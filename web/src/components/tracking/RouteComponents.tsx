@@ -165,5 +165,5 @@ interface RouteInfo {
     traffic: 'low' | 'moderate' | 'heavy';
 }
 
-export { ServiceRoute, Stop };
+export type { ServiceRoute, Stop };
 export type { RouteInfo, GeoLocation };

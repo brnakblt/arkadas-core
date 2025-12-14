@@ -89,7 +89,7 @@ export function useTTS() {
         }
         const audioContext = audioContextRef.current;
         const buffer = audioContext.createBuffer(1, audioData.length, sampleRate);
-        buffer.copyToChannel(audioData, 0);
+        buffer.copyToChannel(audioData as any, 0);
 
         const source = audioContext.createBufferSource();
         currentSourceRef.current = source;
