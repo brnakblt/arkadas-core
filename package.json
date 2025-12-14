@@ -69,9 +69,11 @@
     "typecheck": "concurrently \"npm run typecheck --prefix web\"",
     "------- TEST -------": "",
     "test": "npm run test:all",
-    "test:all": "concurrently \"npm run test:web\" \"npm run test:mobile\"",
+    "test:all": "concurrently -n web,mobile,mebbis \"npm run test:web\" \"npm run test:mobile\" \"npm run test:mebbis\"",
     "test:web": "npm run test:unit --prefix web",
     "test:mobile": "npm test --prefix mobile",
+    "test:mebbis": "npm test --prefix mebbis-service",
+    "test:ai": "cd ai-service && .\\venv\\Scripts\\pytest",
     "test:e2e": "npm run test:e2e --prefix web",
     "test:coverage": "npm run test:coverage --prefix web"
   },

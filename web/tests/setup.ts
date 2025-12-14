@@ -11,6 +11,10 @@ afterEach(() => {
     cleanup();
 });
 
+// Mock environment variables
+process.env.ENCRYPTION_KEY = '0'.repeat(64); // 32 bytes hex
+
+
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
     useRouter: () => ({
