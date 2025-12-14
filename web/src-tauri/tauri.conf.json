@@ -71,7 +71,6 @@
       "wix": null
     },
     "linux": {
-      "appId": "com.arkadasozelegitim.desktop",
       "deb": {
         "depends": [
           "libwebkit2gtk-4.1-0",

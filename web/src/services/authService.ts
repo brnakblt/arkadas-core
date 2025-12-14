@@ -15,6 +15,14 @@ export interface LoginResponse {
   };
 }
 
+export interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+  userType?: 'parent' | 'teacher';
+  [key: string]: any;
+}
+
 export const authService = {
   async login(identifier: string, password: string): Promise<LoginResponse> {
     const response = await fetch(`${STRAPI_URL}/api/auth/local`, {
@@ -76,5 +84,21 @@ export const authService = {
 
     return response.json();
   },
-};
 
+  async register(data: RegisterData): Promise<LoginResponse> {
+    const response = await fetch(`${STRAPI_URL}/api/auth/local/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error?.message || "Kayıt olunamadı");
+    }
+
+    return response.json();
+  },
+};
