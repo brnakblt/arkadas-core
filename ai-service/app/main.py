@@ -99,6 +99,7 @@ else:
 # Include routers
 app.include_router(health_routes.router, prefix="/api", tags=["Health"])
 app.include_router(face_routes.router, prefix="/api", tags=["Face Recognition"])
+app.include_router(storage.router, prefix="/api", tags=["Storage"])
 
 
 @app.get("/")
