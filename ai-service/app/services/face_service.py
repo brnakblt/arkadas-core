@@ -123,12 +123,29 @@ class FaceRecognitionService:
     
     def _decode_image(self, image_base64: str) -> np.ndarray:
         """Decode base64 image to numpy array for face_recognition"""
+        # Security: Limit base64 input size (10MB max encoded = ~7.5MB decoded)
+        MAX_BASE64_SIZE = 10 * 1024 * 1024  # 10MB
+        MAX_IMAGE_PIXELS = 4096 * 4096  # 16 megapixels max
+        
+        if len(image_base64) > MAX_BASE64_SIZE:
+            raise ValueError(f"Image data exceeds maximum size of {MAX_BASE64_SIZE // (1024*1024)}MB")
+        
         # Remove data URL prefix if present
         if ',' in image_base64:
             image_base64 = image_base64.split(',')[1]
         
         image_data = base64.b64decode(image_base64)
+        
+        # Security: Verify decoded size before processing
+        if len(image_data) > MAX_BASE64_SIZE:
+            raise ValueError("Decoded image data exceeds maximum size")
+        
         image = Image.open(BytesIO(image_data))
+        
+        # Security: Check image dimensions to prevent decompression bomb
+        width, height = image.size
+        if width * height > MAX_IMAGE_PIXELS:
+            raise ValueError(f"Image dimensions exceed maximum of {MAX_IMAGE_PIXELS} pixels")
         
         # Convert to RGB if necessary
         if image.mode != 'RGB':

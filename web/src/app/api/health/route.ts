@@ -71,10 +71,12 @@ async function checkDatabase(): Promise<ServiceStatus> {
             error: `Strapi returned ${response.status}`,
         };
     } catch (error) {
+        // Log detailed error server-side, return generic message to client
+        console.error('[Health] Strapi connection error:', error instanceof Error ? error.message : error);
         return {
             status: 'unhealthy',
             latency_ms: Date.now() - start,
-            error: error instanceof Error ? error.message : 'Connection failed',
+            error: 'Service unavailable',
         };
     }
 }

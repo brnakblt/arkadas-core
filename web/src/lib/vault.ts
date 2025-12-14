@@ -45,9 +45,13 @@ const AUTH_TAG_LENGTH = 16;
 function getEncryptionKey(): Buffer {
     const key = process.env.VAULT_ENCRYPTION_KEY || process.env.ENCRYPTION_KEY;
     if (!key) {
-        // Development fallback - NOT SECURE FOR PRODUCTION
-        console.warn('[Vault] No encryption key found, using dev fallback');
-        return crypto.scryptSync('dev-only-key', 'salt', 32);
+        throw new Error(
+            '[Vault] CRITICAL: VAULT_ENCRYPTION_KEY or ENCRYPTION_KEY environment variable is required. ' +
+            'Generate one with: openssl rand -hex 32'
+        );
+    }
+    if (key.length !== 64) {
+        throw new Error('[Vault] Encryption key must be 32 bytes (64 hex characters)');
     }
     return Buffer.from(key, 'hex');
 }

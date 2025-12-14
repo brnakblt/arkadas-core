@@ -138,9 +138,21 @@ export const useFiles = (initialPath: string = '/'): UseFilesReturn => {
 
     const createFolder = useCallback(async (name: string): Promise<boolean> => {
         try {
+            // Security: Sanitize folder name to prevent path traversal
+            const sanitizedName = name
+                .replace(/\.\./g, '')  // Remove traversal sequences
+                .replace(/[\/\\]/g, '') // Remove path separators
+                .replace(/[<>:"|?*]/g, '') // Remove invalid characters
+                .trim();
+
+            if (!sanitizedName || sanitizedName.length === 0) {
+                setError('Geçersiz klasör adı');
+                return false;
+            }
+
             const newPath = currentPath.endsWith('/')
-                ? `${currentPath}${name}`
-                : `${currentPath}/${name}`;
+                ? `${currentPath}${sanitizedName}`
+                : `${currentPath}/${sanitizedName}`;
 
             const response = await fetch(`${API_BASE_URL}/api/v1/files`, {
                 method: 'POST',
