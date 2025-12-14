@@ -1,7 +1,8 @@
 // @ts-nocheck
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Removed output: 'export' to enable API routes
+  // Use static export for desktop builds (Tauri), otherwise default (SSR)
+  output: process.env.APP_ENV === 'desktop' ? 'export' : undefined,
   typescript: {
     // React 19 + Next.js 16 type compatibility
     ignoreBuildErrors: true,

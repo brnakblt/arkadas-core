@@ -225,12 +225,12 @@ export function trackWebVitals(): void {
 
     // Use web-vitals library if available
     import('web-vitals')
-        .then(({ onCLS, onFID, onLCP, onFCP, onTTFB }) => {
-            onCLS((metric) => trackMetric({ name: 'CLS', value: metric.value, unit: 'count' }));
-            onFID((metric) => trackMetric({ name: 'FID', value: metric.value, unit: 'ms' }));
-            onLCP((metric) => trackMetric({ name: 'LCP', value: metric.value, unit: 'ms' }));
-            onFCP((metric) => trackMetric({ name: 'FCP', value: metric.value, unit: 'ms' }));
-            onTTFB((metric) => trackMetric({ name: 'TTFB', value: metric.value, unit: 'ms' }));
+        .then(({ onCLS, onINP, onLCP, onFCP, onTTFB }) => {
+            onCLS((metric: any) => trackMetric({ name: 'CLS', value: metric.value, unit: 'count' }));
+            onINP((metric: any) => trackMetric({ name: 'INP', value: metric.value, unit: 'ms' }));
+            onLCP((metric: any) => trackMetric({ name: 'LCP', value: metric.value, unit: 'ms' }));
+            onFCP((metric: any) => trackMetric({ name: 'FCP', value: metric.value, unit: 'ms' }));
+            onTTFB((metric: any) => trackMetric({ name: 'TTFB', value: metric.value, unit: 'ms' }));
         })
         .catch(() => {
             console.log('[Monitoring] web-vitals not available');

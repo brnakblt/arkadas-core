@@ -99,8 +99,8 @@ export default function AdminSettingsPage() {
                 {message && (
                     <div
                         className={`mb-6 p-4 rounded-lg ${message.type === 'success'
-                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                                : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                            : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
                             }`}
                     >
                         {message.text}
@@ -230,7 +230,11 @@ export default function AdminSettingsPage() {
                 </div>
             </main>
 
-            <style jsx global>{`
+            <style dangerouslySetInnerHTML={{
+                __html: `
+          .tox-tinymce { border-radius: 0.5rem !important; }
+        `}} />
+            <style>{`
         .form-input {
           width: 100%;
           padding: 0.5rem 0.75rem;

@@ -45,8 +45,8 @@ export function RouteCard({ route, onSelect, isSelected }: RouteCardProps) {
                     <p className="text-gray-500">{route.vehiclePlate}</p>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${route.isActive
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-600'
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-gray-100 text-gray-600'
                     }`}>
                     {route.isActive ? 'Aktif' : 'Pasif'}
                 </span>
@@ -111,19 +111,19 @@ export function RouteStopsList({ stops, currentStopId }: RouteStopsListProps) {
                     <div
                         key={stop.id}
                         className={`flex items-start gap-3 p-3 rounded-lg transition-colors ${isCurrent
-                                ? 'bg-blue-50 border border-blue-200'
-                                : isPast
-                                    ? 'bg-gray-50 opacity-60'
-                                    : 'bg-white'
+                            ? 'bg-blue-50 border border-blue-200'
+                            : isPast
+                                ? 'bg-gray-50 opacity-60'
+                                : 'bg-white'
                             }`}
                     >
                         {/* Timeline indicator */}
                         <div className="flex flex-col items-center">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center font-medium ${isCurrent
-                                    ? 'bg-blue-500 text-white'
-                                    : isPast
-                                        ? 'bg-green-500 text-white'
-                                        : 'bg-gray-200 text-gray-600'
+                                ? 'bg-blue-500 text-white'
+                                : isPast
+                                    ? 'bg-green-500 text-white'
+                                    : 'bg-gray-200 text-gray-600'
                                 }`}>
                                 {isPast ? '✓' : index + 1}
                             </div>
@@ -155,3 +155,4 @@ export function RouteStopsList({ stops, currentStopId }: RouteStopsListProps) {
 }
 
 export { ServiceRoute, Stop };
+export type { RouteInfo, GeoLocation };
