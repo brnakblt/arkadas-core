@@ -291,14 +291,9 @@ export async function addBreadcrumb(
  * Send a health check ping
  */
 export async function pingHealthCheck(): Promise<boolean> {
-    try {
-        // In production, ping your health check endpoint
-        // await fetch('/api/health');
-        return true;
-    } catch {
-        captureError(new Error('Health check failed'));
-        return false;
-    }
+    // In production, ping your health check endpoint
+    // await fetch('/api/health');
+    return true;
 }
 
 // ============================================================

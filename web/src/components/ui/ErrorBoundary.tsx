@@ -1,6 +1,7 @@
 'use client';
 
 import { Component, ErrorInfo, ReactNode } from 'react';
+import Link from 'next/link';
 
 interface ErrorBoundaryProps {
     children: ReactNode;
@@ -101,12 +102,12 @@ export function NotFound({ message = 'Sayfa bulunamadı' }: { message?: string }
                 <p className="text-gray-500 mb-6">
                     Aradığınız sayfa mevcut değil veya taşınmış olabilir.
                 </p>
-                <a
+                <Link
                     href="/"
                     className="inline-block px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                 >
                     Ana Sayfaya Dön
-                </a>
+                </Link>
             </div>
         </div>
     );

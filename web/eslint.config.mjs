@@ -21,6 +21,7 @@ export default [
             '**/*.config.cjs',
             '**/*.config.mjs',
             '**/src-tauri/**',
+            '**/public/**',
             // Test utilities
             '**/*.cjs',
             '**/vitest.config.ts',

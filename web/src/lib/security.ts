@@ -13,7 +13,8 @@
  */
 export function generateCsrfToken(): string {
     const array = new Uint8Array(32);
-    crypto.getRandomValues(array);
+     
+    globalThis.crypto.getRandomValues(array);
     return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
@@ -336,9 +337,11 @@ export function escapeSql(str: string): string {
     return str
         .replace(/'/g, "''")
         .replace(/\\/g, '\\\\')
+        // eslint-disable-next-line no-control-regex
         .replace(/\x00/g, '\\0')
         .replace(/\n/g, '\\n')
         .replace(/\r/g, '\\r')
+        // eslint-disable-next-line no-control-regex
         .replace(/\x1a/g, '\\Z');
 }
 

@@ -19,7 +19,7 @@ interface AttendanceRecord {
     notes?: string;
 }
 
-interface AttendanceStats {
+interface AttendanceStatsData {
     totalStudents: number;
     presentToday: number;
     absentToday: number;
@@ -29,7 +29,7 @@ interface AttendanceStats {
 }
 
 // Mock data
-const MOCK_STATS: AttendanceStats = {
+const MOCK_STATS: AttendanceStatsData = {
     totalStudents: 48,
     presentToday: 42,
     absentToday: 4,
@@ -50,7 +50,7 @@ const MOCK_RECORDS: AttendanceRecord[] = [
 ];
 
 export default function AttendanceDashboardPage() {
-    const [stats, setStats] = useState<AttendanceStats>(MOCK_STATS);
+    const [stats, setStats] = useState<AttendanceStatsData>(MOCK_STATS);
     const [records, setRecords] = useState<AttendanceRecord[]>(MOCK_RECORDS);
     const [filteredRecords, setFilteredRecords] = useState<AttendanceRecord[]>(MOCK_RECORDS);
     const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);

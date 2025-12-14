@@ -1,0 +1,63 @@
+{
+    "kind": "collectionType",
+    "collectionName": "file_shares",
+    "info": {
+        "singularName": "file-share",
+        "pluralName": "file-shares",
+        "displayName": "File Share"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "attributes": {
+        "file": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::storage-file.storage-file"
+        },
+        "sharedBy": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "plugin::users-permissions.user"
+        },
+        "sharedWith": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "plugin::users-permissions.user"
+        },
+        "shareType": {
+            "type": "enumeration",
+            "enum": [
+                "user",
+                "group",
+                "link",
+                "email"
+            ],
+            "default": "user"
+        },
+        "permissions": {
+            "type": "enumeration",
+            "enum": [
+                "read",
+                "write",
+                "share",
+                "all"
+            ],
+            "default": "read"
+        },
+        "token": {
+            "type": "string",
+            "unique": true
+        },
+        "password": {
+            "type": "string"
+        },
+        "expiresAt": {
+            "type": "datetime"
+        },
+        "downloadCount": {
+            "type": "integer",
+            "default": 0
+        }
+    }
+}

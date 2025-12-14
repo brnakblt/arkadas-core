@@ -1,0 +1,89 @@
+{
+    "kind": "collectionType",
+    "collectionName": "storage_files",
+    "info": {
+        "singularName": "storage-file",
+        "pluralName": "storage-files",
+        "displayName": "Storage File"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "attributes": {
+        "name": {
+            "type": "string",
+            "required": true
+        },
+        "path": {
+            "type": "string",
+            "required": true
+        },
+        "mimeType": {
+            "type": "string"
+        },
+        "size": {
+            "type": "biginteger",
+            "default": "0"
+        },
+        "etag": {
+            "type": "string"
+        },
+        "checksum": {
+            "type": "string"
+        },
+        "isDirectory": {
+            "type": "boolean",
+            "default": false
+        },
+        "parent": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::storage-file.storage-file",
+            "inversedBy": "children"
+        },
+        "children": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::storage-file.storage-file",
+            "mappedBy": "parent"
+        },
+        "owner": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "plugin::users-permissions.user"
+        },
+        "storageBackend": {
+            "type": "enumeration",
+            "enum": [
+                "local",
+                "s3",
+                "nextcloud"
+            ],
+            "default": "local"
+        },
+        "storagePath": {
+            "type": "string"
+        },
+        "locked": {
+            "type": "boolean",
+            "default": false
+        },
+        "lockedBy": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "plugin::users-permissions.user"
+        },
+        "lockedAt": {
+            "type": "datetime"
+        },
+        "metadata": {
+            "type": "json"
+        },
+        "thumbnailUrl": {
+            "type": "string"
+        },
+        "aiTags": {
+            "type": "json"
+        }
+    }
+}
