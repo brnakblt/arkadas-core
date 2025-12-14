@@ -1,7 +1,7 @@
 // @ts-nocheck
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  // Removed output: 'export' to enable API routes
   typescript: {
     // React 19 + Next.js 16 type compatibility
     ignoreBuildErrors: true,
