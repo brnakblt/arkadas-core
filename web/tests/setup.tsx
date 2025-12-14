@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import { expect, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
+import React from 'react';
 
 // Extend Vitest expect with jest-dom matchers
 expect.extend(matchers);
@@ -13,7 +14,6 @@ afterEach(() => {
 
 // Mock environment variables
 process.env.ENCRYPTION_KEY = '0'.repeat(64); // 32 bytes hex
-
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
@@ -30,8 +30,15 @@ vi.mock('next/navigation', () => ({
 // Mock next/image
 vi.mock('next/image', () => ({
     default: function MockImage(props: Record<string, unknown>) {
-        return { type: 'img', props };
+        return React.createElement('img', props);
     },
+}));
+
+// Mock next/link (since this was causing issues in ErrorBoundary tests)
+vi.mock('next/link', () => ({
+    default: ({ children, href }: { children: React.ReactNode; href: string }) => (
+        React.createElement('a', { href }, children)
+    ),
 }));
 
 // Mock IntersectionObserver
