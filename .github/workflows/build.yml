@@ -168,6 +168,7 @@ jobs:
           releaseDraft: true
           prerelease: false
           projectPath: "./web"
+          args: ${{ matrix.platform == 'windows-latest' && '--bundles nsis,updater' || matrix.platform == 'macos-latest' && '--bundles app,dmg,updater' || '--bundles deb,rpm,appimage,updater' }}
 
       - name: Upload Tauri Artifacts
         uses: actions/upload-artifact@v4
