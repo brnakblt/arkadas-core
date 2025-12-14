@@ -9,6 +9,7 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import apiRoutes from './api/routes';
 import { logger } from './utils/logger';
+import './queues'; // Initialize background workers
 
 // Create Express app
 const app: Express = express();
