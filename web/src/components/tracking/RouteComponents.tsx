@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+
 
 interface Stop {
     id: string;
@@ -152,6 +152,17 @@ export function RouteStopsList({ stops, currentStopId }: RouteStopsListProps) {
             })}
         </div>
     );
+}
+
+interface GeoLocation {
+    latitude: number;
+    longitude: number;
+}
+
+interface RouteInfo {
+    distance: number;
+    duration: number;
+    traffic: 'low' | 'moderate' | 'heavy';
 }
 
 export { ServiceRoute, Stop };
