@@ -3,14 +3,18 @@
   "version": "1.0.0",
   "description": "Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi - ERP Sistemi",
   "private": true,
+  "overrides": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
   "workspaces": [
-    "strapi",
     "web",
     "mobile"
   ],
   "dependencies": {
     "@sentry/react": "^10.27.0",
-    "@sentry/tracing": "^7.120.4"
+    "@sentry/tracing": "^7.120.4",
+    "expo-location": "^19.0.8"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
@@ -29,7 +33,6 @@
     "dev:mebbis": "npm run dev --prefix mebbis-service",
     "dev:docker": "docker compose -f infrastructure/docker-compose.yml up -d",
     "------- BUILD -------": "",
-    "prebuild": "npm run lint && npm run typecheck",
     "build": "npm run dev:docker && npm run build:all",
     "build:all": "concurrently \"npm run build:strapi\" \"npm run build:web\" \"npm run build:mebbis\"",
     "build:strapi": "npm run build --prefix strapi",

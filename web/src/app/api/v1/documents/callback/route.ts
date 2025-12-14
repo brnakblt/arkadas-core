@@ -1,0 +1,127 @@
+/**
+ * OnlyOffice Callback API
+ * Handles document save callbacks from OnlyOffice Document Server
+ * 
+ * Callback statuses:
+ * 0 - No document with the key identifier could be found
+ * 1 - Document is being edited
+ * 2 - Document is ready for saving
+ * 3 - Document saving error
+ * 4 - Document closed with no changes
+ * 6 - Document is being edited, but saving is in progress
+ * 7 - Error has occurred while force saving
+ */
+
+import { NextRequest, NextResponse } from 'next/server';
+import { createNextcloudClient, uploadFile } from '@/lib/nextcloud';
+
+interface OnlyOfficeCallback {
+    key: string;
+    status: number;
+    url?: string;
+    users?: string[];
+    actions?: Array<{ type: number; userid: string }>;
+    changesurl?: string;
+    history?: object;
+    filetype?: string;
+}
+
+// Store document key to file path mapping
+// In production, use Redis or database
+const documentKeyMap = new Map<string, string>();
+
+export async function POST(request: NextRequest) {
+    try {
+        const body: OnlyOfficeCallback = await request.json();
+
+        console.log('OnlyOffice callback received:', JSON.stringify(body, null, 2));
+
+        const { key, status, url } = body;
+
+        switch (status) {
+            case 0:
+                // Document not found
+                console.log(`Document with key ${key} not found`);
+                break;
+
+            case 1:
+                // Document is being edited
+                console.log(`Document ${key} is being edited`);
+                break;
+
+            case 2:
+                // Document is ready for saving
+                if (url) {
+                    console.log(`Saving document ${key} from URL: ${url}`);
+
+                    // Get file path from key (stored when editor was opened)
+                    const filePath = documentKeyMap.get(key);
+
+                    if (filePath) {
+                        try {
+                            // Download the edited document from OnlyOffice
+                            const docResponse = await fetch(url);
+                            if (!docResponse.ok) {
+                                throw new Error(`Failed to download document: ${docResponse.status}`);
+                            }
+
+                            const docBuffer = Buffer.from(await docResponse.arrayBuffer());
+
+                            // Save to Nextcloud
+                            const client = createNextcloudClient();
+                            await uploadFile(client, filePath, docBuffer, { overwrite: true });
+
+                            console.log(`Document saved to Nextcloud: ${filePath}`);
+
+                            // Clean up key mapping
+                            documentKeyMap.delete(key);
+                        } catch (saveError) {
+                            console.error('Error saving document:', saveError);
+                            return NextResponse.json({ error: 1 });
+                        }
+                    } else {
+                        console.warn(`No file path found for key: ${key}`);
+                    }
+                }
+                break;
+
+            case 3:
+                // Document saving error
+                console.error(`Document saving error for key ${key}`);
+                break;
+
+            case 4:
+                // Document closed without changes
+                console.log(`Document ${key} closed without changes`);
+                documentKeyMap.delete(key);
+                break;
+
+            case 6:
+                // Document being edited, save in progress
+                console.log(`Document ${key} save in progress`);
+                break;
+
+            case 7:
+                // Force save error
+                console.error(`Force save error for document ${key}`);
+                break;
+
+            default:
+                console.log(`Unknown callback status: ${status}`);
+        }
+
+        // OnlyOffice expects { error: 0 } for success
+        return NextResponse.json({ error: 0 });
+    } catch (error) {
+        console.error('Error processing OnlyOffice callback:', error);
+        return NextResponse.json({ error: 1 });
+    }
+}
+
+/**
+ * Register a document key with its file path
+ * Called when opening editor to enable save callback
+ */
+export function registerDocumentKey(key: string, filePath: string): void {
+    documentKeyMap.set(key, filePath);
+}

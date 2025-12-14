@@ -97,28 +97,30 @@ const ContactInfo: React.FC = () => {
 
                 <SocialLinks />
 
-                {/* Google Maps iframe */}
-                <div className="rounded-2xl overflow-hidden shadow-lg mt-8 relative">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d38532.36818884902!2d27.103783262601926!3d38.4843215025564!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14bbd0a8c91f1c0b%3A0xaa627e94f9f1781d!2s%C3%96zel%20Arkada%C5%9F%20%C3%96zel%20E%C4%9Fitim%20ve%20Rehabilitasyon%20Merkezi!5e0!3m2!1str!2str!4v1764150415003!5m2!1str!2str"
-                        width="600"
-                        height="450"
-                        style={{ border: 0 }}
-                        allowFullScreen={true}
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade">
-
-                    </iframe>
+                {/* Google Maps iframe - Responsive */}
+                <div className="mt-8">
+                    <div className="rounded-2xl overflow-hidden shadow-lg relative w-full aspect-video sm:aspect-[4/3] lg:aspect-[16/9]">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d38532.36818884902!2d27.103783262601926!3d38.4843215025564!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14bbd0a8c91f1c0b%3A0xaa627e94f9f1781d!2s%C3%96zel%20Arkada%C5%9F%20%C3%96zel%20E%C4%9Fitim%20ve%20Rehabilitasyon%20Merkezi!5e0!3m2!1str!2str!4v1764150415003!5m2!1str!2str"
+                            className="absolute inset-0 w-full h-full"
+                            style={{ border: 0 }}
+                            allowFullScreen={true}
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                            title="Özel Arkadaş Özel Eğitim Merkezi Konum"
+                        />
+                    </div>
 
                     {/* Short link to open in Maps app or full Google Maps */}
-                    <div className="mt-3 text-right px-3 pb-3">
+                    <div className="mt-3 text-right">
                         <a
                             href="https://maps.app.goo.gl/zuUQwm7RvJ14sc2Z9"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-block text-sm font-semibold text-white/90 hover:underline"
+                            className="inline-block text-sm font-semibold text-white/90 hover:text-white hover:underline transition-colors"
                             aria-label="Haritayı uygulamada aç"
                         >
-                            Haritayı uygulamada aç
+                            📍 Haritayı uygulamada aç
                         </a>
                     </div>
                 </div>

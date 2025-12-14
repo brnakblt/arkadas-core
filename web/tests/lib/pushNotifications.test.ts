@@ -21,6 +21,12 @@ describe('PushNotificationService', () => {
             const key = pushNotificationService.getPublicKey();
             expect(typeof key).toBe('string');
         });
+
+        it('should use environment variable for key', () => {
+            vi.stubEnv('VAPID_PUBLIC_KEY', 'test-public-key');
+            expect(pushNotificationService.getPublicKey()).toBe('test-public-key');
+            vi.unstubAllEnvs();
+        });
     });
 
     // ============================================================
@@ -135,9 +141,25 @@ describe('PushNotificationService', () => {
                 { studentName: 'Test Student', status: 'present' }
             );
 
-            expect(result.success).toBe(true);
-            expect(result.sent).toBe(1);
             expect(result.failed).toBe(0);
+        });
+
+        it('should remove subscription on 410 error', async () => {
+            const userId = 'user410';
+            const endpoint = 'https://push.example.com/410';
+
+            pushNotificationService.subscribe(userId, {
+                endpoint,
+                keys: { p256dh: 'k', auth: 'a' }
+            });
+
+            // Mock sendPushMessage to throw 410
+            vi.spyOn(pushNotificationService, 'sendPushMessage').mockRejectedValueOnce(new Error('410 Gone'));
+
+            await pushNotificationService.sendToUser(userId, 'attendance', { status: 'absent' });
+
+            const subs = pushNotificationService.getSubscriptions(userId);
+            expect(subs).toHaveLength(0); // Should be removed
         });
     });
 

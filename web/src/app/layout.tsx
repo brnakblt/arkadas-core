@@ -4,8 +4,7 @@ import './globals.css'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
-import CookieConsent from '@/components/CookieConsent'
-import AccessibilityMenu from '@/components/AccessibilityMenu'
+import PublicOnlyComponents from '@/components/PublicOnlyComponents'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfairDisplay = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair-display' })
@@ -73,8 +72,7 @@ export default function RootLayout({
             Ana içeriğe geç
           </a>
           {children}
-          <CookieConsent />
-          <AccessibilityMenu />
+          <PublicOnlyComponents />
         </Providers>
       </body>
     </html>

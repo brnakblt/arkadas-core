@@ -15,13 +15,6 @@ export interface LoginResponse {
   };
 }
 
-export interface RegisterData {
-  username: string;
-  email: string;
-  password: string;
-  userType: 'parent' | 'teacher';
-}
-
 export const authService = {
   async login(identifier: string, password: string): Promise<LoginResponse> {
     const response = await fetch(`${STRAPI_URL}/api/auth/local`, {
@@ -38,31 +31,14 @@ export const authService = {
     if (!response.ok) {
       const errorData = await response.json();
       let errorMessage = errorData.error?.message || "Giriş yapılamadı";
-      
+
       if (errorMessage === "Invalid identifier or password") {
         errorMessage = "Kullanıcı adı veya şifre hatalı";
       } else if (errorMessage.includes("Too many attempts")) {
         errorMessage = "Çok fazla başarısız deneme. Lütfen daha sonra tekrar deneyin.";
       }
-      
+
       throw new Error(errorMessage);
-    }
-
-    return response.json();
-  },
-
-  async register(data: RegisterData): Promise<LoginResponse> {
-    const response = await fetch(`${STRAPI_URL}/api/auth/local/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error?.message || "Kayıt olunamadı");
     }
 
     return response.json();
@@ -85,7 +61,7 @@ export const authService = {
     }
   },
 
-  getMe: async (token: string) => {
+  async getMe(token: string) {
     const response = await fetch(`${STRAPI_URL}/api/users/me?populate=*`, {
       method: "GET",
       headers: {
@@ -100,8 +76,5 @@ export const authService = {
 
     return response.json();
   },
-
-  getProviderAuthUrl(provider: string) {
-    return `${STRAPI_URL}/api/connect/${provider}`;
-  }
 };
+

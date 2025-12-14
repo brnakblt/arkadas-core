@@ -1,0 +1,30 @@
+- [x] SAST Recon on ai-service/app/main.py
+- [x] SAST Recon on ai-service/app/services/face_service.py
+  - [ ] Investigate potential DoS via large image input in _decode_image on line 118.
+- [x] SAST Recon on mebbis-service/src/services/mebbis-automation.ts
+  - [ ] Investigate executeScript on line 309 for potential Code Injection (Playwright evaluate with string).
+- [x] SAST Recon on mobile/app/(tabs)/_layout.tsx
+- [x] SAST Recon on mobile/app/(tabs)/attendance.tsx
+- [x] SAST Recon on mobile/app/(tabs)/documents.tsx
+  - [ ] Investigate Path Traversal in createFolder usage on line 118 (check useFiles.ts).
+- [x] SAST Recon on mobile/app/(tabs)/tracking.tsx
+- [x] SAST Recon on mobile/app/_layout.tsx
+- [x] SAST Recon on mobile/babel.config.js
+- [x] SAST Recon on mobile/hooks/useLocation.ts
+- [x] SAST Recon on mobile/metro.config.js
+- [x] SAST Recon on web/public/swe-worker-development.js
+- [x] SAST Recon on web/src/app/api/health/route.ts
+  - [ ] Investigate Information Disclosure in health check errors on line 126.
+- [x] SAST Recon on web/src/app/dashboard/documents/page.tsx
+- [x] SAST Recon on web/src/app/dashboard/mebbis/page.tsx
+- [x] SAST Recon on web/src/app/layout.tsx
+- [x] SAST Recon on web/src/components/AuthModal.tsx
+- [x] SAST Recon on web/src/components/Process.tsx
+- [x] SAST Recon on web/src/components/auth/LoginForm.tsx
+- [x] SAST Recon on web/src/components/auth/RegisterForm.tsx
+- [x] SAST Recon on web/src/components/contact/ContactInfo.tsx
+- [x] SAST Recon on web/src/lib/analytics.ts
+- [x] SAST Recon on web/src/lib/vault.ts
+  - [ ] Investigate Weak Cryptography (Hardcoded Key) in getEncryptionKey on line 42.
+- [ ] SAST Recon on web/src/services/authService.ts
+- [ ] Conduct the final review of all findings as per your **Minimizing False Positives** operating principle and generate the final report.

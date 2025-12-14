@@ -109,7 +109,7 @@ class FaceRecognitionService:
                 except Exception as e:
                     print(f"Error loading encodings for {user_id}: {e}")
         
-        print(f"📦 Loaded face encodings for {len(self._encodings_cache)} users")
+        print(f"Loaded face encodings for {len(self._encodings_cache)} users")
     
     def _save_user_encodings(self, user_id: str):
         """Save user encodings to disk (user_id already validated)"""

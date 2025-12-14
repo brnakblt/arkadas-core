@@ -91,45 +91,109 @@ export default function MebbisPage() {
             prev.map((s) => (s.id === serviceId ? { ...s, status: 'running' as JobStatus } : s))
         );
 
-        // Simulate job
-        setActiveJob({
-            id: `job-${Date.now()}`,
-            type: serviceId,
-            status: 'running',
-            progress: 0,
-            message: 'Başlatılıyor...',
-            startedAt: new Date().toISOString(),
-        });
+        try {
+            let endpoint = '';
+            let body = {};
 
-        // Simulate progress
-        for (let i = 0; i <= 100; i += 10) {
-            await new Promise((r) => setTimeout(r, 500));
-            setActiveJob((prev) =>
-                prev
-                    ? {
-                        ...prev,
-                        progress: i,
-                        message: i < 100 ? `İşleniyor... ${i}%` : 'Tamamlandı',
+            switch (serviceId) {
+                case 'student-sync':
+                    endpoint = '/api/v1/mebbis/sync/students';
+                    body = { userId: 'admin' };
+                    break;
+                case 'education-entry':
+                    endpoint = '/api/v1/mebbis/education';
+                    body = { entries: [], stopOnError: false };
+                    break;
+                case 'invoice':
+                    endpoint = '/api/v1/mebbis/invoice';
+                    body = { donem: new Date().toISOString().slice(0, 7) };
+                    break;
+                case 'bep':
+                    endpoint = '/api/v1/mebbis/sync/students'; // Placeholder
+                    body = {};
+                    break;
+                default:
+                    throw new Error('Unknown service');
+            }
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.data?.jobId) {
+                // Start polling for job status
+                setActiveJob({
+                    id: data.data.jobId,
+                    type: serviceId,
+                    status: 'running',
+                    progress: 0,
+                    message: 'İşlem kuyruğa eklendi...',
+                    startedAt: new Date().toISOString(),
+                });
+
+                // Poll job status
+                const pollStatus = async () => {
+                    const statusRes = await fetch(`/api/v1/mebbis/jobs/${data.data.jobId}`);
+                    const statusData = await statusRes.json();
+
+                    if (statusData.success && statusData.data) {
+                        const job = statusData.data;
+                        setActiveJob((prev) =>
+                            prev ? {
+                                ...prev,
+                                status: job.status,
+                                progress: job.progress || 0,
+                                message: job.status === 'completed' ? 'Tamamlandı' :
+                                    job.status === 'failed' ? 'Hata oluştu' : 'İşleniyor...',
+                            } : null
+                        );
+
+                        if (job.status === 'completed' || job.status === 'failed') {
+                            setServices((prev) =>
+                                prev.map((s) =>
+                                    s.id === serviceId
+                                        ? {
+                                            ...s,
+                                            status: job.status === 'completed' ? 'success' : 'error' as JobStatus,
+                                            lastRun: new Date().toLocaleString('tr-TR'),
+                                            lastResult: job.result?.message || (job.error ? `Hata: ${job.error}` : 'İşlem tamamlandı'),
+                                        }
+                                        : s
+                                )
+                            );
+                            setTimeout(() => {
+                                setActiveJob(null);
+                                setServices((prev) =>
+                                    prev.map((s) => (s.id === serviceId ? { ...s, status: 'idle' as JobStatus } : s))
+                                );
+                            }, 2000);
+                            return;
+                        }
+
+                        // Continue polling
+                        setTimeout(pollStatus, 2000);
                     }
-                    : null
-            );
-        }
+                };
 
-        // Complete
-        setServices((prev) =>
-            prev.map((s) =>
-                s.id === serviceId
-                    ? { ...s, status: 'success' as JobStatus, lastRun: new Date().toLocaleString('tr-TR') }
-                    : s
-            )
-        );
-
-        setTimeout(() => {
-            setActiveJob(null);
+                pollStatus();
+            } else {
+                throw new Error(data.error || 'İşlem başlatılamadı');
+            }
+        } catch (error) {
+            console.error('Service error:', error);
             setServices((prev) =>
-                prev.map((s) => (s.id === serviceId ? { ...s, status: 'idle' as JobStatus } : s))
+                prev.map((s) =>
+                    s.id === serviceId
+                        ? { ...s, status: 'error' as JobStatus, lastResult: 'Bağlantı hatası' }
+                        : s
+                )
             );
-        }, 2000);
+            setActiveJob(null);
+        }
     };
 
     const handleConfigSave = () => {
@@ -279,8 +343,8 @@ export default function MebbisPage() {
                                 onClick={() => runService(service.id)}
                                 disabled={service.status === 'running' || !isConfigured}
                                 className={`mt-4 w-full py-2 px-4 rounded-lg font-medium transition-colors ${service.status === 'running' || !isConfigured
-                                        ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed'
-                                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                                    ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed'
+                                    : 'bg-blue-600 text-white hover:bg-blue-700'
                                     }`}
                             >
                                 {service.status === 'running' ? 'Çalışıyor...' : 'Çalıştır'}

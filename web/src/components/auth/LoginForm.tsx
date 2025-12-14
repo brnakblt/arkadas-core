@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../hooks/useAuth";
-import { authService } from "../../services/authService";
 
 interface LoginFormProps {
     onSuccess: () => void;
@@ -64,7 +63,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onForgotPassword }) =>
                         type={showPassword ? "text" : "password"}
                         name="password"
                         placeholder="••••••••"
-                        className="w-full pl-11 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 outline-none"
+                        className="w-full pl-11 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 outline-none text-neutral-dark placeholder-gray-400"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -96,23 +95,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onForgotPassword }) =>
                     }`}
             >
                 {isLoading ? "Giriş Yapılıyor..." : "Giriş Yap"}
-            </button>
-
-            <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-200"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">Veya</span>
-                </div>
-            </div>
-
-            <button
-                type="button"
-                onClick={() => window.location.href = authService.getProviderAuthUrl('auth0')}
-                className="w-full bg-white border border-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 flex items-center justify-center gap-2"
-            >
-                <span>Auth0 ile Giriş Yap</span>
             </button>
         </form>
     );

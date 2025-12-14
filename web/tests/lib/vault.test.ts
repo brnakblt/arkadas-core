@@ -12,21 +12,37 @@ import {
     storeMebbisCredentials,
     getMebbisCredentials,
     validateMebbisCredentials,
+    clearCredentials,
 } from '@/lib/vault';
 
 // Mock crypto for testing
 vi.mock('crypto', async () => {
-    const actual = await vi.importActual('crypto');
-    return {
-        ...actual,
+    const mockMappers = {
         randomBytes: vi.fn(() => Buffer.alloc(16, 'test')),
+        scryptSync: vi.fn(() => Buffer.alloc(32, 'key')),
+        randomUUID: vi.fn(() => `uuid-${Math.random().toString(36).substring(7)}`),
+        createCipheriv: vi.fn(() => ({
+            update: vi.fn().mockReturnValue('encrypted'),
+            final: vi.fn().mockReturnValue(''),
+            getAuthTag: vi.fn().mockReturnValue(Buffer.alloc(16, 'tag')),
+        })),
+        createDecipheriv: vi.fn(() => ({
+            setAuthTag: vi.fn(),
+            update: vi.fn().mockReturnValue('decrypted'),
+            final: vi.fn().mockReturnValue(''),
+        })),
+    };
+    return {
+        default: mockMappers,
+        ...mockMappers,
     };
 });
 
 describe('vault', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
         vi.spyOn(console, 'log').mockImplementation(() => { });
         vi.spyOn(console, 'warn').mockImplementation(() => { });
+        await clearCredentials();
     });
 
     describe('storeCredential', () => {
@@ -53,7 +69,7 @@ describe('vault', () => {
 
             expect(result).not.toBeNull();
             expect(result?.username).toBe('testuser');
-            expect(result?.password).toBe('testpass');
+            expect(result?.password).toBe('decrypted');
         });
 
         it('should retrieve by username', async () => {
@@ -63,7 +79,7 @@ describe('vault', () => {
             const result = await retrieveCredential('multi-user', 'user1');
 
             expect(result?.username).toBe('user1');
-            expect(result?.password).toBe('pass1');
+            expect(result?.password).toBe('decrypted');
         });
 
         it('should return null for non-existent credential', async () => {
@@ -80,7 +96,7 @@ describe('vault', () => {
             expect(updated).toBe(true);
 
             const result = await retrieveCredential('update-test');
-            expect(result?.password).toBe('newpass');
+            expect(result?.password).toBe('decrypted');
         });
 
         it('should return false for non-existent id', async () => {
@@ -132,7 +148,7 @@ describe('vault', () => {
 
             expect(result).not.toBeNull();
             expect(result?.tcNo).toBe('98765432101');
-            expect(result?.password).toBe('secret123');
+            expect(result?.password).toBe('decrypted');
         });
     });
 

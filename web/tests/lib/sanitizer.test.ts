@@ -2,7 +2,7 @@
  * Sanitizer Unit Tests
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, vi, afterEach } from 'vitest';
 import {
     sanitize,
     hasDangerousHTML,
@@ -102,6 +102,92 @@ describe('sanitizer', () => {
             expect(SanitizePresets.RICH.allowedTags).toContain('table');
             expect(SanitizePresets.RICH.allowedTags).toContain('img');
             expect(SanitizePresets.RICH.allowedTags).toContain('h1');
+        });
+    });
+    describe('SSR and Fallback', () => {
+        beforeEach(() => {
+            vi.resetModules();
+        });
+
+        it('should handle SSR environment (no window)', async () => {
+            vi.stubGlobal('window', undefined);
+            const { initSanitizer } = await import('@/lib/sanitizer');
+
+            const result = await initSanitizer();
+            expect(result).toBe(false);
+
+            vi.unstubAllGlobals();
+        });
+
+        it('should use fallback sanitizer when DOMPurify fails to load', async () => {
+            vi.doMock('dompurify', () => {
+                throw new Error('Failed to load');
+            });
+
+            const { initSanitizer, sanitize } = await import('@/lib/sanitizer');
+            await initSanitizer(); // Should return false/fail silently
+
+            const result = sanitize('<script>alert(1)</script><b>Safe</b>');
+            // Fallback replaces < and > but keeps content safe-ish or assumes stripped
+            // The fallbackSanitize implementation:
+            // if textOnly: strip tags
+            // else: escape entities
+
+            expect(result).toContain('&lt;script&gt;');
+            expect(result).toContain('&lt;b&gt;'); // Fallback escapes all HTML chars
+            expect(result).toContain('Safe');
+
+            vi.doUnmock('dompurify');
+        });
+
+        it('should use fallback text-only in SSR', async () => {
+            // Simulate SSR
+            vi.stubGlobal('window', undefined);
+            vi.stubGlobal('document', undefined);
+
+            // We need to re-import to bypass module-level initialized DOMPurify if it was set
+            vi.resetModules();
+            const { sanitize } = await import('@/lib/sanitizer');
+
+            const result = sanitize('<p>Hello</p>', { textOnly: true });
+            expect(result).toBe('Hello');
+
+            vi.unstubAllGlobals();
+        });
+    });
+
+    describe('useSanitizedHTML Hook', () => {
+        // We need a test component or renderHook from @testing-library/react
+        // constructing a standard functional test since renderHook is cleaner
+
+        describe('useSanitizedHTML Hook', () => {
+            it('should sanitize html via hook', async () => {
+                // Mock React hooks
+                let effectCallback: any;
+                const setSanitized = vi.fn();
+
+                // Use doMock to avoid hoisting and access local variables
+                vi.doMock('react', () => ({
+                    useState: (init: any) => [init, setSanitized],
+                    useEffect: (cb: any) => { effectCallback = cb; },
+                }));
+
+                // Re-import to use mocked React
+                vi.resetModules();
+                const { useSanitizedHTML, initSanitizer } = await import('@/lib/sanitizer');
+                await initSanitizer();
+
+                const { __html } = useSanitizedHTML('<script>alert</script><b>Hi</b>');
+
+                // Trigger effect
+                if (effectCallback) effectCallback();
+
+                expect(setSanitized).toHaveBeenCalledWith(expect.stringContaining('<b>Hi</b>'));
+                expect(setSanitized).toHaveBeenCalledWith(expect.not.stringContaining('<script>'));
+
+                vi.doUnmock('react'); // Clean up mock
+                vi.resetModules(); // Cleanup modules
+            });
         });
     });
 });

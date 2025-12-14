@@ -68,6 +68,27 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="bolt" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="assistant"
+        options={{
+          title: 'AI Asistan',
+          tabBarIcon: ({ color }) => <TabBarIcon name="magic" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="messages"
+        options={{
+          title: 'Mesajlar',
+          tabBarIcon: ({ color }) => <TabBarIcon name="comments" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="appointments"
+        options={{
+          title: 'Randevular',
+          tabBarIcon: ({ color }) => <TabBarIcon name="calendar" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

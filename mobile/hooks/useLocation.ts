@@ -146,7 +146,12 @@ export function useLocation(options: UseLocationOptions = {}): UseLocationReturn
 
     const stopTracking = useCallback(() => {
         if (subscriptionRef.current) {
-            subscriptionRef.current.remove();
+            if (typeof subscriptionRef.current.remove === 'function') {
+                subscriptionRef.current.remove();
+            } else if (typeof (subscriptionRef.current as any).removeSubscription === 'function') {
+                // Fallback for older Expo versions or Web shims
+                (subscriptionRef.current as any).removeSubscription();
+            }
             subscriptionRef.current = null;
         }
         setIsTracking(false);

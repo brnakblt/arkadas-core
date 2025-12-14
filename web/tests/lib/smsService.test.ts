@@ -199,11 +199,207 @@ describe('SmsService', () => {
             await smsService.send({ to: '5551234567', text: 'Test message' });
 
             expect(consoleSpy).toHaveBeenCalledWith(
-                expect.stringContaining('[MOCK SMS]'),
-                expect.any(String)
+                expect.stringContaining('[MOCK SMS]')
             );
 
             consoleSpy.mockRestore();
         });
     });
 });
+
+// ============================================================
+// Provider Implementation Tests
+// ============================================================
+describe('Provider Implementations', () => {
+    const mockFetch = vi.fn();
+    global.fetch = mockFetch;
+
+    beforeEach(() => {
+        mockFetch.mockReset();
+    });
+
+    describe('Netgsm', () => {
+        let netgsmService: SmsService;
+
+        beforeEach(() => {
+            netgsmService = new SmsService({
+                provider: 'netgsm',
+                credentials: {
+                    netgsmUserCode: 'user',
+                    netgsmPassword: 'pass',
+                    netgsmMsgHeader: 'HEADER'
+                }
+            });
+        });
+
+        it('should send SMS successfully via Netgsm', async () => {
+            mockFetch.mockResolvedValueOnce({
+                text: () => Promise.resolve('00 123456')
+            } as Response);
+
+            const result = await netgsmService.send({ to: '5551234567', text: 'Test' });
+
+            expect(result.success).toBe(true);
+            expect(result.messageId).toBe('123456');
+            expect(result.provider).toBe('netgsm');
+            expect(mockFetch).toHaveBeenCalledWith(
+                expect.stringContaining('api.netgsm.com.tr/sms/send/get')
+            );
+        });
+
+        it('should handle Netgsm errors', async () => {
+            mockFetch.mockResolvedValueOnce({
+                text: () => Promise.resolve('30 Hata')
+            } as Response);
+
+            const result = await netgsmService.send({ to: '5551234567', text: 'Test' });
+
+            expect(result.success).toBe(false);
+            expect(result.error).toContain('Netgsm error: 30 Hata');
+        });
+
+        it('should fail if credentials missing', async () => {
+            const badService = new SmsService({
+                provider: 'netgsm',
+                credentials: {}
+            });
+            const result = await badService.send({ to: '5551234567', text: 'Test' });
+            expect(result.success).toBe(false);
+            expect(result.error).toContain('credentials not configured');
+        });
+    });
+
+    describe('Twilio', () => {
+        let twilioService: SmsService;
+
+        beforeEach(() => {
+            twilioService = new SmsService({
+                provider: 'twilio',
+                credentials: {
+                    twilioAccountSid: 'AC123',
+                    twilioAuthToken: 'token',
+                    twilioFromNumber: '+1234'
+                }
+            });
+        });
+
+        it('should send SMS successfully via Twilio', async () => {
+            mockFetch.mockResolvedValueOnce({
+                ok: true,
+                json: () => Promise.resolve({ sid: 'SM123' })
+            } as Response);
+
+            const result = await twilioService.send({ to: '+905551234567', text: 'Test' });
+
+            expect(result.success).toBe(true);
+            expect(result.messageId).toBe('SM123');
+            expect(mockFetch).toHaveBeenCalledWith(
+                expect.stringContaining('api.twilio.com'),
+                expect.objectContaining({
+                    method: 'POST',
+                    headers: expect.objectContaining({
+                        'Authorization': expect.stringContaining('Basic')
+                    })
+                })
+            );
+        });
+
+        it('should handle Twilio errors', async () => {
+            mockFetch.mockResolvedValueOnce({
+                ok: false,
+                json: () => Promise.resolve({ message: 'Invalid number' })
+            } as Response);
+
+            const result = await twilioService.send({ to: '+905551234567', text: 'Test' });
+
+            expect(result.success).toBe(false);
+            expect(result.error).toBe('Invalid number');
+        });
+
+        it('should fail if credentials missing', async () => {
+            const badService = new SmsService({
+                provider: 'twilio',
+                credentials: {}
+            });
+            const result = await badService.send({ to: '5551234567', text: 'Test' });
+            expect(result.success).toBe(false);
+            expect(result.error).toContain('credentials not configured');
+        });
+    });
+
+    describe('Ileti Merkezi', () => {
+        let imService: SmsService;
+
+        beforeEach(() => {
+            imService = new SmsService({
+                provider: 'iletimerkezi',
+                credentials: {
+                    iletimerkeziApiKey: 'key',
+                    iletimerkeziSender: 'SENDER'
+                }
+            });
+        });
+
+        it('should send SMS successfully via Ileti Merkezi', async () => {
+            mockFetch.mockResolvedValueOnce({
+                json: () => Promise.resolve({
+                    response: {
+                        status: { code: '200' },
+                        order: { id: '123' }
+                    }
+                })
+            } as Response);
+
+            const result = await imService.send({ to: '5551234567', text: 'Test' });
+
+            expect(result.success).toBe(true);
+            expect(result.messageId).toBe('123');
+            expect(mockFetch).toHaveBeenCalledWith(
+                expect.stringContaining('api.iletimerkezi.com'),
+                expect.anything()
+            );
+        });
+
+        it('should handle Ileti Merkezi errors', async () => {
+            mockFetch.mockResolvedValueOnce({
+                json: () => Promise.resolve({
+                    response: {
+                        status: { code: '400', message: 'Bad Request' }
+                    }
+                })
+            } as Response);
+
+            const result = await imService.send({ to: '5551234567', text: 'Test' });
+
+            expect(result.success).toBe(false);
+            expect(result.error).toBe('Bad Request');
+        });
+
+        it('should fail if credentials missing', async () => {
+            const badService = new SmsService({
+                provider: 'iletimerkezi',
+                credentials: {}
+            });
+            const result = await badService.send({ to: '5551234567', text: 'Test' });
+            expect(result.success).toBe(false);
+            expect(result.error).toContain('credentials not configured');
+        });
+    });
+
+    it('should handle fetch exceptions globally', async () => {
+        const netgsmService = new SmsService({
+            provider: 'netgsm',
+            credentials: { netgsmUserCode: 'u', netgsmPassword: 'p' }
+        });
+
+        mockFetch.mockRejectedValueOnce(new Error('Network error'));
+
+        const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+        const result = await netgsmService.send({ to: '5551234567', text: 'Test' });
+
+        expect(result.success).toBe(false);
+        expect(result.error).toBe('Network error');
+        consoleSpy.mockRestore();
+    });
+});
+

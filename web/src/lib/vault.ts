@@ -92,6 +92,13 @@ const memoryStore = new Map<string, CredentialEntry>();
 // ============================================================
 
 /**
+ * Clear all credentials (for testing/logout)
+ */
+export async function clearCredentials(): Promise<void> {
+    memoryStore.clear();
+}
+
+/**
  * Store credentials securely
  */
 export async function storeCredential(
@@ -100,7 +107,7 @@ export async function storeCredential(
     password: string,
     metadata?: Record<string, string>
 ): Promise<string> {
-    const id = `cred_${service}_${Date.now()}`;
+    const id = `cred_${service}_${crypto.randomUUID()}`;
     const encryptedPassword = encrypt(password);
 
     const entry: CredentialEntry = {
@@ -275,6 +282,7 @@ export const vault = {
     update: updateCredential,
     delete: deleteCredential,
     list: listCredentials,
+    clear: clearCredentials,
     mebbis: {
         store: storeMebbisCredentials,
         get: getMebbisCredentials,

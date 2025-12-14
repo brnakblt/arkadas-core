@@ -1,266 +1,163 @@
 /**
  * Attendance Screen for Mobile App
- * Face recognition check-in/check-out with camera
+ * 
+ * NOTE: Attendance functionality will be handled by remote cameras.
+ * This screen shows status and info about the system.
  */
 
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
-import { CameraView } from 'expo-camera';
-import { useCamera } from '../../hooks/useCamera';
-import { useLocation } from '../../hooks/useLocation';
-
-const AI_SERVICE_URL = process.env.EXPO_PUBLIC_AI_SERVICE_URL || 'http://localhost:8000';
-const STRAPI_URL = process.env.EXPO_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-
-interface AttendanceResult {
-    success: boolean;
-    studentName?: string;
-    confidence?: number;
-    message: string;
-}
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 
 export default function AttendanceScreen() {
-    const [mode, setMode] = useState<'idle' | 'camera' | 'processing' | 'result'>('idle');
-    const [result, setResult] = useState<AttendanceResult | null>(null);
-    const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
-
-    const {
-        cameraRef,
-        facing,
-        permission,
-        requestPermission,
-        toggleFacing,
-        takePhoto
-    } = useCamera({
-        initialFacing: 'front',
-        enableBase64: true,
-        onError: (error) => Alert.alert('Hata', error),
-    });
-
-    const { location, getCurrentLocation, requestPermission: requestLocationPermission } = useLocation();
-
-    const handleStartAttendance = async () => {
-        // Request permissions
-        const cameraGranted = await requestPermission();
-        if (!cameraGranted) {
-            Alert.alert('İzin Gerekli', 'Yoklama için kamera izni gereklidir.');
-            return;
-        }
-
-        await requestLocationPermission();
-        setMode('camera');
-    };
-
-    const handleCapture = async () => {
-        const photo = await takePhoto();
-        if (!photo) return;
-
-        setCapturedPhoto(photo.uri);
-        setMode('processing');
-
-        try {
-            // Get current location
-            const loc = await getCurrentLocation();
-
-            // Send to AI service for face matching
-            const matchResponse = await fetch(`${AI_SERVICE_URL}/api/match`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    image_base64: photo.base64,
-                    threshold: 0.6,
-                }),
-            });
-
-            const matchResult = await matchResponse.json();
-
-            if (matchResult.match) {
-                // Record attendance in Strapi
-                const attendanceResponse = await fetch(`${STRAPI_URL}/api/attendance-logs`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        data: {
-                            student: matchResult.user_id,
-                            checkInTime: new Date().toISOString(),
-                            status: 'present',
-                            verificationMethod: 'face_recognition',
-                            faceMatchConfidence: matchResult.confidence,
-                            latitude: loc.latitude,
-                            longitude: loc.longitude,
-                        },
-                    }),
-                });
-
-                setResult({
-                    success: true,
-                    studentName: matchResult.user_id, // Would be replaced with actual name from Strapi
-                    confidence: matchResult.confidence,
-                    message: 'Yoklama başarıyla kaydedildi!',
-                });
-            } else {
-                setResult({
-                    success: false,
-                    message: 'Yüz tanıma başarısız. Lütfen tekrar deneyin.',
-                });
-            }
-        } catch (error) {
-            console.error('Attendance error:', error);
-            setResult({
-                success: false,
-                message: 'Bir hata oluştu. Lütfen tekrar deneyin.',
-            });
-        }
-
-        setMode('result');
-    };
-
-    const handleReset = () => {
-        setMode('idle');
-        setResult(null);
-        setCapturedPhoto(null);
-    };
-
-    // Permission not granted
-    if (permission === false) {
-        return (
-            <View className="flex-1 justify-center items-center bg-gray-100 p-6">
-                <Text className="text-xl font-bold text-gray-800 mb-4">Kamera İzni Gerekli</Text>
-                <Text className="text-gray-600 text-center mb-6">
-                    Yüz tanıma ile yoklama için kamera erişimi gereklidir.
-                </Text>
-                <TouchableOpacity
-                    onPress={requestPermission}
-                    className="bg-blue-500 px-6 py-3 rounded-xl"
-                >
-                    <Text className="text-white font-semibold">İzin Ver</Text>
-                </TouchableOpacity>
-            </View>
-        );
-    }
-
-    // Idle State
-    if (mode === 'idle') {
-        return (
-            <View className="flex-1 justify-center items-center bg-gray-100 p-6">
-                <View className="w-32 h-32 bg-blue-100 rounded-full justify-center items-center mb-8">
-                    <Text className="text-6xl">📷</Text>
+    return (
+        <View style={styles.container}>
+            <View style={styles.card}>
+                <Text style={styles.icon}>📸</Text>
+                <Text style={styles.title}>Yoklama Sistemi</Text>
+                <Text style={styles.subtitle}>Yüz Tanıma ile Otomatik Kayıt</Text>
+                <View style={styles.statusRow}>
+                    <View style={styles.statusDot} />
+                    <Text style={styles.statusText}>Sistem Aktif</Text>
                 </View>
-                <Text className="text-2xl font-bold text-gray-800 mb-2">Yoklama</Text>
-                <Text className="text-gray-600 text-center mb-8">
-                    Yüz tanıma ile giriş/çıkış kaydı yapın
+                <Text style={styles.description}>
+                    Yoklama işlemleri kurum girişindeki kameraları ile otomatik olarak yapılmaktadır.
+                    Öğrenci giriş/çıkışları anlık olarak sisteme kaydedilir.
                 </Text>
-
-                <TouchableOpacity
-                    onPress={handleStartAttendance}
-                    className="bg-green-500 px-8 py-4 rounded-xl mb-4"
-                >
-                    <Text className="text-white font-bold text-lg">🟢 Giriş Yap</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    onPress={handleStartAttendance}
-                    className="bg-red-500 px-8 py-4 rounded-xl"
-                >
-                    <Text className="text-white font-bold text-lg">🔴 Çıkış Yap</Text>
-                </TouchableOpacity>
             </View>
-        );
-    }
 
-    // Camera State
-    if (mode === 'camera') {
-        return (
-            <View className="flex-1">
-                <CameraView
-                    ref={cameraRef}
-                    style={{ flex: 1 }}
-                    facing={facing}
-                >
-                    {/* Overlay */}
-                    <View className="flex-1 justify-end items-center pb-10">
-                        {/* Face Guide */}
-                        <View className="absolute top-1/4 w-64 h-80 border-4 border-white/50 rounded-[100px]" />
-
-                        <Text className="text-white text-lg mb-8 text-center">
-                            Yüzünüzü çerçeve içine yerleştirin
-                        </Text>
-
-                        <View className="flex-row items-center gap-6">
-                            <TouchableOpacity
-                                onPress={toggleFacing}
-                                className="w-14 h-14 bg-white/30 rounded-full justify-center items-center"
-                            >
-                                <Text className="text-2xl">🔄</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                onPress={handleCapture}
-                                className="w-20 h-20 bg-white rounded-full justify-center items-center border-4 border-blue-500"
-                            >
-                                <View className="w-16 h-16 bg-blue-500 rounded-full" />
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                onPress={handleReset}
-                                className="w-14 h-14 bg-white/30 rounded-full justify-center items-center"
-                            >
-                                <Text className="text-2xl">✕</Text>
-                            </TouchableOpacity>
-                        </View>
+            <View style={styles.statsCard}>
+                <Text style={styles.statsTitle}>📊 Bugünün Özeti</Text>
+                <View style={styles.statsRow}>
+                    <View style={styles.statItem}>
+                        <Text style={styles.statNumber}>-</Text>
+                        <Text style={styles.statLabel}>Giriş</Text>
                     </View>
-                </CameraView>
-            </View>
-        );
-    }
-
-    // Processing State
-    if (mode === 'processing') {
-        return (
-            <View className="flex-1 justify-center items-center bg-gray-100 p-6">
-                {capturedPhoto && (
-                    <Image
-                        source={{ uri: capturedPhoto }}
-                        className="w-48 h-48 rounded-full mb-8"
-                    />
-                )}
-                <ActivityIndicator size="large" color="#3B82F6" />
-                <Text className="text-lg text-gray-600 mt-4">Yüz tanıma yapılıyor...</Text>
-            </View>
-        );
-    }
-
-    // Result State
-    if (mode === 'result' && result) {
-        return (
-            <View className="flex-1 justify-center items-center bg-gray-100 p-6">
-                <View className={`w-24 h-24 rounded-full justify-center items-center mb-6 ${result.success ? 'bg-green-100' : 'bg-red-100'
-                    }`}>
-                    <Text className="text-5xl">{result.success ? '✅' : '❌'}</Text>
+                    <View style={styles.statDivider} />
+                    <View style={styles.statItem}>
+                        <Text style={styles.statNumber}>-</Text>
+                        <Text style={styles.statLabel}>Çıkış</Text>
+                    </View>
                 </View>
-
-                <Text className={`text-2xl font-bold mb-2 ${result.success ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                    {result.success ? 'Başarılı!' : 'Başarısız'}
-                </Text>
-
-                <Text className="text-gray-600 text-center mb-4">{result.message}</Text>
-
-                {result.confidence && (
-                    <Text className="text-gray-500 mb-6">
-                        Eşleşme: %{(result.confidence * 100).toFixed(1)}
-                    </Text>
-                )}
-
-                <TouchableOpacity
-                    onPress={handleReset}
-                    className="bg-blue-500 px-8 py-4 rounded-xl"
-                >
-                    <Text className="text-white font-bold text-lg">Tamam</Text>
-                </TouchableOpacity>
             </View>
-        );
-    }
 
-    return null;
+            <View style={styles.infoCard}>
+                <Text style={styles.infoTitle}>ℹ️ Bilgi</Text>
+                <Text style={styles.infoText}>
+                    Veliler yoklama bildirimlerini push notification ile alabilir.
+                    Detaylı raporlar web panelinden görüntülenebilir.
+                </Text>
+            </View>
+        </View>
+    );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f5f5f5',
+        padding: 16,
+    },
+    card: {
+        backgroundColor: '#fff',
+        borderRadius: 16,
+        padding: 24,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
+        marginTop: 32,
+    },
+    icon: {
+        fontSize: 48,
+        marginBottom: 16,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#1f2937',
+        marginBottom: 4,
+    },
+    subtitle: {
+        fontSize: 16,
+        color: '#6b7280',
+        marginBottom: 16,
+    },
+    statusRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    statusDot: {
+        width: 12,
+        height: 12,
+        borderRadius: 6,
+        backgroundColor: '#22c55e',
+        marginRight: 8,
+    },
+    statusText: {
+        fontSize: 14,
+        color: '#22c55e',
+        fontWeight: '600',
+    },
+    description: {
+        fontSize: 14,
+        color: '#6b7280',
+        textAlign: 'center',
+        lineHeight: 20,
+    },
+    statsCard: {
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        padding: 16,
+        marginTop: 16,
+    },
+    statsTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#1f2937',
+        marginBottom: 12,
+    },
+    statsRow: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    statItem: {
+        alignItems: 'center',
+        paddingHorizontal: 32,
+    },
+    statNumber: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        color: '#3b82f6',
+    },
+    statLabel: {
+        fontSize: 14,
+        color: '#6b7280',
+    },
+    statDivider: {
+        width: 1,
+        height: 40,
+        backgroundColor: '#e5e7eb',
+    },
+    infoCard: {
+        backgroundColor: '#eff6ff',
+        borderRadius: 12,
+        padding: 16,
+        marginTop: 16,
+    },
+    infoTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#1e40af',
+        marginBottom: 8,
+    },
+    infoText: {
+        fontSize: 14,
+        color: '#3b82f6',
+        lineHeight: 20,
+    },
+});
+

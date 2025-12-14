@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import LoginForm from "./auth/LoginForm";
-import RegisterForm from "./auth/RegisterForm";
 import ForgotPasswordForm from "./auth/ForgotPasswordForm";
 
 interface AuthModalProps {
@@ -13,7 +12,7 @@ interface AuthModalProps {
     onClose: () => void;
 }
 
-type AuthView = 'login' | 'register' | 'forgot-password';
+type AuthView = 'login' | 'forgot-password';
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     const router = useRouter();
@@ -36,10 +35,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     const handleLoginSuccess = () => {
         onClose();
         router.push("/dashboard");
-    };
-
-    const handleRegisterSuccess = () => {
-        setView('login');
     };
 
     if (!isVisible && !isOpen) return null;
@@ -72,39 +67,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 <div className="text-center mb-8">
                     <h2 className="font-display text-2xl font-bold text-neutral-dark mb-2">
                         {view === 'login' && "Hoş Geldiniz"}
-                        {view === 'register' && "Aramıza Katılın"}
                         {view === 'forgot-password' && "Şifre Sıfırlama"}
                     </h2>
                     <p className="font-body text-gray-500 text-sm">
                         {view === 'login' && "Hesabınıza giriş yaparak devam edin"}
-                        {view === 'register' && "Yeni bir hesap oluşturarak avantajlardan yararlanın"}
                         {view === 'forgot-password' && "E-posta adresinizi girerek şifrenizi sıfırlayın"}
                     </p>
                 </div>
-
-                {/* Tabs (Only show for login/register) */}
-                {view !== 'forgot-password' && (
-                    <div className="flex p-1 bg-gray-100 rounded-xl mb-6">
-                        <button
-                            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${view === 'login'
-                                ? "bg-white text-primary shadow-sm"
-                                : "text-gray-500 hover:text-gray-700"
-                                }`}
-                            onClick={() => setView('login')}
-                        >
-                            Giriş Yap
-                        </button>
-                        <button
-                            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${view === 'register'
-                                ? "bg-white text-primary shadow-sm"
-                                : "text-gray-500 hover:text-gray-700"
-                                }`}
-                            onClick={() => setView('register')}
-                        >
-                            Kayıt Ol
-                        </button>
-                    </div>
-                )}
 
                 {/* Forms */}
                 {view === 'login' && (
@@ -114,43 +83,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     />
                 )}
 
-                {view === 'register' && (
-                    <RegisterForm
-                        onSuccess={handleRegisterSuccess}
-                    />
-                )}
-
                 {view === 'forgot-password' && (
                     <ForgotPasswordForm
                         onBackToLogin={() => setView('login')}
                     />
-                )}
-
-                {/* Footer */}
-                {view !== 'forgot-password' && (
-                    <div className="mt-8 text-center text-sm text-gray-500">
-                        {view === 'login' ? (
-                            <>
-                                Hesabınız yok mu?{" "}
-                                <button
-                                    onClick={() => setView('register')}
-                                    className="text-primary font-semibold hover:underline"
-                                >
-                                    Kayıt Olun
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                Zaten hesabınız var mı?{" "}
-                                <button
-                                    onClick={() => setView('login')}
-                                    className="text-primary font-semibold hover:underline"
-                                >
-                                    Giriş Yapın
-                                </button>
-                            </>
-                        )}
-                    </div>
                 )}
             </div>
         </div>
@@ -158,3 +94,4 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 };
 
 export default AuthModal;
+

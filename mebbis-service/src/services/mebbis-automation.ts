@@ -7,6 +7,17 @@
 
 import { Browser, BrowserContext, Page, chromium } from 'playwright';
 import { logger } from '../utils/logger';
+import { withRetry, RetryOptions } from '../utils/retry';
+import {
+    MebbisError,
+    MebbisAuthError,
+    MebbisSessionError,
+    MebbisTimeoutError,
+    MebbisNetworkError,
+    MebbisElementError,
+    MebbisNavigationError,
+    toMebbisError,
+} from '../utils/errors';
 
 /**
  * MEBBIS Page URLs
@@ -39,7 +50,20 @@ export interface MebbisConfig {
     password: string;
     headless: boolean;
     timeout: number;
+    /** Retry configuration for operations */
+    retry?: RetryOptions;
 }
+
+/**
+ * Default retry configuration for MEBBIS operations
+ */
+const DEFAULT_RETRY_OPTIONS: RetryOptions = {
+    maxAttempts: 3,
+    initialDelayMs: 2000,
+    maxDelayMs: 15000,
+    backoffMultiplier: 2,
+    jitter: true,
+};
 
 /**
  * MEBBIS Automation Service
@@ -52,9 +76,13 @@ export class MebbisAutomationService {
     private page: Page | null = null;
     private config: MebbisConfig;
     private isLoggedIn = false;
+    private retryOptions: RetryOptions;
+    private loginAttempts = 0;
+    private readonly MAX_LOGIN_ATTEMPTS = 3;
 
     constructor(config: MebbisConfig) {
         this.config = config;
+        this.retryOptions = { ...DEFAULT_RETRY_OPTIONS, ...config.retry };
     }
 
     /**
@@ -102,54 +130,96 @@ export class MebbisAutomationService {
      */
     private getPage(): Page {
         if (!this.page) {
-            throw new Error('Browser not initialized. Call initialize() first.');
+            throw new MebbisError('Browser not initialized. Call initialize() first.', 'NOT_INITIALIZED', false);
         }
         return this.page;
     }
 
     /**
-     * Login to MEBBIS portal
+     * Execute an operation with retry logic
+     */
+    private async withOperation<T>(
+        operationName: string,
+        fn: () => Promise<T>,
+        options?: Partial<RetryOptions>
+    ): Promise<T> {
+        return withRetry(fn, {
+            ...this.retryOptions,
+            ...options,
+            operationName,
+        });
+    }
+
+    /**
+     * Login to MEBBIS portal with retry mechanism
      */
     async login(): Promise<boolean> {
-        const page = this.getPage();
+        return withRetry(
+            async () => {
+                const page = this.getPage();
+                this.loginAttempts++;
 
-        try {
-            logger.info('Navigating to MEBBIS login page...');
-            await page.goto(MEBBIS_PAGES.LOGIN);
+                try {
+                    logger.info(`Navigating to MEBBIS login page (attempt ${this.loginAttempts})...`);
+                    await page.goto(MEBBIS_PAGES.LOGIN);
 
-            // Wait for login form
-            await page.waitForSelector('#txtKullaniciAd', { state: 'visible' });
+                    // Wait for login form
+                    await page.waitForSelector('#txtKullaniciAd', { state: 'visible' });
 
-            // Fill credentials
-            await page.fill('#txtKullaniciAd', this.config.username);
-            await page.fill('#txtSifre', this.config.password);
+                    // Fill credentials
+                    await page.fill('#txtKullaniciAd', this.config.username);
+                    await page.fill('#txtSifre', this.config.password);
 
-            // Click login button
-            await page.click('#btnGiris');
+                    // Click login button
+                    await page.click('#btnGiris');
 
-            // Wait for navigation to main page or error
-            await page.waitForNavigation({ waitUntil: 'networkidle' });
+                    // Wait for navigation to main page or error
+                    await page.waitForNavigation({ waitUntil: 'networkidle' });
 
-            // Check if login was successful
-            const currentUrl = page.url();
-            if (currentUrl.includes('UygulamaListesi') || currentUrl.includes('Anasayfa')) {
-                this.isLoggedIn = true;
-                logger.info('Login successful');
-                return true;
+                    // Check if login was successful
+                    const currentUrl = page.url();
+                    if (currentUrl.includes('UygulamaListesi') || currentUrl.includes('Anasayfa')) {
+                        this.isLoggedIn = true;
+                        this.loginAttempts = 0;
+                        logger.info('Login successful');
+                        return true;
+                    }
+
+                    // Check for error message
+                    const errorElement = await page.$('.error-message, .alert-danger');
+                    if (errorElement) {
+                        const errorText = await errorElement.textContent();
+                        throw new MebbisAuthError(`Giriş başarısız: ${errorText}`);
+                    }
+
+                    throw new MebbisAuthError('Giriş başarısız: Bilinmeyen hata');
+                } catch (error) {
+                    const mebbisError = toMebbisError(error);
+
+                    // Auth errors should not be retried
+                    if (mebbisError instanceof MebbisAuthError) {
+                        logger.error('Authentication failed:', mebbisError.message);
+                        throw mebbisError;
+                    }
+
+                    // Timeout/network errors can be retried
+                    logger.warn('Login attempt failed, may retry:', mebbisError.message);
+                    throw mebbisError;
+                }
+            },
+            {
+                ...this.retryOptions,
+                operationName: 'login',
+                onRetry: (attempt, error) => {
+                    logger.info(`Login retry attempt ${attempt + 1}`, {
+                        error: error instanceof Error ? error.message : String(error),
+                    });
+                },
             }
-
-            // Check for error message
-            const errorElement = await page.$('.error-message, .alert-danger');
-            if (errorElement) {
-                const errorText = await errorElement.textContent();
-                logger.error(`Login failed: ${errorText}`);
-            }
-
+        ).catch((error) => {
+            logger.error('All login attempts failed:', error);
             return false;
-        } catch (error) {
-            logger.error('Login error:', error);
-            return false;
-        }
+        });
     }
 
     /**
@@ -173,22 +243,42 @@ export class MebbisAutomationService {
     }
 
     /**
-     * Navigate to a specific MEBBIS page
+     * Navigate to a specific MEBBIS page with retry and session recovery
      */
     async navigateTo(pageUrl: string): Promise<void> {
-        const page = this.getPage();
+        return withRetry(
+            async () => {
+                const page = this.getPage();
 
-        // Ensure logged in
-        if (!await this.checkLogin()) {
-            const success = await this.login();
-            if (!success) {
-                throw new Error('Failed to login to MEBBIS');
+                // Ensure logged in
+                if (!await this.checkLogin()) {
+                    const success = await this.login();
+                    if (!success) {
+                        throw new MebbisAuthError('MEBBIS oturum açılamadı');
+                    }
+                }
+
+                logger.info(`Navigating to: ${pageUrl}`);
+
+                try {
+                    await page.goto(pageUrl, { timeout: this.config.timeout });
+                    await page.waitForLoadState('networkidle');
+                } catch (error) {
+                    throw new MebbisNavigationError(pageUrl, `Sayfa yüklenemedi: ${pageUrl}`);
+                }
+
+                // Check if redirected to login (session expired)
+                const currentUrl = page.url();
+                if (currentUrl.includes('Login.aspx')) {
+                    this.isLoggedIn = false;
+                    throw new MebbisSessionError('Oturum süresi doldu, yeniden giriş yapılıyor...');
+                }
+            },
+            {
+                ...this.retryOptions,
+                operationName: `navigate to ${pageUrl}`,
             }
-        }
-
-        logger.info(`Navigating to: ${pageUrl}`);
-        await page.goto(pageUrl);
-        await page.waitForLoadState('networkidle');
+        );
     }
 
     /**
@@ -254,11 +344,17 @@ export class MebbisAutomationService {
     }
 
     /**
-     * Click an element
+     * Click an element with retry
      */
     async click(selector: string): Promise<void> {
-        const page = this.getPage();
-        await page.click(selector);
+        return this.withOperation(`click ${selector}`, async () => {
+            const page = this.getPage();
+            try {
+                await page.click(selector);
+            } catch (error) {
+                throw new MebbisElementError(selector, `Element tıklanamadı: ${selector}`);
+            }
+        });
     }
 
     /**
@@ -288,13 +384,22 @@ export class MebbisAutomationService {
     }
 
     /**
-     * Wait for an element to appear
+     * Wait for an element to appear with retry
      */
     async waitForElement(selector: string, timeout?: number): Promise<void> {
-        const page = this.getPage();
-        await page.waitForSelector(selector, {
-            state: 'visible',
-            timeout: timeout || this.config.timeout
+        return this.withOperation(`wait for ${selector}`, async () => {
+            const page = this.getPage();
+            try {
+                await page.waitForSelector(selector, {
+                    state: 'visible',
+                    timeout: timeout || this.config.timeout
+                });
+            } catch (error) {
+                throw new MebbisTimeoutError(
+                    `Element bulunamadı: ${selector}`,
+                    timeout || this.config.timeout
+                );
+            }
         });
     }
 

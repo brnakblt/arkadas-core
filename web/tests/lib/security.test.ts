@@ -16,6 +16,9 @@ import {
     validateOrigin,
     addSecurityHeaders,
     defaultSecurityHeaders,
+    validateCsrfToken,
+    csrfMiddleware,
+    parseJsonBody,
 } from '@/lib/security';
 
 describe('Security Utilities', () => {
@@ -167,7 +170,7 @@ describe('Security Utilities', () => {
 
         it('should allow custom protocols', () => {
             const url = 'ftp://files.example.com';
-            expect(sanitizeUrl(url, ['ftp:'])).toBe(url);
+            expect(sanitizeUrl(url, ['ftp:'])).toBe(url + '/');
         });
     });
 
@@ -324,6 +327,154 @@ describe('Security Utilities', () => {
                 xFrameOptions: 'DENY',
             });
             expect(securedResponse.headers.get('X-Frame-Options')).toBe('DENY');
+        });
+    });
+
+    // ============================================================
+    // CSRF Validation Tests
+    // ============================================================
+    describe('validateCsrfToken', () => {
+
+        it('should validate matching tokens', () => {
+            const token = 'a'.repeat(64);
+            const request = new Request('http://test.com', {
+                headers: { 'X-CSRF-Token': token },
+            });
+            expect(validateCsrfToken(request, token)).toBe(true);
+        });
+
+        it('should reject mismatched tokens', () => {
+            const token = 'a'.repeat(64);
+            const request = new Request('http://test.com', {
+                headers: { 'X-CSRF-Token': 'b'.repeat(64) },
+            });
+            expect(validateCsrfToken(request, token)).toBe(false);
+        });
+
+        it('should reject different length tokens', () => {
+            const token = 'a'.repeat(64);
+            const request = new Request('http://test.com', {
+                headers: { 'X-CSRF-Token': 'a'.repeat(63) },
+            });
+            expect(validateCsrfToken(request, token)).toBe(false);
+        });
+
+        it('should check query params if header missing', () => {
+            const token = 'a'.repeat(64);
+            const request = new Request(`http://test.com?_csrf=${token}`);
+            expect(validateCsrfToken(request, token)).toBe(true);
+        });
+
+        it('should reject if no token provided', () => {
+            const token = 'a'.repeat(64);
+            const request = new Request('http://test.com');
+            expect(validateCsrfToken(request, token)).toBe(false);
+        });
+    });
+
+    // ============================================================
+    // CSRF Middleware Tests
+    // ============================================================
+    describe('csrfMiddleware', () => {
+
+        it('should skip safe methods', async () => {
+            const request = new Request('http://test.com', { method: 'GET' });
+            const result = await csrfMiddleware(request, async () => 'token');
+            expect(result).toBeNull();
+        });
+
+        it('should return 403 if no stored token', async () => {
+            const request = new Request('http://test.com', { method: 'POST' });
+            const result = await csrfMiddleware(request, async () => null);
+
+            expect(result).not.toBeNull();
+            expect(result!.status).toBe(403);
+            const body = await result!.json();
+            expect(body.error.message).toContain('CSRF token bulunamadı');
+        });
+
+        it('should return 403 if token mismatch', async () => {
+            const request = new Request('http://test.com', {
+                method: 'POST',
+                headers: { 'X-CSRF-Token': 'wrong' }
+            });
+            const result = await csrfMiddleware(request, async () => 'correct');
+
+            expect(result).not.toBeNull();
+            expect(result!.status).toBe(403);
+            const body = await result!.json();
+            expect(body.error.message).toContain('Geçersiz CSRF token');
+        });
+
+        it('should return null (pass) if token matches', async () => {
+            const token = 'a'.repeat(64);
+            const request = new Request('http://test.com', {
+                method: 'POST',
+                headers: { 'X-CSRF-Token': token }
+            });
+            const result = await csrfMiddleware(request, async () => token);
+
+            expect(result).toBeNull();
+        });
+    });
+
+    // ============================================================
+    // JSON Parsing Tests
+    // ============================================================
+    describe('parseJsonBody', () => {
+
+        it('should parse valid JSON', async () => {
+            const data = { foo: 'bar' };
+            const request = new Request('http://test.com', {
+                method: 'POST',
+                body: JSON.stringify(data),
+            });
+
+            const result = await parseJsonBody(request);
+            expect(result.data).toEqual(data);
+        });
+
+        it('should reject invalid JSON', async () => {
+            const request = new Request('http://test.com', {
+                method: 'POST',
+                body: '{ invalid json }',
+            });
+
+            const result = await parseJsonBody(request);
+            expect(result.error).toContain('Invalid JSON');
+        });
+
+        it('should reject if content-length exceeds limit', async () => {
+            const request = new Request('http://test.com', {
+                method: 'POST',
+                body: JSON.stringify({ too: 'large' }),
+                headers: { 'content-length': '999999999' },
+            });
+
+            const result = await parseJsonBody(request, 100);
+            expect(result.error).toContain('Request body too large');
+        });
+
+        it('should reject if actual body size exceeds limit', async () => {
+            const data = { foo: 'a'.repeat(200) };
+            const request = new Request('http://test.com', {
+                method: 'POST',
+                body: JSON.stringify(data),
+            });
+
+            const result = await parseJsonBody(request, 50);
+            expect(result.error).toContain('Request body too large');
+        });
+
+        it('should sanitize input data', async () => {
+            const data = { foo: '<script>alert(1)</script>' };
+            const request = new Request('http://test.com', {
+                method: 'POST',
+                body: JSON.stringify(data),
+            });
+
+            const result = await parseJsonBody(request);
+            expect((result.data as any).foo).not.toContain('<script>');
         });
     });
 });

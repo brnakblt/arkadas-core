@@ -54,14 +54,14 @@ async def lifespan(app: FastAPI):
     
     allowed_origins = get_allowed_origins()
     if not allowed_origins:
-        print("⚠️  Warning: No CORS origins configured. Set CORS_ALLOWED_ORIGINS env var.")
+        print("Warning: No CORS origins configured. Set CORS_ALLOWED_ORIGINS env var.")
     else:
-        print(f"✅ CORS configured for {len(allowed_origins)} origins")
+        print(f"CORS configured for {len(allowed_origins)} origins")
     
-    print(f"🚀 AI Face Recognition Service started on port {settings.PORT}")
+    print(f"AI Face Recognition Service started on port {settings.PORT}")
     yield
     # Shutdown
-    print("👋 AI Face Recognition Service shutting down")
+    print("AI Face Recognition Service shutting down")
 
 
 app = FastAPI(
