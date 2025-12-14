@@ -31,7 +31,7 @@ async fn show_notification(app: tauri::AppHandle, title: String, body: String) -
 /// Tauri command: Open external URL
 #[tauri::command]
 async fn open_url(url: String) -> Result<(), String> {
-    open::that(&url).map_err(|e| e.to_string())
+    open::that(&url).map_err(|e: std::io::Error| e.to_string())
 }
 
 /// Main entry point for the Tauri application
@@ -56,7 +56,7 @@ pub fn run() {
         // Process management
         .plugin(tauri_plugin_process::init())
         // Auto-updater
-        .plugin(tauri_plugin_updater::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         // OS information
         .plugin(tauri_plugin_os::init())
         // HTTP client
