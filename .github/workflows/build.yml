@@ -32,12 +32,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-          cache-dependency-path: web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        run: |
-          cd web
-          npm ci
+        run: npm ci
 
       - name: Run Linter
         run: |
@@ -78,12 +76,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-          cache-dependency-path: web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        run: |
-          cd web
-          npm ci
+        run: npm ci
 
       - name: Build
         run: |
@@ -116,8 +112,8 @@ jobs:
             target: linux
           - platform: windows-latest
             target: windows
-          # - platform: macos-latest
-          #   target: macos
+          - platform: macos-latest
+            target: macos
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -149,9 +145,7 @@ jobs:
             patchelf
 
       - name: Install Frontend Dependencies
-        run: |
-          cd web
-          npm ci
+        run: npm ci
 
       - name: Build Tauri App
         uses: tauri-apps/tauri-action@v0
