@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-interface MapMarker {
+export interface MapMarker {
     id: string;
     latitude: number;
     longitude: number;
@@ -11,7 +11,7 @@ interface MapMarker {
     info?: string;
 }
 
-interface MapRoute {
+export interface MapRoute {
     id: string;
     points: { lat: number; lng: number }[];
     color?: string;

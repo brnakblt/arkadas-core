@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 
 from app.api import face_routes, health_routes
 from app.core.config import settings
+from app.routers import storage
 
 
 # =============================================================================

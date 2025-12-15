@@ -3,24 +3,30 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Autoplay } from 'swiper/modules';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/pagination';
+
+interface TeamMember {
+  id: number;
+  name: string;
+  title: string;
+  category: string[]; // JSON field returns array directly
+  image: {
+    url: string;
+    alternativeText?: string;
+  } | null;
+  specialization: string;
+  description: string;
+  objectPosition?: string;
+  order: number;
+  link?: string;
+}
 
 const Team: React.FC = () => {
-  interface TeamMember {
-    id: number;
-    name: string;
-    title: string;
-    category: string[]; // JSON field returns array directly
-    image: {
-      url: string;
-      alternativeText?: string;
-    } | null;
-    specialization: string;
-    description: string;
-    objectPosition?: string;
-    order: number;
-    link?: string;
-  }
-
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -129,6 +135,66 @@ const Team: React.FC = () => {
     );
   }
 
+  const TeamMemberCard = ({ member }: { member: TeamMember }) => {
+    const cardClasses = "group relative overflow-hidden bg-white rounded-2xl p-4 shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col mx-auto w-full max-w-sm md:max-w-none";
+    const CardContent = (
+      <>
+        <div className="relative z-20 h-full flex flex-col">
+          <div className="w-48 h-48 mx-auto mb-4 rounded-2xl overflow-hidden relative flex-shrink-0">
+            <Image
+              unoptimized
+              src={
+                member.image?.url
+                  ? `${STRAPI_URL}${member.image.url}`
+                  : "/images/placeholder.webp"
+              }
+              alt={
+                member.image?.alternativeText || member.name
+              }
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover rounded-2xl"
+              style={{
+                objectPosition:
+                  member.objectPosition || "center",
+              }}
+            />
+          </div>
+
+          <div className="text-center px-2 pb-2 flex-shrink-0">
+            <h3 className="font-display text-lg font-bold text-neutral-dark mb-1">
+              {member.name}
+            </h3>
+
+            <p className="text-primary font-body font-medium text-sm mb-3">
+              {member.title}
+            </p>
+          </div>
+        </div>
+
+        {/* Gradient Hover Effect - Starts from the card bottom */}
+        <div className="absolute inset-x-0 bottom-0 h-1/6 bg-gradient-to-t from-secondary/60 via-secondary/20 to-secondary/0 transform translate-y-full transition-transform duration-500 ease-in-out group-hover:translate-y-0 z-10 pointer-events-none"></div>
+      </>
+    );
+
+    return member.link ? (
+      <Link
+        key={member.id}
+        href={member.link}
+        className={`${cardClasses} cursor-pointer`}
+      >
+        {CardContent}
+      </Link>
+    ) : (
+      <div
+        key={member.id}
+        className={cardClasses}
+      >
+        {CardContent}
+      </div>
+    );
+  };
+
   return (
     <section id="team" className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -160,67 +226,34 @@ const Team: React.FC = () => {
           ))}
         </div>
 
-        {/* Team Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredMembers.map((member) => {
-            const cardClasses = "group relative overflow-hidden bg-white rounded-2xl p-4 shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col";
-            const CardContent = (
-              <>
-                <div className="relative z-20 h-full flex flex-col">
-                  <div className="w-48 h-48 mx-auto mb-4 rounded-2xl overflow-hidden relative flex-shrink-0">
-                    <Image
-                      unoptimized
-                      src={
-                        member.image?.url
-                          ? `${STRAPI_URL}${member.image.url}`
-                          : "/images/placeholder.webp"
-                      }
-                      alt={
-                        member.image?.alternativeText || member.name
-                      }
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover rounded-2xl"
-                      style={{
-                        objectPosition:
-                          member.objectPosition || "center",
-                      }}
-                    />
-                  </div>
+        {/* Mobile View - Swiper */}
+        <div className="block md:hidden">
+          <Swiper
+            modules={[Pagination, Autoplay]}
+            spaceBetween={20}
+            slidesPerView={1.2}
+            centeredSlides={true}
+            loop={true}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+            }}
+            pagination={{ clickable: true }}
+            className="pb-12"
+          >
+            {filteredMembers.map((member) => (
+              <SwiperSlide key={member.id}>
+                <TeamMemberCard member={member} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
 
-                  <div className="text-center px-2 pb-2 flex-shrink-0">
-                    <h3 className="font-display text-lg font-bold text-neutral-dark mb-1">
-                      {member.name}
-                    </h3>
-
-                    <p className="text-primary font-body font-medium text-sm mb-3">
-                      {member.title}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Gradient Hover Effect - Starts from the card bottom */}
-                <div className="absolute inset-x-0 bottom-0 h-1/6 bg-gradient-to-t from-secondary/60 via-secondary/20 to-secondary/0 transform translate-y-full transition-transform duration-500 ease-in-out group-hover:translate-y-0 z-10 pointer-events-none"></div>
-              </>
-            );
-
-            return member.link ? (
-              <Link
-                key={member.id}
-                href={member.link}
-                className={`${cardClasses} cursor-pointer`} // Add cursor-pointer for links
-              >
-                {CardContent}
-              </Link>
-            ) : (
-              <div
-                key={member.id}
-                className={cardClasses}
-              >
-                {CardContent}
-              </div>
-            );
-          })}
+        {/* Desktop View - Grid */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {filteredMembers.map((member) => (
+            <TeamMemberCard key={member.id} member={member} />
+          ))}
         </div>
       </div>
     </section>

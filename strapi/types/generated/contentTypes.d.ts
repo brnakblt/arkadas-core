@@ -659,6 +659,39 @@ export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiFileShareFileShare extends Struct.CollectionTypeSchema {
+  collectionName: 'file_shares';
+  info: {
+    displayName: 'File Share';
+    pluralName: 'file-shares';
+    singularName: 'file-share';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    downloadCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    expiresAt: Schema.Attribute.DateTime;
+    file: Schema.Attribute.Relation<'manyToOne', 'api::storage-file.storage-file'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::file-share.file-share'> &
+      Schema.Attribute.Private;
+    password: Schema.Attribute.String;
+    permissions: Schema.Attribute.Enumeration<['read', 'write', 'share', 'all']> &
+      Schema.Attribute.DefaultTo<'read'>;
+    publishedAt: Schema.Attribute.DateTime;
+    sharedBy: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+    sharedWith: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+    shareType: Schema.Attribute.Enumeration<['user', 'group', 'link', 'email']> &
+      Schema.Attribute.DefaultTo<'user'>;
+    token: Schema.Attribute.String & Schema.Attribute.Unique;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiGalleryGallery extends Struct.CollectionTypeSchema {
   collectionName: 'galleries';
   info: {
@@ -964,6 +997,47 @@ export interface ApiServiceService extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'title'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiStorageFileStorageFile extends Struct.CollectionTypeSchema {
+  collectionName: 'storage_files';
+  info: {
+    displayName: 'Storage File';
+    pluralName: 'storage-files';
+    singularName: 'storage-file';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    aiTags: Schema.Attribute.JSON;
+    checksum: Schema.Attribute.String;
+    children: Schema.Attribute.Relation<'oneToMany', 'api::storage-file.storage-file'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    etag: Schema.Attribute.String;
+    isDirectory: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::storage-file.storage-file'> &
+      Schema.Attribute.Private;
+    locked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    lockedAt: Schema.Attribute.DateTime;
+    lockedBy: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+    metadata: Schema.Attribute.JSON;
+    mimeType: Schema.Attribute.String;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    owner: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+    parent: Schema.Attribute.Relation<'manyToOne', 'api::storage-file.storage-file'>;
+    path: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    size: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<'0'>;
+    storageBackend: Schema.Attribute.Enumeration<['local', 's3', 'nextcloud']> &
+      Schema.Attribute.DefaultTo<'local'>;
+    storagePath: Schema.Attribute.String;
+    thumbnailUrl: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1520,6 +1594,7 @@ declare module '@strapi/strapi' {
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
       'api::erp-role.erp-role': ApiErpRoleErpRole;
       'api::faq.faq': ApiFaqFaq;
+      'api::file-share.file-share': ApiFileShareFileShare;
       'api::gallery.gallery': ApiGalleryGallery;
       'api::global.global': ApiGlobalGlobal;
       'api::hero.hero': ApiHeroHero;
@@ -1530,6 +1605,7 @@ declare module '@strapi/strapi' {
       'api::schedule.schedule': ApiScheduleSchedule;
       'api::service-route.service-route': ApiServiceRouteServiceRoute;
       'api::service.service': ApiServiceService;
+      'api::storage-file.storage-file': ApiStorageFileStorageFile;
       'api::student-profile.student-profile': ApiStudentProfileStudentProfile;
       'api::teacher-profile.teacher-profile': ApiTeacherProfileTeacherProfile;
       'api::team-member.team-member': ApiTeamMemberTeamMember;
