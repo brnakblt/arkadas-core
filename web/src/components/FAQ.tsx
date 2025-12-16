@@ -60,10 +60,10 @@ const FAQ: React.FC<FAQProps> = ({ data }) => {
         <div className="text-center mb-16">
           <h2
             id="faq-heading"
-            className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark mt-4 mb-6"
+            className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark mt-4 mb-6 leading-normal pb-2"
           >
             Merak Ettikleriniz
-            <span className="text-gradient block">Burada</span>
+            <span className="text-gradient block leading-tight pb-2">Burada</span>
           </h2>
           <p className="font-body text-lg text-neutral-dark/80 max-w-2xl mx-auto leading-relaxed">
             Özel eğitim ve rehabilitasyon hizmetlerimiz hakkında en çok sorulan
@@ -82,7 +82,7 @@ const FAQ: React.FC<FAQProps> = ({ data }) => {
                 onClick={() => toggleFAQ(index)}
                 className="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
               >
-                <h3 className="font-display text-lg font-semibold text-neutral-dark pr-4">
+                <h3 className="font-display text-lg font-semibold text-neutral-dark pr-4 leading-normal pb-1">
                   {faq.question}
                 </h3>
                 <div
@@ -130,7 +130,7 @@ const FAQ: React.FC<FAQProps> = ({ data }) => {
         <div className="text-center mt-16">
           <div className="bg-white rounded-3xl p-8 card-shadow">
             <div className="max-w-2xl mx-auto">
-              <h3 className="font-display text-2xl font-bold text-neutral-dark mb-4">
+              <h3 className="font-display text-2xl font-bold text-neutral-dark mb-4 leading-normal pb-1">
                 Başka sorularınız mı var?
               </h3>
               <p className="font-body text-neutral-dark/80 mb-6">

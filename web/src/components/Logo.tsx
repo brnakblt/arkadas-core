@@ -34,7 +34,7 @@ const Logo: React.FC<LogoProps> = ({ className = '', showText = true, size = 'md
       {/* Brand Text */}
       {showText && (
         <div className="flex flex-col">
-          <span className={`font-display font-bold text-primary ${textSizeClasses[size]}`}>
+          <span className={`font-display font-bold text-primary ${textSizeClasses[size]} leading-normal pb-1`}>
             arkadaş
           </span>
         </div>

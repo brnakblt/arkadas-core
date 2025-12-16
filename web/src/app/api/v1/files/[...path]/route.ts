@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createNextcloudClient, downloadFile, deleteFile, getFileInfo } from '@/lib/nextcloud';
+import { createNextcloudClient, downloadFile, deleteFile, getFileInfo, moveFile } from '@/lib/nextcloud';
 
 interface RouteParams {
     params: Promise<{ path: string[] }>;
@@ -68,6 +68,39 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         console.error('Error deleting file:', error);
         return NextResponse.json(
             { success: false, error: 'Failed to delete file' },
+            { status: 500 }
+        );
+    }
+}
+
+export async function PATCH(request: NextRequest, { params }: RouteParams) {
+    try {
+        const { path: pathSegments } = await params;
+        const remotePath = '/' + pathSegments.join('/');
+        
+        const body = await request.json();
+        const { destination } = body;
+
+        if (!destination) {
+            return NextResponse.json(
+                { success: false, error: 'Destination path is required' },
+                { status: 400 }
+            );
+        }
+
+        const client = createNextcloudClient();
+        await moveFile(client, remotePath, destination);
+        
+        return NextResponse.json({
+            success: true,
+            message: 'File moved successfully',
+            from: remotePath,
+            to: destination
+        });
+    } catch (error) {
+        console.error('Error moving file:', error);
+        return NextResponse.json(
+            { success: false, error: 'Failed to move file' },
             { status: 500 }
         );
     }

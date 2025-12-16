@@ -28,6 +28,7 @@ interface UseFilesReturn {
     downloadFile: (file: FileItem) => Promise<string | null>;
     deleteFile: (file: FileItem) => Promise<boolean>;
     createFolder: (name: string) => Promise<boolean>;
+    renameFile: (file: FileItem, newName: string) => Promise<boolean>;
 }
 
 export const useFiles = (initialPath: string = '/'): UseFilesReturn => {
@@ -119,18 +120,26 @@ export const useFiles = (initialPath: string = '/'): UseFilesReturn => {
 
     const deleteFile = useCallback(async (file: FileItem): Promise<boolean> => {
         try {
-            const encodedPath = file.filename.slice(1);
-            const response = await fetch(`${API_BASE_URL}/api/v1/files/${encodedPath}`, {
+            console.log('Attempting to delete file:', file.filename);
+            const encodedPath = encodeURIComponent(file.filename.slice(1)); // Fix encoding
+            const url = `${API_BASE_URL}/api/v1/files/${encodedPath}`; // Construct URL explicitly for logging
+            console.log('Delete URL:', url);
+            
+            const response = await fetch(url, {
                 method: 'DELETE',
             });
-
+            
+            console.log('Delete response status:', response.status);
             const data = await response.json();
+            console.log('Delete response data:', data);
+
             if (data.success) {
                 refresh();
                 return true;
             }
             throw new Error(data.error);
         } catch (err) {
+            console.error('Delete error:', err);
             setError(err instanceof Error ? err.message : 'Silme hatası');
             return false;
         }
@@ -172,6 +181,44 @@ export const useFiles = (initialPath: string = '/'): UseFilesReturn => {
         }
     }, [currentPath, refresh]);
 
+    const renameFile = useCallback(async (file: FileItem, newName: string): Promise<boolean> => {
+        try {
+             // Security: Sanitize folder name to prevent path traversal
+             const sanitizedName = newName
+                .replace(/\.\./g, '')
+                .replace(/[\/\\]/g, '')
+                .replace(/[<>:"|?*]/g, '')
+                .trim();
+            
+            if (!sanitizedName) {
+                setError('Geçersiz dosya adı');
+                return false;
+            }
+
+            const encodedPath = encodeURIComponent(file.filename.slice(1)); // Fix encoding
+            // Construct new path: parent directory of current file + new name
+            // file.filename includes full path e.g. /Folder/file.txt
+            const parentDir = file.filename.substring(0, file.filename.lastIndexOf('/'));
+            const destination = parentDir === '' ? `/${sanitizedName}` : `${parentDir}/${sanitizedName}`;
+
+            const response = await fetch(`${API_BASE_URL}/api/v1/files/${encodedPath}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ destination }),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                refresh();
+                return true;
+            }
+            throw new Error(data.error);
+        } catch (err) {
+             setError(err instanceof Error ? err.message : 'Yeniden adlandırma hatası');
+             return false;
+        }
+    }, [refresh]);
+
     return {
         files,
         currentPath,
@@ -184,6 +231,7 @@ export const useFiles = (initialPath: string = '/'): UseFilesReturn => {
         downloadFile,
         deleteFile,
         createFolder,
+        renameFile,
     };
 };
 

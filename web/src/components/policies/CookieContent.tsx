@@ -30,7 +30,7 @@ const CookieContent = () => {
                 <div className="bg-primary/10 p-4 rounded-2xl text-primary">
                     <FontAwesomeIcon icon={faCookieBite} className="w-8 h-8" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-display font-bold text-neutral-dark m-0">
+                <h1 className="text-3xl md:text-4xl font-display font-bold text-neutral-dark m-0 leading-normal pb-1">
                     Çerez Politikası
                 </h1>
             </div>

@@ -6,7 +6,8 @@ const About: React.FC = () => {
   return (
     <section
       id="about"
-      className="py-20 bg-neutral-light relative overflow-hidden"
+      tabIndex={-1}
+      className="py-20 bg-neutral-light relative overflow-hidden focus:outline-none"
       aria-labelledby="about-heading"
     >
       {/* Decorative Elements */}
@@ -19,10 +20,10 @@ const About: React.FC = () => {
           <div>
             <h2
               id="about-heading"
-              className="font-display text-2xl sm:text-3xl lg:text-5xl font-bold text-neutral-dark mb-6 leading-tight"
+              className="font-display text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-neutral-dark mb-6 leading-normal pb-2"
             >
-              <span className="text-gradient block">Arkadaş Özel Eğitim</span>
-              <span className="text">ve Rehabilitasyon Merkezi</span>
+              <span className="text-gradient block leading-tight pb-2">Arkadaş Özel Eğitim</span>
+              <span className="text block whitespace-nowrap">ve Rehabilitasyon Merkezi</span>
             </h2>
 
             <p className="font-body text-lg text-neutral-dark/80 mb-6 leading-relaxed">
@@ -68,21 +69,25 @@ const About: React.FC = () => {
 
             <div className="mt-8 flex flex-wrap gap-4">
               <button
-                onClick={() =>
-                  document
-                    .getElementById("services")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
+                onClick={() => {
+                  const servicesSection = document.getElementById("services");
+                  if (servicesSection) {
+                    servicesSection.scrollIntoView({ behavior: "smooth" });
+                    servicesSection.focus({ preventScroll: true });
+                  }
+                }}
                 className="bg-primary text-white px-8 py-4 rounded-full font-body font-semibold hover:bg-primary/90 transition-all duration-300 transform hover:scale-105"
               >
                 Hizmetlerimizi Keşfedin
               </button>
               <button
-                onClick={() =>
-                  document
-                    .getElementById("team")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
+                onClick={() => {
+                  const teamSection = document.getElementById("team");
+                  if (teamSection) {
+                    teamSection.scrollIntoView({ behavior: "smooth" });
+                    teamSection.focus({ preventScroll: true });
+                  }
+                }}
                 className="bg-secondary text-white px-8 py-4 rounded-full font-body font-semibold hover:bg-secondary/90 transition-all duration-300 transform hover:scale-105"
               >
                 Ekibimizle Tanışın
@@ -110,7 +115,7 @@ const About: React.FC = () => {
                     />
                   </svg>
                 </div>
-                <h3 className="font-display text-2xl font-bold text-neutral-dark mb-4">
+                <h3 className="font-display text-2xl font-bold text-neutral-dark mb-4 leading-normal pb-1">
                   Misyonumuz
                 </h3>
                 <p className="font-body text-neutral-dark/80 leading-relaxed">

@@ -72,7 +72,7 @@ const Header: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-[9999] bg-white transition-all duration-300 ${isScrolled ? "shadow-lg" : ""
+      className={`fixed top-0 left-0 right-0 z-[9999] bg-white transition-all duration-300 rounded-b-[50px] ${isScrolled ? "shadow-lg" : ""
         }`}
       role="banner"
     >

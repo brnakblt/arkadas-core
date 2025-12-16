@@ -92,6 +92,10 @@ textarea:focus-visible {
     opacity: 0.1;
     z-index: -1;
   }
+
+  .btn-interactive {
+    @apply transition-transform active:scale-95 hover:brightness-110 active:brightness-90;
+  }
 }
 
 /* Custom Utilities */

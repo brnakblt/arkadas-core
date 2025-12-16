@@ -40,6 +40,8 @@
 
 ### 🏫 Kurum Yönetimi
 
+- ✅ Cloud File System (VFS, Chunked Upload, WebDAV)
+- ✅ Premium UI/UX (Modern Arayüz, Mobile-First Tasarım)
 - Öğrenci profil yönetimi (engel bilgisi, veli bilgileri)
 - Öğretmen ve terapist profilleri
 - Rol tabanlı erişim kontrolü (RBAC)
@@ -64,7 +66,8 @@
 ### 🚌 Servis Takip
 
 - Gerçek zamanlı GPS takibi
-- Şoför modu (konum paylaşımlı)
+- **Şoför Modu** (Mobil uyumlu sürücü arayüzü)
+- **Gecikme Tahmini** (Trafik ve durak süresi hesaplama)
 - Rota ve durak yönetimi
 - Veli bildirim sistemi
 

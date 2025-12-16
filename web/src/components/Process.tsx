@@ -39,9 +39,9 @@ const Process: React.FC<ProcessProps> = ({ data }) => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark mt-4 mb-6">
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark mt-4 mb-6 leading-normal pb-2">
             Nasıl
-            <span className="text-gradient block">Çalışıyoruz</span>
+            <span className="text-gradient block leading-tight pb-2">Çalışıyoruz</span>
           </h2>
           <p className="font-body text-lg text-neutral-dark/80 max-w-3xl mx-auto leading-relaxed">
             Kanıta dayalı yöntemlerimiz ve sistematik yaklaşımımızla her çocuğun
@@ -54,7 +54,7 @@ const Process: React.FC<ProcessProps> = ({ data }) => {
             modules={[Autoplay, Pagination, Navigation]}
             spaceBetween={30}
             slidesPerView={1}
-            loop={true}
+            loop={data.length > 4}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
@@ -75,7 +75,7 @@ const Process: React.FC<ProcessProps> = ({ data }) => {
                 spaceBetween: 40,
               },
             }}
-            className="pb-12 px-4"
+            className="!pb-16 px-4"
             style={{ overflow: 'clip', overflowClipMargin: '40px' }}
           >
             {data.map((step, index) => (
@@ -89,7 +89,7 @@ const Process: React.FC<ProcessProps> = ({ data }) => {
                   <div className="text-5xl mb-6 mt-10 text-center filter drop-shadow-lg flex justify-center">
                     <span className="text-6xl">{iconMap[step.icon] || step.icon || "📄"}</span>
                   </div>
-                  <h3 className="font-display text-xl font-bold text-neutral-dark mb-4 group-hover:text-primary transition-colors duration-300 text-center">
+                  <h3 className="font-display text-xl font-bold text-neutral-dark mb-4 group-hover:text-primary transition-colors duration-300 text-center leading-normal pb-1">
                     {step.title}
                   </h3>
                   <p className="font-body text-neutral-dark/80 leading-relaxed text-center flex-grow">

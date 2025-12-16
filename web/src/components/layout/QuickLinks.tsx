@@ -1,6 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode } from 'swiper/modules';
+
+import 'swiper/css';
+import 'swiper/css/free-mode';
 
 interface QuickLink {
     icon: string;
@@ -70,19 +75,29 @@ export default function QuickLinks({
 
     if (variant === 'horizontal') {
         return (
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                {links.map((link) => (
-                    <Link
-                        key={link.label}
-                        href={link.href}
-                        className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl shadow-sm border hover:shadow-md transition-all whitespace-nowrap group"
-                    >
-                        <span className={`w-10 h-10 rounded-lg bg-gradient-to-br ${link.color} flex items-center justify-center text-lg group-hover:scale-110 transition-transform`}>
-                            {link.icon}
-                        </span>
-                        <span className="font-medium text-gray-700">{link.label}</span>
-                    </Link>
-                ))}
+            <div className="w-full">
+                <Swiper
+                    slidesPerView="auto"
+                    spaceBetween={12}
+                    freeMode={true}
+                    modules={[FreeMode]}
+                    className="!pb-4 px-1"
+                >
+                    {links.map((link) => (
+                        <SwiperSlide key={link.label} className="!w-auto">
+                            <Link
+                                href={link.href}
+                                className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl shadow-sm border hover:shadow-md transition-all whitespace-nowrap group select-none"
+                                draggable={false}
+                            >
+                                <span className={`w-10 h-10 rounded-lg bg-gradient-to-br ${link.color} flex items-center justify-center text-lg group-hover:scale-110 transition-transform`}>
+                                    {link.icon}
+                                </span>
+                                <span className="font-medium text-gray-700">{link.label}</span>
+                            </Link>
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
             </div>
         );
     }

@@ -25,7 +25,7 @@
   "scripts": {
     "------- DEV -------": "",
     "dev": "npm run dev:docker && npm run dev:all",
-    "dev:all": "concurrently -n strapi,web,ai,mebbis,mobile -c blue,green,magenta,cyan,yellow \"npm run dev:strapi\" \"npm run dev:web\" \"npm run dev:ai\" \"npm run dev:mebbis\" \"npm run dev:mobile\"",
+    "dev:all": "start \"Arkadas Strapi\" cmd /k \"npm run dev:strapi\" && start \"Arkadas Web\" cmd /k \"npm run dev:web\" && start \"Arkadas AI\" cmd /k \"npm run dev:ai\" && start \"Arkadas MEBBIS\" cmd /k \"npm run dev:mebbis\" && start \"Arkadas Mobile\" cmd /k \"npm run dev:mobile\"",
     "dev:strapi": "npm run develop --prefix strapi",
     "dev:web": "npm run dev --prefix web",
     "dev:mobile": "npm run start --prefix mobile",

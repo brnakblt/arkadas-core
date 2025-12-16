@@ -27,9 +27,9 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark mt-4 mb-6">
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark mt-4 mb-6 leading-normal pb-2">
             Merkezimizden
-            <span className="text-gradient block">Kareler</span>
+            <span className="text-gradient block leading-tight pb-2">Kareler</span>
           </h2>
           <p className="font-body text-lg text-neutral-dark/80 max-w-3xl mx-auto leading-relaxed">
             Özel eğitim ve rehabilitasyon merkezimizde gerçekleştirdiğimiz
@@ -81,7 +81,7 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
                     <div className="text-xs font-body font-medium text-secondary mb-2 uppercase tracking-wider">
                       {image.category}
                     </div>
-                    <h3 className="font-display text-lg font-bold mb-2">
+                    <h3 className="font-display text-lg font-bold mb-2 leading-normal pb-1">
                       {image.title}
                     </h3>
                     <div className="flex items-center space-x-2">

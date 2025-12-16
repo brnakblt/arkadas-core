@@ -65,7 +65,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <h2 className="font-display text-2xl font-bold text-neutral-dark mb-2">
+                    <h2 className="font-display text-2xl font-bold text-neutral-dark mb-2 leading-normal pb-1">
                         {view === 'login' && "Hoş Geldiniz"}
                         {view === 'forgot-password' && "Şifre Sıfırlama"}
                     </h2>

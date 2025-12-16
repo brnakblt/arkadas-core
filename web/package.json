@@ -13,7 +13,6 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",
-    "build:desktop": "node scripts/build-desktop.cjs",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -25,9 +24,6 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "tauri": "tauri",
-    "desktop": "tauri dev",
-    "desktop:build": "tauri build",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],
@@ -45,7 +41,6 @@
     "@sentry/nextjs": "^10.30.0",
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-virtual": "^3.13.13",
-    "@tauri-apps/plugin-deep-link": "^2.4.5",
     "@types/dompurify": "^3.0.5",
     "dompurify": "^3.3.1",
     "isomorphic-fetch": "^3.0.0",
@@ -65,7 +60,6 @@
     "@next/eslint-plugin-next": "^16.0.10",
     "@playwright/test": "^1.57.0",
     "@tanstack/react-query-devtools": "^5.90.14",
-    "@tauri-apps/cli": "^2.9.5",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",

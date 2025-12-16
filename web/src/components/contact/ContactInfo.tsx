@@ -5,7 +5,7 @@ const ContactInfo: React.FC = () => {
     return (
         <div className="flex justify-center">
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 w-full max-w-5xl">
-                <h3 className="font-display text-2xl font-bold text-white mb-6">
+                <h3 className="font-display text-2xl font-bold text-white mb-6 leading-normal pb-1">
                     İletişim Bilgileri
                 </h3>
                 <div className="space-y-6 mb-8">

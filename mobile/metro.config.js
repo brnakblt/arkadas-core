@@ -25,7 +25,18 @@ const webBuildPathRegex = new RegExp(
   `${webBuildPath.replace(/\\/g, "\\\\")}.*`
 );
 
-config.resolver.blockList = [webBuildPathRegex];
+// Block specific optional dependencies that might be missing on Windows
+// This prevents "ENOENT: no such file or directory, watch ..." errors
+const sharpDarwinRegex = /.*node_modules\/@img\/sharp-darwin-x64.*/;
+const sharpLinuxRegex = /.*node_modules\/@img\/sharp-linux-.*/;
+const sharpWasmRegex = /.*node_modules\/@img\/sharp-wasm.*/;
+
+config.resolver.blockList = [
+  webBuildPathRegex,
+  sharpDarwinRegex,
+  sharpLinuxRegex,
+  sharpWasmRegex
+];
 
 // Custom resolver to alias react-native-maps on web
 config.resolver.resolveRequest = (context, moduleName, platform) => {

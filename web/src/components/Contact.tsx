@@ -8,7 +8,8 @@ const Contact: React.FC = () => {
   return (
     <section
       id="contact"
-      className="py-20 bg-neutral-dark text-white relative overflow-hidden"
+      tabIndex={-1}
+      className="py-20 bg-neutral-dark text-white relative overflow-hidden focus:outline-none"
     >
       {/* Background Pattern */}
       <svg
@@ -40,7 +41,7 @@ const Contact: React.FC = () => {
 
           <h2
             id="contact-heading"
-            className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white mt-4 mb-6"
+            className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white mt-4 mb-6 leading-normal pb-2"
           >
             Bizimle İletişime
             <span className="text-secondary block">Geçin</span>

@@ -10,9 +10,11 @@ from typing import Optional
 from fastapi import HTTPException, Security, Depends, Header
 from fastapi.security import APIKeyHeader
 
+from app.core.config import settings
+
 # Environment variable for API key
 API_KEY_NAME = "X-API-Key"
-API_KEY = os.environ.get("AI_SERVICE_API_KEY", "")
+API_KEY = settings.AI_SERVICE_API_KEY
 
 # API Key header security scheme
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)

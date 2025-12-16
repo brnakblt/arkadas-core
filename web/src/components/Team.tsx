@@ -4,11 +4,12 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay } from 'swiper/modules';
+import { Pagination, Autoplay, FreeMode } from 'swiper/modules';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
+import 'swiper/css/free-mode';
 
 interface TeamMember {
   id: number;
@@ -45,7 +46,7 @@ const Team: React.FC = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${STRAPI_URL}/api/team-members?populate=image&sort=order:asc`
+        `${STRAPI_URL}/api/team-members?populate=image&sort[0]=order:asc`
       );
       if (!response.ok) {
         const errorBody = await response.text();
@@ -73,7 +74,7 @@ const Team: React.FC = () => {
           ...member,
           category: category,
         };
-      });
+      }).sort((a: TeamMember, b: TeamMember) => (a.order || 0) - (b.order || 0));
 
 
       setTeamMembers(formattedMembers);
@@ -121,7 +122,7 @@ const Team: React.FC = () => {
 
   if (loading) {
     return (
-      <section id="team" className="py-20 bg-gray-50 text-center">
+      <section id="team" tabIndex={-1} className="py-20 bg-gray-50 text-center focus:outline-none">
         <p className="font-body text-lg text-neutral-dark/80">Yükleniyor...</p>
       </section>
     );
@@ -129,7 +130,7 @@ const Team: React.FC = () => {
 
   if (error) {
     return (
-      <section id="team" className="py-20 bg-gray-50 text-center text-red-600">
+      <section id="team" tabIndex={-1} className="py-20 bg-gray-50 text-center text-red-600 focus:outline-none">
         <p className="font-body text-lg">{error}</p>
       </section>
     );
@@ -162,7 +163,7 @@ const Team: React.FC = () => {
           </div>
 
           <div className="text-center px-2 pb-2 flex-shrink-0">
-            <h3 className="font-display text-lg font-bold text-neutral-dark mb-1">
+            <h3 className="font-display text-lg font-bold text-neutral-dark mb-1 leading-normal pb-1">
               {member.name}
             </h3>
 
@@ -196,13 +197,13 @@ const Team: React.FC = () => {
   };
 
   return (
-    <section id="team" className="py-20 bg-gray-50">
+    <section id="team" tabIndex={-1} className="py-20 bg-gray-50 focus:outline-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark mt-4 mb-6">
-            <span className="text-gradient block">Uzman</span>
-            <span>Kadromuz</span>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark mt-4 mb-6 leading-normal pb-2">
+            <span className="text-gradient inline-block leading-tight pb-2 mr-2">Uzman</span>
+            <span className="inline-block leading-tight pb-2">Kadromuz</span>
           </h2>
           <p className="font-body text-lg text-neutral-dark/80 max-w-3xl mx-auto leading-relaxed">
             Alanında uzman ve deneyimli ekibimizle öğrencilerimize en iyi
@@ -211,38 +212,50 @@ const Team: React.FC = () => {
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-nowrap overflow-x-auto gap-4 mb-12 py-4 justify-center">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`px-6 py-3 rounded-full font-body font-medium transition-all duration-300 whitespace-nowrap ${activeCategory === category
-                ? "bg-primary text-white shadow-lg"
-                : "bg-gray-100 text-neutral-dark hover:bg-gray-200"
-                }`}
-            >
-              {category}
-            </button>
-          ))}
+        <div className="mb-12">
+          <Swiper
+            slidesPerView="auto"
+            spaceBetween={16}
+            freeMode={true}
+            modules={[FreeMode]}
+            className="!py-4"
+          >
+            {categories.map((category) => (
+              <SwiperSlide key={category} className="!w-auto">
+                <button
+                  onClick={() => setActiveCategory(category)}
+                  className={`px-6 py-3 rounded-full font-body font-medium transition-all duration-300 whitespace-nowrap ${activeCategory === category
+                    ? "bg-primary text-white shadow-lg scale-105"
+                    : "bg-gray-100 text-neutral-dark hover:bg-gray-200"
+                    }`}
+                >
+                  {category}
+                </button>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
 
         {/* Mobile View - Swiper */}
         <div className="block md:hidden">
           <Swiper
             modules={[Pagination, Autoplay]}
-            spaceBetween={20}
+            spaceBetween={24}
             slidesPerView={1.2}
             centeredSlides={true}
-            loop={true}
+            loop={filteredMembers.length > 4}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
             }}
-            pagination={{ clickable: true }}
-            className="pb-12"
+            pagination={{
+              clickable: true,
+              dynamicBullets: true
+            }}
+            className="!pb-16"
           >
             {filteredMembers.map((member) => (
-              <SwiperSlide key={member.id}>
+              <SwiperSlide key={member.id} className="h-auto">
                 <TeamMemberCard member={member} />
               </SwiperSlide>
             ))}

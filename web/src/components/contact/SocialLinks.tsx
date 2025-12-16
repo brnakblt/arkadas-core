@@ -3,7 +3,7 @@ import React from "react";
 const SocialLinks: React.FC = () => {
     return (
         <div className="mt-12">
-            <h3 className="font-display text-2xl font-bold text-white mb-6">
+            <h3 className="font-display text-2xl font-bold text-white mb-6 leading-normal pb-1">
                 Bizi Sosyal Medyada Takip Edin
             </h3>
             <div className="flex space-x-4 mb-8">

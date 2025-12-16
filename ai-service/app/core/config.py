@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     # Storage Paths
     FACE_ENCODINGS_PATH: str = "./data/encodings"
     TEMP_UPLOAD_PATH: str = "./data/temp"
+
+    # Security
+    AI_SERVICE_API_KEY: Optional[str] = None
+    CORS_ALLOWED_ORIGINS: Optional[str] = None
     
     class Config:
         env_file = ".env"

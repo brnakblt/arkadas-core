@@ -1,5 +1,10 @@
 'use client';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/free-mode';
+
 interface AttendanceFiltersProps {
     statusFilter: string;
     onStatusFilterChange: (status: string) => void;
@@ -37,20 +42,29 @@ export default function AttendanceFilters({
                 </div>
 
                 {/* Status Filter Tabs */}
-                <div className="flex gap-2 overflow-x-auto pb-1 w-full md:w-auto">
-                    {statusOptions.map((option) => (
-                        <button
-                            key={option.value}
-                            onClick={() => onStatusFilterChange(option.value)}
-                            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${statusFilter === option.value
-                                    ? 'bg-blue-500 text-white shadow-md'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                }`}
-                        >
-                            <span className="mr-1">{option.icon}</span>
-                            {option.label}
-                        </button>
-                    ))}
+                <div className="w-full md:w-auto max-w-full">
+                    <Swiper
+                        slidesPerView="auto"
+                        spaceBetween={8}
+                        freeMode={true}
+                        modules={[FreeMode]}
+                        className="!pb-1"
+                    >
+                        {statusOptions.map((option) => (
+                            <SwiperSlide key={option.value} className="!w-auto">
+                                <button
+                                    onClick={() => onStatusFilterChange(option.value)}
+                                    className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all flex items-center ${statusFilter === option.value
+                                        ? 'bg-blue-500 text-white shadow-md'
+                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                        }`}
+                                >
+                                    <span className="mr-2">{option.icon}</span>
+                                    {option.label}
+                                </button>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
                 </div>
             </div>
         </div>

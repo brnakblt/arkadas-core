@@ -41,7 +41,7 @@ const ContactForm: React.FC = () => {
 
     return (
         <div className="bg-white rounded-3xl px-8 pt-8 pb-0 card-shadow transition-all duration-300 ease-in-out">
-            <h3 className="font-display text-2xl font-bold text-neutral-dark mb-6">
+            <h3 className="font-display text-2xl font-bold text-neutral-dark mb-6 leading-normal pb-1">
                 Bize Mesaj Gönderin
             </h3>
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>

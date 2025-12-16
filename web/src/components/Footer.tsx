@@ -36,6 +36,13 @@ const Footer: React.FC = () => {
       // Start scrolling immediately
       element.scrollIntoView({ behavior: "smooth" });
 
+      // Set focus to the element for accessibility
+      // Ensure the element is focusable
+      if (!element.hasAttribute('tabIndex')) {
+        element.setAttribute('tabIndex', '-1');
+      }
+      element.focus({ preventScroll: true });
+
       // Wait for scroll to almost complete before starting fade animation
       setTimeout(() => {
         setIsScrolling(true);

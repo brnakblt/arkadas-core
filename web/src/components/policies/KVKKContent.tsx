@@ -9,7 +9,7 @@ const KVKKContent = () => {
                 <div className="bg-secondary/10 p-4 rounded-2xl text-secondary">
                     <FontAwesomeIcon icon={faUserLock} className="w-8 h-8" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-display font-bold text-neutral-dark m-0">
+                <h1 className="text-3xl md:text-4xl font-display font-bold text-neutral-dark m-0 leading-normal pb-1">
                     KVKK ve Aydınlatma Metni
                 </h1>
             </div>

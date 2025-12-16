@@ -23,7 +23,7 @@ def get_allowed_origins() -> list:
     Never use '*' with credentials in production.
     """
     # Get from environment variable (comma-separated list)
-    env_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "")
+    env_origins = settings.CORS_ALLOWED_ORIGINS
     
     if env_origins:
         return [origin.strip() for origin in env_origins.split(",") if origin.strip()]

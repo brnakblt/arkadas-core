@@ -36,7 +36,8 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center overflow-hidden"
+      tabIndex={-1}
+      className="relative min-h-screen flex items-center overflow-hidden focus:outline-none"
     >
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
@@ -119,7 +120,7 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="text-white bg-black/20 p-8 rounded-lg backdrop-blur-sm">
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-normal mb-6 pb-2">
               {data.title}
               {data.subtitle && <span className="block text-secondary">{data.subtitle}</span>}
             </h1>
@@ -128,21 +129,25 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
             </p>
             <div className="hidden md:flex flex-col sm:flex-row gap-4">
               <button
-                onClick={() =>
-                  document
-                    .getElementById("contact")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
+                onClick={() => {
+                  const contactSection = document.getElementById("contact");
+                  if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: "smooth" });
+                    contactSection.focus({ preventScroll: true });
+                  }
+                }}
                 className="bg-secondary text-white px-8 py-4 rounded-full font-body font-semibold hover:bg-secondary/90 transition-all duration-300 transform hover:scale-105"
               >
                 Randevu Alın
               </button>
               <button
-                onClick={() =>
-                  document
-                    .getElementById("about")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
+                onClick={() => {
+                  const aboutSection = document.getElementById("about");
+                  if (aboutSection) {
+                    aboutSection.scrollIntoView({ behavior: "smooth" });
+                    aboutSection.focus({ preventScroll: true });
+                  }
+                }}
                 className="bg-white text-primary px-8 py-4 rounded-full font-body font-semibold hover:bg-gray-200 transition-all duration-300"
               >
                 Daha Fazla Bilgi

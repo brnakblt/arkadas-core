@@ -80,7 +80,7 @@ export default function DashboardPage() {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-12">
                 <div className="text-center md:text-left mb-6 md:mb-0">
-                    <h1 className="text-3xl font-display font-bold text-neutral-dark">
+                    <h1 className="text-3xl font-display font-bold text-neutral-dark leading-normal pb-1">
                         {user.userType === 'teacher' ? 'Öğretmen Paneli' : 'Veli Paneli'}
                     </h1>
                     <p className="text-gray-600 mt-2 text-lg">
