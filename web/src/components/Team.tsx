@@ -62,11 +62,27 @@ const Team: React.FC = () => {
         const rawCat = member.category;
 
         if (Array.isArray(rawCat)) {
-          category = rawCat.map((c: any) => typeof c === 'string' ? c : c?.role || JSON.stringify(c));
+          category = rawCat.map((c: any) => {
+            if (typeof c === 'string') return c.replace(/^["']|["']$/g, '').trim();
+            if (c?.role) return c.role.replace(/^["']|["']$/g, '').trim();
+            if (c?.name) return c.name.replace(/^["']|["']$/g, '').trim();
+            return '';
+          }).filter(Boolean);
         } else if (typeof rawCat === 'string') {
-          category = [rawCat];
+          // Handle JSON string that might contain array
+          try {
+            const parsed = JSON.parse(rawCat);
+            if (Array.isArray(parsed)) {
+              category = parsed.map((c: any) => typeof c === 'string' ? c : c?.role || c?.name || '').filter(Boolean);
+            } else {
+              category = [rawCat.replace(/^["']|["']$/g, '').trim()];
+            }
+          } catch {
+            category = [rawCat.replace(/^["']|["']$/g, '').trim()];
+          }
         } else if (typeof rawCat === 'object' && rawCat !== null) {
           if (rawCat.role) category = [rawCat.role];
+          else if (rawCat.name) category = [rawCat.name];
           else category = [];
         }
 
@@ -84,14 +100,16 @@ const Team: React.FC = () => {
           formattedMembers.flatMap((member) => member.category)
         ),
       ];
-      // Remove "Tümü" and ensure categories are unique and valid, excluding English roles
+      // Remove "Tümü" and ensure categories are unique and valid, excluding English roles and quoted duplicates
       const excludedCategories = ["Specialist", "Coordinator", "Psychologist"];
       setCategories(
         [...defaultCategories, ...uniqueCategories].filter(
-          (value, index, self) =>
-            self.indexOf(value) === index &&
-            value &&
-            !excludedCategories.includes(value)
+          (value, index, self) => {
+            // Skip if empty, excluded, or contains quotes
+            if (!value || excludedCategories.includes(value) || value.includes('"')) return false;
+            // Check for duplicates (case-insensitive)
+            return self.findIndex(v => v.toLowerCase() === value.toLowerCase()) === index;
+          }
         )
       );
     } catch (err) {
@@ -113,10 +131,12 @@ const Team: React.FC = () => {
     if (!activeCategory) {
       return teamMembers.slice(0, 8);
     }
+    // Case-insensitive category matching
+    const activeLower = activeCategory.toLowerCase();
     return teamMembers.filter(
       (member) =>
         member.category &&
-        member.category.includes(activeCategory)
+        member.category.some(cat => cat.toLowerCase() === activeLower)
     );
   }, [activeCategory, teamMembers]);
 
@@ -137,7 +157,7 @@ const Team: React.FC = () => {
   }
 
   const TeamMemberCard = ({ member }: { member: TeamMember }) => {
-    const cardClasses = "group relative overflow-hidden bg-white rounded-2xl p-4 shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col mx-auto w-full max-w-sm md:max-w-none";
+    const cardClasses = "group relative overflow-hidden bg-white rounded-2xl p-3 md:p-4 shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col mx-auto w-full max-w-[280px] md:max-w-sm";
     const CardContent = (
       <>
         <div className="relative z-20 h-full flex flex-col">
@@ -180,7 +200,6 @@ const Team: React.FC = () => {
 
     return member.link ? (
       <Link
-        key={member.id}
         href={member.link}
         className={`${cardClasses} cursor-pointer`}
       >
@@ -188,7 +207,6 @@ const Team: React.FC = () => {
       </Link>
     ) : (
       <div
-        key={member.id}
         className={cardClasses}
       >
         {CardContent}
@@ -197,8 +215,8 @@ const Team: React.FC = () => {
   };
 
   return (
-    <section id="team" tabIndex={-1} className="py-20 bg-gray-50 focus:outline-none">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="team" tabIndex={-1} className="flex flex-col md:min-h-screen md:justify-center py-8 md:py-32 bg-gray-50 focus:outline-none relative overflow-x-clip">
+      <div className="w-full max-w-full lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark mt-4 mb-6 leading-normal pb-2">
@@ -212,19 +230,36 @@ const Team: React.FC = () => {
         </div>
 
         {/* Category Filter */}
-        <div className="mb-12">
+        {/* Desktop: Flex wrap centered */}
+        <div className="mb-12 hidden md:flex flex-wrap justify-center gap-4">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`px-6 py-3 rounded-full font-body font-medium transition-all duration-300 whitespace-nowrap ${activeCategory === category
+                ? "bg-primary text-white shadow-lg scale-105"
+                : "bg-gray-100 text-neutral-dark hover:bg-gray-200"
+                }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        {/* Mobile: Swiper horizontal scroll */}
+        <div className="mb-12 md:hidden overflow-visible">
           <Swiper
             slidesPerView="auto"
-            spaceBetween={16}
+            spaceBetween={12}
             freeMode={true}
             modules={[FreeMode]}
-            className="!py-4"
+            className="!py-6 !overflow-visible"
           >
             {categories.map((category) => (
               <SwiperSlide key={category} className="!w-auto">
                 <button
                   onClick={() => setActiveCategory(category)}
-                  className={`px-6 py-3 rounded-full font-body font-medium transition-all duration-300 whitespace-nowrap ${activeCategory === category
+                  className={`px-5 py-2.5 rounded-full font-body font-medium text-sm transition-all duration-300 whitespace-nowrap ${activeCategory === category
                     ? "bg-primary text-white shadow-lg scale-105"
                     : "bg-gray-100 text-neutral-dark hover:bg-gray-200"
                     }`}
@@ -241,9 +276,8 @@ const Team: React.FC = () => {
           <Swiper
             modules={[Pagination, Autoplay]}
             spaceBetween={24}
-            slidesPerView={1.2}
-            centeredSlides={true}
-            loop={filteredMembers.length > 4}
+            slidesPerView={1}
+            loop={true}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
@@ -262,10 +296,12 @@ const Team: React.FC = () => {
           </Swiper>
         </div>
 
-        {/* Desktop View - Grid */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Desktop View - Grid/Flex */}
+        <div className="hidden md:flex md:flex-wrap md:justify-center gap-6">
           {filteredMembers.map((member) => (
-            <TeamMemberCard key={member.id} member={member} />
+            <div key={member.id} className="w-full md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] max-w-sm">
+              <TeamMemberCard member={member} />
+            </div>
           ))}
         </div>
       </div>
@@ -274,3 +310,4 @@ const Team: React.FC = () => {
 };
 
 export default Team;
+

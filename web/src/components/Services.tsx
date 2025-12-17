@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Modal from "./Modal";
 import { ServiceData } from "@/services/contentService";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -26,6 +26,8 @@ const iconMap: { [key: string]: string } = {
 const Services: React.FC<ServicesProps> = ({ data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<any | null>(null);
+  const prevRef = useRef<HTMLButtonElement>(null);
+  const nextRef = useRef<HTMLButtonElement>(null);
 
   const openModal = (service: ServiceData) => {
     const modalService = {
@@ -47,18 +49,23 @@ const Services: React.FC<ServicesProps> = ({ data }) => {
   return (
     <section
       id="services"
-      className="py-20 bg-white relative overflow-hidden"
+      className="min-h-screen flex flex-col justify-center py-16 bg-white relative overflow-x-auto"
       aria-labelledby="services-heading"
     >
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 border-2 border-primary rounded-full"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-secondary rounded-full"></div>
-        <div className="absolute bottom-32 left-1/4 w-16 h-16 bg-accent rounded-full"></div>
-        <div className="absolute bottom-20 right-1/3 w-20 h-20 border-2 border-secondary rounded-full"></div>
+      {/* Background Image - Hands */}
+      <div className="absolute inset-0 z-0 opacity-15 pointer-events-none">
+        <img
+          src="/images/decor_hands.webp"
+          alt=""
+          className="w-full h-full object-cover"
+        />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5 pointer-events-none">
+      </div>
+
+      <div className="w-full max-w-full lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2
@@ -76,12 +83,43 @@ const Services: React.FC<ServicesProps> = ({ data }) => {
         </div>
 
         {/* Services Slider */}
-        <div className="services-swiper-container">
+        {/* Services Slider */}
+        <div className="services-swiper-container relative">
+          {/* Custom Navigation Buttons */}
+          <button
+            ref={prevRef}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-12 h-12 hidden md:flex items-center justify-center text-primary hover:scale-110 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed outline-none focus:outline-none"
+            aria-label="Önceki"
+          >
+            <svg width="11" height="20" viewBox="0 0 11 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0.38296 20.0762C0.111788 19.805 0.111788 19.3654 0.38296 19.0942L9.19758 10.2796L0.38296 1.46497C0.111788 1.19379 0.111788 0.754138 0.38296 0.482966C0.654131 0.211794 1.09379 0.211794 1.36496 0.482966L10.4341 9.55214C10.8359 9.9539 10.8359 10.6053 10.4341 11.007L1.36496 20.0762C1.09379 20.3474 0.654131 20.3474 0.38296 20.0762Z" fill="currentColor" transform="rotate(180 5.5 10)" />
+            </svg>
+          </button>
+
+          <button
+            ref={nextRef}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-12 h-12 hidden md:flex items-center justify-center text-primary hover:scale-110 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed outline-none focus:outline-none"
+            aria-label="Sonraki"
+          >
+            <svg width="11" height="20" viewBox="0 0 11 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0.38296 20.0762C0.111788 19.805 0.111788 19.3654 0.38296 19.0942L9.19758 10.2796L0.38296 1.46497C0.111788 1.19379 0.111788 0.754138 0.38296 0.482966C0.654131 0.211794 1.09379 0.211794 1.36496 0.482966L10.4341 9.55214C10.8359 9.9539 10.8359 10.6053 10.4341 11.007L1.36496 20.0762C1.09379 20.3474 0.654131 20.3474 0.38296 20.0762Z" fill="currentColor" />
+            </svg>
+          </button>
+
           <Swiper
             modules={[Pagination, Autoplay, Navigation]}
             spaceBetween={24}
             slidesPerView={1}
-            navigation
+            navigation={{
+              prevEl: prevRef.current,
+              nextEl: nextRef.current,
+            }}
+            onBeforeInit={(swiper) => {
+              // @ts-ignore
+              swiper.params.navigation.prevEl = prevRef.current;
+              // @ts-ignore
+              swiper.params.navigation.nextEl = nextRef.current;
+            }}
             pagination={{
               clickable: true,
               dynamicBullets: true
@@ -101,7 +139,9 @@ const Services: React.FC<ServicesProps> = ({ data }) => {
                 spaceBetween: 32,
               },
             }}
-            className="!pb-16 !px-4"
+            centerInsufficientSlides={true}
+            wrapperClass="!justify-center"
+            className="!pb-16 !px-4 md:!px-16"
           >
             {data.map((service, index) => (
               <SwiperSlide key={index} className="h-auto">

@@ -76,11 +76,11 @@ const Footer: React.FC = () => {
         </svg>
       </div>
 
-      <div className="py-4 relative z-10">
+      <div className="py-4 pb-24 md:pb-4 relative z-10">
         <div className="max-w-1xl mx-auto px-2 sm:px-2 lg:px-2">
           {/* Bottom Bar */}
           <div className="">
-            <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div className="flex flex-col md:flex-row rounded-2xl justify-between items-center space-y-4 md:space-y-0">
               <div className="font-body text-white/60 text-sm">
                 © 2025 Arkadaş Özel Eğitim
               </div>
@@ -99,7 +99,7 @@ const Footer: React.FC = () => {
       </div>
 
       {/* Fixed Buttons */}
-      <div className="fixed bottom-8 right-8 flex flex-col gap-4 z-[10000]">
+      <div className="fixed bottom-6 right-6 flex flex-col gap-4 z-[10000]">
         {/* WhatsApp Button */}
         <a
           href="https://wa.me/905068103321"

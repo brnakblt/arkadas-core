@@ -24,108 +24,122 @@ const CookieContent = () => {
     };
 
     return (
-        <div className="prose prose-lg prose-green max-w-none text-gray-600 space-y-8 font-body pb-20">
+        <div className="prose prose-lg max-w-none text-gray-600 space-y-8 font-body pb-20">
             {/* Header Section */}
-            <div className="flex items-center gap-4 mb-4">
-                <div className="bg-primary/10 p-4 rounded-2xl text-primary">
-                    <FontAwesomeIcon icon={faCookieBite} className="w-8 h-8" />
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8 border-b border-gray-100 pb-8">
+                <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-6 rounded-3xl text-primary shadow-sm ring-1 ring-primary/10">
+                    <FontAwesomeIcon icon={faCookieBite} className="w-10 h-10" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-display font-bold text-neutral-dark m-0 leading-normal pb-1">
-                    Çerez Politikası
-                </h1>
+                <div>
+                    <h1 className="text-3xl md:text-4xl font-display font-bold text-neutral-dark m-0 leading-tight">
+                        Çerez Politikası
+                    </h1>
+                    <p className="text-lg text-gray-500 mt-2 m-0">
+                        Gizliliğiniz ve güvenliğiniz bizim için önemlidir.
+                    </p>
+                </div>
             </div>
 
             {/* Cookie Settings Panel */}
-            <div className="bg-gray-50 rounded-2xl border border-gray-200 p-6 shadow-sm">
-                <h3 className="text-xl font-bold text-neutral-dark mb-6 flex items-center gap-2">
-                    <FontAwesomeIcon icon={faCookieBite} className="text-primary w-5 h-5" />
-                    Çerez Tercihlerinizi Yönetin
-                </h3>
+            <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-lg shadow-gray-100/50">
+                <div className="p-6 md:p-8 bg-gray-50/50 border-b border-gray-100">
+                    <h3 className="text-xl font-bold text-neutral-dark flex items-center gap-3 m-0">
+                        <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm">
+                            <FontAwesomeIcon icon={faCookieBite} />
+                        </span>
+                        Çerez Tercihlerini Yönet
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-2 m-0">
+                        Aşağıdaki panelden hangi çerezlerin kullanılacağına karar verebilirsiniz.
+                    </p>
+                </div>
 
-                <div className="space-y-4">
+                <div className="p-6 md:p-8 space-y-4">
                     {/* Necessary */}
-                    <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200">
-                        <div>
-                            <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-start md:items-center justify-between p-5 bg-gray-50 rounded-2xl border border-gray-200 opacity-80 cursor-not-allowed">
+                        <div className="pr-4">
+                            <div className="flex items-center gap-3 mb-1">
                                 <span className="font-bold text-neutral-dark">Zorunlu Çerezler</span>
-                                <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">Gerekli</span>
+                                <span className="text-[10px] uppercase tracking-wider font-bold bg-neutral-dark text-white px-2 py-0.5 rounded-full">Gerekli</span>
                             </div>
-                            <p className="text-xs text-gray-500">Sitenin çalışması için zorunludur.</p>
+                            <p className="text-sm text-gray-500 m-0">Sitenin temel fonksiyonları ve güvenliği için zorunludur. Kapatılamaz.</p>
                         </div>
-                        <FontAwesomeIcon icon={faCheck} className="text-gray-300" />
+                        <div className="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center shrink-0">
+                            <FontAwesomeIcon icon={faCheck} className="w-3 h-3" />
+                        </div>
                     </div>
 
                     {/* Functional */}
-                    <div className={`flex items-center justify-between p-4 rounded-xl border transition-all ${preferences.functional ? 'bg-primary/5 border-primary/30' : 'bg-white border-gray-200'}`}>
-                        <div>
+                    <div className={`flex items-start md:items-center justify-between p-5 rounded-2xl border transition-all duration-300 ${preferences.functional ? 'bg-blue-50/50 border-blue-200' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
+                        <div className="pr-4">
                             <div className="font-bold text-neutral-dark mb-1">Fonksiyonel Çerezler</div>
-                            <p className="text-xs text-gray-500">Tercihlerinizi hatırlamamızı sağlar.</p>
+                            <p className="text-sm text-gray-500 m-0">Dil ve bölge gibi tercihlerinizi hatırlamamızı sağlar.</p>
                         </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
+                        <label className="relative inline-flex items-center cursor-pointer shrink-0">
                             <input
                                 type="checkbox"
                                 checked={preferences.functional}
                                 onChange={() => togglePreference('functional')}
                                 className="sr-only peer"
                             />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            <div className="w-12 h-7 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-500 hover:after:scale-95"></div>
                         </label>
                     </div>
 
                     {/* Analytics */}
-                    <div className={`flex items-center justify-between p-4 rounded-xl border transition-all ${preferences.analytics ? 'bg-primary/5 border-primary/30' : 'bg-white border-gray-200'}`}>
-                        <div>
+                    <div className={`flex items-start md:items-center justify-between p-5 rounded-2xl border transition-all duration-300 ${preferences.analytics ? 'bg-purple-50/50 border-purple-200' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
+                        <div className="pr-4">
                             <div className="font-bold text-neutral-dark mb-1">Performans ve Analiz</div>
-                            <p className="text-xs text-gray-500">Site trafiğini analiz etmemize yarar.</p>
+                            <p className="text-sm text-gray-500 m-0">Site trafiğini analiz ederek deneyiminizi iyileştirmemize yardımcı olur.</p>
                         </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
+                        <label className="relative inline-flex items-center cursor-pointer shrink-0">
                             <input
                                 type="checkbox"
                                 checked={preferences.analytics}
                                 onChange={() => togglePreference('analytics')}
                                 className="sr-only peer"
                             />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            <div className="w-12 h-7 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-500 hover:after:scale-95"></div>
                         </label>
                     </div>
 
                     {/* Marketing */}
-                    <div className={`flex items-center justify-between p-4 rounded-xl border transition-all ${preferences.marketing ? 'bg-primary/5 border-primary/30' : 'bg-white border-gray-200'}`}>
-                        <div>
+                    <div className={`flex items-start md:items-center justify-between p-5 rounded-2xl border transition-all duration-300 ${preferences.marketing ? 'bg-orange-50/50 border-orange-200' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
+                        <div className="pr-4">
                             <div className="font-bold text-neutral-dark mb-1">Pazarlama</div>
-                            <p className="text-xs text-gray-500">Size özel içerikler sunmamızı sağlar.</p>
+                            <p className="text-sm text-gray-500 m-0">İlgi alanlarınıza uygun içerik ve kampanyalar sunmamızı sağlar.</p>
                         </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
+                        <label className="relative inline-flex items-center cursor-pointer shrink-0">
                             <input
                                 type="checkbox"
                                 checked={preferences.marketing}
                                 onChange={() => togglePreference('marketing')}
                                 className="sr-only peer"
                             />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            <div className="w-12 h-7 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-orange-500 hover:after:scale-95"></div>
                         </label>
                     </div>
                 </div>
 
-                {/* Actions */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6">
+                {/* Actions Footer */}
+                <div className="p-6 md:p-8 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row gap-3">
                     <button
                         onClick={handleRejectAll}
-                        className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-medium transition-all text-sm"
+                        className="flex-1 px-6 py-3.5 border border-gray-300 text-gray-700 bg-white rounded-xl hover:bg-gray-50 hover:border-gray-400 font-bold transition-all text-sm flex items-center justify-center gap-2"
                     >
-                        <FontAwesomeIcon icon={faBan} />
-                        Sadece Zorunlu
+                        <FontAwesomeIcon icon={faBan} className="text-gray-400" />
+                        Reddet
                     </button>
                     <button
                         onClick={handleSave}
-                        className="flex items-center justify-center gap-2 px-4 py-3 bg-neutral-dark text-white rounded-xl hover:bg-black font-medium transition-all text-sm"
+                        className="flex-[2] px-6 py-3.5 bg-neutral-dark text-white rounded-xl hover:bg-black font-bold transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-gray-200"
                     >
                         <FontAwesomeIcon icon={faSave} />
-                        Seçilenleri Kaydet
+                        Seçimi Kaydet
                     </button>
                     <button
                         onClick={handleAcceptAll}
-                        className="flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 font-medium transition-all text-sm shadow-lg shadow-primary/20"
+                        className="flex-[2] px-6 py-3.5 bg-primary text-white rounded-xl hover:bg-primary/90 font-bold transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
                     >
                         <FontAwesomeIcon icon={faThumbsUp} />
                         Tümünü Kabul Et
@@ -133,97 +147,94 @@ const CookieContent = () => {
                 </div>
             </div>
 
-            <section>
-                <h2 className="text-2xl font-bold text-neutral-dark mb-4 flex items-center gap-2">
-                    <FontAwesomeIcon icon={faInfoCircle} className="w-5 h-5 text-secondary" />
-                    Çerez (Cookie) Nedir?
-                </h2>
-                <p>
-                    Çerezler, bir web sitesini ziyaret ettiğinizde cihazınızda (bilgisayar, telefon
-                    veya tablet) depolanan ve sonraki ziyaretlerinizde bu bilgilerin okunmasını
-                    sağlayan küçük veri dosyalarıdır. Çerezler, web sitesinin daha verimli çalışmasını,
-                    tercihlerinizin hatırlanmasını ve site trafiğinin analiz edilmesini sağlar.
-                </p>
-            </section>
+            {/* Info Sections Grid */}
+            <div className="grid md:grid-cols-2 gap-8 pt-8">
+                <section>
+                    <h2 className="text-2xl font-bold text-neutral-dark mb-4 flex items-center gap-3">
+                        <span className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary text-sm">
+                            <FontAwesomeIcon icon={faInfoCircle} />
+                        </span>
+                        Çerez Nedir?
+                    </h2>
+                    <p className="text-gray-600 leading-relaxed text-sm">
+                        Çerezler, ziyaret ettiğiniz web siteleri tarafından tarayıcınıza gönderilen
+                        küçük metin dosyalarıdır. Sitenin tercihlerinizi hatırlamasına, oturumunuzu
+                        açık tutmasına ve size daha iyi bir deneyim sunmasına yardımcı olur.
+                    </p>
+                </section>
 
-            <section>
-                <h2 className="text-2xl font-bold text-neutral-dark mb-4">
-                    Çerezleri Neden ve Nasıl Kullanıyoruz?
-                </h2>
-                <p>
-                    Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi olarak çerezleri şu amaçlarla kullanıyoruz:
-                </p>
-                <ul className="list-disc pl-6 space-y-2 mt-4">
-                    <li>Web sitemizin temel fonksiyonlarının çalışmasını sağlamak (Oturum açma, güvenlik vb.).</li>
-                    <li>Ziyaretçi tercihlerini hatırlayarak kullanım kolaylığı sunmak.</li>
-                    <li>Site trafiğini ve performansını analiz ederek hizmetlerimizi geliştirmek.</li>
-                    <li>Size özel kişiselleştirilmiş içerik ve deneyimler sunmak.</li>
-                </ul>
-            </section>
-
-            <section>
-                <h2 className="text-2xl font-bold text-neutral-dark mb-4">
-                    Kullandığımız Çerez Türleri
-                </h2>
-                <div className="grid gap-6">
-                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-100">
-                        <h3 className="font-bold text-lg text-primary mb-2">Zorunlu Çerezler</h3>
-                        <p className="text-sm">
-                            Web sitesinin düzgün çalışması için gereklidir. Bu çerezler olmadan sitenin
-                            bazı bölümleri kullanılamaz. (Örn: Güvenlik ayarları, erişilebilirlik tercihleri).
-                        </p>
-                    </div>
-
-                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-100">
-                        <h3 className="font-bold text-lg text-secondary mb-2">Performans ve Analiz Çerezleri</h3>
-                        <p className="text-sm">
-                            Sitemizin nasıl kullanıldığını anlamamıza yardımcı olur. Ziyaretçi sayısı,
-                            en çok gezilen sayfalar gibi verileri anonim olarak toplar.
-                        </p>
-                    </div>
-
-                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-100">
-                        <h3 className="font-bold text-lg text-accent mb-2">Fonksiyonel Çerezler</h3>
-                        <p className="text-sm">
-                            Dil tercihi, yazı boyutu gibi kişisel ayarlarınızı hatırlamamızı sağlar.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <section>
-                <h2 className="text-2xl font-bold text-neutral-dark mb-4">
-                    Çerez Tercihlerini Yönetme
-                </h2>
-                <p>
-                    Web sitemizi kullanırken çerez tercihlerinizi dilediğiniz zaman değiştirebilirsiniz.
-                    Zorunlu çerezler dışındaki tüm çerezleri "Çerez Ayarları" butonunu kullanarak
-                    kapatabilirsiniz. Ayrıca tarayıcı ayarlarınızdan da çerezleri silebilir veya
-                    engelleyebilirsiniz.
-                </p>
-                <div className="mt-6 p-4 bg-gray-100 rounded-xl">
-                    <h3 className="font-bold text-neutral-dark mb-2">İlgili Mevzuat</h3>
-                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                        <li>
-                            Çerez uygulamalarımız, <a href="https://www.mevzuat.gov.tr/MevzuatMetin/1.5.6698.pdf" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">6698 Sayılı KVKK</a> ve Avrupa Birliği <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32002L0058" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">e-Privacy Direktifi</a> ile uyumlu olarak yürütülmektedir.
+                <section>
+                    <h2 className="text-2xl font-bold text-neutral-dark mb-4 flex items-center gap-3">
+                        <span className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-sm">
+                            <FontAwesomeIcon icon={faCheck} />
+                        </span>
+                        Neden Kullanıyoruz?
+                    </h2>
+                    <ul className="space-y-2 text-sm text-gray-600">
+                        <li className="flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></span>
+                            Güvenli ve hızlı bir deneyim sunmak için.
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></span>
+                            Site performansını ölçmek ve iyileştirmek için.
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></span>
+                            Tercihlerinizi hatırlayarak kolaylık sağlamak için.
                         </li>
                     </ul>
+                </section>
+            </div>
+
+            {/* Cookie Types */}
+            <section className="pt-8">
+                <h2 className="text-2xl font-bold text-neutral-dark mb-6">Detaylı Çerez Bilgileri</h2>
+                <div className="grid md:grid-cols-3 gap-6">
+                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600 mb-4">
+                            <FontAwesomeIcon icon={faCheck} />
+                        </div>
+                        <h3 className="font-bold text-lg text-neutral-dark mb-2">Zorunlu</h3>
+                        <p className="text-sm text-gray-500 m-0">
+                            Güvenlik, ağ yönetimi ve erişilebilirlik gibi temel işlevleri etkinleştirir.
+                            Bunları tarayıcı ayarlarından devre dışı bırakabilirsiniz ancak site düzgün çalışmayabilir.
+                        </p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500 mb-4">
+                            <FontAwesomeIcon icon={faInfoCircle} />
+                        </div>
+                        <h3 className="font-bold text-lg text-neutral-dark mb-2">Analitik</h3>
+                        <p className="text-sm text-gray-500 m-0">
+                            Ziyaretçilerin siteyle nasıl etkileşime girdiğini anonim olarak raporlayarak
+                            sitemizi geliştirmemize yardımcı olur.
+                        </p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500 mb-4">
+                            <FontAwesomeIcon icon={faCookieBite} />
+                        </div>
+                        <h3 className="font-bold text-lg text-neutral-dark mb-2">Pazarlama</h3>
+                        <p className="text-sm text-gray-500 m-0">
+                            Ziyaretçileri web siteleri genelinde takip etmek için kullanılır.
+                            Amaç, bireysel kullanıcı için alakalı ve ilgi çekici reklamlar göstermektir.
+                        </p>
+                    </div>
                 </div>
             </section>
 
-            <section className="bg-primary/5 p-8 rounded-2xl border border-primary/10 mt-8">
-                <h2 className="text-xl font-bold text-neutral-dark mb-4">
-                    Bize Ulaşın
-                </h2>
-                <p className="mb-4">
-                    Çerez politikamız veya kişisel verilerinizin işlenmesi hakkında sorularınız için
-                    bizimle iletişime geçebilirsiniz.
+            {/* Legal Footer */}
+            <div className="mt-8 p-6 bg-gray-50 rounded-2xl border border-gray-100 text-sm text-gray-500">
+                <h3 className="font-bold text-neutral-dark mb-2">Yasal Bilgilendirme</h3>
+                <p>
+                    Bu politika, <a href="https://www.mevzuat.gov.tr/MevzuatMetin/1.5.6698.pdf" target="_blank" rel="noopener noreferrer" className="text-primary font-medium hover:underline">6698 Sayılı KVKK</a> ve
+                    ilgili mevzuata uygun olarak hazırlanmıştır. Daha fazla bilgi veya sorularınız için
+                    <a href="mailto:info@arkadasozelegitim.com" className="text-neutral-dark font-medium hover:underline ml-1">info@arkadasozelegitim.com</a> adresinden bize ulaşabilirsiniz.
                 </p>
-                <div className="text-sm text-gray-500">
-                    <p><strong>Kurum:</strong> Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi</p>
-                    <p><strong>E-posta:</strong> info@arkadasozelegitim.com</p>
-                </div>
-            </section>
+            </div>
         </div>
     );
 };

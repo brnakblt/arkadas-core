@@ -53,14 +53,16 @@ const AccessibilityMenu: React.FC = () => {
 
         const handleGlobalEscape = (event: KeyboardEvent) => {
             if (event.key === 'Escape' && !isOpen) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
                 setActiveProfile(null);
-                speak('Görme engelli profili kapatıldı.');
+                // speak() call removed to prevent double audio (handled by useScreenReader)
             }
         };
 
         document.addEventListener('keydown', handleGlobalEscape);
         return () => document.removeEventListener('keydown', handleGlobalEscape);
-    }, [activeProfile, isOpen, speak]);
+    }, [activeProfile, isOpen]);
 
     // Focus trap: Keep Tab within menu when open
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
@@ -68,6 +70,8 @@ const AccessibilityMenu: React.FC = () => {
 
         // Close on Escape
         if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopImmediatePropagation();
             setIsOpen(false);
             toggleButtonRef.current?.focus();
             return;
@@ -202,7 +206,8 @@ const AccessibilityMenu: React.FC = () => {
             <button
                 ref={toggleButtonRef}
                 onClick={() => setIsOpen(!isOpen)}
-                className={`fixed bottom-6 left-6 z-[10000] w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ${isOpen
+                style={{ bottom: '1.5rem', left: '1.5rem' }}
+                className={`fixed z-[10000] w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ${isOpen
                     ? "bg-primary text-white scale-110 ring-4 ring-primary/30"
                     : "bg-gradient-to-br from-primary to-green-600 text-white hover:scale-105 hover:shadow-xl"
                     }`}

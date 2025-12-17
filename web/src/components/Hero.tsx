@@ -37,7 +37,7 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
     <section
       id="home"
       tabIndex={-1}
-      className="relative min-h-screen flex items-center overflow-hidden focus:outline-none"
+      className="relative min-h-screen flex items-center overflow-hidden focus:outline-none rounded-b-2xl"
     >
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
@@ -117,10 +117,10 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="text-white bg-black/20 p-8 rounded-lg backdrop-blur-sm">
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-normal mb-6 pb-2">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="text-white bg-black/20 p-6 md:p-8 rounded-lg backdrop-blur-sm">
+            <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold leading-normal mb-6 pb-2 break-words text-wrap">
               {data.title}
               {data.subtitle && <span className="block text-secondary">{data.subtitle}</span>}
             </h1>

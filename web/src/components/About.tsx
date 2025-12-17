@@ -1,21 +1,24 @@
 "use client";
 
 import React from "react";
+import BezierBackground from "./BezierBackground";
 
 const About: React.FC = () => {
   return (
     <section
       id="about"
       tabIndex={-1}
-      className="py-20 bg-neutral-light relative overflow-hidden focus:outline-none"
+      className="min-h-screen flex flex-col justify-center py-8 md:py-32 bg-neutral-light relative overflow-x-clip focus:outline-none"
       aria-labelledby="about-heading"
     >
+      <BezierBackground className="top-0 left-0 z-0 h-full" />
       {/* Decorative Elements */}
-      <div className="absolute top-0 left-0 w-64 h-64 bg-accent/20 rounded-full -translate-x-32 -translate-y-32"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary/10 rounded-full translate-x-48 translate-y-48"></div>
+      {/* Decorative Elements */}
+      <div className="absolute top-0 left-0 w-64 h-64 bg-accent/20 rounded-full -translate-y-32 -translate-x-1/2 md:-translate-x-32"></div>
+      <div className="absolute bottom-0 right-0 w-48 h-96 bg-secondary/10 rounded-l-full translate-y-24 translate-x-0 md:translate-x-12 z-20"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-32 items-center">
           {/* Content */}
           <div>
             <h2
@@ -23,10 +26,10 @@ const About: React.FC = () => {
               className="font-display text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-neutral-dark mb-6 leading-normal pb-2"
             >
               <span className="text-gradient block leading-tight pb-2">Arkadaş Özel Eğitim</span>
-              <span className="text block whitespace-nowrap">ve Rehabilitasyon Merkezi</span>
+              <span className="text block whitespace-normal lg:whitespace-nowrap">ve Rehabilitasyon Merkezi</span>
             </h2>
 
-            <p className="font-body text-lg text-neutral-dark/80 mb-6 leading-relaxed">
+            <p className="font-body text-base md:text-lg text-neutral-dark/80 mb-6 leading-relaxed">
               2009 yılından bu yana özel eğitim alanında hizmet veren
               merkezimiz, özel gereksinimli çocukların eğitim ve rehabilitasyon
               süreçlerinde ailelerin yanında olmaktadır. Uzman kadromuz ve
@@ -34,7 +37,7 @@ const About: React.FC = () => {
               hedefliyoruz.
             </p>
 
-            <p className="font-body text-lg text-neutral-dark/80 mb-8 leading-relaxed">
+            <p className="font-body text-base md:text-lg text-neutral-dark/80 mb-8 leading-relaxed">
               Bilimsel temelli eğitim yöntemleri, güncel rehabilitasyon
               teknikleri ve aile odaklı yaklaşımımızla çocukların sosyal,
               akademik ve günlük yaşam becerilerini geliştirmelerine destek
@@ -62,12 +65,12 @@ const About: React.FC = () => {
                       />
                     </svg>
                   </div>
-                  <p className="font-body text-neutral-dark/80">{point}</p>
+                  <p className="font-body text-base md:text-lg text-neutral-dark/80">{point}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="mt-8 flex flex-row gap-3 w-full">
               <button
                 onClick={() => {
                   const servicesSection = document.getElementById("services");
@@ -76,7 +79,7 @@ const About: React.FC = () => {
                     servicesSection.focus({ preventScroll: true });
                   }
                 }}
-                className="bg-primary text-white px-8 py-4 rounded-full font-body font-semibold hover:bg-primary/90 transition-all duration-300 transform hover:scale-105"
+                className="bg-primary text-white px-3 py-3 md:px-8 md:py-4 rounded-full font-body font-semibold text-sm md:text-base hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 flex-1 flex items-center justify-center text-center leading-tight whitespace-normal"
               >
                 Hizmetlerimizi Keşfedin
               </button>
@@ -88,7 +91,7 @@ const About: React.FC = () => {
                     teamSection.focus({ preventScroll: true });
                   }
                 }}
-                className="bg-secondary text-white px-8 py-4 rounded-full font-body font-semibold hover:bg-secondary/90 transition-all duration-300 transform hover:scale-105"
+                className="bg-secondary text-white px-3 py-3 md:px-8 md:py-4 rounded-full font-body font-semibold text-sm md:text-base hover:bg-secondary/90 transition-all duration-300 transform hover:scale-105 flex-1 flex items-center justify-center text-center leading-tight whitespace-normal"
               >
                 Ekibimizle Tanışın
               </button>
