@@ -18,10 +18,10 @@
     "lint": "echo 'Strapi lint check passed'"
   },
   "dependencies": {
-    "@strapi/plugin-cloud": "5.31.3",
-    "@strapi/plugin-users-permissions": "5.31.3",
-    "@strapi/provider-email-nodemailer": "5.31.3",
-    "@strapi/strapi": "^5.32.0",
+    "@strapi/plugin-cloud": "^5.33.0",
+    "@strapi/plugin-users-permissions": "^5.33.0",
+    "@strapi/provider-email-nodemailer": "^5.33.0",
+    "@strapi/strapi": "^5.33.0",
     "better-sqlite3": "^12.5.0",
     "mysql2": "^3.15.3",
     "pg": "^8.16.3",
@@ -32,7 +32,7 @@
     "styled-components": "^6.0.0"
   },
   "devDependencies": {
-    "@strapi/cloud-cli": "^5.32.0",
+    "@strapi/cloud-cli": "^5.33.0",
     "@types/node": "^24.10.1",
     "@types/react": "^18.3.26",
     "@types/react-dom": "^18.3.7",

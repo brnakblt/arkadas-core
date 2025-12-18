@@ -25,7 +25,8 @@
   "scripts": {
     "------- DEV -------": "",
     "dev": "npm run dev:docker && npm run dev:all",
-    "dev:all": "concurrently -n strapi,web,ai,mebbis,mobile -c blue,green,yellow,cyan,magenta \"npm run dev:strapi\" \"npm run dev:web\" \"npm run dev:ai\" \"npm run dev:mebbis\" \"npm run dev:mobile\"",
+    "dev:all": "concurrently -n strapi,others -c blue,auto \"npm run dev:strapi\" \"npm run dev:others\"",
+    "dev:others": "wait-on tcp:1337 && concurrently -n web,ai,mebbis,mobile -c green,yellow,cyan,magenta \"npm run dev:web\" \"npm run dev:ai\" \"npm run dev:mebbis\" \"npm run dev:mobile\"",
     "dev:strapi": "npm run develop --prefix strapi",
     "dev:web": "npm run dev --prefix web",
     "dev:mobile": "npm run start --prefix mobile",

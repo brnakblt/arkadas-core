@@ -248,10 +248,7 @@ const styles = StyleSheet.create({
         padding: 16,
         margin: 4,
         borderLeftWidth: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
+        boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.1)',
         elevation: 2,
     },
     statIcon: {
@@ -273,10 +270,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         padding: 16,
         marginBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
+        boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.1)',
         elevation: 2,
     },
     cardTitle: {
