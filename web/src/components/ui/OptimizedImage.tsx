@@ -21,13 +21,18 @@ export function OptimizedImage({
     ...props
 }: OptimizedImageProps) {
     // Check if src is external
-    const isExternal = src.startsWith('http') || src.startsWith('//');
+    // const isExternal = src.startsWith('http') || src.startsWith('//');
 
     // For Strapi images
     const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
     const imageSrc = src.startsWith('/uploads')
         ? `${strapiUrl}${src}`
         : src;
+
+    // Force unoptimized for localhost Strapi images to avoid Next.js build errors
+    // "resolved to private ip"
+    const isLocalhost = imageSrc.includes('localhost') || imageSrc.includes('127.0.0.1');
+    const shouldUnoptimize = props.unoptimized || isLocalhost;
 
     return (
         <Image
@@ -44,6 +49,7 @@ export function OptimizedImage({
                 }
             }}
             {...props}
+            unoptimized={shouldUnoptimize}
         />
     );
 }

@@ -8,6 +8,21 @@ import base64
 from io import BytesIO
 from PIL import Image
 
+
+def validate_storage_path(path: str):
+    """
+    Validates that the path is safe and does not attempt traversal.
+    We assume valid paths must not contain '..' and should be relative or specific absolute paths.
+    """
+    # Normalize path to resolve .. components
+    normalized_path = os.path.normpath(path)
+    
+    # Check for traversal attempts
+    if ".." in path or ".." in normalized_path:
+        raise HTTPException(status_code=400, detail="Invalid storage path: Path traversal detected")
+    
+    return normalized_path
+
 router = APIRouter(prefix="/storage", tags=["storage"])
 
 class AnalyzeRequest(BaseModel):
@@ -21,6 +36,7 @@ class ThumbnailRequest(BaseModel):
 
 @router.post("/analyze")
 async def analyze_file(request: AnalyzeRequest):
+    validate_storage_path(request.storagePath)
     # This would simulate fetching file and analyzing
     # Placeholder implementation
     return {
@@ -31,6 +47,7 @@ async def analyze_file(request: AnalyzeRequest):
 
 @router.post("/thumbnail")
 async def generate_thumbnail(request: ThumbnailRequest):
+    validate_storage_path(request.storagePath)
     # Placeholder for thumbnail generation
     # 1. Read image from storagePath
     # 2. Resize

@@ -11,8 +11,8 @@ export default function ScrollToTop() {
         window.scrollTo(0, 0);
 
         // Also try to disable browser duplicate scroll restoration if needed
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
+        if ('scrollRestoration' in window.history) {
+            window.history.scrollRestoration = 'manual';
         }
     }, [pathname]);
 

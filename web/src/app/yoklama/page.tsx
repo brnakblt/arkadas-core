@@ -50,13 +50,13 @@ const MOCK_RECORDS: AttendanceRecord[] = [
 ];
 
 export default function AttendanceDashboardPage() {
-    const [stats, setStats] = useState<AttendanceStatsData>(MOCK_STATS);
+    const [stats] = useState<AttendanceStatsData>(MOCK_STATS);
     const [records, setRecords] = useState<AttendanceRecord[]>(MOCK_RECORDS);
     const [filteredRecords, setFilteredRecords] = useState<AttendanceRecord[]>(MOCK_RECORDS);
     const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
     const [statusFilter, setStatusFilter] = useState<string>('all');
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const [isLoading, setIsLoading] = useState(false);
+
 
     // Apply filters
     useEffect(() => {

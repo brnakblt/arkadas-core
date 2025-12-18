@@ -37,27 +37,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     useEffect(() => {
         const fetchUser = async () => {
-            const token = localStorage.getItem('jwt');
-            if (!token) {
-                router.push('/');
-                return;
-            }
-
             try {
-                // First try to get from localStorage for immediate render
-                const storedUser = localStorage.getItem('user');
-                if (storedUser) {
-                    setUser(JSON.parse(storedUser));
-                }
-
-                // Then fetch fresh data
-                const userData = await authService.getMe(token);
+                // authService.getMe() cookies via /api/auth/me proxy
+                const userData = await authService.getMe();
                 setUser(userData);
-                localStorage.setItem('user', JSON.stringify(userData));
             } catch (error) {
                 console.error("Error fetching user data:", error);
-                localStorage.removeItem('user');
-                localStorage.removeItem('jwt');
                 router.push('/');
             } finally {
                 setLoading(false);

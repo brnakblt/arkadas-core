@@ -6,7 +6,7 @@ export const dynamic = 'force-static';
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { authFetch } from '@/lib/auth';
-import { BarChart, LineChart, PieChart, StatCard } from '@/components/charts/DashboardCharts';
+import { BarChart, PieChart, StatCard } from '@/components/charts/DashboardCharts';
 import { exportToPDF, exportToExcel } from '@/lib/reportExport';
 
 // ============================================================

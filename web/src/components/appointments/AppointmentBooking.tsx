@@ -14,7 +14,6 @@ import {
     faVideo,
     faPhone,
     faSpinner,
-    faCheck,
     faTimes,
     faPlus,
 } from '@fortawesome/free-solid-svg-icons';
@@ -94,7 +93,7 @@ const AppointmentBooking: React.FC = () => {
         }
     };
 
-    const loadAvailableSlots = async () => {
+    const loadAvailableSlots = React.useCallback(async () => {
         if (!selectedTeacher || !selectedDate) return;
 
         setLoadingSlots(true);
@@ -111,13 +110,13 @@ const AppointmentBooking: React.FC = () => {
         } finally {
             setLoadingSlots(false);
         }
-    };
+    }, [selectedTeacher, selectedDate]);
 
     useEffect(() => {
         if (selectedTeacher && selectedDate) {
             loadAvailableSlots();
         }
-    }, [selectedTeacher, selectedDate]);
+    }, [loadAvailableSlots, selectedTeacher, selectedDate]);
 
     const handleBook = async () => {
         if (!selectedTeacher || !selectedDate || !selectedSlot) {
@@ -147,7 +146,8 @@ const AppointmentBooking: React.FC = () => {
             } else {
                 setError(data.error);
             }
-        } catch (err) {
+        } catch (error) {
+            console.error(error);
             setError('Randevu oluşturulamadı');
         }
     };
@@ -326,8 +326,8 @@ const AppointmentBooking: React.FC = () => {
                                                 key={slot}
                                                 onClick={() => setSelectedSlot(slot)}
                                                 className={`px-3 py-2 rounded-lg text-sm border transition-colors ${selectedSlot === slot
-                                                        ? 'bg-primary text-white border-primary'
-                                                        : 'hover:border-primary'
+                                                    ? 'bg-primary text-white border-primary'
+                                                    : 'hover:border-primary'
                                                     }`}
                                             >
                                                 {slot}
@@ -351,10 +351,10 @@ const AppointmentBooking: React.FC = () => {
                                 ].map((type) => (
                                     <button
                                         key={type.value}
-                                        onClick={() => setBookingType(type.value as any)}
+                                        onClick={() => setBookingType(type.value as 'in-person' | 'online' | 'phone')}
                                         className={`flex-1 px-3 py-2 rounded-lg border flex items-center justify-center gap-2 transition-colors ${bookingType === type.value
-                                                ? 'bg-primary text-white border-primary'
-                                                : 'hover:border-primary'
+                                            ? 'bg-primary text-white border-primary'
+                                            : 'hover:border-primary'
                                             }`}
                                     >
                                         <FontAwesomeIcon icon={type.icon} />

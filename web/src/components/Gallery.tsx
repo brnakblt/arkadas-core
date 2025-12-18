@@ -9,7 +9,12 @@ interface GalleryProps {
 }
 
 const Gallery: React.FC<GalleryProps> = ({ data }) => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<{
+    url: string;
+    alt: string;
+    width: number;
+    height: number;
+  } | null>(null);
 
   // Extract unique categories from data
   const categories = ["Hepsi", ...Array.from(new Set(data.map(item => item.category)))];
@@ -43,6 +48,7 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
+              aria-pressed={activeCategory === category}
               className={`px-6 py-3 rounded-full font-body font-medium transition-all duration-300 ${activeCategory === category
                 ? "bg-primary text-white shadow-lg"
                 : "bg-gray-100 dark:bg-neutral-800 text-neutral-dark dark:text-neutral-200 hover:bg-gray-200 dark:hover:bg-neutral-700"
@@ -63,13 +69,32 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
               <div
                 key={index}
                 className="group relative overflow-hidden rounded-3xl cursor-pointer transform transition-all duration-500 hover:scale-105"
-                onClick={() => setSelectedImage(imageUrl)}
+                onClick={() => setSelectedImage({
+                  url: imageUrl,
+                  alt: image.alt || image.title || "",
+                  width: image.image.width,
+                  height: image.image.height
+                })}
+                role="button"
+                tabIndex={0}
+                aria-label={`Görüntüle: ${image.title}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setSelectedImage({
+                      url: imageUrl,
+                      alt: image.alt || image.title || "",
+                      width: image.image.width,
+                      height: image.image.height
+                    });
+                  }
+                }}
               >
                 <div className="relative w-full h-64">
                   <Image
                     src={imageUrl}
                     alt={image.alt || image.title}
                     fill
+                    unoptimized
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
@@ -121,15 +146,19 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
             onClick={() => setSelectedImage(null)}
           >
             <div className="relative max-w-4xl max-h-full">
-              <img
-                src={selectedImage}
-                alt="Gallery image"
-                className="max-w-full max-h-full object-contain rounded-lg"
-                style={{ maxWidth: "100%", maxHeight: "100%" }}
+              <Image
+                src={selectedImage.url}
+                alt={selectedImage.alt}
+                width={selectedImage.width}
+                height={selectedImage.height}
+                unoptimized
+                className="max-w-full max-h-[90vh] object-contain rounded-lg"
+                style={{ width: 'auto', height: 'auto' }}
               />
               <button
                 onClick={() => setSelectedImage(null)}
                 className="absolute top-4 right-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors duration-200"
+                aria-label="Kapat"
               >
                 <svg
                   className="w-6 h-6"
@@ -166,7 +195,7 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
           </button>
         </div>
       </div>
-    </section>
+    </section >
   );
 };
 

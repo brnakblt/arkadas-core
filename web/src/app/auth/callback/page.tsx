@@ -28,7 +28,7 @@ function AuthCallbackContent() {
             // Redirect to dashboard or home
             router.push('/dashboard');
         } else {
-            console.log("No JWT found in URL");
+            console.error("No JWT found in URL");
         }
     }, [searchParams, router]);
 

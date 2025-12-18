@@ -94,9 +94,9 @@ export default function BulkStudentsPage() {
             label: 'SMS Gönder',
             icon: '📱',
             variant: 'primary',
-            onExecute: async (items) => {
+            onExecute: async (_items) => {
                 await new Promise((r) => setTimeout(r, 1000));
-                console.log('SMS sent to:', items.map((i) => i.parentPhone));
+                // console.log('SMS sent to:', items.map((i) => i.parentPhone));
             },
         },
         {
@@ -119,10 +119,10 @@ export default function BulkStudentsPage() {
             </div>
             <span
                 className={`px-2 py-1 rounded-full text-xs ${student.status === 'active'
-                        ? 'bg-green-100 text-green-700'
-                        : student.status === 'inactive'
-                            ? 'bg-gray-100 text-gray-700'
-                            : 'bg-blue-100 text-blue-700'
+                    ? 'bg-green-100 text-green-700'
+                    : student.status === 'inactive'
+                        ? 'bg-gray-100 text-gray-700'
+                        : 'bg-blue-100 text-blue-700'
                     }`}
             >
                 {student.status === 'active' ? 'Aktif' : student.status === 'inactive' ? 'Pasif' : 'Mezun'}
@@ -152,8 +152,8 @@ export default function BulkStudentsPage() {
                             key={f}
                             onClick={() => setFilter(f)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === f
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                                 }`}
                         >
                             {f === 'all' ? 'Tümü' : f === 'active' ? 'Aktif' : f === 'inactive' ? 'Pasif' : 'Mezun'}

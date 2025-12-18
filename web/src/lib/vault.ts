@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Credential Vault Utilities
  * 
@@ -40,7 +41,7 @@ export interface VaultConfig {
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
-const AUTH_TAG_LENGTH = 16;
+const _AUTH_TAG_LENGTH = 16;
 
 function getEncryptionKey(): Buffer {
     const key = process.env.VAULT_ENCRYPTION_KEY || process.env.ENCRYPTION_KEY;
@@ -127,7 +128,7 @@ export async function storeCredential(
     // Store in memory (replace with production vault)
     memoryStore.set(id, entry);
 
-    console.log(`[Vault] Credential stored: ${service}/${username}`);
+    console.debug(`[Vault] Credential stored: ${service}/${username}`);
     return id;
 }
 
@@ -179,7 +180,7 @@ export async function updateCredential(
     entry.updatedAt = new Date();
     memoryStore.set(id, entry);
 
-    console.log(`[Vault] Credential updated: ${entry.service}`);
+    console.debug(`[Vault] Credential updated: ${entry.service}`);
     return true;
 }
 
@@ -189,7 +190,7 @@ export async function updateCredential(
 export async function deleteCredential(id: string): Promise<boolean> {
     const deleted = memoryStore.delete(id);
     if (deleted) {
-        console.log(`[Vault] Credential deleted: ${id}`);
+        console.debug(`[Vault] Credential deleted: ${id}`);
     }
     return deleted;
 }
@@ -201,7 +202,7 @@ export async function listCredentials(): Promise<Omit<CredentialEntry, 'encrypte
     const entries: Omit<CredentialEntry, 'encryptedPassword'>[] = [];
 
     for (const [, entry] of memoryStore) {
-        const { encryptedPassword, ...safe } = entry;
+        const { encryptedPassword: _encryptedPassword, ...safe } = entry;
         entries.push(safe);
     }
 

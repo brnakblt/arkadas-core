@@ -1,10 +1,9 @@
 "use client";
 
 import React from 'react';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 interface Service {
-  icon: IconProp;
+  icon: string;
   title: string;
   description: string;
   features: string[];

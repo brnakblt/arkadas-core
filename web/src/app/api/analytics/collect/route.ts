@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -73,9 +74,9 @@ export async function POST(request: NextRequest) {
 
         // For now, log to console in development
         if (process.env.NODE_ENV === 'development') {
-            console.log('[Analytics API] Received events:', eventsToProcess.length);
+            console.debug('[Analytics API] Received events:', eventsToProcess.length);
             eventsToProcess.forEach((event) => {
-                console.log(`  - ${event.name}:`, event.properties);
+                console.debug(`  - ${event.name}:`, event.properties);
             });
         }
 

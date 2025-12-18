@@ -3,16 +3,14 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay, FreeMode } from 'swiper/modules';
+import dynamic from 'next/dynamic';
 import BezierBackground from "./BezierBackground";
 
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/free-mode';
+// Dynamic imports for Swiper components to reduce TBT
+const TeamMobile = dynamic(() => import('./TeamMobile'), { ssr: false });
+const TeamCategorySwiper = dynamic(() => import('./TeamCategorySwiper'), { ssr: false });
 
-interface TeamMember {
+export interface TeamMember {
   id: number;
   name: string;
   title: string;
@@ -57,13 +55,13 @@ const Team: React.FC = () => {
       const data = await response.json();
 
       // Strapi v5 returns flattened data in data.data
-      const formattedMembers: TeamMember[] = data.data.map((member: any) => {
+      const formattedMembers: TeamMember[] = data.data.map((member: { category: string | string[] | { role?: string; name?: string }[] | { role?: string; name?: string };[key: string]: unknown }) => {
         // category is a JSON field. We need to normalize it to string[].
         let category: string[] = [];
         const rawCat = member.category;
 
         if (Array.isArray(rawCat)) {
-          category = rawCat.map((c: any) => {
+          category = rawCat.map((c: string | { role?: string; name?: string }) => {
             if (typeof c === 'string') return c.replace(/^["']|["']$/g, '').trim();
             if (c?.role) return c.role.replace(/^["']|["']$/g, '').trim();
             if (c?.name) return c.name.replace(/^["']|["']$/g, '').trim();
@@ -74,7 +72,7 @@ const Team: React.FC = () => {
           try {
             const parsed = JSON.parse(rawCat);
             if (Array.isArray(parsed)) {
-              category = parsed.map((c: any) => typeof c === 'string' ? c : c?.role || c?.name || '').filter(Boolean);
+              category = parsed.map((c: string | { role?: string; name?: string }) => typeof c === 'string' ? c : c?.role || c?.name || '').filter(Boolean);
             } else {
               category = [rawCat.replace(/^["']|["']$/g, '').trim()];
             }
@@ -158,7 +156,7 @@ const Team: React.FC = () => {
   }
 
   const TeamMemberCard = ({ member }: { member: TeamMember }) => {
-    const cardClasses = "group relative overflow-hidden bg-white rounded-2xl p-3 md:p-4 shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col mx-auto w-full max-w-[280px] md:max-w-sm";
+    const cardClasses = "group relative overflow-hidden bg-white dark:bg-neutral-800 rounded-2xl p-3 md:p-4 shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col mx-auto w-full max-w-[280px] md:max-w-sm";
     const CardContent = (
       <>
         <div className="relative z-20 h-full flex flex-col">
@@ -184,11 +182,11 @@ const Team: React.FC = () => {
           </div>
 
           <div className="text-center px-2 pb-2 flex-shrink-0">
-            <h3 className="font-display text-lg font-bold text-neutral-dark mb-1 leading-normal pb-1">
+            <h3 className="font-display text-lg font-bold text-neutral-dark dark:text-white mb-1 leading-normal pb-1">
               {member.name}
             </h3>
 
-            <p className="text-primary font-body font-medium text-sm mb-3">
+            <p className="text-primary dark:text-primary-light font-body font-medium text-sm mb-3">
               {member.title}
             </p>
           </div>
@@ -216,7 +214,7 @@ const Team: React.FC = () => {
   };
 
   return (
-    <section id="team" tabIndex={-1} className="flex flex-col md:min-h-screen md:justify-center py-8 md:py-32 bg-neutral-light focus:outline-none relative overflow-x-clip">
+    <section id="team" tabIndex={-1} className="flex flex-col md:min-h-screen md:justify-center py-8 md:py-32 bg-neutral-light dark:bg-surface focus:outline-none relative overflow-x-clip">
       <div className="absolute inset-0 z-0 pointer-events-none" style={{ maskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)" }}>
         <BezierBackground className="h-full w-full opacity-40" />
       </div>
@@ -242,7 +240,7 @@ const Team: React.FC = () => {
               onClick={() => setActiveCategory(category)}
               className={`px-6 py-3 rounded-full font-body font-medium transition-all duration-300 whitespace-nowrap ${activeCategory === category
                 ? "bg-primary text-white shadow-lg scale-105"
-                : "bg-gray-100 text-neutral-dark hover:bg-gray-200"
+                : "bg-gray-100 text-neutral-dark hover:bg-gray-200 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
                 }`}
             >
               {category}
@@ -250,54 +248,18 @@ const Team: React.FC = () => {
           ))}
         </div>
 
-        {/* Mobile: Swiper horizontal scroll */}
+        {/* Mobile: Swiper horizontal scroll type */}
         <div className="mb-12 md:hidden overflow-visible">
-          <Swiper
-            slidesPerView="auto"
-            spaceBetween={12}
-            freeMode={true}
-            modules={[FreeMode]}
-            className="!py-6 !overflow-visible"
-          >
-            {categories.map((category) => (
-              <SwiperSlide key={category} className="!w-auto">
-                <button
-                  onClick={() => setActiveCategory(category)}
-                  className={`px-5 py-2.5 rounded-full font-body font-medium text-sm transition-all duration-300 whitespace-nowrap ${activeCategory === category
-                    ? "bg-primary text-white shadow-lg scale-105"
-                    : "bg-gray-100 text-neutral-dark hover:bg-gray-200"
-                    }`}
-                >
-                  {category}
-                </button>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          <TeamCategorySwiper
+            categories={categories}
+            activeCategory={activeCategory}
+            setActiveCategory={setActiveCategory}
+          />
         </div>
 
         {/* Mobile View - Swiper */}
         <div className="block md:hidden">
-          <Swiper
-            modules={[Pagination, Autoplay]}
-            spaceBetween={24}
-            slidesPerView={1}
-            loop={true}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-            }}
-            pagination={{
-              clickable: true,
-              dynamicBullets: true
-            }}
-            className="!pb-16"
-          >
-            {filteredMembers.map((member) => (
-              <SwiperSlide key={member.id} className="h-auto">
-                <TeamMemberCard member={member} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          <TeamMobile members={filteredMembers} TeamMemberCard={TeamMemberCard} />
         </div>
 
         {/* Desktop View - Grid/Flex */}

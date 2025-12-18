@@ -18,7 +18,7 @@ const KVKKContent = () => {
                 <p className="lead text-lg font-medium text-gray-700">
                     Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi olarak, kişisel verilerinizin güvenliği
                     ve gizliliği konusunda azami hassasiyet göstermekteyiz. 6698 sayılı Kişisel Verilerin
-                    Korunması Kanunu ("KVKK") uyarınca, veri sorumlusu sıfatıyla, kişisel verilerinizi
+                    Korunması Kanunu (&quot;KVKK&quot;) uyarınca, veri sorumlusu sıfatıyla, kişisel verilerinizi
                     aşağıda açıklanan kapsamda işlemekteyiz.
                 </p>
             </section>
@@ -95,7 +95,7 @@ const KVKKContent = () => {
                     Haklarınız
                 </h2>
                 <p>
-                    KVKK'nın 11. maddesi uyarınca, veri sahibi olarak aşağıdaki haklara sahipsiniz:
+                    KVKK&apos;nın 11. maddesi uyarınca, veri sahibi olarak aşağıdaki haklara sahipsiniz:
                 </p>
                 <ul className="list-disc pl-6 space-y-2 mt-4">
                     <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme,</li>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { User, Check, X, Clock } from 'lucide-react';
 
 // Prototype for the "Student Attendance Card" interaction
@@ -34,9 +35,9 @@ export const AttendanceCard: React.FC<AttendanceCardProps> = ({
     <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
       {/* Left: Student Info */}
       <div className="flex items-center space-x-3">
-        <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
+        <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center relative">
           {student.avatarUrl ? (
-            <img src={student.avatarUrl} alt={student.name} className="w-full h-full object-cover" />
+            <Image src={student.avatarUrl} alt={student.name} fill className="object-cover" />
           ) : (
             <User className="w-6 h-6 text-gray-400" />
           )}
@@ -51,33 +52,30 @@ export const AttendanceCard: React.FC<AttendanceCardProps> = ({
       <div className="flex bg-gray-100 rounded-lg p-1">
         <button
           onClick={() => handleStatusChange('present')}
-          className={`p-2 rounded-md transition-all ${
-            status === 'present'
+          className={`p-2 rounded-md transition-all ${status === 'present'
               ? 'bg-green-500 text-white shadow-sm'
               : 'text-gray-500 hover:bg-gray-200'
-          }`}
+            }`}
           aria-label="Mark Present"
         >
           <Check className="w-5 h-5" />
         </button>
         <button
           onClick={() => handleStatusChange('late')}
-          className={`p-2 rounded-md transition-all ${
-            status === 'late'
+          className={`p-2 rounded-md transition-all ${status === 'late'
               ? 'bg-yellow-500 text-white shadow-sm'
               : 'text-gray-500 hover:bg-gray-200'
-          }`}
+            }`}
           aria-label="Mark Late"
         >
           <Clock className="w-5 h-5" />
         </button>
         <button
           onClick={() => handleStatusChange('absent')}
-          className={`p-2 rounded-md transition-all ${
-            status === 'absent'
+          className={`p-2 rounded-md transition-all ${status === 'absent'
               ? 'bg-red-500 text-white shadow-sm'
               : 'text-gray-500 hover:bg-gray-200'
-          }`}
+            }`}
           aria-label="Mark Absent"
         >
           <X className="w-5 h-5" />

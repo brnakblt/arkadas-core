@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import GPSMap, { MapMarker } from '@/components/maps/GPSMap';
 import { useGPSTracking } from '@/hooks/useGPSTracking';
 import { getStrapiURL } from '@/lib/api';
-import { calculateDelay, GeoPoint, RouteStop } from '@/utils/delayEstimation';
+import { calculateDelay, RouteStop } from '@/utils/delayEstimation';
 
 interface ServiceRoute {
     id: string;
@@ -42,13 +42,14 @@ export default function ServiceTrackingPage() {
     const refreshTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     // Fetch initial routes
-    const fetchRoutes = async () => {
+    const fetchRoutes = useCallback(async () => {
         try {
             const res = await fetch(`${getStrapiURL()}/api/service-routes?populate=*&filters[isActive][$eq]=true`);
             const json = await res.json();
 
             if (!json.data) return;
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const mappedRoutes: ServiceRoute[] = await Promise.all(json.data.map(async (item: any) => {
                 const attrs = item.attributes;
 
@@ -71,7 +72,8 @@ export default function ServiceTrackingPage() {
                 }
 
                 // Map stops
-                const stops: ServiceStop[] = (attrs.stops?.data || []).map((stop: any, index: number) => ({
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const stops: ServiceStop[] = (attrs.stops?.data || []).map((stop: any) => ({
                     id: stop.id.toString(),
                     name: stop.attributes.name,
                     latitude: stop.attributes.latitude,
@@ -80,13 +82,14 @@ export default function ServiceTrackingPage() {
                     estimatedTime: stop.attributes.estimatedTime,
                     status: 'pending', // Default
                     delayMinutes: 0
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 })).sort((a: any, b: any) => a.order - b.order);
 
                 // Calculate statuses and delays if we have location
                 if (currentLocation) {
                     stops.forEach(stop => {
                         stop.delayMinutes = calculateDelay(
-                            { latitude: currentLocation!.latitude, longitude: currentLocation!.longitude },
+                            { latitude: currentLocation.latitude, longitude: currentLocation.longitude },
                             stop
                         );
                     });
@@ -118,7 +121,7 @@ export default function ServiceTrackingPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [selectedRoute]);
 
     useEffect(() => {
         fetchRoutes();
@@ -130,7 +133,7 @@ export default function ServiceTrackingPage() {
         return () => {
             if (refreshTimerRef.current) clearInterval(refreshTimerRef.current);
         };
-    }, [autoRefresh]);
+    }, [autoRefresh, fetchRoutes]);
 
     const mapMarkers: MapMarker[] = selectedRoute
         ? selectedRoute.stops.map(stop => ({
@@ -143,8 +146,8 @@ export default function ServiceTrackingPage() {
         }))
         : routes.filter(r => r.currentLocation).map(route => ({
             id: route.id,
-            latitude: route.currentLocation!.latitude,
-            longitude: route.currentLocation!.longitude,
+            latitude: route.currentLocation?.latitude ?? 0,
+            longitude: route.currentLocation?.longitude ?? 0,
             title: route.name,
             info: `${route.vehiclePlate} - ${route.driverName}`,
         }));

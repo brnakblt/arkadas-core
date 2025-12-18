@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
     try {
-        const { uploadId } = await request.json();
+        const { uploadId: _uploadId } = await request.json();
 
         // Logic:
         // 1. Check all chunks valid
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
         // 4. Create database entry
 
         return NextResponse.json({ success: true, file: { id: 1, name: 'uploaded.file' } });
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: 'Completion failed' }, { status: 500 });
     }
 }

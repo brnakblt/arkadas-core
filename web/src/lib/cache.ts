@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Redis Cache Service
  * Caching layer for API responses, sessions, and rate limiting
@@ -109,7 +110,7 @@ class RedisCache {
         const redisUrl = process.env.REDIS_URL;
 
         if (!redisUrl) {
-            console.log('[Cache] REDIS_URL not configured, using memory cache');
+            console.debug('[Cache] REDIS_URL not configured, using memory cache');
             return;
         }
 
@@ -122,7 +123,7 @@ class RedisCache {
                 (this.client as { connect: () => Promise<void> }).connect()
                     .then(() => {
                         this.isConnected = true;
-                        console.log('[Cache] Connected to Redis');
+                        console.debug('[Cache] Connected to Redis');
                     })
                     .catch((err: Error) => {
                         console.error('[Cache] Redis connection failed:', err.message);
@@ -130,7 +131,7 @@ class RedisCache {
                     });
             }
         } catch {
-            console.log('[Cache] Redis not available, using memory cache');
+            console.debug('[Cache] Redis not available, using memory cache');
         }
     }
 

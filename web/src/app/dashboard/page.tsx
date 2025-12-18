@@ -17,16 +17,12 @@ import {
     faBus
 } from '@fortawesome/free-solid-svg-icons';
 
-interface User {
-    id: number;
-    username: string;
-    email: string;
-    userType?: 'parent' | 'teacher';
-}
+
 
 interface DashboardApp {
     id: string;
     title: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     icon: any;
     color: string;
     description: string;

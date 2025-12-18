@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useEffect, useCallback, useRef } from 'react';
 import { useTTS } from './useTTS';
 
@@ -118,7 +119,7 @@ export function useScreenReader(isActive: boolean) {
 
         if (textToSpeak && textToSpeak !== lastSpokenRef.current) {
             lastSpokenRef.current = textToSpeak;
-            console.log('[ScreenReader] Focus reading:', textToSpeak);
+            console.debug('[ScreenReader] Focus reading:', textToSpeak);
             speak(textToSpeak);
         }
     }, [getAccessibleName, getElementType, speak, stop]);
@@ -148,7 +149,7 @@ export function useScreenReader(isActive: boolean) {
         if (textContent && textContent.length > 0 && textContent.length < 500) {
             if (textContent !== lastSpokenRef.current) {
                 lastSpokenRef.current = textContent;
-                console.log('[ScreenReader] Click reading:', textContent.substring(0, 50) + '...');
+                console.debug('[ScreenReader] Click reading:', textContent.substring(0, 50) + '...');
                 speak(textContent);
             }
         }
@@ -170,12 +171,12 @@ export function useScreenReader(isActive: boolean) {
             return;
         }
 
-        console.log('[ScreenReader] Adding listeners');
+        console.debug('[ScreenReader] Adding listeners');
         document.addEventListener('focusin', handleFocus);
         document.addEventListener('click', handleClick);
 
         return () => {
-            console.log('[ScreenReader] Removing listeners');
+            console.debug('[ScreenReader] Removing listeners');
             document.removeEventListener('focusin', handleFocus);
             document.removeEventListener('click', handleClick);
         };

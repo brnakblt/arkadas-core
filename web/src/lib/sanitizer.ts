@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * DOMPurify HTML Sanitizer Wrapper
  * 
@@ -100,13 +101,13 @@ let DOMPurify: any = null;
  */
 export async function initSanitizer(): Promise<boolean> {
     if (typeof window === 'undefined') {
-        console.log('[Sanitizer] SSR environment, using fallback');
+        console.debug('[Sanitizer] SSR environment, using fallback');
         return false;
     }
 
     try {
         DOMPurify = (await import('dompurify')).default;
-        console.log('[Sanitizer] DOMPurify initialized');
+        console.debug('[Sanitizer] DOMPurify initialized');
         return true;
     } catch (error) {
         console.warn('[Sanitizer] DOMPurify not available, using fallback:', error);

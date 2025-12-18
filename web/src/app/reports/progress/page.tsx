@@ -79,7 +79,7 @@ export default function StudentProgressReport() {
 
     const { data: progressNotes = [], isLoading: loadingProgress } = useQuery({
         queryKey: ['progress', selectedStudentId],
-        queryFn: () => fetchProgressNotes(selectedStudentId!),
+        queryFn: () => fetchProgressNotes(selectedStudentId as number),
         enabled: !!selectedStudentId,
     });
 
@@ -111,7 +111,7 @@ export default function StudentProgressReport() {
 
     // Overall progress
     const overallProgress = categoryAverages.reduce((sum, c) => sum + c.average, 0) / categories.length;
-    const previousProgress = overallProgress - 0.3; // Mock comparison
+
 
     // Export handler
     const handleExportPDF = () => {

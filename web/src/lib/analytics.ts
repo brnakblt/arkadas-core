@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Privacy-First Analytics Utility
  * 
@@ -91,7 +92,7 @@ export function getSession(): SessionInfo {
             const stored = sessionStorage.getItem(SESSION_KEY);
             if (stored) {
                 currentSession = JSON.parse(stored);
-                return currentSession!;
+                if (currentSession) return currentSession;
             }
         } catch {
             // Storage not available
@@ -239,7 +240,7 @@ function queueEvent(event: AnalyticsEvent): void {
 
     // Log in development
     if (process.env.NODE_ENV === 'development') {
-        console.log('[Analytics] 📊', fullEvent);
+        console.debug('[Analytics] 📊', fullEvent);
     }
 
     // Send if buffer is full
@@ -267,7 +268,7 @@ export async function flushEvents(): Promise<void> {
 
     // Skip sending in development
     if (process.env.NODE_ENV === 'development') {
-        console.log('[Analytics] Batch would send:', events.length, 'events');
+        console.debug('[Analytics] Batch would send:', events.length, 'events');
         return;
     }
 

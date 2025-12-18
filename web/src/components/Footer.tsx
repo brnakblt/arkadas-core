@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
-import { usePolicyModal } from "@/context/PolicyModalContext";
+// import { usePolicyModal } from "@/context/PolicyModalContext";
 
 const Footer: React.FC = () => {
-  const { openPolicyModal } = usePolicyModal();
+  // const { openPolicyModal } = usePolicyModal(); // Removed unused hook
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
 

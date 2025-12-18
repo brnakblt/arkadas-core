@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
         // This requires access to fs, which works in Next.js Server Components / Route Handlers (Node.js runtime)
 
         return NextResponse.json({ success: true, index: chunkIndex });
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: 'Chunk upload failed' }, { status: 500 });
     }
 }

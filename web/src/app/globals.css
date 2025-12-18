@@ -3,6 +3,13 @@
 @tailwind utilities;
 
 :root {
+  /* Core Theme Variables - Light Mode */
+  --background: #FFFFFF;
+  --foreground: #212121;
+  --surface: #F8F9FA;
+  --border: #E0E0E0;
+
+  /* Legacy Colors */
   --color-primary: #7CB342;
   --color-secondary: #F4A261;
   --color-accent: #A5D6A7;
@@ -14,6 +21,18 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark Mode Overrides */
+.dark {
+  --background: #121212;
+  --foreground: #EDEDED;
+  --surface: #1E1E1E;
+  --border: #333333;
+
+  /* Adjust specific colors for dark mode if needed, or keep them */
+  --color-neutral-light: #1E1E1E; 
+  --color-background: #121212;
 }
 
 html {
@@ -29,6 +48,7 @@ body {
   overflow-x: hidden;
   position: relative;
   width: 100%;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Performance optimizations */
@@ -271,12 +291,18 @@ body {
 }
 
 /* Swiper Pagination Bullets */
+/* Swiper Pagination Bullets - Optimized for Touch Targets (24px min) */
 .swiper-pagination-bullet {
-  width: 10px !important;
-  height: 10px !important;
+  width: 12px !important;
+  height: 12px !important;
   background: #2A2A2A !important;
   opacity: 0.3 !important;
   transition: all 0.3s ease !important;
+  /* Add transparent border to increase touch area to 24x24px without affecting visual size */
+  border: 6px solid transparent !important;
+  background-clip: padding-box !important;
+  box-sizing: content-box !important;
+  margin: 0 4px !important;
 }
 
 .swiper-pagination-bullet-active {

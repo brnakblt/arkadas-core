@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, ReactNode } from 'react';
+import Image from 'next/image';
 
 interface ResponsiveMapProps {
     src: string;
@@ -184,7 +185,7 @@ export function GoogleMapsEmbed({
 export function OpenStreetMapEmbed({
     latitude,
     longitude,
-    zoom = 15,
+    _zoom = 15,
     marker = true,
     className = '',
     ...props
@@ -244,13 +245,12 @@ export function StaticMap({
     const src = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(centerStr)}&zoom=${zoom}&size=${width}x${height}&${markerStr}&key=${key}`;
 
     return (
-        <img
+        <Image
             src={src}
             alt="Map"
             width={width}
             height={height}
             className={`rounded-xl ${className}`}
-            loading="lazy"
         />
     );
 }

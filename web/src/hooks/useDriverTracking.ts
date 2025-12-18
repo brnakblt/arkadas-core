@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import useGPSTracking from './useGPSTracking';
 import { getStrapiURL } from '@/lib/api';
 
@@ -71,6 +71,7 @@ export function useDriverTracking({ routeId, updateInterval = 10000 }: DriverTra
                 setLastSentTime(now);
                 setTotalSent(prev => prev + 1);
                 setSendError(null);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 console.error('Error sending location:', err);
                 setSendError(err.message);
@@ -81,6 +82,9 @@ export function useDriverTracking({ routeId, updateInterval = 10000 }: DriverTra
 
         sendLocation();
 
+
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location, isTracking, routeId]);
 
     return {

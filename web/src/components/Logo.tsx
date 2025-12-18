@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface LogoProps {
   className?: string;
@@ -23,11 +24,12 @@ const Logo: React.FC<LogoProps> = ({ className = '', showText = true, size = 'md
     <div className={`flex items-center space-x-3 ${className}`}>
       {/* Logo Image */}
       <div className={`${sizeClasses[size]} relative`}>
-        <img
+        <Image
           src="/images/logo.svg"
           alt="Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi"
-          className="h-full w-auto object-contain transition-all duration-300"
-          loading="eager"
+          fill
+          className="object-contain transition-all duration-300"
+          priority
         />
       </div>
 

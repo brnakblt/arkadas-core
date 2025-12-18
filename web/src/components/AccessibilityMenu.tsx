@@ -19,7 +19,7 @@ import { useScreenReader } from "@/hooks/useScreenReader";
 type AccessibilityProfile = "seizure" | "vision" | "adhd" | "blind" | "dyslexia" | "elderly" | null;
 
 const AccessibilityMenu: React.FC = () => {
-    const { speak, isLoading, progress } = useTTS();
+    const { isLoading, progress } = useTTS();
     const [isOpen, setIsOpen] = useState(false);
     const [activeProfile, setActiveProfile] = useState<AccessibilityProfile>(null);
 

@@ -10,6 +10,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfairDisplay = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair-display' })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://arkadasozelegitim.com'),
   title: 'Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi | İzmir Çiğli',
   description: 'İzmir Çiğli\'de hizmet veren Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi, uzman kadrosuyla otizm, down sendromu, öğrenme güçlüğü gibi alanlarda bireysel eğitim ve terapi hizmetleri sunmaktadır.',
   keywords: ['özel eğitim', 'rehabilitasyon', 'izmir', 'çiğli', 'otizm', 'down sendromu', 'dil terapisi', 'fizyoterapi', 'bireysel eğitim', 'arkadaş özel eğitim'],

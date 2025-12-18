@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
@@ -7,14 +8,18 @@ export default {
   theme: {
     extend: {
       colors: {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        surface: "var(--surface)",
+        border: "var(--border)",
         primary: {
-          DEFAULT: "#7CB342",
+          DEFAULT: "#689F38", // Darkened from #7CB342 for contrast
           light: "#AEE571",
           dark: "#4B830D",
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#F4A261",
+          DEFAULT: "#E67E22", // Darkened from #F4A261 for contrast
           light: "#FFD38F",
           dark: "#BF7335",
           foreground: "#FFFFFF",

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Cookie-based Token Storage
  * 
@@ -187,7 +188,7 @@ export async function migrateFromLocalStorage(): Promise<void> {
             localStorage.removeItem('erp_auth_token');
             localStorage.removeItem('erp_auth_user');
 
-            console.log('[Auth] Migrated from localStorage to cookies');
+            console.debug('[Auth] Migrated from localStorage to cookies');
         } catch (error) {
             console.error('[Auth] Migration failed:', error);
         }

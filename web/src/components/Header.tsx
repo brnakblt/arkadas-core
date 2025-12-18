@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
-import Link from "next/link";
+// import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import AuthModal from "./AuthModal";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -17,7 +17,7 @@ const Header: React.FC = () => {
 
   const isDashboard = pathname === "/dashboard";
 
-  const menuItems = [
+  const menuItems = useMemo(() => [
     {
       id: "home",
       label: "Ana Sayfa",
@@ -90,7 +90,7 @@ const Header: React.FC = () => {
         </svg>
       )
     },
-  ];
+  ], []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -184,14 +184,22 @@ const Header: React.FC = () => {
           ) : (
             <button
               onClick={() => setIsAuthModalOpen(true)}
-              className="w-10 h-10 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary/90 transition-all duration-300 shadow-md hover:shadow-lg"
+              className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-neutral-700 transition-all duration-300 transform hover:scale-105"
+              aria-label="Giriş Yap"
             >
               <div className="relative h-6 w-6">
-                <Image
-                  src="/images/favicon.svg"
-                  alt="Giriş Yap"
-                  fill
-                  className="object-contain brightness-0 invert"
+                <div
+                  className="absolute inset-0 bg-yellow-500 dark:bg-blue-400 transition-colors duration-300"
+                  style={{
+                    maskImage: "url(/images/favicon.svg)",
+                    maskSize: "contain",
+                    maskRepeat: "no-repeat",
+                    maskPosition: "center",
+                    WebkitMaskImage: "url(/images/favicon.svg)",
+                    WebkitMaskSize: "contain",
+                    WebkitMaskRepeat: "no-repeat",
+                    WebkitMaskPosition: "center",
+                  }}
                 />
               </div>
             </button>
@@ -251,6 +259,7 @@ const Header: React.FC = () => {
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="text-neutral-dark dark:text-neutral-200 hover:text-primary transition-colors duration-200"
+                aria-label="Menüyü aç"
               >
                 <svg
                   className="h-8 w-8"

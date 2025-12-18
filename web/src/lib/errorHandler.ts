@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 'use client';
 
 /**
@@ -90,10 +91,10 @@ export function logError(error: AppError): void {
     console.group(`%c[${error.severity.toUpperCase()}] ${error.code || 'ERROR'}`, styles[error.severity]);
     console.error(error.message);
     if (error.stack) {
-        console.log(error.stack);
+        console.error(error.stack);
     }
     if (error.context) {
-        console.log('Context:', error.context);
+        console.error('Context:', error.context);
     }
     console.groupEnd();
 }
@@ -121,7 +122,7 @@ export async function reportError(error: AppError): Promise<void> {
         //   body: JSON.stringify(report),
         // });
 
-        console.log('[ErrorReporter] Error reported:', report.error.id);
+        console.debug('[ErrorReporter] Error reported:', report.error.id);
     } catch (e) {
         console.error('[ErrorReporter] Failed to report error:', e);
     }

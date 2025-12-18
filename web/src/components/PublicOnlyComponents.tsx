@@ -1,8 +1,10 @@
 "use client";
 
+import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
-import CookieConsent from './CookieConsent';
-import AccessibilityMenu from './AccessibilityMenu';
+
+const CookieConsent = dynamic(() => import('./CookieConsent'), { ssr: false });
+const AccessibilityMenu = dynamic(() => import('./AccessibilityMenu'), { ssr: false });
 
 /**
  * Components that should only appear on the public website,

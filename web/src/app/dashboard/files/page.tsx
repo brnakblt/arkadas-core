@@ -2,9 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import VirtualizedFileList from '@/components/files/VirtualizedFileList';
+interface FileItem {
+    id: string;
+    name: string;
+    mimeType?: string;
+    size: number;
+    isDirectory: boolean;
+    updatedAt: string;
+}
 
 export default function FilesPage() {
-    const [files, setFiles] = useState<any[]>([]);
+    const [files, setFiles] = useState<FileItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentPath, setCurrentPath] = useState('/');
 
@@ -30,11 +38,11 @@ export default function FilesPage() {
         }
     };
 
-    const handleFileClick = (file: any) => {
+    const handleFileClick = (file: FileItem) => {
         if (file.isDirectory) {
             setCurrentPath((prev) => (prev === '/' ? `/${file.name}` : `${prev}/${file.name}`));
         } else {
-            console.log('Open file:', file.name);
+            // console.log('Open file:', file.name);
         }
     };
 

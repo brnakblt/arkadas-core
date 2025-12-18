@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Arkadaş Push Notification Service
  * 
@@ -198,7 +199,7 @@ export const pushNotificationService = {
             existingSubscriptions.push(newSubscription);
             subscriptionStore.set(userId, existingSubscriptions);
 
-            console.log(`Push subscription added for user: ${userId}`);
+            console.debug(`Push subscription added for user: ${userId}`);
             return true;
         } catch (error) {
             console.error('Failed to add push subscription:', error);
@@ -226,7 +227,7 @@ export const pushNotificationService = {
                 }
             }
 
-            console.log(`Push subscription removed for user: ${userId}`);
+            console.debug(`Push subscription removed for user: ${userId}`);
             return true;
         } catch (error) {
             console.error('Failed to remove push subscription:', error);
@@ -245,7 +246,7 @@ export const pushNotificationService = {
         const subscriptions = subscriptionStore.get(userId);
 
         if (!subscriptions || subscriptions.length === 0) {
-            console.log(`No push subscriptions for user: ${userId}`);
+            console.debug(`No push subscriptions for user: ${userId}`);
             return { success: false, sent: 0, failed: 0 };
         }
 
@@ -348,7 +349,7 @@ export const pushNotificationService = {
         // await webpush.sendNotification(subscription, JSON.stringify(payload));
 
         // For now, simulate the push
-        console.log(`Push notification sent to ${subscription.endpoint}:`, payload.title);
+        console.debug(`Push notification sent to ${subscription.endpoint}:`, payload.title);
 
         // Simulate network delay
         await new Promise((resolve) => setTimeout(resolve, 50));

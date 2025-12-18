@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, ReactNode, useCallback } from 'react';
+import Image from 'next/image';
 
 interface SliderProps {
     children: ReactNode[];
@@ -154,8 +155,8 @@ export default function Slider({
                             key={index}
                             onClick={() => goToSlide(index)}
                             className={`transition-all duration-300 rounded-full ${index === currentIndex
-                                    ? 'w-8 h-3 bg-white shadow-lg'
-                                    : 'w-3 h-3 bg-white/50 hover:bg-white/75'
+                                ? 'w-8 h-3 bg-white shadow-lg'
+                                : 'w-3 h-3 bg-white/50 hover:bg-white/75'
                                 }`}
                             aria-label={`Slayt ${index + 1}`}
                             aria-current={index === currentIndex ? 'true' : 'false'}
@@ -193,10 +194,12 @@ export function HeroSlider({
         <Slider className={`aspect-[21/9] ${className}`} autoPlayInterval={6000}>
             {slides.map((slide, index) => (
                 <div key={index} className="relative w-full h-full">
-                    <img
+                    <Image
                         src={slide.image}
+                        unoptimized // Bypass Next.js local image optimization blocking
                         alt={slide.title}
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
                         <div className="px-8 md:px-16 max-w-2xl">

@@ -12,6 +12,7 @@
  * 7 - Error has occurred while force saving
  */
 
+/* eslint-disable no-console */
 import { NextRequest, NextResponse } from 'next/server';
 import { createNextcloudClient, uploadFile } from '@/lib/nextcloud';
 
@@ -34,25 +35,25 @@ export async function POST(request: NextRequest) {
     try {
         const body: OnlyOfficeCallback = await request.json();
 
-        console.log('OnlyOffice callback received:', JSON.stringify(body, null, 2));
+        console.debug('OnlyOffice callback received:', JSON.stringify(body, null, 2));
 
         const { key, status, url } = body;
 
         switch (status) {
             case 0:
                 // Document not found
-                console.log(`Document with key ${key} not found`);
+                console.debug(`Document with key ${key} not found`);
                 break;
 
             case 1:
                 // Document is being edited
-                console.log(`Document ${key} is being edited`);
+                console.debug(`Document ${key} is being edited`);
                 break;
 
             case 2:
                 // Document is ready for saving
                 if (url) {
-                    console.log(`Saving document ${key} from URL: ${url}`);
+                    console.debug(`Saving document ${key} from URL: ${url}`);
 
                     // Get file path from key (stored when editor was opened)
                     const filePath = documentKeyMap.get(key);
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
                             const client = createNextcloudClient();
                             await uploadFile(client, filePath, docBuffer, { overwrite: true });
 
-                            console.log(`Document saved to Nextcloud: ${filePath}`);
+                            console.debug(`Document saved to Nextcloud: ${filePath}`);
 
                             // Clean up key mapping
                             documentKeyMap.delete(key);
@@ -92,13 +93,13 @@ export async function POST(request: NextRequest) {
 
             case 4:
                 // Document closed without changes
-                console.log(`Document ${key} closed without changes`);
+                console.debug(`Document ${key} closed without changes`);
                 documentKeyMap.delete(key);
                 break;
 
             case 6:
                 // Document being edited, save in progress
-                console.log(`Document ${key} save in progress`);
+                console.debug(`Document ${key} save in progress`);
                 break;
 
             case 7:
@@ -107,7 +108,7 @@ export async function POST(request: NextRequest) {
                 break;
 
             default:
-                console.log(`Unknown callback status: ${status}`);
+                console.warn(`Unknown callback status: ${status}`);
         }
 
         // OnlyOffice expects { error: 0 } for success

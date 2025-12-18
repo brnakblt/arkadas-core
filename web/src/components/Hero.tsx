@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { HeroData, contentService } from "@/services/contentService";
 
@@ -13,11 +13,11 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
 
   const images = data.images?.map(img => contentService.getStrapiUrl(img.url)) || [];
 
-  const nextImage = () => {
+  const nextImage = useCallback(() => {
     setCurrentImageIndex((prevIndex) =>
       prevIndex === images.length - 1 ? 0 : prevIndex + 1
     );
-  };
+  }, [images.length]);
 
   const prevImage = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -29,7 +29,7 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
     if (images.length === 0) return;
     const interval = setInterval(nextImage, 5000);
     return () => clearInterval(interval);
-  }, [currentImageIndex, images.length]);
+  }, [nextImage, images.length]);
 
   if (!data) return null;
 
@@ -45,8 +45,10 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
           <Image
             key={src}
             src={src}
+            unoptimized // Re-enabled to fix 400 Error
             alt={`Slide ${index + 1}`}
             fill
+            sizes="100vw"
             className={`object-cover transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"
               }`}
             priority={index === 0}
@@ -58,6 +60,7 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
       <button
         onClick={prevImage}
         className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white/50 hover:bg-white/80 text-primary p-2 rounded-full z-20"
+        aria-label="Önceki Slayt"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -66,6 +69,7 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
       <button
         onClick={nextImage}
         className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white/50 hover:bg-white/80 text-primary p-2 rounded-full z-20"
+        aria-label="Sonraki Slayt"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -78,8 +82,9 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
           <button
             key={index}
             onClick={() => setCurrentImageIndex(index)}
-            className={`w-3 h-3 rounded-full ${index === currentImageIndex ? "bg-white" : "bg-white/50"
+            className={`w-3 h-3 rounded-full border-[6px] border-transparent bg-clip-padding box-content ${index === currentImageIndex ? "bg-white" : "bg-white/50"
               }`}
+            aria-label={`Slayt ${index + 1}`}
           ></button>
         ))}
       </div>

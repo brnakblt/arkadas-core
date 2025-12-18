@@ -3,6 +3,7 @@
  * Receives incoming messages and status updates from WhatsApp
  */
 
+/* eslint-disable no-console */
 import { NextRequest, NextResponse } from 'next/server';
 
 const WEBHOOK_VERIFY_TOKEN = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN || 'arkadas_verify_token';
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
     const challenge = searchParams.get('hub.challenge');
 
     if (mode === 'subscribe' && token === WEBHOOK_VERIFY_TOKEN) {
-        console.log('WhatsApp webhook verified');
+        console.debug('WhatsApp webhook verified');
         return new NextResponse(challenge, { status: 200 });
     }
 
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
 
         // Log the webhook payload
-        console.log('WhatsApp webhook received:', JSON.stringify(body, null, 2));
+        console.debug('WhatsApp webhook received:', JSON.stringify(body, null, 2));
 
         const entry = body.entry?.[0];
         const changes = entry?.changes?.[0];
@@ -73,8 +74,8 @@ interface MessageMetadata {
     display_phone_number: string;
 }
 
-async function handleIncomingMessage(message: IncomingMessage, metadata: MessageMetadata) {
-    console.log(`New message from ${message.from}: ${message.text?.body || '[media]'}`);
+async function handleIncomingMessage(message: IncomingMessage, _metadata: MessageMetadata) {
+    console.debug(`New message from ${message.from}: ${message.text?.body || '[media]'}`);
 
     // TODO: Store message in database and/or forward to Nextcloud Talk
     // For now, just log it
@@ -92,7 +93,7 @@ interface StatusUpdate {
 }
 
 async function handleStatusUpdate(status: StatusUpdate) {
-    console.log(`Message ${status.id} status: ${status.status}`);
+    console.debug(`Message ${status.id} status: ${status.status}`);
 
     if (status.status === 'failed' && status.errors) {
         console.error('Message delivery failed:', status.errors);

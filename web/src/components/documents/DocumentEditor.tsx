@@ -73,7 +73,7 @@ const DocumentEditorWrapper: React.FC<DocumentEditorProps> = ({
     }, [fileId, mode]);
 
     const handleDocumentReady = () => {
-        console.log('Document is ready for editing');
+        // console.log('Document is ready for editing');
     };
 
     const handleLoadComponentError = (errorCode: number, errorDescription: string) => {

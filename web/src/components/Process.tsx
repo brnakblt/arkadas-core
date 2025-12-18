@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef } from 'react';
 import { ProcessData } from '@/services/contentService';
 import { Swiper, SwiperSlide } from 'swiper/react';

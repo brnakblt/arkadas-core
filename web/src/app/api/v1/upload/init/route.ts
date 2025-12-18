@@ -8,7 +8,7 @@ import crypto from 'crypto';
 
 export async function POST(request: NextRequest) {
     try {
-        const { filename, size, mimeType, parentId } = await request.json();
+        const { filename: _filename, size, mimeType: _mimeType, parentId: _parentId } = await request.json();
         const uploadId = crypto.randomUUID();
         const chunkSize = 5 * 1024 * 1024; // 5MB
         const totalChunks = Math.ceil(size / chunkSize);
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
             totalChunks,
             uploadUrl: `/api/v1/upload/${uploadId}`, // Placeholder
         });
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: 'Upload init failed' }, { status: 500 });
     }
 }

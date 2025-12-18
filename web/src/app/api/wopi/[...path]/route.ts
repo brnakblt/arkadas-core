@@ -32,7 +32,7 @@ export async function GET(request: NextRequest, { params }: { params: { path: st
     return NextResponse.json(metadata);
 }
 
-export async function POST(request: NextRequest, { params }: { params: { path: string[] } }) {
+export async function POST(request: NextRequest, { params: _params }: { params: { path: string[] } }) {
     // Handling contents update (PutFile) usually goes to /api/wopi/files/{id}/contents
     // but Next.js catch-all handles it.
 

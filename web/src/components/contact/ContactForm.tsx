@@ -27,7 +27,7 @@ const ContactForm: React.FC = () => {
             if (success) {
                 alert("Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağız.");
             }
-        } catch (error) {
+        } catch {
             alert("Mesaj gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.");
         }
     };
