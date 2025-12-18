@@ -24,9 +24,9 @@ const Logo: React.FC<LogoProps> = ({ className = '', showText = true, size = 'md
       {/* Logo Image */}
       <div className={`${sizeClasses[size]} relative`}>
         <img
-          src="/fotolar/logo kare.PNG"
-          alt="Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi Logo"
-          className="w-full h-full object-contain"
+          src="/images/logo.svg"
+          alt="Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi"
+          className="h-full w-auto object-contain transition-all duration-300"
           loading="eager"
         />
       </div>

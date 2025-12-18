@@ -4,8 +4,8 @@ import SocialLinks from "./SocialLinks";
 const ContactInfo: React.FC = () => {
     return (
         <div className="flex justify-center">
-            <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 w-full max-w-5xl">
-                <h3 className="font-display text-2xl font-bold text-white mb-6 leading-normal pb-1">
+            <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 w-full max-w-5xl shadow-xl dark:shadow-none transition-colors duration-300">
+                <h3 className="font-display text-2xl font-bold text-neutral-dark dark:text-white mb-6 leading-normal pb-1">
                     İletişim Bilgileri
                 </h3>
                 <div className="space-y-6 mb-8">
@@ -26,10 +26,10 @@ const ContactInfo: React.FC = () => {
                             </svg>
                         </div>
                         <div>
-                            <h4 className="font-body font-semibold text-white mb-1">
+                            <h4 className="font-body font-semibold text-neutral-dark dark:text-white mb-1">
                                 E-posta
                             </h4>
-                            <p className="font-body text-white/80">
+                            <p className="font-body text-neutral-dark/80 dark:text-white/80">
                                 cigliarkadasozelegitim@gmail.com
                             </p>
                         </div>
@@ -52,10 +52,10 @@ const ContactInfo: React.FC = () => {
                             </svg>
                         </div>
                         <div>
-                            <h4 className="font-body font-semibold text-white mb-1">
+                            <h4 className="font-body font-semibold text-neutral-dark dark:text-white mb-1">
                                 Telefon
                             </h4>
-                            <p className="font-body text-white/80">+90 506 810 33 21</p>
+                            <p className="font-body text-neutral-dark/80 dark:text-white/80">+90 506 810 33 21</p>
                         </div>
                     </div>
 
@@ -82,10 +82,10 @@ const ContactInfo: React.FC = () => {
                             </svg>
                         </div>
                         <div>
-                            <h4 className="font-body font-semibold text-white mb-1">
+                            <h4 className="font-body font-semibold text-neutral-dark dark:text-white mb-1">
                                 Adres
                             </h4>
-                            <p className="font-body text-white/80">
+                            <p className="font-body text-neutral-dark/80 dark:text-white/80">
                                 Maltepe Mahallesi 8108. Sk. No:9
                                 <br />
                                 35600 Çiğli/İzmir
@@ -117,7 +117,7 @@ const ContactInfo: React.FC = () => {
                             href="https://maps.app.goo.gl/zuUQwm7RvJ14sc2Z9"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-block text-sm font-semibold text-white/90 hover:text-white hover:underline transition-colors"
+                            className="inline-block text-sm font-semibold text-neutral-dark/90 dark:text-white/90 hover:text-primary dark:hover:text-white hover:underline transition-colors"
                             aria-label="Haritayı uygulamada aç"
                         >
                             📍 Haritayı uygulamada aç

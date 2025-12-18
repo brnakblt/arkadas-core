@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, FreeMode } from 'swiper/modules';
+import BezierBackground from "./BezierBackground";
 
 // Import Swiper styles
 import 'swiper/css';
@@ -215,15 +216,18 @@ const Team: React.FC = () => {
   };
 
   return (
-    <section id="team" tabIndex={-1} className="flex flex-col md:min-h-screen md:justify-center py-8 md:py-32 bg-gray-50 focus:outline-none relative overflow-x-clip">
-      <div className="w-full max-w-full lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="team" tabIndex={-1} className="flex flex-col md:min-h-screen md:justify-center py-8 md:py-32 bg-neutral-light focus:outline-none relative overflow-x-clip">
+      <div className="absolute inset-0 z-0 pointer-events-none" style={{ maskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)" }}>
+        <BezierBackground className="h-full w-full opacity-40" />
+      </div>
+      <div className="w-full max-w-full lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark mt-4 mb-6 leading-normal pb-2">
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark dark:text-neutral-100 mt-4 mb-6 leading-normal pb-2">
             <span className="text-gradient inline-block leading-tight pb-2 mr-2">Uzman</span>
             <span className="inline-block leading-tight pb-2">Kadromuz</span>
           </h2>
-          <p className="font-body text-lg text-neutral-dark/80 max-w-3xl mx-auto leading-relaxed">
+          <p className="font-body text-lg text-neutral-dark/80 dark:text-neutral-300 max-w-3xl mx-auto leading-relaxed">
             Alanında uzman ve deneyimli ekibimizle öğrencilerimize en iyi
             eğitimi sunuyoruz.
           </p>

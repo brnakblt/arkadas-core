@@ -28,19 +28,19 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onForgotPassword }) =>
         <form className="space-y-4" onSubmit={handleSubmit}>
             {/* Error/Success Messages */}
             {error && (
-                <div className="p-3 bg-red-50 text-red-500 text-sm rounded-lg">
+                <div className="p-3 bg-red-50 text-red-500 dark:bg-red-900/20 dark:text-red-300 text-sm rounded-lg">
                     {error}
                 </div>
             )}
             {successMessage && (
-                <div className="p-3 bg-green-50 text-green-600 text-sm rounded-lg">
+                <div className="p-3 bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-300 text-sm rounded-lg">
                     {successMessage}
                 </div>
             )}
 
             <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <FontAwesomeIcon icon={faUser} className="text-gray-400 w-4 h-4" />
+                    <FontAwesomeIcon icon={faUser} className="text-gray-400 dark:text-gray-500 w-4 h-4" />
                 </div>
                 <input
                     type="text"
@@ -49,21 +49,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onForgotPassword }) =>
                     onChange={(e) => setIdentifier(e.target.value)}
                     placeholder="E-posta veya Kullanıcı Adı"
                     required
-                    className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none font-body text-neutral-dark placeholder-gray-400"
+                    className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none font-body text-neutral-dark placeholder-gray-400 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-500"
                 />
             </div>
 
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 ml-1">Şifre</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Şifre</label>
                 <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <FontAwesomeIcon icon={faLock} className="text-gray-400" />
+                        <FontAwesomeIcon icon={faLock} className="text-gray-400 dark:text-gray-500" />
                     </div>
                     <input
                         type={showPassword ? "text" : "password"}
                         name="password"
                         placeholder="••••••••"
-                        className="w-full pl-11 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 outline-none text-neutral-dark placeholder-gray-400"
+                        className="w-full pl-11 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 outline-none text-neutral-dark placeholder-gray-400 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-100 dark:placeholder-neutral-500 dark:focus:bg-neutral-900"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required

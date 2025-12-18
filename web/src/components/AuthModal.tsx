@@ -52,24 +52,24 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
             {/* Modal Content */}
             <div
-                className={`relative bg-white rounded-3xl w-full max-w-md p-8 shadow-2xl transform transition-all duration-300 ${isOpen ? "scale-100 translate-y-0" : "scale-95 translate-y-4"
+                className={`relative bg-white dark:bg-surface rounded-3xl w-full max-w-md p-8 shadow-2xl transform transition-all duration-300 ${isOpen ? "scale-100 translate-y-0" : "scale-95 translate-y-4"
                     }`}
             >
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
                 >
                     <FontAwesomeIcon icon={faTimes} className="w-5 h-5" />
                 </button>
 
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <h2 className="font-display text-2xl font-bold text-neutral-dark mb-2 leading-normal pb-1">
+                    <h2 className="font-display text-2xl font-bold text-neutral-dark dark:text-neutral-100 mb-2 leading-normal pb-1">
                         {view === 'login' && "Hoş Geldiniz"}
                         {view === 'forgot-password' && "Şifre Sıfırlama"}
                     </h2>
-                    <p className="font-body text-gray-500 text-sm">
+                    <p className="font-body text-gray-500 dark:text-gray-400 text-sm">
                         {view === 'login' && "Hesabınıza giriş yaparak devam edin"}
                         {view === 'forgot-password' && "E-posta adresinizi girerek şifrenizi sıfırlayın"}
                     </p>

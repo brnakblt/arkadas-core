@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+
 import BezierBackground from "./BezierBackground";
 
 const About: React.FC = () => {
@@ -11,25 +12,28 @@ const About: React.FC = () => {
       className="min-h-screen flex flex-col justify-center py-8 md:py-32 bg-neutral-light relative overflow-x-clip focus:outline-none"
       aria-labelledby="about-heading"
     >
-      <BezierBackground className="top-0 left-0 z-0 h-full" />
+      <div className="absolute inset-0 z-0 pointer-events-none" style={{ maskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)" }}>
+        <BezierBackground className="h-full w-full" />
+      </div>
       {/* Decorative Elements */}
       {/* Decorative Elements */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-accent/20 rounded-full -translate-y-32 -translate-x-1/2 md:-translate-x-32"></div>
       <div className="absolute bottom-0 right-0 w-48 h-96 bg-secondary/10 rounded-l-full translate-y-24 translate-x-0 md:translate-x-12 z-20"></div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      {/* Content Container - Ensure z-10 to stay above background */}
+      <div className="w-full max-w-full lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-32 items-center">
           {/* Content */}
           <div>
             <h2
               id="about-heading"
-              className="font-display text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-neutral-dark mb-6 leading-normal pb-2"
+              className="font-display text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-neutral-dark dark:text-neutral-100 mb-6 leading-normal pb-2"
             >
               <span className="text-gradient block leading-tight pb-2">Arkadaş Özel Eğitim</span>
               <span className="text block whitespace-normal lg:whitespace-nowrap">ve Rehabilitasyon Merkezi</span>
             </h2>
 
-            <p className="font-body text-base md:text-lg text-neutral-dark/80 mb-6 leading-relaxed">
+            <p className="font-body text-base md:text-lg text-neutral-dark/80 dark:text-neutral-300 mb-6 leading-relaxed">
               2009 yılından bu yana özel eğitim alanında hizmet veren
               merkezimiz, özel gereksinimli çocukların eğitim ve rehabilitasyon
               süreçlerinde ailelerin yanında olmaktadır. Uzman kadromuz ve
@@ -37,7 +41,7 @@ const About: React.FC = () => {
               hedefliyoruz.
             </p>
 
-            <p className="font-body text-base md:text-lg text-neutral-dark/80 mb-8 leading-relaxed">
+            <p className="font-body text-base md:text-lg text-neutral-dark/80 dark:text-neutral-300 mb-8 leading-relaxed">
               Bilimsel temelli eğitim yöntemleri, güncel rehabilitasyon
               teknikleri ve aile odaklı yaklaşımımızla çocukların sosyal,
               akademik ve günlük yaşam becerilerini geliştirmelerine destek
@@ -65,7 +69,7 @@ const About: React.FC = () => {
                       />
                     </svg>
                   </div>
-                  <p className="font-body text-base md:text-lg text-neutral-dark/80">{point}</p>
+                  <p className="font-body text-base md:text-lg text-neutral-dark/80 dark:text-neutral-300">{point}</p>
                 </div>
               ))}
             </div>
@@ -100,12 +104,12 @@ const About: React.FC = () => {
 
           {/* Visual Element */}
           <div className="relative">
-            <div className="relative bg-white rounded-3xl p-8 card-shadow">
+            <div className="relative bg-white dark:bg-neutral-800 rounded-3xl p-8 card-shadow transition-colors duration-300">
               {/* Mission Statement */}
               <div className="text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="w-16 h-16 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6">
                   <svg
-                    className="w-8 h-8 text-primary"
+                    className="w-8 h-8 text-primary dark:text-primary-light"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -118,10 +122,10 @@ const About: React.FC = () => {
                     />
                   </svg>
                 </div>
-                <h3 className="font-display text-2xl font-bold text-neutral-dark mb-4 leading-normal pb-1">
+                <h3 className="font-display text-2xl font-bold text-neutral-dark dark:text-white mb-4 leading-normal pb-1">
                   Misyonumuz
                 </h3>
-                <p className="font-body text-neutral-dark/80 leading-relaxed">
+                <p className="font-body text-neutral-dark/80 dark:text-gray-300 leading-relaxed">
                   Her çocuğun eşsiz potansiyelini keşfetmesi, bağımsızlık
                   becerilerini geliştirmesi ve toplumsal yaşama aktif katılımını
                   sağlamak için kaliteli özel eğitim ve rehabilitasyon
@@ -130,7 +134,7 @@ const About: React.FC = () => {
               </div>
 
               {/* Values */}
-              <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-gray-200">
+              <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-gray-200 dark:border-neutral-700">
                 {[
                   { icon: "❤️", label: "Sevgi" },
                   { icon: "🎯", label: "Hedef" },
@@ -138,7 +142,7 @@ const About: React.FC = () => {
                 ].map((value, index) => (
                   <div key={index} className="text-center">
                     <div className="text-2xl mb-2">{value.icon}</div>
-                    <div className="font-body text-sm font-medium text-neutral-dark">
+                    <div className="font-body text-sm font-medium text-neutral-dark dark:text-gray-200">
                       {value.label}
                     </div>
                   </div>
@@ -152,7 +156,7 @@ const About: React.FC = () => {
           </div>
         </div>
       </div>
-    </section>
+    </section >
   );
 };
 

@@ -27,7 +27,7 @@ const FAQ: React.FC<FAQProps> = ({ data }) => {
   return (
     <section
       id="faq"
-      className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5 relative overflow-hidden"
+      className="py-20 bg-neutral-light dark:bg-surface relative overflow-hidden"
       aria-labelledby="faq-heading"
     >
       {/* Background Pattern */}
@@ -60,12 +60,12 @@ const FAQ: React.FC<FAQProps> = ({ data }) => {
         <div className="text-center mb-16">
           <h2
             id="faq-heading"
-            className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark mt-4 mb-6 leading-normal pb-2"
+            className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark dark:text-neutral-100 mt-4 mb-6 leading-normal pb-2"
           >
             Merak Ettikleriniz
             <span className="text-gradient block leading-tight pb-2">Burada</span>
           </h2>
-          <p className="font-body text-lg text-neutral-dark/80 max-w-2xl mx-auto leading-relaxed">
+          <p className="font-body text-lg text-neutral-dark/80 dark:text-neutral-300 max-w-2xl mx-auto leading-relaxed">
             Özel eğitim ve rehabilitasyon hizmetlerimiz hakkında en çok sorulan
             soruların yanıtlarını burada bulabilirsiniz.
           </p>
@@ -76,13 +76,13 @@ const FAQ: React.FC<FAQProps> = ({ data }) => {
           {data.map((faq, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl card-shadow overflow-hidden transition-all duration-300 hover:shadow-xl"
+              className="bg-white dark:bg-neutral-800 rounded-2xl card-shadow overflow-hidden transition-all duration-300 hover:shadow-xl"
             >
               <button
                 onClick={() => toggleFAQ(index)}
-                className="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
+                className="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-gray-50 dark:hover:bg-neutral-700 transition-colors duration-200"
               >
-                <h3 className="font-display text-lg font-semibold text-neutral-dark pr-4 leading-normal pb-1">
+                <h3 className="font-display text-lg font-semibold text-neutral-dark dark:text-neutral-200 pr-4 leading-normal pb-1">
                   {faq.question}
                 </h3>
                 <div
@@ -116,7 +116,7 @@ const FAQ: React.FC<FAQProps> = ({ data }) => {
               >
                 <div className="px-8 pb-6">
                   <div className="border-t border-gray-100 pt-6">
-                    <p className="font-body text-neutral-dark/80 leading-relaxed">
+                    <p className="font-body text-neutral-dark/80 dark:text-neutral-300 leading-relaxed">
                       {faq.answer}
                     </p>
                   </div>
@@ -128,12 +128,12 @@ const FAQ: React.FC<FAQProps> = ({ data }) => {
 
         {/* Contact CTA */}
         <div className="text-center mt-16">
-          <div className="bg-white rounded-3xl p-8 card-shadow">
+          <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 card-shadow">
             <div className="max-w-2xl mx-auto">
-              <h3 className="font-display text-2xl font-bold text-neutral-dark mb-4 leading-normal pb-1">
+              <h3 className="font-display text-2xl font-bold text-neutral-dark dark:text-neutral-100 mb-4 leading-normal pb-1">
                 Başka sorularınız mı var?
               </h3>
-              <p className="font-body text-neutral-dark/80 mb-6">
+              <p className="font-body text-neutral-dark/80 dark:text-neutral-300 mb-6">
                 Uzman ekibimiz tüm sorularınızı yanıtlamak ve size en uygun
                 eğitim programını önermek için burada.
               </p>

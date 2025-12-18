@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import AuthModal from "./AuthModal";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const Header: React.FC = () => {
   const pathname = usePathname();
@@ -141,7 +142,7 @@ const Header: React.FC = () => {
         onClick={() => setIsMobileMenuOpen(false)}
       />
       <header
-        className={`fixed top-0 left-0 right-0 z-[9999] bg-white transition-all duration-300 rounded-b-2xl ${isScrolled ? "shadow-lg" : ""
+        className={`fixed top-0 left-0 right-0 z-[9999] bg-white dark:bg-[color:var(--surface)] transition-all duration-300 rounded-b-2xl ${isScrolled ? "shadow-lg" : ""
           }`}
         role="banner"
       >
@@ -169,8 +170,10 @@ const Header: React.FC = () => {
           </a>
         </div>
 
-        {/* Desktop Auth Button - Absolutely positioned right */}
-        <div className="hidden md:flex absolute top-0 right-0 h-16 items-center pr-4">
+        {/* Desktop Auth & Theme Buttons - Absolutely positioned right */}
+        <div className="hidden md:flex absolute top-0 right-0 h-16 items-center pr-4 space-x-3">
+          <ThemeToggle />
+
           {isDashboard ? (
             <button
               onClick={() => router.push("/")}
@@ -181,7 +184,7 @@ const Header: React.FC = () => {
           ) : (
             <button
               onClick={() => setIsAuthModalOpen(true)}
-              className="w-12 h-12 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary/90 transition-all duration-300 shadow-md hover:shadow-lg"
+              className="w-10 h-10 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary/90 transition-all duration-300 shadow-md hover:shadow-lg"
             >
               <div className="relative h-6 w-6">
                 <Image
@@ -231,7 +234,7 @@ const Header: React.FC = () => {
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className="relative font-body text-sm font-medium text-neutral-dark hover:text-primary transition-colors duration-200 group"
+                  className="relative font-body text-sm font-medium text-neutral-dark dark:text-neutral-200 hover:text-primary transition-colors duration-200 group"
                 >
                   {item.label}
                   <span
@@ -242,14 +245,12 @@ const Header: React.FC = () => {
               ))}
             </nav>
 
-
-
-
-            {/* Mobile menu button */}
-            <div className="md:hidden">
+            {/* Mobile Menu & Theme Button */}
+            <div className="md:hidden flex items-center space-x-4">
+              <ThemeToggle />
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-neutral-dark hover:text-primary transition-colors duration-200"
+                className="text-neutral-dark dark:text-neutral-200 hover:text-primary transition-colors duration-200"
               >
                 <svg
                   className="h-8 w-8"
@@ -278,7 +279,7 @@ const Header: React.FC = () => {
           </div>
           {/* Mobile Navigation */}
           <div
-            className={`md:hidden bg-white border-t border-gray-200 overflow-hidden transition-all duration-500 ease-in-out rounded-b-2xl ${isMobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+            className={`md:hidden bg-white dark:bg-neutral-900 border-t border-gray-200 dark:border-gray-800 overflow-hidden transition-all duration-500 ease-in-out rounded-b-2xl ${isMobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
               }`}
           >
             <div className="px-2 pt-2 pb-3 space-y-1">
@@ -287,11 +288,11 @@ const Header: React.FC = () => {
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
                   className={`flex items-center w-full text-left px-3 py-2 font-body text-base font-medium transition-colors duration-200 ${activeSection === item.id
-                    ? "text-primary bg-primary/5 rounded-lg"
-                    : "text-neutral-dark hover:text-primary hover:bg-gray-50 rounded-lg"
+                    ? "text-primary bg-primary/5 dark:bg-primary/20 rounded-lg"
+                    : "text-neutral-dark dark:text-neutral-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-neutral-800 rounded-lg"
                     }`}
                 >
-                  <span className={`mr-3 ${activeSection === item.id ? "text-primary" : "text-neutral-400 group-hover:text-primary"}`}>
+                  <span className={`mr-3 ${activeSection === item.id ? "text-primary" : "text-neutral-400 dark:text-neutral-500 group-hover:text-primary"}`}>
                     {item.icon}
                   </span>
                   {item.label}

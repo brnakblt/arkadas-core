@@ -23,15 +23,15 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
   if (!data) return null;
 
   return (
-    <section id="gallery" className="py-20 bg-white relative overflow-hidden">
+    <section id="gallery" className="py-20 bg-neutral-light dark:bg-surface relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark mt-4 mb-6 leading-normal pb-2">
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark dark:text-neutral-100 mt-4 mb-6 leading-normal pb-2">
             Merkezimizden
             <span className="text-gradient block leading-tight pb-2">Kareler</span>
           </h2>
-          <p className="font-body text-lg text-neutral-dark/80 max-w-3xl mx-auto leading-relaxed">
+          <p className="font-body text-lg text-neutral-dark/80 dark:text-neutral-300 max-w-3xl mx-auto leading-relaxed">
             Özel eğitim ve rehabilitasyon merkezimizde gerçekleştirdiğimiz
             çalışmalardan ve mutlu anlardan kareler.
           </p>
@@ -45,7 +45,7 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
               onClick={() => setActiveCategory(category)}
               className={`px-6 py-3 rounded-full font-body font-medium transition-all duration-300 ${activeCategory === category
                 ? "bg-primary text-white shadow-lg"
-                : "bg-gray-100 text-neutral-dark hover:bg-gray-200"
+                : "bg-gray-100 dark:bg-neutral-800 text-neutral-dark dark:text-neutral-200 hover:bg-gray-200 dark:hover:bg-neutral-700"
                 }`}
             >
               {category}
@@ -151,7 +151,7 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16">
-          <p className="font-body text-neutral-dark/80 mb-6">
+          <p className="font-body text-neutral-dark/80 dark:text-neutral-300 mb-6">
             Merkezimizi ziyaret etmek ve daha fazla bilgi almak ister misiniz?
           </p>
           <button
