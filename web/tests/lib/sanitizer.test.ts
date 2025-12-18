@@ -2,7 +2,7 @@
  * Sanitizer Unit Tests
  */
 
-import { describe, it, expect, beforeAll, beforeEach, vi, afterEach } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
 import {
     sanitize,
     hasDangerousHTML,
@@ -163,13 +163,13 @@ describe('sanitizer', () => {
         describe('useSanitizedHTML Hook', () => {
             it('should sanitize html via hook', async () => {
                 // Mock React hooks
-                let effectCallback: any;
+                let effectCallback: () => void | (() => void) = () => { };
                 const setSanitized = vi.fn();
 
                 // Use doMock to avoid hoisting and access local variables
                 vi.doMock('react', () => ({
-                    useState: (init: any) => [init, setSanitized],
-                    useEffect: (cb: any) => { effectCallback = cb; },
+                    useState: (init: unknown) => [init, setSanitized],
+                    useEffect: (cb: () => void) => { effectCallback = cb; },
                 }));
 
                 // Re-import to use mocked React

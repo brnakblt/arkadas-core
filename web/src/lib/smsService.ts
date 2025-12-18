@@ -394,8 +394,8 @@ export class SmsService {
      * Mock implementation for testing
      */
     private sendViaMock(to: string, text: string): SmsSendResult {
-        console.log(`[MOCK SMS] To: ${to}`);
-        console.log(`[MOCK SMS] Text: ${text}`);
+        console.warn(`[MOCK SMS] To: ${to}`);
+        console.warn(`[MOCK SMS] Text: ${text}`);
 
         return {
             success: true,

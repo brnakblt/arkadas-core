@@ -1,7 +1,7 @@
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
 
 export interface LoginResponse {
-  jwt: string;
+  jwt?: string;
   user: {
     id: number;
     username: string;
@@ -20,12 +20,12 @@ export interface RegisterData {
   email: string;
   password: string;
   userType?: 'parent' | 'teacher';
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export const authService = {
   async login(identifier: string, password: string): Promise<LoginResponse> {
-    const response = await fetch(`${STRAPI_URL}/api/auth/local`, {
+    const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,18 +38,16 @@ export const authService = {
 
     if (!response.ok) {
       const errorData = await response.json();
-      let errorMessage = errorData.error?.message || "Giriş yapılamadı";
-
-      if (errorMessage === "Invalid identifier or password") {
-        errorMessage = "Kullanıcı adı veya şifre hatalı";
-      } else if (errorMessage.includes("Too many attempts")) {
-        errorMessage = "Çok fazla başarısız deneme. Lütfen daha sonra tekrar deneyin.";
-      }
-
-      throw new Error(errorMessage);
+      throw new Error(errorData.error || "Giriş yapılamadı");
     }
 
     return response.json();
+  },
+
+  async logout(): Promise<void> {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+    });
   },
 
   async forgotPassword(email: string): Promise<void> {
@@ -69,11 +67,10 @@ export const authService = {
     }
   },
 
-  async getMe(token: string) {
-    const response = await fetch(`${STRAPI_URL}/api/users/me?populate=*`, {
+  async getMe() {
+    const response = await fetch("/api/auth/me", {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });

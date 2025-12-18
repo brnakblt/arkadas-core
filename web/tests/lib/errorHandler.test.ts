@@ -83,12 +83,12 @@ describe('errorHandler', () => {
 
         it('should report high severity errors in production', async () => {
             vi.stubEnv('NODE_ENV', 'production');
-            const { handleError, reportError } = await import('@/lib/errorHandler');
+            const { handleError, reportError: _reportError } = await import('@/lib/errorHandler');
 
             // Mock console to catch output
             const consoleSpy = vi.spyOn(console, 'log');
 
-            const error = handleError('Critical Error', { severity: 'critical', report: true });
+            const _error = handleError('Critical Error', { severity: 'critical', report: true });
 
             // We can check if it logged "Error reported"
             // Since reportError is internal mostly, checking console side effect is one way

@@ -11,7 +11,7 @@ interface JobStatus {
     jobId: string;
     status: 'waiting' | 'active' | 'completed' | 'failed' | 'delayed';
     progress?: number;
-    result?: any;
+    result?: unknown;
     error?: string;
 }
 

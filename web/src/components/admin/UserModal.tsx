@@ -95,7 +95,7 @@ export default function UserModal({ user, mode, onClose, onSave }: UserModalProp
         if (mode === 'view') return;
 
         if (validateForm()) {
-            const { confirmPassword, ...userData } = formData;
+            const { confirmPassword: _confirmPassword, ...userData } = formData;
             onSave(userData);
         }
     };

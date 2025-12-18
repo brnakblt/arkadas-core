@@ -127,7 +127,7 @@ export function ActiveRoutesMap({
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        console.log('🗺️ Map widget came into view');
+                        // Map widget came into view
                         setIsVisible(true);
                     }
                 });
@@ -139,13 +139,14 @@ export function ActiveRoutesMap({
             }
         );
 
-        if (mapContainerRef.current) {
-            observer.observe(mapContainerRef.current);
+        const currentContainer = mapContainerRef.current;
+        if (currentContainer) {
+            observer.observe(currentContainer);
         }
 
         return () => {
-            if (mapContainerRef.current) {
-                observer.unobserve(mapContainerRef.current);
+            if (currentContainer) {
+                observer.unobserve(currentContainer);
             }
         };
     }, []);
@@ -155,7 +156,7 @@ export function ActiveRoutesMap({
     // 2. User clicked "Load Map" button
     useEffect(() => {
         if (isVisible && userWantsMap && mapApiKey) {
-            console.log('🚀 Loading Google Maps API...');
+            // Loading Google Maps API...
             setShouldLoadMap(true);
         }
     }, [isVisible, userWantsMap, mapApiKey]);
@@ -249,10 +250,10 @@ export function ActiveRoutesMap({
                                 >
                                     <div
                                         className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${vehicle.status === 'moving'
-                                                ? 'bg-green-500'
-                                                : vehicle.status === 'stopped'
-                                                    ? 'bg-yellow-500'
-                                                    : 'bg-gray-500'
+                                            ? 'bg-green-500'
+                                            : vehicle.status === 'stopped'
+                                                ? 'bg-yellow-500'
+                                                : 'bg-gray-500'
                                             }`}
                                     >
                                         <span className="text-white text-lg">🚐</span>
@@ -322,8 +323,8 @@ export function ActiveRoutesMap({
                                 <div className="flex items-center gap-3">
                                     <div
                                         className={`w-12 h-12 rounded-full flex items-center justify-center ${selectedVehicleData.status === 'moving'
-                                                ? 'bg-green-100 dark:bg-green-900/30'
-                                                : 'bg-yellow-100 dark:bg-yellow-900/30'
+                                            ? 'bg-green-100 dark:bg-green-900/30'
+                                            : 'bg-yellow-100 dark:bg-yellow-900/30'
                                             }`}
                                     >
                                         🚐
@@ -378,10 +379,10 @@ export function ActiveRoutesMap({
                                             <div className="flex items-center gap-2">
                                                 <span
                                                     className={`w-2 h-2 rounded-full ${vehicle.status === 'moving'
-                                                            ? 'bg-green-500'
-                                                            : vehicle.status === 'stopped'
-                                                                ? 'bg-yellow-500'
-                                                                : 'bg-gray-500'
+                                                        ? 'bg-green-500'
+                                                        : vehicle.status === 'stopped'
+                                                            ? 'bg-yellow-500'
+                                                            : 'bg-gray-500'
                                                         }`}
                                                 />
                                                 <span className="font-medium text-gray-800 dark:text-gray-200 text-sm">

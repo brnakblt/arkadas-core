@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import NextImage from 'next/image';
 
 interface OnlyOfficeEditorProps {
     documentUrl: string;
@@ -192,7 +193,14 @@ export function DocumentEmbed({
     if (isImage) {
         return (
             <div className={`rounded-xl overflow-hidden ${className}`}>
-                <img src={url} alt={title} className="max-w-full h-auto" />
+                <NextImage 
+                    src={url} 
+                    alt={title} 
+                    className="max-w-full h-auto" 
+                    width={800} 
+                    height={600} 
+                    unoptimized 
+                />
             </div>
         );
     }

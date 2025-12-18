@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
     userCreateSchema,
-    userUpdateSchema,
     loginSchema,
     contactFormSchema,
     scheduleSchema,

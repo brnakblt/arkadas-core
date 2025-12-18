@@ -4,7 +4,7 @@
  * Unit tests for the push notification service.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { pushNotificationService } from '@/lib/pushNotifications';
 
 describe('PushNotificationService', () => {

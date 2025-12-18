@@ -74,7 +74,7 @@ export async function initMonitoring(config: Partial<MonitoringConfig> = {}): Pr
     const finalConfig = { ...defaultConfig, ...config };
 
     if (!finalConfig.dsn) {
-        console.log('[Monitoring] No DSN configured, running in mock mode');
+        console.warn('[Monitoring] No DSN configured, running in mock mode');
         isInitialized = true;
         return;
     }
@@ -92,7 +92,7 @@ export async function initMonitoring(config: Partial<MonitoringConfig> = {}): Pr
             replaysOnErrorSampleRate: finalConfig.enableReplays ? 1.0 : 0,
         });
 
-        console.log('[Monitoring] Sentry initialized');
+        console.warn('[Monitoring] Sentry initialized');
         isInitialized = true;
     } catch (error) {
         console.warn('[Monitoring] Sentry not available, running in mock mode:', error);
@@ -133,7 +133,7 @@ export async function captureMessage(
     level: 'info' | 'warning' | 'error' = 'info',
     context?: Record<string, unknown>
 ): Promise<void> {
-    console.log(`[Monitoring] ${level.toUpperCase()}: ${message}`, context);
+    console.warn(`[Monitoring] ${level.toUpperCase()}: ${message}`, context);
 
     try {
         const Sentry = await import('@sentry/nextjs');
@@ -198,7 +198,7 @@ export function trackMetric(metric: Omit<PerformanceMetric, 'timestamp'>): void 
         metricsBuffer.shift();
     }
 
-    console.log(`[Monitoring] Metric: ${metric.name} = ${metric.value}${metric.unit}`);
+    console.warn(`[Monitoring] Metric: ${metric.name} = ${metric.value}${metric.unit}`);
 }
 
 /**
@@ -226,14 +226,19 @@ export function trackWebVitals(): void {
     // Use web-vitals library if available
     import('web-vitals')
         .then(({ onCLS, onINP, onLCP, onFCP, onTTFB }) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onCLS((metric: any) => trackMetric({ name: 'CLS', value: metric.value, unit: 'count' }));
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onINP((metric: any) => trackMetric({ name: 'INP', value: metric.value, unit: 'ms' }));
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onLCP((metric: any) => trackMetric({ name: 'LCP', value: metric.value, unit: 'ms' }));
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onFCP((metric: any) => trackMetric({ name: 'FCP', value: metric.value, unit: 'ms' }));
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onTTFB((metric: any) => trackMetric({ name: 'TTFB', value: metric.value, unit: 'ms' }));
         })
         .catch(() => {
-            console.log('[Monitoring] web-vitals not available');
+            console.warn('[Monitoring] web-vitals not available');
         });
 }
 
@@ -268,7 +273,7 @@ export async function addBreadcrumb(
     category: string,
     data?: Record<string, unknown>
 ): Promise<void> {
-    console.log(`[Monitoring] Breadcrumb: [${category}] ${message}`, data);
+    console.warn(`[Monitoring] Breadcrumb: [${category}] ${message}`, data);
 
     try {
         const Sentry = await import('@sentry/nextjs');

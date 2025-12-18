@@ -18,7 +18,6 @@ export function useTTS() {
     const workerRef = useRef<Worker | null>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
     const currentSourceRef = useRef<AudioBufferSourceNode | null>(null);
-    const abortControllerRef = useRef<AbortController | null>(null);
 
     // Stop current audio playback
     const stop = useCallback(() => {
@@ -27,7 +26,7 @@ export function useTTS() {
             try {
                 currentSourceRef.current.stop();
                 currentSourceRef.current.disconnect();
-            } catch (e) {
+            } catch {
                 // Already stopped
             }
             currentSourceRef.current = null;
@@ -43,13 +42,14 @@ export function useTTS() {
                 try {
                     currentSourceRef.current.stop();
                     currentSourceRef.current.disconnect();
-                } catch (e) {
+                } catch {
                     // Already stopped
                 }
             }
 
             if (!audioContextRef.current) {
-                audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+                const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+                audioContextRef.current = new AudioContextClass();
             }
             const audioContext = audioContextRef.current;
 
@@ -79,17 +79,18 @@ export function useTTS() {
             try {
                 currentSourceRef.current.stop();
                 currentSourceRef.current.disconnect();
-            } catch (e) {
+            } catch {
                 // Already stopped
             }
         }
 
         if (!audioContextRef.current) {
-            audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+            const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+            audioContextRef.current = new AudioContextClass();
         }
         const audioContext = audioContextRef.current;
         const buffer = audioContext.createBuffer(1, audioData.length, sampleRate);
-        buffer.copyToChannel(audioData as any, 0);
+        buffer.copyToChannel(audioData, 0);
 
         const source = audioContext.createBufferSource();
         currentSourceRef.current = source;
@@ -147,7 +148,7 @@ export function useTTS() {
             try {
                 currentSourceRef.current.stop();
                 currentSourceRef.current.disconnect();
-            } catch (e) {
+            } catch {
                 // Already stopped
             }
             currentSourceRef.current = null;

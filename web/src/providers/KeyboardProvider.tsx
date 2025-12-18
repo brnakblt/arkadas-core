@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback, createContext, useContext, ReactNode, useState } from 'react';
+import { useEffect, useCallback, createContext, useContext, ReactNode, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface Shortcut {
@@ -39,7 +39,7 @@ export function KeyboardProvider({ children }: { children: ReactNode }) {
     const [showShortcutsPanel, setShowShortcutsPanel] = useState(false);
 
     // Default shortcuts
-    const defaultShortcuts: Shortcut[] = [
+    const defaultShortcuts: Shortcut[] = useMemo(() => [
         {
             key: '/',
             description: 'Arama',
@@ -80,7 +80,7 @@ export function KeyboardProvider({ children }: { children: ReactNode }) {
             description: 'Paneli Kapat',
             action: () => setShowShortcutsPanel(false),
         },
-    ];
+    ], [router]);
 
     const registerShortcut = useCallback((shortcut: Shortcut) => {
         setShortcuts((prev) => [...prev.filter((s) => s.key !== shortcut.key), shortcut]);
@@ -126,7 +126,7 @@ export function KeyboardProvider({ children }: { children: ReactNode }) {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [shortcuts, router]);
+    }, [shortcuts, defaultShortcuts]);
 
     const allDisplayShortcuts = [...defaultShortcuts, ...shortcuts];
 

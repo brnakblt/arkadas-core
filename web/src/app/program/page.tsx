@@ -42,7 +42,7 @@ const MOCK_EVENTS: ScheduleEvent[] = [
 ];
 
 export default function ProgramPage() {
-    const [events, setEvents] = useState<ScheduleEvent[]>(MOCK_EVENTS);
+    const [events] = useState<ScheduleEvent[]>(MOCK_EVENTS);
     const [selectedEvent, setSelectedEvent] = useState<ScheduleEvent | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -89,8 +89,8 @@ export default function ProgramPage() {
                 <ScheduleCalendar
                     events={events}
                     onEventClick={handleEventClick}
-                    onDateClick={(date) => {
-                        console.log('Date clicked:', date);
+                    onDateClick={(_date) => {
+                        // Date click handler
                     }}
                 />
             </div>

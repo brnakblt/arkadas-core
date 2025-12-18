@@ -4,8 +4,8 @@
  * Unit tests for the SMS notification service.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { SmsService } from '@/lib/smsService';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { SmsService, SmsNotificationType } from '@/lib/smsService';
 
 describe('SmsService', () => {
     let smsService: SmsService;
@@ -107,7 +107,7 @@ describe('SmsService', () => {
         it('should fail for invalid template type', async () => {
             const result = await smsService.sendWithTemplate(
                 '5551234567',
-                'invalid_template' as any,
+                'invalid_template' as unknown as SmsNotificationType,
                 {}
             );
             expect(result.success).toBe(false);
@@ -195,7 +195,7 @@ describe('SmsService', () => {
         });
 
         it('should log mock messages', async () => {
-            const consoleSpy = vi.spyOn(console, 'log');
+            const consoleSpy = vi.spyOn(console, 'warn');
             await smsService.send({ to: '5551234567', text: 'Test message' });
 
             expect(consoleSpy).toHaveBeenCalledWith(

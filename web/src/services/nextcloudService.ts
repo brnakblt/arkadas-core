@@ -1,5 +1,3 @@
-import { join } from 'path';
-
 // Types for Nextcloud responses
 export interface NextcloudUser {
     id: string;
@@ -55,9 +53,9 @@ export class NextcloudService {
         this.authHeader = 'Basic ' + Buffer.from(`${username}:${appPassword}`).toString('base64');
     }
 
-    private async fetchOCS<T>(endpoint: string, method: string = 'GET', body?: any): Promise<T> {
+    private async fetchOCS<T>(endpoint: string, method: string = 'GET', body?: Record<string, string | number | boolean>): Promise<T> {
         const url = `${this.baseUrl}/ocs/v2.php${endpoint}`;
-        const headers: HeadersInit = {
+        const headers: Record<string, string> = {
             'Authorization': this.authHeader,
             'OCS-APIRequest': 'true',
             'Accept': 'application/json', // Prefer JSON
@@ -74,10 +72,10 @@ export class NextcloudService {
                 // For standard OCS, form-urlencoded is safest for many endpoints, but let's try to support both or default to URLSearchParams
                 const params = new URLSearchParams();
                 for (const key in body) {
-                    params.append(key, body[key]);
+                    params.append(key, String(body[key]));
                 }
                 options.body = params;
-                (headers as any)['Content-Type'] = 'application/x-www-form-urlencoded';
+                headers['Content-Type'] = 'application/x-www-form-urlencoded';
             }
         }
 
@@ -113,7 +111,7 @@ export class NextcloudService {
      * Create a new user
      */
     async createUser(userid: string, password?: string, email?: string, displayName?: string) {
-        const body: any = { userid };
+        const body: Record<string, string> = { userid };
         if (password) body.password = password;
         if (email) body.email = email;
         if (displayName) body.displayName = displayName;
@@ -133,7 +131,7 @@ export class NextcloudService {
      * shareType: 0 = user, 1 = group, 3 = public link, 4 = email
      */
     async createShare(path: string, shareType: number, shareWith?: string, permissions?: number) {
-        const body: any = {
+        const body: Record<string, string | number> = {
             path,
             shareType,
         };
@@ -186,7 +184,7 @@ export class NextcloudService {
                 'Authorization': this.authHeader,
                 'Content-Type': 'application/octet-stream'
             },
-            body: content as any
+            body: content as unknown as RequestInit['body']
         });
 
         if (!response.ok) {
@@ -203,7 +201,7 @@ export class NextcloudService {
             const base64Part = this.authHeader.split(' ')[1];
             const decoded = Buffer.from(base64Part, 'base64').toString();
             return decoded.split(':')[0];
-        } catch (e) {
+        } catch {
             return 'admin'; // fallback
         }
     }

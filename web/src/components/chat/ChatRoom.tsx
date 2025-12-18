@@ -12,25 +12,9 @@ import {
     faPaperPlane,
     faSpinner,
     faUser,
-    faCheck,
     faCheckDouble,
 } from '@fortawesome/free-solid-svg-icons';
 import useChat from '@/hooks/useChat';
-
-interface Message {
-    id: number;
-    actorDisplayName: string;
-    message: string;
-    timestamp: number;
-    systemMessage: string;
-}
-
-interface Conversation {
-    token: string;
-    displayName: string;
-    unreadMessages: number;
-    lastMessage?: Message;
-}
 
 const ChatRoom: React.FC = () => {
     const [input, setInput] = useState('');
@@ -75,13 +59,6 @@ const ChatRoom: React.FC = () => {
         return new Date(timestamp * 1000).toLocaleTimeString('tr-TR', {
             hour: '2-digit',
             minute: '2-digit',
-        });
-    };
-
-    const formatDate = (timestamp: number): string => {
-        return new Date(timestamp * 1000).toLocaleDateString('tr-TR', {
-            day: '2-digit',
-            month: 'short',
         });
     };
 

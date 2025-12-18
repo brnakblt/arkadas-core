@@ -4,7 +4,7 @@
  * Unit tests for the security middleware and utilities.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
     generateCsrfToken,
     escapeHtml,
@@ -15,7 +15,6 @@ import {
     validateContentType,
     validateOrigin,
     addSecurityHeaders,
-    defaultSecurityHeaders,
     validateCsrfToken,
     csrfMiddleware,
     parseJsonBody,
@@ -388,9 +387,11 @@ describe('Security Utilities', () => {
             const result = await csrfMiddleware(request, async () => null);
 
             expect(result).not.toBeNull();
-            expect(result!.status).toBe(403);
-            const body = await result!.json();
-            expect(body.error.message).toContain('CSRF token bulunamadı');
+            if (result) {
+                expect(result.status).toBe(403);
+                const body = await result.json();
+                expect(body.error.message).toContain('CSRF token bulunamadı');
+            }
         });
 
         it('should return 403 if token mismatch', async () => {
@@ -401,9 +402,11 @@ describe('Security Utilities', () => {
             const result = await csrfMiddleware(request, async () => 'correct');
 
             expect(result).not.toBeNull();
-            expect(result!.status).toBe(403);
-            const body = await result!.json();
-            expect(body.error.message).toContain('Geçersiz CSRF token');
+            if (result) {
+                expect(result.status).toBe(403);
+                const body = await result.json();
+                expect(body.error.message).toContain('Geçersiz CSRF token');
+            }
         });
 
         it('should return null (pass) if token matches', async () => {
@@ -474,7 +477,7 @@ describe('Security Utilities', () => {
             });
 
             const result = await parseJsonBody(request);
-            expect((result.data as any).foo).not.toContain('<script>');
+            expect((result.data as Record<string, string>).foo).not.toContain('<script>');
         });
     });
 });

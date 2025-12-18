@@ -79,8 +79,6 @@ describe('ContactForm', () => {
 
     it('handles KVKK accordion toggle', () => {
         render(<ContactForm />);
-        const kvkkSection = screen.getByText(/Kişisel verilerimin işlenmesi hakkında/).closest('div')?.parentElement;
-        const accordionContent = screen.getByText(/İlgili kanun ve yönetmelikler/).closest('div');
 
         // Initial state is closed (max-h-0) - actually testing logic via click
         // Note: We can't easily test state inside functional component without integration test

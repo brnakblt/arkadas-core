@@ -241,7 +241,7 @@ function TwoFactorVerifyModal({
  * 2FA Setup Component
  */
 export function TwoFactorSetup() {
-    const { isEnabled, setupKey, qrCodeUrl, enableTwoFactor, verifyCode, disableTwoFactor } =
+    const { isEnabled, setupKey, enableTwoFactor, verifyCode, disableTwoFactor } =
         useTwoFactor();
     const [step, setStep] = useState<'idle' | 'setup' | 'verify' | 'disable'>('idle');
     const [code, setCode] = useState('');
@@ -316,7 +316,7 @@ export function TwoFactorSetup() {
                         onClick={() => setStep('disable')}
                         className="text-sm text-red-600 hover:underline"
                     >
-                        2FA'yı Devre Dışı Bırak
+                        2FA&apos;yı Devre Dışı Bırak
                     </button>
                 )}
             </div>
@@ -342,7 +342,7 @@ export function TwoFactorSetup() {
                         onClick={handleSetup}
                         className="w-full px-4 py-2.5 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors"
                     >
-                        2FA'yı Etkinleştir
+                        2FA&apos;yı Etkinleştir
                     </button>
                 </>
             )}

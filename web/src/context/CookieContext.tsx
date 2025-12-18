@@ -37,7 +37,7 @@ export function CookieProvider({ children }: { children: ReactNode }) {
         const savedPreferences = localStorage.getItem("cookiePreferences");
 
         if (savedConsent) {
-            setConsentStatus(savedConsent as any);
+            setConsentStatus(savedConsent as 'pending' | 'accepted' | 'declined' | 'custom');
             if (savedPreferences) {
                 try {
                     setPreferences(JSON.parse(savedPreferences));
@@ -53,7 +53,7 @@ export function CookieProvider({ children }: { children: ReactNode }) {
     const saveToStorage = (prefs: CookiePreferences, status: string) => {
         localStorage.setItem("cookiePreferences", JSON.stringify(prefs));
         localStorage.setItem("cookieConsent", status);
-        setConsentStatus(status as any);
+        setConsentStatus(status as 'pending' | 'accepted' | 'declined' | 'custom');
         setPreferences(prefs);
     };
 

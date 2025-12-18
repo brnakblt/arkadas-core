@@ -17,9 +17,8 @@ import {
 describe('monitoring', () => {
     beforeEach(() => {
         vi.resetModules();
-        vi.spyOn(console, 'log').mockImplementation(() => { });
-        vi.spyOn(console, 'error').mockImplementation(() => { });
         vi.spyOn(console, 'warn').mockImplementation(() => { });
+        vi.spyOn(console, 'error').mockImplementation(() => { });
     });
 
     afterEach(() => {
@@ -57,8 +56,10 @@ describe('monitoring', () => {
             const metrics = getMetrics(10);
             const spanMetric = metrics.find((m) => m.name === 'test_operation');
             expect(spanMetric).toBeDefined();
-            expect(spanMetric!.value).toBeGreaterThan(50); // At least 50ms
-            expect(spanMetric!.unit).toBe('ms');
+            if (spanMetric) {
+                expect(spanMetric.value).toBeGreaterThan(50); // At least 50ms
+                expect(spanMetric.unit).toBe('ms');
+            }
         });
     });
 
@@ -66,7 +67,7 @@ describe('monitoring', () => {
         it('should log breadcrumb', async () => {
             await addBreadcrumb('User clicked button', 'ui', { buttonId: 'submit' });
 
-            expect(console.log).toHaveBeenCalledWith(
+            expect(console.warn).toHaveBeenCalledWith(
                 '[Monitoring] Breadcrumb: [ui] User clicked button',
                 { buttonId: 'submit' }
             );
@@ -91,7 +92,7 @@ describe('monitoring', () => {
         it('should log info message', async () => {
             await captureMessage('Test message', 'info', { extra: 'data' });
 
-            expect(console.log).toHaveBeenCalledWith(
+            expect(console.warn).toHaveBeenCalledWith(
                 '[Monitoring] INFO: Test message',
                 { extra: 'data' }
             );
@@ -100,7 +101,7 @@ describe('monitoring', () => {
         it('should log warning message', async () => {
             await captureMessage('Warning message', 'warning');
 
-            expect(console.log).toHaveBeenCalledWith(
+            expect(console.warn).toHaveBeenCalledWith(
                 '[Monitoring] WARNING: Warning message',
                 undefined
             );
@@ -148,7 +149,14 @@ describe('monitoring', () => {
     });
 
     describe('Sentry Integration', () => {
-        let mockSentry: any;
+        interface SentryMock {
+            init: ReturnType<typeof vi.fn>;
+            captureException: ReturnType<typeof vi.fn>;
+            captureMessage: ReturnType<typeof vi.fn>;
+            setUser: ReturnType<typeof vi.fn>;
+            addBreadcrumb: ReturnType<typeof vi.fn>;
+        }
+        let mockSentry: SentryMock;
 
         beforeEach(() => {
             mockSentry = {
