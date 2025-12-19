@@ -1,0 +1,136 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # Infrastructure Services
+  # ==========================================
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-arkadas_erp}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - arkadas-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    networks:
+      - arkadas-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================
+  # Application Services
+  # ==========================================
+  strapi:
+    build:
+      context: ./strapi
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${POSTGRES_DB:-arkadas_erp}
+      DATABASE_USERNAME: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      HOST: 0.0.0.0
+      PORT: 1337
+      NODE_ENV: ${NODE_ENV:-development}
+      JWT_SECRET: ${JWT_SECRET:-changeme}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET:-changeme}
+      APP_KEYS: ${APP_KEYS:-changeme,changeme}
+      API_TOKEN_SALT: ${API_TOKEN_SALT:-changeme}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT:-changeme}
+    volumes:
+      - ./strapi/public/uploads:/opt/app/public/uploads
+      # Uncomment for development hot-reload
+      # - ./strapi/src:/opt/app/src
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - arkadas-net
+    ports:
+      - "1337:1337"
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      NEXT_PUBLIC_STRAPI_URL: http://strapi:1337 # Internal Docker URL
+      # NEXT_PUBLIC_STRAPI_URL_CLIENT: http://localhost:1337 # External Browser URL (Client-side)
+      NEXT_PUBLIC_AI_SERVICE_URL: http://ai-service:8000
+      NEXT_PUBLIC_MEBBIS_SERVICE_URL: http://mebbis-service:4000
+      NODE_ENV: ${NODE_ENV:-production}
+    networks:
+      - arkadas-net
+    ports:
+      - "3000:3000"
+    depends_on:
+      - strapi
+
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-arkadas_erp}
+      STRAPI_URL: http://strapi:1337
+      HOST: 0.0.0.0
+      PORT: 8000
+    volumes:
+      - ./ai-service/data:/app/data
+    networks:
+      - arkadas-net
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - strapi
+
+  mebbis-service:
+    build:
+      context: ./mebbis-service
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      STRAPI_URL: http://strapi:1337
+      REDIS_URL: redis://redis:6379
+      PORT: 4000
+      MEBBIS_USERNAME: ${MEBBIS_USERNAME}
+      MEBBIS_PASSWORD: ${MEBBIS_PASSWORD}
+    networks:
+      - arkadas-net
+    ports:
+      - "4000:4000"
+    depends_on:
+      - strapi
+      - redis
+
+networks:
+  arkadas-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

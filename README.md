@@ -138,11 +138,7 @@
 <summary><b>Windows (PowerShell)</b></summary>
 
 ```powershell
-# ExecutionPolicy ayarla
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-
-# Kurulum scriptini çalıştır
-.\setup_windows.ps1
+docker compose up -d
 ```
 
 </details>
@@ -151,8 +147,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 <summary><b>Linux / macOS</b></summary>
 
 ```bash
-chmod +x setup_project.sh
-./setup_project.sh
+docker compose up -d
 ```
 
 </details>
@@ -173,21 +168,11 @@ sudo ./setup_arch.sh
 git clone https://github.com/brnakblt/arkadasozelegitim.git
 cd arkadasozelegitim
 
-# 2. Node.js 22 kur (NVM ile)
-nvm install 22 && nvm use 22
+# 2. Docker ile tüm servisleri başlat
+docker compose up -d
 
-# 3. Tüm bağımlılıkları yükle
-npm run install:all
-
-# 4. AI servisi için Python ortamı
-npm run install:ai
-
-# 5. Ortam değişkenlerini kopyala
-cp strapi/.env.example strapi/.env
-cp web/.env.example web/.env.local
-
-# 6. Geliştirme sunucusunu başlat
-npm run dev
+# 3. Servislerin durumunu kotrol et
+docker ps
 ```
 
 ---
@@ -237,17 +222,18 @@ arkadasozelegitim/
 ### Geliştirme Modu
 
 ```bash
-# Tüm servisleri başlat
-npm run dev
+# Hot Reloading ile geliştirme modunda başlat
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
-# Veya ayrı ayrı:
-npm run dev:strapi   # Backend API     → localhost:1337
-npm run dev:web      # Frontend        → localhost:3000
-npm run dev:ai       # AI Service      → localhost:8000
-npm run dev:mebbis   # MEBBIS Service  → localhost:4000
-npm run dev:mobile   # Mobile          → Expo Go
-npm run dev:docker   # Infrastructure  → Nextcloud, etc.
+# Logları izle
+docker compose logs -f
 ```
+
+### Hot Reloading Özellikleri
+- **Web**: `./web` klasöründeki değişiklikler anında yansır.
+- **AI Service**: `./ai-service` kod değişikliklerinde sunucu otomatik yeniden başlar.
+- **Mebbis Service**: `ts-node` ile watch modunda çalışır.
+- **Strapi**: Development modunda çalışır.
 
 ### Servis Adresleri
 

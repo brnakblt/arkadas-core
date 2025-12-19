@@ -18,9 +18,8 @@ export default ({ env }) => ({
   upload: {
     config: {
       provider: 'local',
-      providerOptions: {
-        sizeLimit: 100000,
-      },
+      sizeLimit: 100000,
+      providerOptions: {},
       security: {
         actions: {
           coopPolicy: 'same-origin',

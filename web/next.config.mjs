@@ -1,8 +1,8 @@
 // @ts-nocheck
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Use static export for desktop builds (Tauri), otherwise default (SSR)
-  output: process.env.APP_ENV === 'desktop' ? 'export' : undefined,
+  // Use static export for desktop builds (Tauri), otherwise standalone (Docker) or default (SSR)
+  output: process.env.APP_ENV === 'desktop' ? 'export' : 'standalone',
   typescript: {
     // React 19 + Next.js 16 type compatibility
     ignoreBuildErrors: true,

@@ -1,0 +1,15 @@
+# Global .dockerignore
+node_modules
+.git
+.env
+.env.local
+.tmp
+dist
+build
+coverage
+*.log
+.DS_Store
+nanobanana-output
+venv
+__pycache__
+*.pyc

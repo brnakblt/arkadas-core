@@ -68,7 +68,9 @@ export interface SharedSeo extends Struct.ComponentSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 60;
       }>;
-    shareImage: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    shareImage: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios'
+    >;
     structuredData: Schema.Attribute.JSON;
   };
 }
