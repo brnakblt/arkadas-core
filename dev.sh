@@ -15,18 +15,18 @@ COMMAND=${1:-up}
 case $COMMAND in
   up)
     echo "Starting development environment..."
-    $DOCKER_COMPOSE_CMD up
+    $DOCKER_COMPOSE_CMD -f docker-compose.yml -f docker-compose.dev.yml up -d --build
     ;;
   down)
     echo "Stopping environment..."
-    $DOCKER_COMPOSE_CMD down
+    $DOCKER_COMPOSE_CMD -f docker-compose.yml -f docker-compose.dev.yml down
     ;;
   build)
     echo "Rebuilding images..."
-    $DOCKER_COMPOSE_CMD build
+    $DOCKER_COMPOSE_CMD -f docker-compose.yml -f docker-compose.dev.yml build
     ;;
   logs)
-    $DOCKER_COMPOSE_CMD logs -f
+    $DOCKER_COMPOSE_CMD -f docker-compose.yml -f docker-compose.dev.yml logs -f
     ;;
   help|*)
     echo "Usage: ./dev.sh [up|down|build|logs]"

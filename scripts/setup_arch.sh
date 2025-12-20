@@ -242,7 +242,7 @@ echo "Starting development servers..."
 
 # Start infrastructure
 echo "Starting Docker containers..."
-docker compose -f infrastructure/docker-compose.yml up -d
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 # Navigate to project
 cd /opt/arkadas-erp || exit

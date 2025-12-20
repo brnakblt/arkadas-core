@@ -9,7 +9,8 @@ services:
       - ./web:/app
       - /app/node_modules
       - /app/.next
-    command: sh -c "npm install && npm run dev"
+    # command: sh -c "ls -la /app && ls -la /app/src && ls -la /app/src/app && npm install --ignore-scripts && npm run dev"
+    command: sh -c "npm install --ignore-scripts && npm run dev"
     environment:
       - NODE_ENV=development
 

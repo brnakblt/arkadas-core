@@ -109,10 +109,10 @@
                 │                                  │
                 ▼                                  ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                       INFRASTRUCTURE                             │
+│                       PERSISTENCE LAYER                          │
 ├──────────────┬───────────────┬───────────────┬──────────────────┤
-│  PostgreSQL  │   Nextcloud   │   OnlyOffice  │      Redis       │
-│    :5432     │     :8080     │     :8088     │      :6379       │
+│  PostgreSQL  │   MariaDB     │   OnlyOffice  │      Redis       │
+│    :5432     │    :3306      │     :8081     │      :6379       │
 └──────────────┴───────────────┴───────────────┴──────────────────┘
 ```
 
@@ -156,7 +156,7 @@ docker compose up -d
 <summary><b>Arch Linux (Tam Kurulum)</b></summary>
 
 ```bash
-sudo ./setup_arch.sh
+sudo ./scripts/setup_arch.sh
 ```
 
 </details>
@@ -211,8 +211,14 @@ arkadasozelegitim/
 │   ├── run-tests.ps1
 │   └── run-tests.sh
 │
-└── 📂 infrastructure/      # Docker Compose
-    └── docker-compose.yml
+├── 📂 databases/           # Local Database Persistence
+│   ├── postgres/
+│   ├── mariadb/
+│   ├── nextcloud/
+│   └── ...
+│
+└── docker-compose.yml      # Main Docker Compose
+└── docker-compose.dev.yml  # Development Overrides
 ```
 
 ---
@@ -222,11 +228,14 @@ arkadasozelegitim/
 ### Geliştirme Modu
 
 ```bash
-# Hot Reloading ile geliştirme modunda başlat
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+# Hot Reloading ile geliştirme modunda başlat (Otomatik script)
+./dev.sh up
+
+# Veya manuel olarak:
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 
 # Logları izle
-docker compose logs -f
+./dev.sh logs
 ```
 
 ### Hot Reloading Özellikleri
@@ -317,7 +326,7 @@ Detaylı deployment rehberi için: [docs/docs/deployment/index.md](./docs/docs/d
 npm run build
 
 # Docker ile deployment
-docker-compose -f infrastructure/docker-compose.yml up -d
+docker compose -f docker-compose.yml up -d
 
 # PM2 ile Strapi
 cd strapi && pm2 start npm --name "strapi" -- start
