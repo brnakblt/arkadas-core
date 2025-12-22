@@ -117,10 +117,30 @@ const ContactInfo: React.FC = () => {
                             href="https://maps.app.goo.gl/zuUQwm7RvJ14sc2Z9"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-block text-sm font-semibold text-neutral-dark/90 dark:text-white/90 hover:text-primary dark:hover:text-white hover:underline transition-colors"
+                            className="inline-flex items-center text-sm font-semibold text-neutral-dark/90 dark:text-white/90 hover:text-primary dark:hover:text-white hover:underline transition-colors"
                             aria-label="Haritayı uygulamada aç"
                         >
-                            📍 Haritayı uygulamada aç
+                            <svg
+                                className="w-4 h-4 mr-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                />
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                            </svg>
+                            Haritayı uygulamada aç
                         </a>
                     </div>
                 </div>

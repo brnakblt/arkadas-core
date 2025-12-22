@@ -26,6 +26,7 @@ import {
     CreateFaturaSchema,
 } from '../types';
 import { logger } from '../utils/logger';
+import { getTenantCredentials } from '../utils/tenant';
 
 // Redis connection for job queue
 const redisConnection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', {
@@ -80,9 +81,26 @@ router.get('/health', (_req: Request, res: Response) => {
 router.post('/sync/students', asyncHandler(async (req: Request, res: Response) => {
     logger.info('Received student sync request');
 
+    const { tenantId, userId } = req.body;
+
+    if (!tenantId) {
+        const response: ApiResponse = {
+            success: false,
+            message: 'tenantId gereklidir',
+        };
+        res.status(400).json(response);
+        return;
+    }
+
+    // Verify credentials exist for this tenant
+    // We don't need the actual credentials here, just ensuring the tenant is valid
+    // The worker will fetch credentials again to avoid passing sensitive data in queue
+    await getTenantCredentials(tenantId);
+
     const job = await syncQueue.add('full-sync', {
+        tenantId,
         requestedAt: new Date().toISOString(),
-        requestedBy: req.body.userId || 'system',
+        requestedBy: userId || 'system',
     });
 
     const response: ApiResponse<{ jobId: string }> = {
@@ -100,10 +118,24 @@ router.post('/sync/students', asyncHandler(async (req: Request, res: Response) =
  */
 router.post('/sync/students/:tcKimlikNo', asyncHandler(async (req: Request, res: Response) => {
     const { tcKimlikNo } = req.params;
+    const { tenantId } = req.body;
+
+    if (!tenantId) {
+        const response: ApiResponse = {
+            success: false,
+            message: 'tenantId gereklidir',
+        };
+        res.status(400).json(response);
+        return;
+    }
+
     logger.info(`Syncing student: ${tcKimlikNo}`);
+
+    await getTenantCredentials(tenantId);
 
     const job = await syncQueue.add('sync-single', {
         tcKimlikNo,
+        tenantId,
         requestedAt: new Date().toISOString(),
     });
 
@@ -145,7 +177,16 @@ router.post('/sync/educators', asyncHandler(async (req: Request, res: Response) 
  * Submit education entries to MEBBIS
  */
 router.post('/education/submit', asyncHandler(async (req: Request, res: Response) => {
-    const entries: EgitimBilgiGiris[] = req.body.entries;
+    const { entries, tenantId } = req.body;
+
+    if (!tenantId) {
+        const response: ApiResponse = {
+            success: false,
+            message: 'tenantId gereklidir',
+        };
+        res.status(400).json(response);
+        return;
+    }
 
     if (!Array.isArray(entries) || entries.length === 0) {
         const response: ApiResponse = {
@@ -178,8 +219,11 @@ router.post('/education/submit', asyncHandler(async (req: Request, res: Response
 
     logger.info(`Submitting ${entries.length} education entries`);
 
+    await getTenantCredentials(tenantId);
+
     const job = await educationQueue.add('submit-batch', {
         entries,
+        tenantId,
         stopOnError: req.body.stopOnError || false,
         requestedAt: new Date().toISOString(),
     });
@@ -269,7 +313,16 @@ router.get('/invoices/candidates', asyncHandler(async (req: Request, res: Respon
  * Create invoices for students
  */
 router.post('/invoices/create', asyncHandler(async (req: Request, res: Response) => {
-    const invoices: CreateFaturaRequest[] = req.body.invoices;
+    const { invoices, tenantId } = req.body;
+
+    if (!tenantId) {
+        const response: ApiResponse = {
+            success: false,
+            message: 'tenantId gereklidir',
+        };
+        res.status(400).json(response);
+        return;
+    }
 
     if (!Array.isArray(invoices) || invoices.length === 0) {
         const response: ApiResponse = {
@@ -296,8 +349,11 @@ router.post('/invoices/create', asyncHandler(async (req: Request, res: Response)
 
     logger.info(`Creating ${invoices.length} invoices`);
 
+    await getTenantCredentials(tenantId);
+
     const job = await invoiceQueue.add('create-batch', {
         invoices,
+        tenantId,
         requestedAt: new Date().toISOString(),
     });
 
@@ -400,7 +456,16 @@ router.get('/bep/students', asyncHandler(async (req: Request, res: Response) => 
  * Submit BEP forms to MEBBIS
  */
 router.post('/bep/submit', asyncHandler(async (req: Request, res: Response) => {
-    const { formType, records } = req.body;
+    const { formType, records, tenantId } = req.body;
+
+    if (!tenantId) {
+        const response: ApiResponse = {
+            success: false,
+            message: 'tenantId gereklidir',
+        };
+        res.status(400).json(response);
+        return;
+    }
 
     if (!formType || !records || !Array.isArray(records)) {
         const response: ApiResponse = {
@@ -413,9 +478,12 @@ router.post('/bep/submit', asyncHandler(async (req: Request, res: Response) => {
 
     logger.info(`Submitting ${records.length} BEP forms (${formType})`);
 
+    await getTenantCredentials(tenantId);
+
     const job = await bepQueue.add(`submit-${formType}`, {
         formType,
         records,
+        tenantId,
         requestedAt: new Date().toISOString(),
     });
 

@@ -227,15 +227,35 @@ arkadasozelegitim/
 
 ### Geliştirme Modu
 
+**Önerilen Yöntem (Lite Mod):**
+Sadece temel servisleri (Veritabanları + Strapi + Web) başlatır. RAM tasarrufu sağlar.
 ```bash
-# Hot Reloading ile geliştirme modunda başlat (Otomatik script)
-./dev.sh up
+npm run dev:lite
+```
 
-# Veya manuel olarak:
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+**Diğer Seçenekler:**
+```bash
+# Sadece Docker servislerini (Veritabanları) başlat
+npm run dev:docker
 
-# Logları izle
-./dev.sh logs
+# Tüm altyapıyı (Nextcloud, OnlyOffice, AI vb.) başlat
+npm run dev:infra
+
+# Her şeyi başlat (Full Stack)
+npm run dev:docker
+npm run dev
+```
+
+### Docker Profilleri
+Bu projede kaynak yönetimini iyileştirmek için Docker profilleri kullanılmaktadır:
+- **core**: Postgres, Redis (Backend için zorunlu)
+- **apps**: Strapi, Web (Docker içinde çalıştıracaksanız)
+- **features**: AI Service, Mebbis Service (Opsiyonel özellikler)
+- **infra**: Nextcloud, OnlyOffice, n8n (Ağır altyapı servisleri)
+
+Örneğin sadece core servisleri ayağa kaldırmak için:
+```bash
+docker compose --profile core up -d
 ```
 
 ### Hot Reloading Özellikleri

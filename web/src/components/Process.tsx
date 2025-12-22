@@ -11,22 +11,53 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
+import {
+  faUsers,
+  faClipboardList,
+  faBullseye,
+  faUserFriends,
+  faChartLine,
+  faHandshake,
+  faComments,
+  faSearch,
+  faMapMarkedAlt,
+  faBrain,
+  faFileAlt,
+  faRocket,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+
 interface ProcessProps {
   data: ProcessData[];
 }
 
-const iconMap: { [key: string]: string } = {
-  users: '👥',
-  'clipboard-list': '📋',
-  bullseye: '🚀',
-  'user-friends': '👨‍👩‍👧‍👦',
-  'chart-line': '📈',
-  handshake: '🤝',
-  chat: '💬',
-  search: '🔍',
-  map: '🗺️',
-  comments: '💬',
-  brain: '🧠',
+interface IconConfig {
+  icon: IconDefinition;
+  className: string;
+}
+
+const iconMap: { [key: string]: IconConfig } = {
+  // Mapping for literal emojis from seed data
+  '👥': { icon: faUsers, className: "text-blue-500" },
+  '📋': { icon: faClipboardList, className: "text-amber-500" },
+  '🚀': { icon: faRocket, className: "text-red-500" },
+  '👨‍👩‍👧‍👦': { icon: faUserFriends, className: "text-emerald-500" },
+  '📈': { icon: faChartLine, className: "text-violet-500" },
+  '🤝': { icon: faHandshake, className: "text-orange-500" },
+
+  // Existing keys
+  users: { icon: faUsers, className: "text-blue-500" },
+  'clipboard-list': { icon: faClipboardList, className: "text-amber-500" },
+  bullseye: { icon: faBullseye, className: "text-red-500" },
+  'user-friends': { icon: faUserFriends, className: "text-emerald-500" },
+  'chart-line': { icon: faChartLine, className: "text-violet-500" },
+  handshake: { icon: faHandshake, className: "text-orange-500" },
+  chat: { icon: faComments, className: "text-cyan-500" },
+  search: { icon: faSearch, className: "text-indigo-500" },
+  map: { icon: faMapMarkedAlt, className: "text-pink-500" },
+  comments: { icon: faComments, className: "text-cyan-500" },
+  brain: { icon: faBrain, className: "text-rose-500" },
 };
 
 const Process: React.FC<ProcessProps> = ({ data }) => {
@@ -157,8 +188,10 @@ const Process: React.FC<ProcessProps> = ({ data }) => {
                     <span className="font-display font-bold text-white text-lg">{step.number}</span>
                   </div>
                   <div className="flex-1 flex flex-col items-center justify-center w-full mt-6">
-                    <div className="text-4xl mb-4 text-center filter drop-shadow-lg flex justify-center">
-                      <span className="text-5xl">{iconMap[step.icon] || step.icon || '📄'}</span>
+                    <div className={`text-4xl mb-4 text-center filter drop-shadow-lg flex justify-center ${iconMap[step.icon]?.className || 'text-primary'}`}>
+                      <span className="text-5xl">
+                        <FontAwesomeIcon icon={iconMap[step.icon]?.icon || faFileAlt} />
+                      </span>
                     </div>
                     <h3 className="font-display text-lg sm:text-xl font-bold text-neutral-dark dark:text-neutral-100 mb-3 group-hover:text-primary transition-colors duration-300 text-center leading-normal">
                       {step.title}

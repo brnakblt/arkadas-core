@@ -85,6 +85,15 @@ export interface GalleryData {
   image: Image;
 }
 
+export interface AboutData {
+  title: string;
+  blocks: {
+    __component: string;
+    id: number;
+    body?: string;
+  }[];
+}
+
 export const contentService = {
   async getHero(): Promise<StrapiSingleResponse<HeroData>> {
     const params = new URLSearchParams();
@@ -137,6 +146,17 @@ export const contentService = {
       next: { revalidate: 60 },
     });
     if (!response.ok) throw new Error("Failed to fetch gallery data");
+    return response.json();
+  },
+
+  async getAbout(): Promise<StrapiSingleResponse<AboutData>> {
+    const params = new URLSearchParams();
+    params.append("populate[0]", "blocks");
+
+    const response = await fetch(`${STRAPI_URL}/api/about?${params.toString()}`, {
+      next: { revalidate: 60 },
+    });
+    if (!response.ok) throw new Error("Failed to fetch about data");
     return response.json();
   },
 

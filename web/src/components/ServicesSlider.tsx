@@ -8,10 +8,19 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import { faTools } from "@fortawesome/free-solid-svg-icons";
+
+interface IconConfig {
+    icon: IconDefinition;
+    className: string;
+}
+
 interface ServicesSliderProps {
     data: ServiceData[];
     openModal: (service: ServiceData) => void;
-    iconMap: { [key: string]: string };
+    iconMap: { [key: string]: IconConfig };
 }
 
 const ServicesSlider: React.FC<ServicesSliderProps> = ({ data, openModal, iconMap }) => {
@@ -21,8 +30,15 @@ const ServicesSlider: React.FC<ServicesSliderProps> = ({ data, openModal, iconMa
     // If no data, return nothing or a fallback
     if (!data) return null;
 
+    // Duplicate items enough times to ensure smooth looping
+    // Swiper needs significantly more slides than slidesPerView for smooth loop
+    let items = [...data];
+    while (items.length > 0 && items.length < 12) {
+        items = [...items, ...data];
+    }
+
     return (
-        <div className="services-swiper-container relative">
+        <div className="services-swiper-container relative px-4 md:px-16">
             {/* Custom Navigation Buttons */}
             <button
                 ref={prevRef}
@@ -67,8 +83,7 @@ const ServicesSlider: React.FC<ServicesSliderProps> = ({ data, openModal, iconMa
                 modules={[Pagination, Autoplay, Navigation]}
                 spaceBetween={24}
                 slidesPerView={1}
-                // Disable loop if only 1 item to prevent warning
-                loop={data.length > 2}
+                loop={true}
                 navigation={{
                     prevEl: prevRef.current,
                     nextEl: nextRef.current,
@@ -98,10 +113,10 @@ const ServicesSlider: React.FC<ServicesSliderProps> = ({ data, openModal, iconMa
                         spaceBetween: 32,
                     },
                 }}
-                className="!pb-16 !px-4 md:!px-16"
+                className="!pb-16"
             >
-                {data.map((service, index) => (
-                    <SwiperSlide key={index} className="h-auto">
+                {items.map((service, index) => (
+                    <SwiperSlide key={`${index}-${service.slug || index}`} className="h-auto">
                         <div className="h-full flex flex-col bg-white rounded-3xl p-8 card-shadow hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 relative overflow-hidden group border border-gray-100/50">
                             {/* Background Gradient */}
                             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -109,8 +124,8 @@ const ServicesSlider: React.FC<ServicesSliderProps> = ({ data, openModal, iconMa
                             <div className="relative z-10 flex flex-col flex-grow">
                                 {/* Icon */}
                                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:scale-110 transition-all duration-500 shadow-sm group-hover:shadow-md">
-                                    <span className="text-4xl filter drop-shadow-sm">
-                                        {iconMap[service.icon] || service.icon || '🔧'}
+                                    <span className={`text-4xl filter drop-shadow-sm ${iconMap[service.icon]?.className || 'text-primary'} group-hover:text-white transition-colors duration-300`}>
+                                        <FontAwesomeIcon icon={iconMap[service.icon]?.icon || faTools} />
                                     </span>
                                 </div>
 

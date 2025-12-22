@@ -2,8 +2,10 @@
 
 import React from 'react';
 
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+
 interface Service {
-  icon: string;
+  icon: string | IconDefinition;
   title: string;
   description: string;
   features: string[];

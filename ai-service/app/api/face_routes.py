@@ -24,6 +24,7 @@ class FaceEncodeRequest(BaseModel):
     """Request to encode a face from base64 image"""
     image_base64: str
     user_id: str
+    tenant_id: str
 
 
 class FaceEncodeResponse(BaseModel):
@@ -38,6 +39,7 @@ class FaceEncodeResponse(BaseModel):
 class FaceMatchRequest(BaseModel):
     """Request to match a face against database"""
     image_base64: str
+    tenant_id: str
 
 
 class FaceMatchResult(BaseModel):
@@ -59,6 +61,7 @@ class TrainRequest(BaseModel):
     """Request to train model with images"""
     user_id: str
     images_base64: List[str]
+    tenant_id: str
 
 
 class TrainResponse(BaseModel):
@@ -115,6 +118,7 @@ async def encode_face(
         result = await face_service.encode_face(
             image_base64=request.image_base64,
             user_id=request.user_id,
+            tenant_id=request.tenant_id,
         )
         return result
     except ValueError as e:
@@ -169,6 +173,7 @@ async def match_face(request: FaceMatchRequest):
     try:
         result = await face_service.match_face(
             image_base64=request.image_base64,
+            tenant_id=request.tenant_id,
         )
         return result
     except Exception as e:
@@ -214,6 +219,7 @@ async def train_user(
         result = await face_service.train_user(
             user_id=request.user_id,
             images_base64=request.images_base64,
+            tenant_id=request.tenant_id,
         )
         return result
     except ValueError as e:

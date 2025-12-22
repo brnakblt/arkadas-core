@@ -1,10 +1,16 @@
 "use client";
 
 import React from "react";
+import ReactMarkdown from "react-markdown";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart, faBullseye, faHandshake } from "@fortawesome/free-solid-svg-icons";
+import { AboutData } from "@/services/contentService";
 
 import BezierBackground from "./BezierBackground";
 
-const About: React.FC = () => {
+const About: React.FC<{ data?: AboutData }> = ({ data }) => {
+  const content = data?.blocks?.find(b => b.__component === 'shared.rich-text')?.body;
+
   return (
     <section
       id="about"
@@ -29,50 +35,35 @@ const About: React.FC = () => {
               id="about-heading"
               className="font-display text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-neutral-dark dark:text-neutral-100 mb-6 leading-normal pb-2"
             >
-              <span className="text-gradient block leading-tight pb-2">Arkadaş Özel Eğitim</span>
-              <span className="text block whitespace-normal lg:whitespace-nowrap">ve Rehabilitasyon Merkezi</span>
+              <span className="text-gradient block leading-tight pb-2">{data?.title || "Arkadaş Özel Eğitim"}</span>
+              {!data?.title && <span className="text block whitespace-normal lg:whitespace-nowrap">ve Rehabilitasyon Merkezi</span>}
             </h2>
 
-            <p className="font-body text-base md:text-lg text-neutral-dark/80 dark:text-neutral-300 mb-6 leading-relaxed">
-              2009 yılından bu yana özel eğitim alanında hizmet veren
-              merkezimiz, özel gereksinimli çocukların eğitim ve rehabilitasyon
-              süreçlerinde ailelerin yanında olmaktadır. Uzman kadromuz ve
-              bireysel yaklaşımımızla her çocuğun potansiyelini ortaya çıkarmayı
-              hedefliyoruz.
-            </p>
-
-            <p className="font-body text-base md:text-lg text-neutral-dark/80 dark:text-neutral-300 mb-8 leading-relaxed">
-              Bilimsel temelli eğitim yöntemleri, güncel rehabilitasyon
-              teknikleri ve aile odaklı yaklaşımımızla çocukların sosyal,
-              akademik ve günlük yaşam becerilerini geliştirmelerine destek
-              oluyoruz.
-            </p>
-
-            {/* Key Points */}
-            <div className="space-y-4">
-              {[
-                "Bireysel Eğitim Programları (BEP) ile kişiye özel yaklaşım",
-                "Uzman psikolog, özel eğitim öğretmeni ve fizyoterapist kadrosu",
-                "Aile eğitimi ve danışmanlık hizmetleri",
-              ].map((point, index) => (
-                <div key={index} className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1">
-                    <svg
-                      className="w-3 h-3 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <p className="font-body text-base md:text-lg text-neutral-dark/80 dark:text-neutral-300">{point}</p>
-                </div>
-              ))}
-            </div>
+            {content && (
+              <div className="prose prose-lg dark:prose-invert text-neutral-dark/80 dark:text-neutral-300 mb-8 leading-relaxed">
+                <ReactMarkdown
+                  components={{
+                    h2: (props) => <h3 className="text-xl md:text-2xl font-display font-bold text-neutral-dark dark:text-neutral-100 mb-4 mt-6" {...props} />,
+                    h3: (props) => <h4 className="text-lg md:text-xl font-display font-bold text-secondary mb-3 mt-5" {...props} />,
+                    p: (props) => <p className="font-body text-base md:text-lg text-neutral-dark/80 dark:text-neutral-300 mb-4 leading-relaxed" {...props} />,
+                    strong: (props) => <strong className="font-semibold text-neutral-dark dark:text-neutral-100" {...props} />,
+                    ul: (props) => <ul className="space-y-2 mb-6" {...props} />,
+                    li: (props) => (
+                      <li className="flex items-start space-x-3 group" {...props}>
+                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center mt-1.5 group-hover:bg-primary/20 transition-colors duration-300">
+                          <svg className="w-3 h-3 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <span className="flex-1 font-body text-base md:text-lg text-neutral-dark dark:text-neutral-200">{props.children}</span>
+                      </li>
+                    ),
+                  }}
+                >
+                  {content}
+                </ReactMarkdown>
+              </div>
+            )}
 
             <div className="mt-8 flex flex-row gap-3 w-full">
               <button
@@ -133,15 +124,19 @@ const About: React.FC = () => {
                 </p>
               </div>
 
+
+
               {/* Values */}
               <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-gray-200 dark:border-neutral-700">
                 {[
-                  { icon: "❤️", label: "Sevgi" },
-                  { icon: "🎯", label: "Hedef" },
-                  { icon: "🤝", label: "İşbirliği" },
+                  { icon: faHeart, label: "Sevgi", color: "text-red-500" },
+                  { icon: faBullseye, label: "Hedef", color: "text-orange-500" },
+                  { icon: faHandshake, label: "İşbirliği", color: "text-blue-500" },
                 ].map((value, index) => (
                   <div key={index} className="text-center">
-                    <div className="text-2xl mb-2">{value.icon}</div>
+                    <div className={`text-2xl mb-2 ${value.color}`}>
+                      <FontAwesomeIcon icon={value.icon} />
+                    </div>
                     <div className="font-body text-sm font-medium text-neutral-dark dark:text-gray-200">
                       {value.label}
                     </div>

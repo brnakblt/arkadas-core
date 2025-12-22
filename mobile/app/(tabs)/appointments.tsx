@@ -152,9 +152,9 @@ export default function AppointmentsScreen() {
                 <View className="flex-1">
                     <Text className="font-semibold text-gray-800">{item.title}</Text>
                     <View className="flex-row items-center gap-2 mt-1">
-                        <FontAwesomeIcon name="calendar" size={12} color="#6b7280" />
+                        <FontAwesome name="calendar" size={12} color="#6b7280" />
                         <Text className="text-sm text-gray-500">{formatDate(item.date)}</Text>
-                        <FontAwesomeIcon name="clock-o" size={12} color="#6b7280" />
+                        <FontAwesome name="clock-o" size={12} color="#6b7280" />
                         <Text className="text-sm text-gray-500">{item.startTime}</Text>
                     </View>
                     {item.teacher && (
@@ -181,7 +181,7 @@ export default function AppointmentsScreen() {
             <View className="bg-orange-500 px-4 py-4 flex-row items-center justify-between">
                 <Text className="text-white text-xl font-bold">Randevular</Text>
                 <TouchableOpacity onPress={() => setShowModal(true)} className="bg-white/20 px-3 py-2 rounded-lg">
-                    <FontAwesomeIcon name="plus" size={18} color="white" />
+                    <FontAwesome name="plus" size={18} color="white" />
                 </TouchableOpacity>
             </View>
 
@@ -195,7 +195,7 @@ export default function AppointmentsScreen() {
                 ListEmptyComponent={
                     !isLoading ? (
                         <View className="items-center py-12">
-                            <FontAwesomeIcon name="calendar-o" size={48} color="#d1d5db" />
+                            <FontAwesome name="calendar-o" size={48} color="#d1d5db" />
                             <Text className="text-gray-400 mt-3">Henüz randevunuz yok</Text>
                         </View>
                     ) : null
@@ -209,7 +209,7 @@ export default function AppointmentsScreen() {
                         <View className="flex-row items-center justify-between mb-4">
                             <Text className="text-xl font-bold">Yeni Randevu</Text>
                             <TouchableOpacity onPress={() => setShowModal(false)}>
-                                <FontAwesomeIcon name="times" size={24} color="#6b7280" />
+                                <FontAwesome name="times" size={24} color="#6b7280" />
                             </TouchableOpacity>
                         </View>
 

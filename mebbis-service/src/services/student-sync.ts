@@ -29,11 +29,13 @@ export class StudentSyncService {
     private mebbis: MebbisAutomationService;
     private strapiUrl: string;
     private strapiToken: string;
+    private tenantId: number;
 
-    constructor(mebbis: MebbisAutomationService) {
+    constructor(mebbis: MebbisAutomationService, tenantId: number) {
         this.mebbis = mebbis;
         this.strapiUrl = process.env.STRAPI_URL || 'http://localhost:1337';
         this.strapiToken = process.env.STRAPI_API_TOKEN || '';
+        this.tenantId = tenantId;
     }
 
     /**
@@ -312,6 +314,7 @@ export class StudentSyncService {
                 lastName: student.soyad,
                 fatherName: student.babaAdi,
                 registrationDate: student.kayitTarihi,
+                tenant: this.tenantId,
                 // Map additional fields as needed
             };
 
@@ -402,6 +405,38 @@ export class StudentSyncService {
     }
 
     /**
+     * Sync all students (Alias for fullSync)
+     */
+    async syncAllStudents(): Promise<StudentSyncResult> {
+        return this.fullSync();
+    }
+
+    /**
+     * Sync a single student by TC Kimlik No
+     */
+    async syncStudent(tcKimlikNo: string): Promise<boolean> {
+        try {
+            logger.info(`Syncing single student: ${tcKimlikNo}`);
+
+            // Fetch detailed info
+            const details = await this.fetchStudentDetails(tcKimlikNo);
+
+            if (!details) {
+                logger.warn(`Student ${tcKimlikNo} not found in MEBBIS`);
+                return false;
+            }
+
+            // Sync to Strapi
+            const result = await this.upsertStudentInStrapi(details);
+
+            return !!result;
+        } catch (error) {
+            logger.error(`Error syncing student ${tcKimlikNo}:`, error);
+            throw error;
+        }
+    }
+
+    /**
      * Delay helper
      */
     private delay(ms: number): Promise<void> {
@@ -412,6 +447,6 @@ export class StudentSyncService {
 /**
  * Create a Student Sync Service instance
  */
-export function createStudentSyncService(mebbis: MebbisAutomationService): StudentSyncService {
-    return new StudentSyncService(mebbis);
+export function createStudentSyncService(mebbis: MebbisAutomationService, tenantId: number): StudentSyncService {
+    return new StudentSyncService(mebbis, tenantId);
 }

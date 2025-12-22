@@ -16,16 +16,49 @@ interface ServicesProps {
   data: ServiceData[];
 }
 
-interface ServiceModalData extends Omit<ServiceData, 'features'> {
+interface ServiceModalData extends Omit<ServiceData, 'features' | 'icon'> {
   features: string[];
+  icon: IconDefinition | string;
+  iconColor?: string;
 }
 
-const iconMap: { [key: string]: string } = {
-  comments: '💬',
-  brain: '🧠',
-  users: '👥',
-  book: '📖',
-  speech: '🗨️',
+import {
+  faComments,
+  faBrain,
+  faUsers,
+  faBook,
+  faCommentDots,
+  faTools,
+  faClipboardList,
+  faChartLine,
+  faHandshake,
+  faPuzzlePiece,
+  faChild,
+} from "@fortawesome/free-solid-svg-icons";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+
+// ...
+
+interface IconConfig {
+  icon: IconDefinition;
+  className: string;
+}
+
+const iconMap: { [key: string]: IconConfig } = {
+  // Mapping for literal emojis from seed data
+  '💬': { icon: faComments, className: "text-blue-500" },
+  '🧩': { icon: faPuzzlePiece, className: "text-orange-500" },
+  '🤸': { icon: faChild, className: "text-emerald-500" },
+
+  // Existing text-based keys (kept for fallback or future use)
+  comments: { icon: faComments, className: "text-blue-500" },
+  brain: { icon: faBrain, className: "text-pink-500" },
+  users: { icon: faUsers, className: "text-indigo-500" },
+  book: { icon: faBook, className: "text-emerald-500" },
+  speech: { icon: faCommentDots, className: "text-cyan-500" },
+  'clipboard-list': { icon: faClipboardList, className: "text-amber-500" },
+  'chart-line': { icon: faChartLine, className: "text-violet-500" },
+  handshake: { icon: faHandshake, className: "text-orange-500" },
 };
 
 const Services: React.FC<ServicesProps> = ({ data }) => {
@@ -33,9 +66,11 @@ const Services: React.FC<ServicesProps> = ({ data }) => {
   const [selectedService, setSelectedService] = useState<ServiceModalData | null>(null);
 
   const openModal = (service: ServiceData) => {
+    const iconConfig = iconMap[service.icon];
     const modalService = {
       ...service,
-      icon: iconMap[service.icon] || service.icon || '🔧',
+      icon: iconConfig?.icon || faTools,
+      iconColor: iconConfig?.className || "text-primary",
       features: service.features.map((f) => f.text),
     };
     setSelectedService(modalService);

@@ -31,6 +31,8 @@ async function setPublicPermissions(strapi) {
     'api::faq.faq.findOne',
     'api::gallery.gallery.find',
     'api::gallery.gallery.findOne',
+    'api::about.about.find',
+    'api::about.about.findOne',
   ];
 
   for (const permission of permissions) {
@@ -51,6 +53,47 @@ async function setPublicPermissions(strapi) {
     }
   }
   console.log('Public permissions set.');
+}
+
+async function seedAbout(strapi) {
+  // Clear existing
+  try {
+    const existing = await strapi.documents('api::about.about').findMany();
+    if (existing && !Array.isArray(existing)) {
+      await strapi.documents('api::about.about').delete({ documentId: existing.documentId });
+    } else if (Array.isArray(existing)) {
+      for (const item of existing) {
+        await strapi.documents('api::about.about').delete({ documentId: item.documentId });
+      }
+    }
+  } catch (e) {
+    // Ignore
+  }
+
+  await strapi.documents('api::about.about').create({
+    data: {
+      title: 'Hakkımızda',
+      blocks: [
+        {
+          __component: 'shared.rich-text',
+          body: `2009 yılından itibaren **İzmir'de** özel eğitim alanında öncü hizmetler sunan merkezimiz, özel gereksinimli çocukların eğitim ve rehabilitasyon süreçlerinde ailelerin en güvenilir yol arkadaşıdır. Uzman kadromuz ve her çocuğa özel hazırlanan **Bireyselleştirilmiş Eğitim Programlarımız (BEP)** ile her çocuğun içindeki gerçek potansiyeli ortaya çıkarmayı hedefliyoruz.
+
+### Eğitim Modelimiz ve Yaklaşımımız
+
+Eğitim modelimizde; bilimsel temelli eğitim yöntemleri, kanıta dayalı güncel rehabilitasyon teknikleri ve aile odaklı yaklaşımı bir araya getiriyoruz. Çocuklarımızın:
+
+- Sosyal becerileri
+- Akademik başarıları
+- Günlük yaşam becerileri
+
+üzerinde kalıcı gelişim sağlamayı amaçlıyoruz. Otizm, Disleksi, Down Sendromu ve fiziksel gelişim alanlarında gelişimsel takip ve profesyonel destekle, özel çocuklarımızın hayata tam katılımı için yanınızdayız.`
+        }
+      ],
+      publishedAt: new Date(),
+    },
+    status: 'published',
+  });
+  console.log('About seeded.');
 }
 
 async function seedHero(strapi) {
@@ -81,7 +124,7 @@ async function seedHero(strapi) {
     data: {
       title: 'Her Çocuk',
       subtitle: 'Özel ve Değerli',
-      description: 'Özel eğitim ve rehabilitasyon alanında uzman kadromuzla, her çocuğun potansiyelini keşfetmesi ve gelişmesi için bireysel eğitim programları sunuyoruz.',
+      description: '2009’dan beri özel eğitim ve rehabilitasyon alanında uzman kadromuzla hizmet veriyoruz. Bilimsel temelli yöntemlerle özel gereksinimli çocukların sosyal ve akademik gelişimlerini destekliyoruz. Her çocuk için bireysel yaklaşım, aile odaklı çözüm!',
       images: images, // Pass IDs
       stats: [
         { value: '500+', label: 'Başarılı Öğrenci' },
@@ -241,6 +284,7 @@ async function main() {
 
   try {
     await setPublicPermissions(app);
+    await seedAbout(app);
     await seedHero(app);
     await seedServices(app);
     await seedProcesses(app);

@@ -157,6 +157,7 @@ class FaceRecognitionService:
         self,
         image_base64: str,
         user_id: str,
+        tenant_id: str,
     ) -> Dict[str, Any]:
         """
         Encode face from image and store for user
@@ -202,8 +203,13 @@ class FaceRecognitionService:
                 self._encodings_cache[user_id] = []
                 self._user_metadata[user_id] = {
                     "created_at": datetime.now().isoformat(),
+                    "tenant_id": tenant_id,
                 }
             
+            # Enforce tenant consistency - if user exists but has different tenant_id, warn/error?
+            # For now, we update the tenant_id in case it changed (migration scenario)
+            self._user_metadata[user_id]["tenant_id"] = tenant_id
+
             self._encodings_cache[user_id].append(encoding)
             self._user_metadata[user_id]["updated_at"] = datetime.now().isoformat()
             self._user_metadata[user_id]["encoding_count"] = len(self._encodings_cache[user_id])
@@ -230,9 +236,10 @@ class FaceRecognitionService:
     async def match_face(
         self,
         image_base64: str,
+        tenant_id: str,
     ) -> Dict[str, Any]:
         """
-        Match face against all stored encodings
+        Match face against stored encodings for a specific tenant
         """
         if not FACE_RECOGNITION_AVAILABLE:
             return {
@@ -270,13 +277,18 @@ class FaceRecognitionService:
             
             unknown_encoding = face_encodings[0]
             
-            # Compare against all stored encodings
+            # Compare against stored encodings, filtering by tenant_id
             matches = []
             
             for user_id, stored_encodings in self._encodings_cache.items():
                 if not stored_encodings:
                     continue
                 
+                # Check tenant isolation
+                user_tenant = self._user_metadata.get(user_id, {}).get("tenant_id")
+                if user_tenant != tenant_id:
+                    continue
+
                 # Calculate distances to all encodings for this user
                 distances = face_recognition.face_distance(stored_encodings, unknown_encoding)
                 
@@ -316,12 +328,13 @@ class FaceRecognitionService:
         self,
         user_id: str,
         images_base64: List[str],
+        tenant_id: str,
     ) -> Dict[str, Any]:
         """Train with multiple images for a user"""
         processed = 0
         
         for image_base64 in images_base64:
-            result = await self.encode_face(image_base64, user_id)
+            result = await self.encode_face(image_base64, user_id, tenant_id)
             if result["success"]:
                 processed += 1
         

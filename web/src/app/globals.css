@@ -308,8 +308,8 @@ body {
 .swiper-pagination-bullet-active {
   background: #F4A261 !important;
   opacity: 1 !important;
-  width: 24px !important;
-  border-radius: 5px !important;
+  width: 12px !important;
+  border-radius: 50% !important;
 }
 
 /* 

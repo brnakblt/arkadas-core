@@ -55,6 +55,7 @@
     "@types/react": "~19.1.0",
     "@urql/core": "^5.2.0",
     "babel-plugin-module-resolver": "^5.0.2",
+    "babel-plugin-transform-define": "^2.1.4",
     "freeport-async": "^2.0.0",
     "jest": "^29.7.0",
     "jest-expo": "^54.0.16",

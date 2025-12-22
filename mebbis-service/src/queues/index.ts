@@ -2,6 +2,7 @@ import { Queue } from 'bullmq';
 import { Redis } from 'ioredis';
 import './workers'; // Import to start workers
 import './mebbis';  // Import to start workers
+import './domain-workers'; // Import to start tenant-aware workers
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const connection = new Redis(redisUrl, {

@@ -470,12 +470,18 @@ export class MebbisAutomationService {
  */
 export function createMebbisService(config: Partial<MebbisConfig> = {}): MebbisAutomationService {
     const fullConfig: MebbisConfig = {
-        username: process.env.MEBBIS_USERNAME || '',
-        password: process.env.MEBBIS_PASSWORD || '',
-        headless: process.env.HEADLESS !== 'false',
-        timeout: parseInt(process.env.BROWSER_TIMEOUT || '30000', 10),
+        username: config.username || process.env.MEBBIS_USERNAME || '',
+        password: config.password || process.env.MEBBIS_PASSWORD || '',
+        headless: config.headless ?? (process.env.HEADLESS !== 'false'),
+        timeout: config.timeout || parseInt(process.env.BROWSER_TIMEOUT || '30000', 10),
         ...config,
     };
+
+    if (!fullConfig.username || !fullConfig.password) {
+        // We allow empty credentials for initialization, but login() will fail if they are missing.
+        // This is useful for testing connectivity or health checks that don't need login.
+        logger.warn('MebbisService initialized without complete credentials');
+    }
 
     return new MebbisAutomationService(fullConfig);
 }

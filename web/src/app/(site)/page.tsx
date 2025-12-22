@@ -12,18 +12,21 @@ import { contentService } from '@/services/contentService';
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const [hero, services, processes, faq, gallery] = await Promise.all([
+  // Use Promise.allSettled for About to prevent whole page crashing if about is missing?
+  // Or just Promise.all. The seed script guarantees it presumably.
+  const [hero, services, processes, faq, gallery, about] = await Promise.all([
     contentService.getHero(),
     contentService.getServices(),
     contentService.getProcesses(),
     contentService.getFAQs(),
     contentService.getGallery(),
+    contentService.getAbout().catch(() => ({ data: null })), // Handle potential 404 gracefully initially
   ]);
 
   return (
     <>
       <Hero data={hero.data} />
-      <About />
+      <About data={about?.data as any} />
       <Team />
       <Services data={services.data} />
       <Process data={processes.data} />

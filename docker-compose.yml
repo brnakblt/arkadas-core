@@ -5,6 +5,7 @@ services:
   # Infrastructure Services
   # ==========================================
   postgres:
+    profiles: [ core ]
     image: postgres:15-alpine
     restart: always
     environment:
@@ -20,12 +21,13 @@ services:
         limits:
           memory: 1G
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
+    profiles: [ core ]
     image: redis:7-alpine
     restart: always
     command: redis-server --save 60 1 --loglevel warning
@@ -38,12 +40,13 @@ services:
         limits:
           memory: 512M
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
   onlyoffice:
+    profiles: [ infra ]
     image: onlyoffice/documentserver:latest
     restart: always
     ports:
@@ -63,8 +66,8 @@ services:
         limits:
           memory: 2G
 
-
   nextcloud-db:
+    profiles: [ infra ]
     image: mariadb:10.6
     restart: always
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
@@ -83,6 +86,7 @@ services:
           memory: 512M
 
   nextcloud:
+    profiles: [ infra ]
     image: nextcloud
     restart: always
     ports:
@@ -107,6 +111,7 @@ services:
           memory: 1G
 
   n8n:
+    profiles: [ infra ]
     image: n8nio/n8n:latest
     restart: always
     ports:
@@ -133,6 +138,7 @@ services:
   # Application Services
   # ==========================================
   strapi:
+    profiles: [ apps ]
     build:
       context: ./strapi
       dockerfile: Dockerfile
@@ -169,6 +175,7 @@ services:
           memory: 3G
 
   web:
+    profiles: [ apps ]
     build:
       context: ./web
       dockerfile: Dockerfile
@@ -176,8 +183,8 @@ services:
     environment:
       NEXT_PUBLIC_STRAPI_URL: http://strapi:1337 # Internal Docker URL
       # NEXT_PUBLIC_STRAPI_URL_CLIENT: http://localhost:1337 # External Browser URL (Client-side)
-      NEXT_PUBLIC_AI_SERVICE_URL: http://ai-service:8000
-      NEXT_PUBLIC_MEBBIS_SERVICE_URL: http://mebbis-service:4000
+      NEXT_PUBLIC_AI_SERVICE_URL: http://localhost:8000
+      NEXT_PUBLIC_MEBBIS_SERVICE_URL: http://localhost:4000
       NODE_ENV: ${NODE_ENV:-production}
     networks:
       - arkadas-net
@@ -191,6 +198,7 @@ services:
       - strapi
 
   ai-service:
+    profiles: [ features ]
     build:
       context: ./ai-service
       dockerfile: Dockerfile
@@ -211,10 +219,13 @@ services:
         limits:
           memory: 2G
     depends_on:
-      - postgres
-      - strapi
+      postgres:
+        condition: service_healthy
+      strapi:
+        condition: service_started
 
   mebbis-service:
+    profiles: [ features ]
     build:
       context: ./mebbis-service
       dockerfile: Dockerfile
@@ -234,10 +245,11 @@ services:
         limits:
           memory: 1G
     depends_on:
-      - strapi
-      - redis
+      strapi:
+        condition: service_started
+      redis:
+        condition: service_healthy
 
 networks:
   arkadas-net:
     driver: bridge
-

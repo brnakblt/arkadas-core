@@ -222,6 +222,9 @@ pip install dlib
 # Install face-recognition
 pip install face-recognition
 
+# Install face-recognition-models explicitly
+pip install git+https://github.com/ageitgey/face_recognition_models
+
 deactivate
 END_BASH
     

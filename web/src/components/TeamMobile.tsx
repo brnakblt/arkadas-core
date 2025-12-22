@@ -15,6 +15,13 @@ interface TeamMobileProps {
 }
 
 const TeamMobile: React.FC<TeamMobileProps> = ({ members, TeamMemberCard }) => {
+    // Duplicate items enough times to ensure smooth looping
+    // Swiper needs significantly more slides than slidesPerView for smooth loop
+    let items = [...members];
+    while (items.length > 0 && items.length < 6) {
+        items = [...items, ...members];
+    }
+
     return (
         <Swiper
             modules={[Pagination, Autoplay]}
@@ -31,8 +38,8 @@ const TeamMobile: React.FC<TeamMobileProps> = ({ members, TeamMemberCard }) => {
             }}
             className="!pb-16"
         >
-            {members.map((member) => (
-                <SwiperSlide key={member.id} className="h-auto">
+            {items.map((member, index) => (
+                <SwiperSlide key={`${member.id}-${index}`} className="h-auto">
                     <TeamMemberCard member={member} />
                 </SwiperSlide>
             ))}
