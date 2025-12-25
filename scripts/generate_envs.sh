@@ -93,7 +93,7 @@ generate_env_file() {
     sed -i "s/DATABASE_PASSWORD=.*$/DATABASE_PASSWORD=${POSTGRES_PASSWORD}/" "$target_file" || true
     sed -i "s/DATABASE_USERNAME=.*$/DATABASE_USERNAME=postgres/" "$target_file" || true
     sed -i "s/REDIS_PASSWORD=.*$/REDIS_PASSWORD=${REDIS_PASSWORD}/" "$target_file" || true
-    sed -i "s|REDIS_URL=.*$|REDIS_URL=redis://:${REDIS_PASSWORD}@localhost:6379|g" "$target_file" || true
+    sed -i "s|REDIS_URL=.*$|REDIS_URL=redis://localhost:6380|g" "$target_file" || true
     
     sed -i "s/JWT_SECRET=.*$/JWT_SECRET=${JWT_SECRET}/" "$target_file" || true
     sed -i "s/ADMIN_JWT_SECRET=.*$/ADMIN_JWT_SECRET=${ADMIN_JWT_SECRET}/" "$target_file" || true
