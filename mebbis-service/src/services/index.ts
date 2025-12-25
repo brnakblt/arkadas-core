@@ -9,3 +9,5 @@ export { EducationEntryService, createEducationEntryService } from './education-
 export { StudentSyncService, createStudentSyncService } from './student-sync';
 export { InvoiceService, createInvoiceService } from './invoice';
 export { BepService, createBepService } from './bep-service';
+export { WorkPlanService, createWorkPlanService } from './work-plan';
+

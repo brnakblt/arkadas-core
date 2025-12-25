@@ -13,6 +13,7 @@ import {
     createStudentSyncService,
     createInvoiceService,
     createBepService,
+    createWorkPlanService,
 } from '../services';
 import {
     EgitimBilgiGiris,
@@ -38,6 +39,7 @@ const syncQueue = new Queue('student-sync', { connection: redisConnection });
 const educationQueue = new Queue('education-entry', { connection: redisConnection });
 const invoiceQueue = new Queue('invoice', { connection: redisConnection });
 const bepQueue = new Queue('bep', { connection: redisConnection });
+const workPlanQueue = new Queue('work-plan', { connection: redisConnection });
 
 import { authenticateRequest } from '../middleware/auth';
 
@@ -439,6 +441,142 @@ router.post('/bep/submit', asyncHandler(async (req: Request, res: Response) => {
     };
 
     res.status(202).json(response);
+}));
+
+// ============================================================================
+// Work Plan Endpoints (İş Planı)
+// ============================================================================
+
+/**
+ * POST /api/work-plan/sync
+ * Sync work plans to MEBBIS (batch or date range)
+ */
+router.post('/work-plan/sync', asyncHandler(async (req: Request, res: Response) => {
+    const { entries, tenantId, stopOnError } = req.body;
+
+    if (!tenantId) {
+        const response: ApiResponse = {
+            success: false,
+            message: 'tenantId gereklidir',
+        };
+        res.status(400).json(response);
+        return;
+    }
+
+    if (!Array.isArray(entries) || entries.length === 0) {
+        const response: ApiResponse = {
+            success: false,
+            message: 'Aktarılacak iş planı bulunamadı',
+            errors: ['entries array is required'],
+        };
+        res.status(400).json(response);
+        return;
+    }
+
+    logger.info(`Syncing ${entries.length} work plans to MEBBIS`);
+
+    await getTenantCredentials(tenantId);
+
+    const job = await workPlanQueue.add('sync-batch', {
+        entries,
+        tenantId,
+        stopOnError: stopOnError || false,
+        requestedAt: new Date().toISOString(),
+    });
+
+    const response: ApiResponse<{ jobId: string; count: number }> = {
+        success: true,
+        message: `${entries.length} iş planı aktarılmak üzere kuyruğa eklendi`,
+        data: { jobId: job.id || '', count: entries.length },
+    };
+
+    res.status(202).json(response);
+}));
+
+/**
+ * GET /api/work-plan/fetch
+ * Fetch existing work plans from MEBBIS for a date range
+ */
+router.get('/work-plan/fetch', asyncHandler(async (req: Request, res: Response) => {
+    const { startDate, endDate, tenantId } = req.query;
+
+    if (!startDate || !endDate || typeof startDate !== 'string' || typeof endDate !== 'string') {
+        const response: ApiResponse = {
+            success: false,
+            message: 'startDate ve endDate parametreleri gerekli (YYYY-MM-DD formatında)',
+        };
+        res.status(400).json(response);
+        return;
+    }
+
+    if (!tenantId || typeof tenantId !== 'string') {
+        const response: ApiResponse = {
+            success: false,
+            message: 'tenantId parametresi gerekli',
+        };
+        res.status(400).json(response);
+        return;
+    }
+
+    logger.info(`Fetching work plans from MEBBIS: ${startDate} to ${endDate}`);
+
+    const credentials = await getTenantCredentials(tenantId);
+    const mebbis = createMebbisService(credentials);
+    const workPlanService = createWorkPlanService(mebbis);
+
+    try {
+        await mebbis.initialize();
+        await mebbis.login();
+        const plans = await workPlanService.fetchWorkPlans(startDate, endDate);
+
+        const response: ApiResponse<any> = {
+            success: true,
+            data: { plans, count: plans.length },
+        };
+
+        res.json(response);
+    } finally {
+        await mebbis.close();
+    }
+}));
+
+/**
+ * DELETE /api/work-plan/:mebbisId
+ * Delete a work plan from MEBBIS
+ */
+router.delete('/work-plan/:mebbisId', asyncHandler(async (req: Request, res: Response) => {
+    const { mebbisId } = req.params;
+    const { tenantId } = req.body;
+
+    if (!tenantId) {
+        const response: ApiResponse = {
+            success: false,
+            message: 'tenantId gereklidir',
+        };
+        res.status(400).json(response);
+        return;
+    }
+
+    logger.info(`Deleting work plan ${mebbisId} from MEBBIS`);
+
+    const credentials = await getTenantCredentials(tenantId);
+    const mebbis = createMebbisService(credentials);
+    const workPlanService = createWorkPlanService(mebbis);
+
+    try {
+        await mebbis.initialize();
+        await mebbis.login();
+        const deleted = await workPlanService.deleteWorkPlan(mebbisId);
+
+        const response: ApiResponse = {
+            success: deleted,
+            message: deleted ? 'İş planı silindi' : 'Silme işlemi başarısız',
+        };
+
+        res.status(deleted ? 200 : 400).json(response);
+    } finally {
+        await mebbis.close();
+    }
 }));
 
 // ============================================================================
