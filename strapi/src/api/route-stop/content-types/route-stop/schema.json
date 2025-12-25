@@ -39,6 +39,11 @@
             "relation": "manyToOne",
             "target": "api::service-route.service-route",
             "inversedBy": "stops"
+        },
+        "tenant": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::tenant.tenant"
         }
     }
 }

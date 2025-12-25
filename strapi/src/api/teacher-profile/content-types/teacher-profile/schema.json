@@ -38,6 +38,11 @@
             "type": "relation",
             "relation": "oneToOne",
             "target": "plugin::users-permissions.user"
+        },
+        "tenant": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::tenant.tenant"
         }
     }
 }

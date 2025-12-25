@@ -157,6 +157,8 @@ databases/
 
 # Dynamic images (served from Strapi)
 web/public/images/
+web/public/files/
+web/public/icons/
 
 # Custom Ignore
 todo.txt

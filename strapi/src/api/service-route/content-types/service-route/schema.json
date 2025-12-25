@@ -58,6 +58,11 @@
             "type": "relation",
             "relation": "manyToMany",
             "target": "api::student-profile.student-profile"
+        },
+        "tenant": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::tenant.tenant"
         }
     }
 }

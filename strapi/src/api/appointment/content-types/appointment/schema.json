@@ -75,6 +75,11 @@
         "reminderSent": {
             "type": "boolean",
             "default": false
+        },
+        "tenant": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::tenant.tenant"
         }
     }
 }

@@ -51,6 +51,11 @@
             "type": "relation",
             "relation": "manyToOne",
             "target": "api::service-route.service-route"
+        },
+        "tenant": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::tenant.tenant"
         }
     }
 }

@@ -445,6 +445,7 @@ export interface ApiAppointmentAppointment extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<'pending'>;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
     teacher: Schema.Attribute.Relation<'manyToOne', 'api::teacher-profile.teacher-profile'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     type: Schema.Attribute.Enumeration<['in-person', 'online', 'phone']> &
       Schema.Attribute.DefaultTo<'in-person'>;
@@ -516,6 +517,7 @@ export interface ApiAttendanceLogAttendanceLog extends Struct.CollectionTypeSche
     photoUrl: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     recordedAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
@@ -984,6 +986,7 @@ export interface ApiLocationLogLocationLog extends Struct.CollectionTypeSchema {
     source: Schema.Attribute.Enumeration<['gps', 'network', 'manual']> &
       Schema.Attribute.DefaultTo<'gps'>;
     speedKmh: Schema.Attribute.Decimal;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
@@ -1169,6 +1172,7 @@ export interface ApiRouteStopRouteStop extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     route: Schema.Attribute.Relation<'manyToOne', 'api::service-route.service-route'>;
     stopOrder: Schema.Attribute.Integer & Schema.Attribute.Required;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1204,6 +1208,7 @@ export interface ApiScheduleSchedule extends Struct.CollectionTypeSchema {
     startTime: Schema.Attribute.DateTime & Schema.Attribute.Required;
     status: Schema.Attribute.Enumeration<['scheduled', 'cancelled', 'completed']> &
       Schema.Attribute.DefaultTo<'scheduled'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
@@ -1242,6 +1247,7 @@ export interface ApiServiceRouteServiceRoute extends Struct.CollectionTypeSchema
     name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     stops: Schema.Attribute.Relation<'oneToMany', 'api::route-stop.route-stop'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     vehiclePlate: Schema.Attribute.String;
@@ -1394,6 +1400,7 @@ export interface ApiTeacherProfileTeacherProfile extends Struct.CollectionTypeSc
     officeLocation: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     specialization: Schema.Attribute.String;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'oneToOne', 'plugin::users-permissions.user'>;
