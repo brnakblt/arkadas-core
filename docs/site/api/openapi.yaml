@@ -1,0 +1,796 @@
+openapi: 3.0.3
+info:
+  title: Arkadaş Özel Eğitim ERP API
+  description: |
+    Özel eğitim kurumu için kapsamlı ERP sistemi REST API'si.
+    
+    ## Kimlik Doğrulama
+    API, JWT tabanlı kimlik doğrulama kullanır. `/api/auth/local` endpoint'i ile token alınır.
+    
+    ## Rate Limiting
+    - 100 istek/dakika (Standart)
+    - 1000 istek/dakika (Admin)
+    
+    ## Hata Kodları
+    - `400` - Geçersiz istek
+    - `401` - Kimlik doğrulama gerekli
+    - `403` - Yetki yok
+    - `404` - Kaynak bulunamadı
+    - `500` - Sunucu hatası
+  version: 1.0.0
+  contact:
+    name: Arkadaş Özel Eğitim
+    url: https://arkadasozelegitim.com
+servers:
+  - url: http://localhost:1337/api
+    description: Geliştirme sunucusu
+  - url: https://admin.arkadasozelegitim.com/api
+    description: Üretim sunucusu
+
+tags:
+  - name: Auth
+    description: Kimlik doğrulama işlemleri
+  - name: Users
+    description: Kullanıcı yönetimi
+  - name: Students
+    description: Öğrenci profilleri
+  - name: Teachers
+    description: Öğretmen profilleri
+  - name: Attendance
+    description: Yoklama kayıtları
+  - name: Schedules
+    description: Program/Takvim
+  - name: ServiceRoutes
+    description: Servis güzergahları ve GPS takibi
+  - name: Documents
+    description: Nextcloud dosya yönetimi
+
+paths:
+  # ============================================================
+  # AUTH
+  # ============================================================
+  /auth/local:
+    post:
+      tags: [Auth]
+      summary: Kullanıcı girişi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [identifier, password]
+              properties:
+                identifier:
+                  type: string
+                  example: admin@arkadas.com
+                password:
+                  type: string
+                  example: Password123
+      responses:
+        '200':
+          description: Başarılı giriş
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Geçersiz kimlik bilgileri
+
+  /auth/local/register:
+    post:
+      tags: [Auth]
+      summary: Yeni kullanıcı kaydı
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, password]
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 6
+      responses:
+        '200':
+          description: Kayıt başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Mevcut kullanıcı bilgisi
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Kullanıcı bilgisi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  # ============================================================
+  # STUDENTS
+  # ============================================================
+  /student-profiles:
+    get:
+      tags: [Students]
+      summary: Öğrenci listesi
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/pagination'
+        - $ref: '#/components/parameters/sort'
+        - name: filters[isActive][$eq]
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Öğrenci listesi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentProfileList'
+    post:
+      tags: [Students]
+      summary: Yeni öğrenci ekle
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentProfileInput'
+      responses:
+        '200':
+          description: Öğrenci oluşturuldu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentProfile'
+
+  /student-profiles/{id}:
+    get:
+      tags: [Students]
+      summary: Öğrenci detayı
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Öğrenci detayı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentProfile'
+    put:
+      tags: [Students]
+      summary: Öğrenci güncelle
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentProfileInput'
+      responses:
+        '200':
+          description: Güncellendi
+    delete:
+      tags: [Students]
+      summary: Öğrenci sil
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Silindi
+
+  # ============================================================
+  # TEACHERS
+  # ============================================================
+  /teacher-profiles:
+    get:
+      tags: [Teachers]
+      summary: Öğretmen listesi
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/pagination'
+      responses:
+        '200':
+          description: Öğretmen listesi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherProfileList'
+
+  /teacher-profiles/{id}:
+    get:
+      tags: [Teachers]
+      summary: Öğretmen detayı
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Öğretmen detayı
+
+  # ============================================================
+  # ATTENDANCE
+  # ============================================================
+  /attendance-logs:
+    get:
+      tags: [Attendance]
+      summary: Yoklama kayıtları
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/pagination'
+        - name: filters[date][$gte]
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: filters[date][$lte]
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: filters[student][id][$eq]
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Yoklama listesi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceLogList'
+    post:
+      tags: [Attendance]
+      summary: Yoklama kaydı oluştur
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceLogInput'
+      responses:
+        '200':
+          description: Kayıt oluşturuldu
+
+  /attendance-logs/face-recognition:
+    post:
+      tags: [Attendance]
+      summary: Yüz tanıma ile yoklama
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                action:
+                  type: string
+                  enum: [check-in, check-out]
+      responses:
+        '200':
+          description: Yoklama kaydedildi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  student:
+                    $ref: '#/components/schemas/StudentProfile'
+                  confidence:
+                    type: number
+
+  # ============================================================
+  # SCHEDULES
+  # ============================================================
+  /schedules:
+    get:
+      tags: [Schedules]
+      summary: Program listesi
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/pagination'
+        - name: filters[type][$eq]
+          in: query
+          schema:
+            type: string
+            enum: [lesson, therapy, meeting, event]
+        - name: filters[startTime][$gte]
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Program listesi
+    post:
+      tags: [Schedules]
+      summary: Program oluştur
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduleInput'
+      responses:
+        '200':
+          description: Program oluşturuldu
+
+  # ============================================================
+  # SERVICE ROUTES
+  # ============================================================
+  /service-routes:
+    get:
+      tags: [ServiceRoutes]
+      summary: Servis güzergahları
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Güzergah listesi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceRouteList'
+
+  /service-routes/{id}/location:
+    post:
+      tags: [ServiceRoutes]
+      summary: Konum güncelle (GPS)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [latitude, longitude]
+              properties:
+                latitude:
+                  type: number
+                  example: 36.8969
+                longitude:
+                  type: number
+                  example: 30.7133
+                speed:
+                  type: number
+                heading:
+                  type: number
+      responses:
+        '200':
+          description: Konum güncellendi
+
+  /service-routes/{id}/live:
+    get:
+      tags: [ServiceRoutes]
+      summary: Canlı konum (SSE)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Server-Sent Events stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+
+  # ============================================================
+  # DOCUMENTS (Nextcloud)
+  # ============================================================
+  /nextcloud-sync/files:
+    get:
+      tags: [Documents]
+      summary: Kullanıcı dosyaları
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: path
+          in: query
+          schema:
+            type: string
+            default: /
+      responses:
+        '200':
+          description: Dosya listesi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/File'
+
+  /nextcloud-sync/upload:
+    post:
+      tags: [Documents]
+      summary: Dosya yükle
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                path:
+                  type: string
+      responses:
+        '200':
+          description: Yükleme başarılı
+
+# ============================================================
+# COMPONENTS
+# ============================================================
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    pagination:
+      name: pagination
+      in: query
+      schema:
+        type: object
+        properties:
+          page:
+            type: integer
+            default: 1
+          pageSize:
+            type: integer
+            default: 25
+    sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        example: createdAt:desc
+
+  schemas:
+    AuthResponse:
+      type: object
+      properties:
+        jwt:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        role:
+          type: object
+          properties:
+            name:
+              type: string
+            type:
+              type: string
+
+    StudentProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        attributes:
+          type: object
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+            birthDate:
+              type: string
+              format: date
+            gender:
+              type: string
+              enum: [male, female]
+            isActive:
+              type: boolean
+            enrollmentDate:
+              type: string
+              format: date
+            specialNeeds:
+              type: string
+            emergencyContact:
+              type: string
+            photo:
+              type: string
+            faceEncoding:
+              type: string
+
+    StudentProfileInput:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - firstName
+            - lastName
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+            birthDate:
+              type: string
+              format: date
+            gender:
+              type: string
+              enum: [male, female]
+            isActive:
+              type: boolean
+              default: true
+            specialNeeds:
+              type: string
+
+    StudentProfileList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/StudentProfile'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    TeacherProfileList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    AttendanceLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        attributes:
+          type: object
+          properties:
+            date:
+              type: string
+              format: date
+            checkInTime:
+              type: string
+              format: time
+            checkOutTime:
+              type: string
+              format: time
+            method:
+              type: string
+              enum: [manual, face-recognition, qr-code]
+            status:
+              type: string
+              enum: [present, absent, late, excused]
+
+    AttendanceLogInput:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - student
+            - date
+            - status
+          properties:
+            student:
+              type: integer
+            date:
+              type: string
+              format: date
+            checkInTime:
+              type: string
+            checkOutTime:
+              type: string
+            status:
+              type: string
+              enum: [present, absent, late, excused]
+            method:
+              type: string
+              enum: [manual, face-recognition, qr-code]
+            notes:
+              type: string
+
+    AttendanceLogList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttendanceLog'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    ScheduleInput:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - title
+            - type
+            - startTime
+            - endTime
+          properties:
+            title:
+              type: string
+            type:
+              type: string
+              enum: [lesson, therapy, meeting, event]
+            startTime:
+              type: string
+              format: date-time
+            endTime:
+              type: string
+              format: date-time
+            description:
+              type: string
+            location:
+              type: string
+            participants:
+              type: array
+              items:
+                type: integer
+            recurring:
+              type: boolean
+            recurrenceRule:
+              type: string
+
+    ServiceRoute:
+      type: object
+      properties:
+        id:
+          type: integer
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+            driver:
+              type: string
+            vehicle:
+              type: string
+            waypoints:
+              type: array
+              items:
+                type: object
+                properties:
+                  lat:
+                    type: number
+                  lng:
+                    type: number
+                  order:
+                    type: integer
+            isActive:
+              type: boolean
+
+    ServiceRouteList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceRoute'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    File:
+      type: object
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        type:
+          type: string
+          enum: [file, directory]
+        size:
+          type: integer
+        mimeType:
+          type: string
+        lastModified:
+          type: string
+          format: date-time
+
+    PaginationMeta:
+      type: object
+      properties:
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+            pageSize:
+              type: integer
+            pageCount:
+              type: integer
+            total:
+              type: integer

@@ -50,7 +50,7 @@ export class PlanningRuleEngine {
         // Group by student
         const byStudent = this.groupBy(sessions, 'studentId');
 
-        Object.entries(byStudent).forEach(([studentId, studentSessions]) => {
+        Object.entries(byStudent).forEach(([_studentId, studentSessions]) => {
             // Daily bireysel count
             const dailyBireysel: Record<number, number> = {};
             let weeklyGrup = 0;
@@ -62,7 +62,7 @@ export class PlanningRuleEngine {
             });
 
             // Check daily bireysel limits
-            Object.entries(dailyBireysel).forEach(([day, count]) => {
+            Object.entries(dailyBireysel).forEach(([_day, count]) => {
                 if (count < rules.studentDailyBireysel.min) {
                     errors.push({
                         type: 'student_limit',
@@ -108,7 +108,7 @@ export class PlanningRuleEngine {
 
         const byTeacher = this.groupBy(sessions, 'teacherId');
 
-        Object.entries(byTeacher).forEach(([teacherId, teacherSessions]) => {
+        Object.entries(byTeacher).forEach(([_teacherId, teacherSessions]) => {
             const daily: Record<number, number> = {};
             let weeklyTotal = 0;
 
@@ -119,7 +119,7 @@ export class PlanningRuleEngine {
             });
 
             // Check daily limit
-            Object.entries(daily).forEach(([day, count]) => {
+            Object.entries(daily).forEach(([_day, count]) => {
                 if (count > rules.teacherDailyMax) {
                     errors.push({
                         type: 'teacher_limit',

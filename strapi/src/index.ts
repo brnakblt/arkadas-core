@@ -3,11 +3,6 @@
  * 
  * Automatically injects tenant filter into all database queries.
  * This provides Row-Level Security (RLS) for multi-tenant data isolation.
- * 
- * How it works:
- * 1. Before any find/findMany, adds filters.tenant = user's tenant
- * 2. Before any create, sets data.tenant = user's tenant
- * 3. Before any update/delete, validates ownership
  */
 
 import type { Core } from '@strapi/strapi';
@@ -31,22 +26,13 @@ const TENANT_FILTERED_TYPES = [
 ];
 
 export default {
-  /**
-   * An asynchronous register function that runs before
-   * your application is initialized.
-   */
   register(/*{ strapi }*/) {
     // Registration phase
   },
 
-  /**
-   * An asynchronous bootstrap function that runs before
-   * your application gets started.
-   */
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     // Subscribe to lifecycle events for tenant-filtered content types
     for (const contentType of TENANT_FILTERED_TYPES) {
-      // Check if content type exists
       if (!strapi.contentTypes[contentType]) {
         console.warn(`[Tenant Isolation] Content type ${contentType} not found, skipping...`);
         continue;
@@ -61,9 +47,9 @@ export default {
           const ctx = strapi.requestContext.get();
 
           if (ctx?.state?.tenant) {
-            // Set tenant on the data being created
-            if (!params.data.tenant) {
-              params.data.tenant = ctx.state.tenant.id || ctx.state.tenant;
+            const data = params.data as Record<string, unknown>;
+            if (!data.tenant) {
+              data.tenant = ctx.state.tenant.id || ctx.state.tenant;
             }
           }
         },
@@ -75,14 +61,11 @@ export default {
 
           if (ctx?.state?.tenant) {
             const tenantId = ctx.state.tenant.id || ctx.state.tenant;
-
-            // Add tenant filter to the query
-            if (!params.filters) {
-              params.filters = {};
+            const p = params as Record<string, unknown>;
+            if (!p.where) {
+              p.where = {};
             }
-
-            // Ensure tenant filter is applied
-            params.filters.tenant = tenantId;
+            (p.where as Record<string, unknown>).tenant = tenantId;
           }
         },
 
@@ -92,11 +75,11 @@ export default {
 
           if (ctx?.state?.tenant) {
             const tenantId = ctx.state.tenant.id || ctx.state.tenant;
-
-            if (!params.filters) {
-              params.filters = {};
+            const p = params as Record<string, unknown>;
+            if (!p.where) {
+              p.where = {};
             }
-            params.filters.tenant = tenantId;
+            (p.where as Record<string, unknown>).tenant = tenantId;
           }
         },
 
@@ -107,11 +90,11 @@ export default {
 
           if (ctx?.state?.tenant) {
             const tenantId = ctx.state.tenant.id || ctx.state.tenant;
-
-            if (!params.filters) {
-              params.filters = {};
+            const p = params as Record<string, unknown>;
+            if (!p.where) {
+              p.where = {};
             }
-            params.filters.tenant = tenantId;
+            (p.where as Record<string, unknown>).tenant = tenantId;
           }
         },
 
@@ -122,11 +105,11 @@ export default {
 
           if (ctx?.state?.tenant) {
             const tenantId = ctx.state.tenant.id || ctx.state.tenant;
-
-            if (!params.filters) {
-              params.filters = {};
+            const p = params as Record<string, unknown>;
+            if (!p.where) {
+              p.where = {};
             }
-            params.filters.tenant = tenantId;
+            (p.where as Record<string, unknown>).tenant = tenantId;
           }
         },
       });

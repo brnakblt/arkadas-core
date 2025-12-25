@@ -22,10 +22,10 @@ import {
     useSensors,
     DragStartEvent,
     DragEndEvent,
-    DragOverEvent,
+    // DragOverEvent - unused but kept for future use
 } from '@dnd-kit/core';
 import {
-    arrayMove,
+    // arrayMove - unused but kept for future use
     SortableContext,
     sortableKeyboardCoordinates,
     rectSortingStrategy,
@@ -102,7 +102,7 @@ const DroppableSlot: React.FC<{
     hour: number;
     sessions: PlannedSession[];
     onDrop: (item: PlanItem) => void;
-}> = ({ day, hour, sessions, onDrop }) => {
+}> = ({ day, hour, sessions, onDrop: _onDrop }) => {
     const slotSessions = sessions.filter(
         (s) => s.slot.day === day && s.slot.hour === hour
     );
@@ -194,7 +194,7 @@ export const PlanningGrid: React.FC<PlanningGridProps> = ({
     availableItems,
     onSessionAdd,
     onSessionMove,
-    onSessionRemove,
+    onSessionRemove: _onSessionRemove,
     onValidationError,
     rules = DEFAULT_RULES,
     readOnly = false,
@@ -228,17 +228,17 @@ export const PlanningGrid: React.FC<PlanningGridProps> = ({
         });
 
         // Check student limits
-        Object.entries(byStudent).forEach(([studentId, studentSessions]) => {
+        Object.entries(byStudent).forEach(([_studentId, studentSessions]) => {
             const daily: Record<number, number> = {};
-            let weeklyGrup = 0;
+            let _weeklyGrup = 0;
 
             studentSessions.forEach((s) => {
                 if (!daily[s.slot.day]) daily[s.slot.day] = 0;
                 if (s.sessionType === 'bireysel') daily[s.slot.day]++;
-                if (s.sessionType === 'grup') weeklyGrup++;
+                if (s.sessionType === 'grup') _weeklyGrup++;
             });
 
-            Object.entries(daily).forEach(([day, count]) => {
+            Object.entries(daily).forEach(([_day, count]) => {
                 if (count > rules.studentDailyBireysel.max) {
                     errors.push({
                         type: 'student_limit',
@@ -250,7 +250,7 @@ export const PlanningGrid: React.FC<PlanningGridProps> = ({
         });
 
         // Check teacher limits
-        Object.entries(byTeacher).forEach(([teacherId, teacherSessions]) => {
+        Object.entries(byTeacher).forEach(([_teacherId, teacherSessions]) => {
             const daily: Record<number, number> = {};
             let weeklyTotal = 0;
 
@@ -260,7 +260,7 @@ export const PlanningGrid: React.FC<PlanningGridProps> = ({
                 weeklyTotal++;
             });
 
-            Object.entries(daily).forEach(([day, count]) => {
+            Object.entries(daily).forEach(([_day, count]) => {
                 if (count > rules.teacherDailyMax) {
                     errors.push({
                         type: 'teacher_limit',

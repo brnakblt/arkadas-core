@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
                                     console.error(`Blocked SSRF attempt: ${url}`);
                                     return NextResponse.json({ error: 1 });
                                 }
-                            } catch (e) {
+                            } catch (_e) {
                                 console.error('Invalid URL in callback:', url);
                                 return NextResponse.json({ error: 1 });
                             }
