@@ -6,183 +6,68 @@
 
 [![Node.js](https://img.shields.io/badge/Node.js-22.x-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Strapi](https://img.shields.io/badge/Strapi-v5-4945FF?style=for-the-badge&logo=strapi&logoColor=white)](https://strapi.io/)
-[![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![React Native](https://img.shields.io/badge/React_Native-Expo-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://expo.dev/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org/)
-[![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org/)
-
-[📖 Dokümantasyon](./docs) • [🚀 Hızlı Başlangıç](#-hızlı-başlangıç) • [📋 API](./docs/docs/api)
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org/)
+[![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org/)
 
 </div>
 
 ---
 
-## 📋 İçindekiler
-
-- [Özellikler](#-özellikler)
-- [Sistem Mimarisi](#-sistem-mimarisi)
-- [Gereksinimler](#-gereksinimler)
-- [Hızlı Başlangıç](#-hızlı-başlangıç)
-- [Proje Yapısı](#-proje-yapısı)
-- [Çalıştırma](#-çalıştırma)
-- [API Dokümantasyonu](#-api-dokümantasyonu)
-- [Test](#-test)
-- [Deployment](#-deployment)
-- [Katkıda Bulunma](#-katkıda-bulunma)
-
----
-
-## ✨ Özellikler
-
-<table>
-<tr>
-<td width="50%">
-
-### 🏫 Kurum Yönetimi
-
-- ✅ Cloud File System (VFS, Chunked Upload, WebDAV)
-- ✅ Premium UI/UX (Modern Arayüz, Mobile-First Tasarım)
-- Öğrenci profil yönetimi (engel bilgisi, veli bilgileri)
-- Öğretmen ve terapist profilleri
-- Rol tabanlı erişim kontrolü (RBAC)
-- Kullanıcı yönetimi paneli
-
-### 📅 Program ve Planlama
-
-- Haftalık/aylık takvim görünümü
-- Ders, terapi ve etkinlik planlaması
-- Sürükle-bırak program düzenleyici
-
-### 📋 Yoklama Sistemi
-
-- **Yüz tanıma** ile otomatik yoklama
-- QR kod ile hızlı yoklama
-- Günlük/aylık raporlama
-- PDF ve Excel dışa aktarma
-
-</td>
-<td width="50%">
-
-### 🚌 Servis Takip
-
-- Gerçek zamanlı GPS takibi
-- **Şoför Modu** (Mobil uyumlu sürücü arayüzü)
-- **Gecikme Tahmini** (Trafik ve durak süresi hesaplama)
-- Rota ve durak yönetimi
-- Veli bildirim sistemi
-
-### 📁 Dosya Yönetimi
-
-- **Nextcloud** entegrasyonu
-- Otomatik kullanıcı ve klasör oluşturma
-- OnlyOffice ile belge düzenleme
-
-### 🤖 Yapay Zeka Servisleri
-
-- Yüz kodlama ve eşleştirme
-- Güven skoru hesaplama
-- Batch model eğitimi
-
-</td>
-</tr>
-</table>
-
----
-
-## 🏗 Sistem Mimarisi
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         FRONTEND                                 │
-├────────────────────────────────┬────────────────────────────────┤
-│        Web (Next.js 15)        │     Mobile (React Native)      │
-│        localhost:3000          │        Expo Go / APK           │
-└───────────────┬────────────────┴────────────────┬───────────────┘
-                │                                  │
-                ▼                                  ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                         BACKEND API                              │
-├────────────────────────────────┬────────────────────────────────┤
-│       Strapi v5 (CMS)          │      AI Service (Python)       │
-│       localhost:1337           │        localhost:8000          │
-└───────────────┬────────────────┴────────────────┬───────────────┘
-                │                                  │
-                ▼                                  ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                       PERSISTENCE LAYER                          │
-├──────────────┬───────────────┬───────────────┬──────────────────┤
-│  PostgreSQL  │   MariaDB     │   OnlyOffice  │      Redis       │
-│    :5432     │    :3306      │     :8081     │      :6379       │
-└──────────────┴───────────────┴───────────────┴──────────────────┘
-```
-
----
-
-## 📦 Gereksinimler
-
-| Yazılım | Minimum Sürüm | Önerilen |
-|---------|---------------|----------|
-| Node.js | 18.x | 22.x |
-| Python | 3.10 | 3.11 |
-| Docker | 20.x | 24.x |
-| PostgreSQL | 14 | 16 |
-| Git | 2.x | 2.40+ |
-
----
-
 ## 🚀 Hızlı Başlangıç
 
-### Otomatik Kurulum
-
-<details>
-<summary><b>Windows (PowerShell)</b></summary>
-
-```powershell
-docker compose up -d
-```
-
-</details>
-
-<details>
-<summary><b>Linux / macOS</b></summary>
-
 ```bash
-docker compose up -d
-```
-
-</details>
-
-<details>
-<summary><b>Arch Linux (Tam Kurulum)</b></summary>
-
-```bash
-sudo ./scripts/setup_arch.sh
-```
-
-</details>
-
-### Kurulum (ÖNEMLİ)
-
-Projeyi ilk kez indirdiğinizde, tüm servislerin bağımlılıklarını (Node.js ve Python) tek komutla kurmak için:
-
-```bash
-npm run install:all
-```
-*Bu komut backend, frontend, mobile ve AI servisi için gerekli ortamları (virtualenv dahil) hazırlar.*
-
-### Manuel Kurulum
-
-```bash
-# 1. Repoyu klonla
-git clone https://github.com/brnakblt/arkadasozelegitim.git
-cd arkadasozelegitim
-
-# 2. Kurulum (Dependencies + Docker Images)
+# 1. Bağımlılıkları kur
 npm run install:all
 
-# 3. Geliştirme Modunda Başlat (Docker + Node Servers)
-npm run dev:all
+# 2. Geliştirme modunda başlat
+npm run dev
 ```
+
+**Servis Adresleri:**
+
+| Servis | URL | Port |
+|--------|-----|------|
+| Web Frontend | http://localhost:3000 | 3000 |
+| Strapi CMS | http://localhost:1337/admin | 1337 |
+| AI Service | http://localhost:8000/docs | 8000 |
+| MEBBIS Service | http://localhost:4000/api | 4000 |
+| Mobile (Expo) | http://localhost:8082 | 8082 |
+
+---
+
+## ✨ Tamamlanan Özellikler
+
+### ✅ Phase 1: MEBBIS Entegrasyonu
+- İş Planı Aktarımı
+- Eğitim Bilgi Girişi
+- Öğrenci Rapor Çekme
+- Modül Süreleri Çekme
+- Fatura Aktarımı
+
+### ✅ Phase 2: BEP Otomasyonu
+- Kaba Değerlendirme
+- Bireysel Eğitim Planı (BEP)
+- Performans Kayıt Tablosu (PKT)
+- Dönem Sonu Değerlendirme
+
+### ✅ Phase 3: Planlama Sistemi
+- Drag-drop haftalık planlama (`@dnd-kit`)
+- Multi-user WebSocket senkronizasyonu
+- Kural motoru (öğrenci/öğretmen limitleri)
+
+### ✅ Phase 4: Fatura & Servis
+- Fatura modülü (Strapi schema)
+- Dönem bazlı otomatik fatura oluşturma
+- MEBBIS senkronizasyonu
+- PDF export
+
+### ✅ Phase 5: Raporlama
+- Ek-4 Raporu (Devam Takip)
+- Dönem Sonu Raporu
+- Öğrenci Gelişim Raporu
+- Kurum Performans Raporu
+- PDF/Excel/MEBBIS export
 
 ---
 
@@ -190,193 +75,65 @@ npm run dev:all
 
 ```
 arkadasozelegitim/
-├── 📂 strapi/              # Backend CMS (Strapi v5)
-│   ├── src/api/            # 21 Content-type
-│   ├── src/policies/       # RBAC Policies
-│   └── config/             # Database, plugins
-│
-├── 📂 web/                 # Frontend (Next.js 15)
-│   ├── src/app/            # App Router pages
-│   ├── src/components/     # 34+ React components
-│   └── src/lib/            # Auth, cache, CDN utils
-│
-├── 📂 mobile/              # Mobile App (React Native/Expo)
-│   ├── hooks/              # Offline, biometric, location
-│   └── screens/            # QR attendance, etc.
-│
-├── 📂 ai-service/          # AI Face Recognition (Python)
-│   └── app/api/            # FastAPI endpoints
-│
-├── 📂 mebbis-service/      # Arkadaş MEBBIS Automation (Node.js)
-│   ├── src/services/       # MEBBIS automation services
-│   ├── src/api/            # REST API endpoints
-│   └── src/types/          # TypeScript type definitions
-│
-├── 📂 docs/                # MkDocs documentation
-│   └── docs/api/           # OpenAPI specification
-│
-├── 📂 scripts/             # Utility scripts
-│   ├── database-indexes.sql
-│   ├── run-tests.ps1
-│   └── run-tests.sh
-│
-├── 📂 databases/           # Local Database Persistence
-│   ├── postgres/
-│   ├── mariadb/
-│   ├── nextcloud/
-│   └── ...
-│
-└── docker-compose.yml      # Main Docker Compose
-└── docker-compose.dev.yml  # Development Overrides
+├── strapi/           # Backend CMS (Strapi v5)
+├── web/              # Frontend (Next.js 16)
+├── mobile/           # Mobile App (React Native/Expo)
+├── ai-service/       # AI Face Recognition (Python/FastAPI)
+├── mebbis-service/   # MEBBIS Automation (Node.js)
+├── docs/             # Documentation
+├── scripts/          # Utility scripts
+└── databases/        # Docker volume data
 ```
 
 ---
 
-## ▶️ Çalıştırma
+## 🛠️ Komutlar
 
-**Geliştirme Modu:**
-Docker container'larını ve tüm Node.js servislerini başlatır.
-```bash
-npm run dev:all
-```
-
-**Production Build & Start:**
-Lint/Typecheck işlemleri sonrası build alır ve production modunda başlatır.
-```bash
-npm run build:all
-npm run start:all
-```
-
-**Sistemi Durdurma:**
-Tüm container'ları durdurur ve portları temizler.
-```bash
-npm run stop:all
-```
-
-**Sistemi Sıfırlama:**
-Tüm Docker imajlarını, container'ları ve ağları temizler.
-```bash
-npm run reset:all
-```
-
-### Docker Profilleri
-Bu projede kaynak yönetimini iyileştirmek için Docker profilleri kullanılmaktadır:
-- **core**: Postgres, Redis (Backend için zorunlu)
-- **apps**: Strapi, Web (Docker içinde çalıştıracaksanız)
-- **features**: AI Service, Mebbis Service (Opsiyonel özellikler)
-- **infra**: Nextcloud, OnlyOffice, n8n (Ağır altyapı servisleri)
-
-Örneğin sadece core servisleri ayağa kaldırmak için:
-```bash
-docker compose --profile core up -d
-```
-
-### Hot Reloading Özellikleri
-- **Web**: `./web` klasöründeki değişiklikler anında yansır.
-- **AI Service**: `./ai-service` kod değişikliklerinde sunucu otomatik yeniden başlar.
-- **Mebbis Service**: `ts-node` ile watch modunda çalışır.
-- **Strapi**: Development modunda çalışır.
-
-### Servis Adresleri
-
-| Servis | URL | Açıklama |
-|--------|-----|----------|
-| Web Frontend | <http://localhost:3000> | Next.js uygulaması |
-| Strapi Admin | <http://localhost:1337/admin> | CMS yönetim paneli |
-| API Docs | <http://localhost:1337/api> | REST API |
-| AI Service | <http://localhost:8000/docs> | FastAPI Swagger |
-| Arkadaş MEBBIS | <http://localhost:4000/api> | MEBBIS Otomasyon Servisi |
-| Nextcloud | <http://localhost:8080> | Dosya yönetimi |
+| Komut | Açıklama |
+|-------|----------|
+| `npm run dev` | Geliştirme modunda başlat |
+| `npm run build` | Production build |
+| `npm run lint` | Lint kontrolü |
+| `npm run stop` | Tüm servisleri durdur |
+| `npm run reset` | Docker container'ları sıfırla |
 
 ---
 
-## 📡 API Dokümantasyonu
+## 📦 Gereksinimler
 
-### Strapi REST API
-
-| Endpoint | Method | Açıklama |
-|----------|--------|----------|
-| `/api/auth/local` | POST | Kullanıcı girişi |
-| `/api/student-profiles` | GET/POST | Öğrenci profilleri |
-| `/api/attendance-logs` | GET/POST | Yoklama kayıtları |
-| `/api/schedules` | GET/POST | Program/takvim |
-| `/api/service-routes` | GET/POST | Servis rotaları |
-
-### AI Service API
-
-| Endpoint | Method | Açıklama |
-|----------|--------|----------|
-| `/api/encode` | POST | Yüz kodlama |
-| `/api/match` | POST | Yüz eşleştirme |
-| `/api/train` | POST | Model eğitimi |
-| `/api/health` | GET | Sağlık kontrolü |
-
-### Arkadaş MEBBIS Service API
-
-MEBBIS (Milli Eğitim Bakanlığı Bilişim Sistemleri) ile entegrasyon için otomasyon servisi.
-
-| Endpoint | Method | Açıklama |
-|----------|--------|----------|
-| `/api/health` | GET | Servis sağlık kontrolü |
-| `/api/sync/students` | POST | Öğrenci verilerini MEBBIS'ten senkronize et |
-| `/api/sync/educators` | POST | Eğitimci verilerini senkronize et |
-| `/api/education/submit` | POST | Eğitim bilgisi kayıtlarını MEBBIS'e aktar |
-| `/api/invoices/create` | POST | Fatura oluştur |
-| `/api/invoices/approve` | POST | Bekleyen faturaları onayla |
-| `/api/bep/submit` | POST | BEP formlarını (EK-4, EK-5, EK-6) aktar |
-| `/api/status/:jobId` | GET | Arka plan işlerinin durumunu sorgula |
-
-📖 Detaylı API dokümantasyonu için: [docs/docs/api/openapi.yaml](./docs/docs/api/openapi.yaml)
+| Yazılım | Minimum | Önerilen |
+|---------|---------|----------|
+| Node.js | 18.x | 22.x |
+| Python | 3.10 | 3.13 |
+| Docker | 20.x | 24.x |
+| RAM | 8 GB | 16 GB |
 
 ---
 
-## 🧪 Test
+## 📖 Dokümantasyon
+
+| Dosya | Açıklama |
+|-------|----------|
+| [DEPLOYMENT.md](./docs/DEPLOYMENT.md) | Production kurulum rehberi |
+| [DEVELOPMENT.md](./docs/DEVELOPMENT.md) | Geliştirme ortamı |
+| [DISASTER_RECOVERY.md](./docs/DISASTER_RECOVERY.md) | Felaket kurtarma |
+| [INFISICAL_STRATEGY.md](./docs/INFISICAL_STRATEGY.md) | Secret yönetimi |
+
+---
+
+## 🔐 Environment Variables
+
+Secret yönetimi için **Infisical** kullanılması önerilir:
 
 ```bash
-# Tüm testleri çalıştır (Web, Mobile, Mebbis, AI)
-npm run test:all
-
-# Sadece web unit testleri
-npm run test --prefix web
-
-# E2E testleri
-npm run test:e2e --prefix web
-
-# Mobile testleri
-npm run test:mobile
-
-# AI Service testleri
-npm run test:ai
+# Infisical'dan secret sync
+./scripts/sync_secrets.sh prod
 ```
 
----
-
-## 🚀 Deployment
-
-Detaylı deployment rehberi için: [docs/docs/deployment/index.md](./docs/docs/deployment/index.md)
-
-### Hızlı Production Build
-
+Manuel kurulum için:
 ```bash
-# Tüm projeleri build et
-npm run build
-
-# Docker ile deployment
-docker compose -f docker-compose.yml up -d
-
-# PM2 ile Strapi
-cd strapi && pm2 start npm --name "strapi" -- start
+./scripts/generate_envs.sh
 ```
-
----
-
-## 🤝 Katkıda Bulunma
-
-1. Bu repoyu fork edin
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'feat: Add amazing feature'`)
-4. Branch'i push edin (`git push origin feature/amazing-feature`)
-5. Pull Request açın
 
 ---
 
