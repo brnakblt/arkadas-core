@@ -1,0 +1,102 @@
+{
+    "kind": "collectionType",
+    "collectionName": "faturalar",
+    "info": {
+        "singularName": "fatura",
+        "pluralName": "faturalar",
+        "displayName": "Fatura",
+        "description": "Özel eğitim faturaları - MEBBIS ile senkronize"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "faturaNo": {
+            "type": "string",
+            "required": true,
+            "unique": true
+        },
+        "student": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::student-profile.student-profile"
+        },
+        "donem": {
+            "type": "string",
+            "required": true
+        },
+        "ay": {
+            "type": "integer",
+            "required": true,
+            "min": 1,
+            "max": 12
+        },
+        "yil": {
+            "type": "integer",
+            "required": true
+        },
+        "toplamSaat": {
+            "type": "decimal"
+        },
+        "birimFiyat": {
+            "type": "decimal"
+        },
+        "toplamTutar": {
+            "type": "decimal",
+            "required": true
+        },
+        "kdvOrani": {
+            "type": "decimal",
+            "default": 0
+        },
+        "kdvTutar": {
+            "type": "decimal"
+        },
+        "netTutar": {
+            "type": "decimal"
+        },
+        "faturaTarihi": {
+            "type": "date",
+            "required": true
+        },
+        "vadeTarihi": {
+            "type": "date"
+        },
+        "status": {
+            "type": "enumeration",
+            "enum": [
+                "draft",
+                "pending",
+                "approved",
+                "paid",
+                "cancelled"
+            ],
+            "default": "draft"
+        },
+        "mebbisRefId": {
+            "type": "string"
+        },
+        "syncedToMebbis": {
+            "type": "boolean",
+            "default": false
+        },
+        "mebbisOnayTarihi": {
+            "type": "datetime"
+        },
+        "pdfUrl": {
+            "type": "string"
+        },
+        "notes": {
+            "type": "richtext"
+        },
+        "kalemler": {
+            "type": "json"
+        },
+        "tenant": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::tenant.tenant"
+        }
+    }
+}
