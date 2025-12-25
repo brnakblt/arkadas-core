@@ -1,0 +1,52 @@
+{
+    "routes": [
+        {
+            "method": "GET",
+            "path": "/bireysel-egitim-planlari",
+            "handler": "bireysel-egitim-plani.find",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "GET",
+            "path": "/bireysel-egitim-planlari/:id",
+            "handler": "bireysel-egitim-plani.findOne",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "POST",
+            "path": "/bireysel-egitim-planlari",
+            "handler": "bireysel-egitim-plani.create",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "PUT",
+            "path": "/bireysel-egitim-planlari/:id",
+            "handler": "bireysel-egitim-plani.update",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "DELETE",
+            "path": "/bireysel-egitim-planlari/:id",
+            "handler": "bireysel-egitim-plani.delete",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "POST",
+            "path": "/bireysel-egitim-planlari/generate-from-kaba",
+            "handler": "bireysel-egitim-plani.generateFromKaba",
+            "config": {
+                "policies": []
+            }
+        }
+    ]
+}

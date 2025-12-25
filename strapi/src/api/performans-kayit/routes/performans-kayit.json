@@ -1,0 +1,52 @@
+{
+    "routes": [
+        {
+            "method": "GET",
+            "path": "/performans-kayitlari",
+            "handler": "performans-kayit.find",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "GET",
+            "path": "/performans-kayitlari/:id",
+            "handler": "performans-kayit.findOne",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "POST",
+            "path": "/performans-kayitlari",
+            "handler": "performans-kayit.create",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "PUT",
+            "path": "/performans-kayitlari/:id",
+            "handler": "performans-kayit.update",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "DELETE",
+            "path": "/performans-kayitlari/:id",
+            "handler": "performans-kayit.delete",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "POST",
+            "path": "/performans-kayitlari/generate-from-planlama",
+            "handler": "performans-kayit.generateFromPlanlama",
+            "config": {
+                "policies": []
+            }
+        }
+    ]
+}

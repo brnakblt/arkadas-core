@@ -550,6 +550,52 @@ export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBireyselEgitimPlaniBireyselEgitimPlani extends Struct.CollectionTypeSchema {
+  collectionName: 'bireysel_egitim_planlari';
+  info: {
+    description: 'Bireysel E\u011Fitim Plan\u0131 - Kaba de\u011Ferlendirmeden otomatik olu\u015Fur';
+    displayName: 'Bireysel E\u011Fitim Plan\u0131 (BEP)';
+    pluralName: 'bireysel-egitim-planlari';
+    singularName: 'bireysel-egitim-plani';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    altBasamaklar: Schema.Attribute.JSON & Schema.Attribute.Required;
+    approvedAt: Schema.Attribute.DateTime;
+    approvedBy: Schema.Attribute.Relation<'oneToOne', 'plugin::users-permissions.user'>;
+    baslangicTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
+    bitisTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    degerlendirmeYontemleri: Schema.Attribute.JSON;
+    donem: Schema.Attribute.String & Schema.Attribute.Required;
+    egitimOrtami: Schema.Attribute.String;
+    kabaDegerlendirme: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::kaba-degerlendirme.kaba-degerlendirme'
+    >;
+    kisaVadeliAmaclar: Schema.Attribute.JSON;
+    kullanilanMateryaller: Schema.Attribute.JSON;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::bireysel-egitim-plani.bireysel-egitim-plani'
+    > &
+      Schema.Attribute.Private;
+    notes: Schema.Attribute.RichText;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<['draft', 'active', 'completed', 'archived']> &
+      Schema.Attribute.DefaultTo<'draft'>;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    uzunVadeliAmaclar: Schema.Attribute.JSON;
+  };
+}
+
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -772,6 +818,44 @@ export interface ApiHeroHero extends Struct.SingleTypeSchema {
     stats: Schema.Attribute.Component<'shared.stat', true>;
     subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiKabaDegerlendirmeKabaDegerlendirme extends Struct.CollectionTypeSchema {
+  collectionName: 'kaba_degerlendirmeler';
+  info: {
+    description: "Kaba De\u011Ferlendirme Formu - MEBBIS'ten performans ve ihtiya\u00E7lar\u0131 \u00E7eker";
+    displayName: 'Kaba De\u011Ferlendirme';
+    pluralName: 'kaba-degerlendirmeler';
+    singularName: 'kaba-degerlendirme';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    createdFromMebbis: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    degerlendirmeTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
+    donem: Schema.Attribute.String & Schema.Attribute.Required;
+    gelisimAlanlari: Schema.Attribute.JSON;
+    ihtiyaclar: Schema.Attribute.JSON & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::kaba-degerlendirme.kaba-degerlendirme'
+    > &
+      Schema.Attribute.Private;
+    mebbisRefId: Schema.Attribute.String;
+    notes: Schema.Attribute.RichText;
+    performanslar: Schema.Attribute.JSON & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<['draft', 'completed', 'approved']> &
+      Schema.Attribute.DefaultTo<'draft'>;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1622,6 +1706,7 @@ declare module '@strapi/strapi' {
       'api::article.article': ApiArticleArticle;
       'api::attendance-log.attendance-log': ApiAttendanceLogAttendanceLog;
       'api::author.author': ApiAuthorAuthor;
+      'api::bireysel-egitim-plani.bireysel-egitim-plani': ApiBireyselEgitimPlaniBireyselEgitimPlani;
       'api::category.category': ApiCategoryCategory;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
       'api::erp-role.erp-role': ApiErpRoleErpRole;
@@ -1630,6 +1715,7 @@ declare module '@strapi/strapi' {
       'api::gallery.gallery': ApiGalleryGallery;
       'api::global.global': ApiGlobalGlobal;
       'api::hero.hero': ApiHeroHero;
+      'api::kaba-degerlendirme.kaba-degerlendirme': ApiKabaDegerlendirmeKabaDegerlendirme;
       'api::location-log.location-log': ApiLocationLogLocationLog;
       'api::nextcloud-sync.nextcloud-sync': ApiNextcloudSyncNextcloudSync;
       'api::process.process': ApiProcessProcess;
