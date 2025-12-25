@@ -17,10 +17,10 @@
 - [x] API endpoint'lerinde tenant filtering kontrolü
 
 ### 3. Mobil Uygulama Auth
-- [ ] Login screen test et
-- [ ] Tenant seçimi çalışıyor mu kontrol et
-- [ ] AsyncStorage token saklama doğrula
-- [ ] Protected routes implement et
+- [x] Login screen test et
+- [x] Tenant seçimi çalışıyor mu kontrol et
+- [x] AsyncStorage token saklama doğrula
+- [x] Protected routes implement et
 
 ## 🟡 ORTA ÖNCELİK
 
