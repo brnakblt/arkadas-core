@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 
 // ============================================================
 // Types
@@ -406,9 +407,12 @@ export default function TenantsPage() {
                                                     {tenant.name.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div>
-                                                    <div className="font-medium text-gray-900 dark:text-white">
+                                                    <Link
+                                                        href={`/admin/tenants/${tenant.documentId}`}
+                                                        className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
+                                                    >
                                                         {tenant.name}
-                                                    </div>
+                                                    </Link>
                                                     {tenant.contactEmail && (
                                                         <div className="text-sm text-gray-500 dark:text-gray-400">
                                                             {tenant.contactEmail}

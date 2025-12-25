@@ -7,7 +7,7 @@
 ### 1. Admin Panel - Tenant Yönetimi
 - [x] /admin/tenants sayfa oluştur (Kurum listesi)
 - [x] Tenant CRUD UI (ekleme, düzenleme, silme)
-- [ ] Tenant detay sayfası (/admin/tenants/[id])
+- [x] Tenant detay sayfası (/admin/tenants/[id])
 - [ ] Kullanıcı-Tenant atama arayüzü
 
 ### 2. Multi-Tenant Query Filtering
