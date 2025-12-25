@@ -20,6 +20,9 @@ export default ({ env }) => ({
       provider: 'local',
       sizeLimit: 104857600,
       providerOptions: {},
+      // Disable automatic image optimization to preserve original quality
+      breakpoints: {},
+      quality: 100,
       security: {
         actions: {
           coopPolicy: 'same-origin',

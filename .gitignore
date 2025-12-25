@@ -155,5 +155,8 @@ databases/
 **/.env.test
 !**/.env.example
 
+# Dynamic images (served from Strapi)
+web/public/images/
+
 # Custom Ignore
 todo.txt
