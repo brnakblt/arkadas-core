@@ -4,4 +4,4 @@
 
 import { factories } from '@strapi/strapi';
 
-export default factories.createCoreController('api::donem-sonu-degerlendirme.donem-sonu-degerlendirme' as any);
+export default factories.createCoreController('api::donem-sonu-degerlendirme.donem-sonu-degerlendirme');

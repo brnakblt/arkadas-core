@@ -4,4 +4,4 @@
 
 import { factories } from '@strapi/strapi';
 
-export default factories.createCoreService('api::rapor.rapor' as any);
+export default factories.createCoreService('api::rapor.rapor');

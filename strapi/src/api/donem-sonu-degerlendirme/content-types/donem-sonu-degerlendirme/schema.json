@@ -30,10 +30,10 @@
             "type": "date",
             "required": true
         },
-        "ulasilan Amaclar": {
+        "ulasilanAmaclar": {
             "type": "json"
         },
-        "ulasilamayan Amaclar": {
+        "ulasilamayanAmaclar": {
             "type": "json"
         },
         "genelDegerlendirme": {

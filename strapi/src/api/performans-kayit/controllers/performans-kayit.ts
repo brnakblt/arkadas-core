@@ -4,4 +4,4 @@
 
 import { factories } from '@strapi/strapi';
 
-export default factories.createCoreController('api::performans-kayit.performans-kayit' as any);
+export default factories.createCoreController('api::performans-kayit.performans-kayit');

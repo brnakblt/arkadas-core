@@ -650,6 +650,49 @@ export interface ApiContactMessageContactMessage extends Struct.CollectionTypeSc
   };
 }
 
+export interface ApiDonemSonuDegerlendirmeDonemSonuDegerlendirme
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'donem_sonu_degerlendirmeleri';
+  info: {
+    description: "D\u00F6nem Sonu De\u011Ferlendirme Formu - PKT'den otomatik olu\u015Fur";
+    displayName: 'D\u00F6nem Sonu De\u011Ferlendirme';
+    pluralName: 'donem-sonu-degerlendirmeleri';
+    singularName: 'donem-sonu-degerlendirme';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    degerlendirmeTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
+    donem: Schema.Attribute.String & Schema.Attribute.Required;
+    egitimciGorusleri: Schema.Attribute.RichText;
+    gelecekDonemOneriler: Schema.Attribute.RichText;
+    genelDegerlendirme: Schema.Attribute.RichText;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::donem-sonu-degerlendirme.donem-sonu-degerlendirme'
+    > &
+      Schema.Attribute.Private;
+    mebbisRefId: Schema.Attribute.String;
+    pkt: Schema.Attribute.Relation<'oneToOne', 'api::performans-kayit.performans-kayit'>;
+    publishedAt: Schema.Attribute.DateTime;
+    sonuclar: Schema.Attribute.JSON;
+    status: Schema.Attribute.Enumeration<['draft', 'completed', 'approved']> &
+      Schema.Attribute.DefaultTo<'draft'>;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    syncedToMebbis: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    ulasilamayanAmaclar: Schema.Attribute.JSON;
+    ulasilanAmaclar: Schema.Attribute.JSON;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    veliGorusleri: Schema.Attribute.RichText;
+  };
+}
+
 export interface ApiErpRoleErpRole extends Struct.CollectionTypeSchema {
   collectionName: 'erp_roles';
   info: {
@@ -702,6 +745,59 @@ export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
     question: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiFaturaFatura extends Struct.CollectionTypeSchema {
+  collectionName: 'faturalar';
+  info: {
+    description: '\u00D6zel e\u011Fitim faturalar\u0131 - MEBBIS ile senkronize';
+    displayName: 'Fatura';
+    pluralName: 'faturalar';
+    singularName: 'fatura';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    ay: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 12;
+          min: 1;
+        },
+        number
+      >;
+    birimFiyat: Schema.Attribute.Decimal;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    donem: Schema.Attribute.String & Schema.Attribute.Required;
+    faturaNo: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
+    faturaTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
+    kalemler: Schema.Attribute.JSON;
+    kdvOrani: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
+    kdvTutar: Schema.Attribute.Decimal;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::fatura.fatura'> &
+      Schema.Attribute.Private;
+    mebbisOnayTarihi: Schema.Attribute.DateTime;
+    mebbisRefId: Schema.Attribute.String;
+    netTutar: Schema.Attribute.Decimal;
+    notes: Schema.Attribute.RichText;
+    pdfUrl: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<['draft', 'pending', 'approved', 'paid', 'cancelled']> &
+      Schema.Attribute.DefaultTo<'draft'>;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    syncedToMebbis: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    toplamSaat: Schema.Attribute.Decimal;
+    toplamTutar: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    vadeTarihi: Schema.Attribute.Date;
+    yil: Schema.Attribute.Integer & Schema.Attribute.Required;
   };
 }
 
@@ -927,6 +1023,49 @@ export interface ApiNextcloudSyncNextcloudSync extends Struct.CollectionTypeSche
   };
 }
 
+export interface ApiPerformansKayitPerformansKayit extends Struct.CollectionTypeSchema {
+  collectionName: 'performans_kayitlari';
+  info: {
+    description: 'Performans Kay\u0131t Tablosu - Planlama ekran\u0131ndan saat ve mod\u00FCller otomatik gelir';
+    displayName: 'Performans Kay\u0131t Tablosu (PKT)';
+    pluralName: 'performans-kayitlari';
+    singularName: 'performans-kayit';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    baslangicTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
+    bep: Schema.Attribute.Relation<'manyToOne', 'api::bireysel-egitim-plani.bireysel-egitim-plani'>;
+    bitisTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
+    calismaModulleri: Schema.Attribute.JSON;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    degerlendirmeler: Schema.Attribute.JSON;
+    donem: Schema.Attribute.String & Schema.Attribute.Required;
+    egitimciDegerlendirmeleri: Schema.Attribute.JSON;
+    genelDegerlendirme: Schema.Attribute.Enumeration<
+      ['basarisiz', 'gelisiyor', 'basarili', 'cok_iyi']
+    > &
+      Schema.Attribute.DefaultTo<'gelisiyor'>;
+    haftalikSaatler: Schema.Attribute.JSON;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::performans-kayit.performans-kayit'
+    > &
+      Schema.Attribute.Private;
+    mebbisRefId: Schema.Attribute.String;
+    notes: Schema.Attribute.RichText;
+    publishedAt: Schema.Attribute.DateTime;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    syncedToMebbis: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiProcessProcess extends Struct.CollectionTypeSchema {
   collectionName: 'processes';
   info: {
@@ -951,6 +1090,57 @@ export interface ApiProcessProcess extends Struct.CollectionTypeSchema {
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiRaporRapor extends Struct.CollectionTypeSchema {
+  collectionName: 'raporlar';
+  info: {
+    description: 'Otomatik olu\u015Fturulan raporlar - Ek-4, D\u00F6nem Sonu, Kurum Performans vb.';
+    displayName: 'Rapor';
+    pluralName: 'raporlar';
+    singularName: 'rapor';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    ay: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 12;
+          min: 1;
+        },
+        number
+      >;
+    baslangicTarihi: Schema.Attribute.Date;
+    baslik: Schema.Attribute.String & Schema.Attribute.Required;
+    bitisTarihi: Schema.Attribute.Date;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    donem: Schema.Attribute.String;
+    excelUrl: Schema.Attribute.String;
+    icerik: Schema.Attribute.JSON;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::rapor.rapor'> &
+      Schema.Attribute.Private;
+    mebbisExported: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    olusturmaTarihi: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    ozet: Schema.Attribute.RichText;
+    pdfUrl: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    raporTipi: Schema.Attribute.Enumeration<
+      ['ek4', 'donem_sonu', 'ogrenci_gelisim', 'kurum_performans', 'devamsizlik', 'fatura_ozet']
+    > &
+      Schema.Attribute.Required;
+    status: Schema.Attribute.Enumeration<['generating', 'ready', 'error']> &
+      Schema.Attribute.DefaultTo<'generating'>;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    teacher: Schema.Attribute.Relation<'manyToOne', 'api::teacher-profile.teacher-profile'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    yil: Schema.Attribute.Integer;
   };
 }
 
@@ -1709,8 +1899,10 @@ declare module '@strapi/strapi' {
       'api::bireysel-egitim-plani.bireysel-egitim-plani': ApiBireyselEgitimPlaniBireyselEgitimPlani;
       'api::category.category': ApiCategoryCategory;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
+      'api::donem-sonu-degerlendirme.donem-sonu-degerlendirme': ApiDonemSonuDegerlendirmeDonemSonuDegerlendirme;
       'api::erp-role.erp-role': ApiErpRoleErpRole;
       'api::faq.faq': ApiFaqFaq;
+      'api::fatura.fatura': ApiFaturaFatura;
       'api::file-share.file-share': ApiFileShareFileShare;
       'api::gallery.gallery': ApiGalleryGallery;
       'api::global.global': ApiGlobalGlobal;
@@ -1718,7 +1910,9 @@ declare module '@strapi/strapi' {
       'api::kaba-degerlendirme.kaba-degerlendirme': ApiKabaDegerlendirmeKabaDegerlendirme;
       'api::location-log.location-log': ApiLocationLogLocationLog;
       'api::nextcloud-sync.nextcloud-sync': ApiNextcloudSyncNextcloudSync;
+      'api::performans-kayit.performans-kayit': ApiPerformansKayitPerformansKayit;
       'api::process.process': ApiProcessProcess;
+      'api::rapor.rapor': ApiRaporRapor;
       'api::route-stop.route-stop': ApiRouteStopRouteStop;
       'api::schedule.schedule': ApiScheduleSchedule;
       'api::service-route.service-route': ApiServiceRouteServiceRoute;
