@@ -1,12 +1,30 @@
-import { StyleSheet, Text, View } from "react-native";
+import { useEffect } from "react";
+import { ActivityIndicator, View, StyleSheet } from "react-native";
+import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function Page() {
+export default function Index() {
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      if (token) {
+        router.replace("/(tabs)");
+      } else {
+        router.replace("/login");
+      }
+    } catch (err) {
+      console.error("Auth check error:", err);
+      router.replace("/login");
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.main}>
-        <Text style={styles.title}>Hello World</Text>
-        <Text style={styles.subtitle}>This is the first page of your app.</Text>
-      </View>
+      <ActivityIndicator size="large" color="#3b82f6" />
     </View>
   );
 }
@@ -14,21 +32,8 @@ export default function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    padding: 24,
-  },
-  main: {
-    flex: 1,
     justifyContent: "center",
-    maxWidth: 960,
-    marginHorizontal: "auto",
-  },
-  title: {
-    fontSize: 64,
-    fontWeight: "bold",
-  },
-  subtitle: {
-    fontSize: 36,
-    color: "#38434D",
+    alignItems: "center",
+    backgroundColor: "#f8fafc",
   },
 });

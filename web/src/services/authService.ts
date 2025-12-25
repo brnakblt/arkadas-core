@@ -12,7 +12,18 @@ export interface LoginResponse {
     createdAt: string;
     updatedAt: string;
     userType: 'parent' | 'teacher';
+    tenant?: {
+      id: number;
+      name: string;
+      domain: string;
+    };
   };
+}
+
+export interface Tenant {
+  id: number;
+  name: string;
+  domain: string;
 }
 
 export interface RegisterData {
@@ -24,7 +35,16 @@ export interface RegisterData {
 }
 
 export const authService = {
-  async login(identifier: string, password: string): Promise<LoginResponse> {
+  async getTenants(): Promise<Tenant[]> {
+    const response = await fetch("/api/tenants");
+    if (!response.ok) {
+      return [];
+    }
+    const data = await response.json();
+    return data.tenants || [];
+  },
+
+  async login(identifier: string, password: string, tenantId?: number): Promise<LoginResponse> {
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
@@ -33,6 +53,7 @@ export const authService = {
       body: JSON.stringify({
         identifier,
         password,
+        tenantId,
       }),
     });
 

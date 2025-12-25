@@ -6,12 +6,12 @@ export const useAuth = () => {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const login = async (identifier: string, password: string): Promise<LoginResponse | null> => {
+  const login = async (identifier: string, password: string, tenantId?: number): Promise<LoginResponse | null> => {
     setIsLoading(true);
     setError("");
     setSuccessMessage("");
     try {
-      const response = await authService.login(identifier, password);
+      const response = await authService.login(identifier, password, tenantId);
       // Removed localStorage logic as we now use HttpOnly cookies
       setSuccessMessage("Giriş başarılı! Yönlendiriliyorsunuz...");
       return response;
