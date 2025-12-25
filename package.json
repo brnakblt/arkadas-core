@@ -26,7 +26,7 @@
   "scripts": {
     "------- DEV -------": "",
     "dev": "npm run dev:all",
-    "dev:all": "npm run dev:docker && concurrently -n strapi,web,mobile,mebbis,ai -c blue,green,magenta,cyan,yellow \"npm run dev:strapi\" \"npm run dev:web\" \"npm run dev:mobile\" \"npm run dev:mebbis\" \"npm run dev:ai\"",
+    "dev:all": "npm run dev:docker && concurrently --kill-others --kill-signal SIGTERM -n strapi,web,mobile,mebbis,ai -c blue,green,magenta,cyan,yellow \"npm run dev:strapi\" \"npm run dev:web\" \"npm run dev:mobile\" \"npm run dev:mebbis\" \"npm run dev:ai\"",
     "dev:docker": "docker compose -f docker-compose.yml --profile core --profile infra up -d --wait",
     "dev:strapi": "npm run develop --prefix strapi",
     "dev:web": "npm run dev --prefix web",
@@ -43,7 +43,7 @@
     "build:ai": "echo 'AI Service: No build step required (Python)'",
     "------- START (Production) -------": "",
     "start": "npm run start:all",
-    "start:all": "npm run start:docker && concurrently -n strapi,web,mebbis,ai -c blue,green,cyan,yellow \"npm run start:strapi\" \"npm run start:web\" \"npm run start:mebbis\" \"npm run start:ai\"",
+    "start:all": "npm run start:docker && concurrently --kill-others --kill-signal SIGTERM -n strapi,web,mebbis,ai -c blue,green,cyan,yellow \"npm run start:strapi\" \"npm run start:web\" \"npm run start:mebbis\" \"npm run start:ai\"",
     "start:strapi": "npm run start --prefix strapi",
     "start:web": "npm run start --prefix web",
     "start:mebbis": "npm run start --prefix mebbis-service",
