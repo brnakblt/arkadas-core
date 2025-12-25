@@ -33,6 +33,7 @@
     "dev:mobile": "cd mobile && EXPO_ROUTER_APP_ROOT=./app npm run start",
     "dev:ai": "cd ai-service && ./venv/bin/python -m uvicorn app.main:app --reload --port 8000",
     "dev:mebbis": "npm run dev --prefix mebbis-service",
+    "dev:docs": "cd docs && mkdocs serve -a localhost:8001",
     "------- BUILD -------": "",
     "build": "npm run build:all",
     "build:all": "npm run typecheck && npm run lint && concurrently \"npm run build:strapi\" \"npm run build:web\" \"npm run build:mebbis\" \"npm run build:ai\"",
