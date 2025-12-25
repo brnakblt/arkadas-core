@@ -61,7 +61,7 @@
     "install:mobile": "cd mobile && npm install",
     "install:mebbis": "cd mebbis-service && npm install && npx playwright install chromium",
     "install:ai": "cd ai-service && python3 -m venv venv && ./venv/bin/pip install -r requirements.txt",
-    "install:docs": "pip install --user mkdocs-material",
+    "install:docs": "pipx install mkdocs-material || pip install --user mkdocs-material --break-system-packages",
     "------- UTILS -------": "",
     "reset": "npm run reset:all",
     "reset:all": "bash scripts/reset_docker.sh",
