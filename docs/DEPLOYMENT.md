@@ -36,6 +36,101 @@
 
 ---
 
+## 🏢 Multi-Tenant Mimarisi
+
+### Shared Instance Model
+Bu sistem **tek deployment** ile birden fazla kurumu destekler. Her kurum (tenant) aynı uygulamayı ve veritabanını paylaşır, ancak veriler **row-level security** ile tamamen izole edilir.
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                     PRODUCTION SUNUCU                        │
+│                                                              │
+│   ┌────────────────────────────────────────────────────────┐ │
+│   │  Strapi + Web + Mobile API                            │ │
+│   │  (Tenant middleware ile izolasyon)                    │ │
+│   └────────────────────────────────────────────────────────┘ │
+│                            ↓                                 │
+│   ┌────────────────────────────────────────────────────────┐ │
+│   │  PostgreSQL (Tek veritabanı)                          │ │
+│   │  ┌──────────┐ ┌──────────┐ ┌──────────┐              │ │
+│   │  │ Kurum A  │ │ Kurum B  │ │ Kurum C  │  ...         │ │
+│   │  │ tenant=1 │ │ tenant=2 │ │ tenant=3 │              │ │
+│   │  └──────────┘ └──────────┘ └──────────┘              │ │
+│   └────────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Veri İzolasyonu
+- **beforeFindMany**: Tüm sorgulara `WHERE tenant_id = X` eklenir
+- **beforeCreate**: Yeni kayıtlara otomatik `tenant_id` atanır
+- **beforeUpdate/Delete**: Sadece kendi tenant'ının verisini değiştirebilir
+
+### Avantajlar
+- ✅ Tek deployment, düşük maliyet
+- ✅ Merkezi bakım ve güncelleme
+- ✅ Tenant sayısı arttıkça sadece RAM/CPU ekle
+- ✅ Ayrı env dosyası gerekmez
+
+---
+
+## 💾 Disk ve RAID Yapılandırması
+
+### Önerilen Disk Yapısı
+
+| Mount Point | RAID | Disk Sayısı | Boyut | Açıklama |
+|-------------|------|-------------|-------|----------|
+| `/` | RAID 1 | 2x SSD | 100 GB | İşletim sistemi + Docker |
+| `/var/lib/postgresql` | RAID 10 | 4x SSD | 200+ GB | PostgreSQL verileri |
+| `/backups` | RAID 1 veya NAS | 2x HDD | 500+ GB | Yedekler |
+
+### RAID Kurulumu (mdadm)
+
+```bash
+# RAID 1 oluştur (OS için)
+sudo mdadm --create /dev/md0 --level=1 --raid-devices=2 /dev/sda /dev/sdb
+
+# RAID 10 oluştur (Database için)
+sudo mdadm --create /dev/md1 --level=10 --raid-devices=4 /dev/sdc /dev/sdd /dev/sde /dev/sdf
+
+# RAID yapısını kaydet
+sudo mdadm --detail --scan | sudo tee -a /etc/mdadm/mdadm.conf
+sudo update-initramfs -u
+
+# Dosya sistemi oluştur
+sudo mkfs.ext4 /dev/md0
+sudo mkfs.ext4 /dev/md1
+
+# Mount pointler
+sudo mkdir -p /mnt/database
+sudo mount /dev/md1 /mnt/database
+
+# fstab'a ekle (kalıcı mount)
+echo '/dev/md1 /var/lib/postgresql ext4 defaults 0 2' | sudo tee -a /etc/fstab
+```
+
+### PostgreSQL Docker Volume Ayarı
+
+```yaml
+# docker-compose.prod.yml
+services:
+  postgres:
+    image: postgres:16-alpine
+    volumes:
+      - /var/lib/postgresql/data:/var/lib/postgresql/data  # RAID 10
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+```
+
+### Tenant Başına Disk Kullanımı Tahmini
+
+| Tenant Boyutu | Öğrenci Sayısı | Tahmini Disk |
+|---------------|----------------|--------------|
+| Küçük | 10-50 | 1-5 GB |
+| Orta | 50-200 | 5-20 GB |
+| Büyük | 200+ | 20-50 GB |
+
+> **Not**: 10 tenant ile başlayacaksanız minimum 200 GB PostgreSQL alanı ayırın.
+
 ## 🖥️ Adım 1: İşletim Sistemi Seçimi
 
 ### Önerilen: Ubuntu Server 22.04 LTS
