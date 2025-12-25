@@ -37,9 +37,9 @@
 - [x] Fatura özet raporu
 
 ### 6. Bildirim Sistemi
-- [ ] Push notification tenant filtering
-- [ ] SMS gönderim tenant ayırımı
-- [ ] Email template tenant bazlı
+- [x] Push notification tenant filtering
+- [x] SMS gönderim tenant ayırımı
+- [x] Email template tenant bazlı
 
 ## 🟢 DÜŞÜK ÖNCELİK
 
