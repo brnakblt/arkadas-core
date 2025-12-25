@@ -2,10 +2,12 @@
 # Requires Python 3.11 (recommended for ML libraries)
 
 # Web Framework
-# Web Framework
 fastapi
 uvicorn[standard]
+uvicorn[standard]
 python-multipart
+slowapi==0.1.9
+pytest-cov==4.1.0
 
 # Face Recognition (requires dlib)
 cmake

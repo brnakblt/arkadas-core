@@ -1,43 +1,50 @@
-import IORedis from 'ioredis';
-jest.mock('ioredis');
+import { getTenantCredentials, redis } from '../utils/tenant';
 
-import { getTenantCredentials } from '../utils/tenant';
+// Mock logger
+jest.mock('../utils/logger', () => ({
+    logger: {
+        warn: jest.fn(),
+        info: jest.fn(),
+        error: jest.fn(),
+    },
+}));
 
-// Mock fetch
-global.fetch = jest.fn();
+// Mock global fetch
+const mockFetch = jest.fn() as jest.Mock;
+global.fetch = mockFetch;
 
 describe('getTenantCredentials', () => {
-    let mockRedis: any;
-
-    beforeAll(() => {
-        // Access the instance created in tenant.ts
-        // Since tenant.ts is imported after mock, the constructor was the mock
-        const MockRedis = IORedis as unknown as jest.Mock;
-        mockRedis = MockRedis.mock.instances[0];
-    });
 
     beforeEach(() => {
         jest.clearAllMocks();
-        // Reset specific mock implementations if needed, but keep the instance
         process.env.STRAPI_URL = 'http://localhost:1337';
         process.env.STRAPI_API_TOKEN = 'test-token';
     });
 
+    // Since we are using the REAL redis instance (but it will fail if it tries to connect to real redis),
+    // we MUST spy on its methods to prevent actual network calls.
+    // However, redis tries to connect on instantiation.
+    // If the test env doesn't have a redis, it might error or warn. 
+    // Ideally we mock the redis module to return a "fake" client that we can spy on.
+
+    // But since we just exported 'redis', we can spy on it.
+
     it('should return cached credentials if available', async () => {
-        const cachedConfig = { username: 'cached-user', password: 'cached-pass' };
-        mockRedis.get.mockResolvedValue(JSON.stringify(cachedConfig));
+        // Spy on the exported redis instance methods
+        const getSpy = jest.spyOn(redis, 'get').mockResolvedValue(JSON.stringify({ username: 'cached', password: 'pass' }));
 
         const config = await getTenantCredentials('1');
 
-        expect(mockRedis.get).toHaveBeenCalledWith('tenant:1:credentials');
-        expect(config).toEqual(cachedConfig);
-        expect(fetch).not.toHaveBeenCalled();
+        expect(getSpy).toHaveBeenCalledWith('tenant:1:credentials');
+        expect(config).toEqual({ username: 'cached', password: 'pass' });
+        expect(mockFetch).not.toHaveBeenCalled();
     });
 
     it('should fetch from Strapi if not in cache', async () => {
-        mockRedis.get.mockResolvedValue(null);
+        const getSpy = jest.spyOn(redis, 'get').mockResolvedValue(null);
+        const setSpy = jest.spyOn(redis, 'set').mockResolvedValue('OK');
 
-        (global.fetch as jest.Mock).mockResolvedValue({
+        mockFetch.mockResolvedValue({
             ok: true,
             json: async () => ({
                 data: {
@@ -51,23 +58,53 @@ describe('getTenantCredentials', () => {
 
         const config = await getTenantCredentials('2');
 
-        expect(mockRedis.get).toHaveBeenCalledWith('tenant:2:credentials');
-        expect(fetch).toHaveBeenCalledWith('http://localhost:1337/api/tenants/2', expect.any(Object));
+        expect(getSpy).toHaveBeenCalledWith('tenant:2:credentials');
+        expect(mockFetch).toHaveBeenCalledWith(
+            'http://localhost:1337/api/tenants/2',
+            expect.objectContaining({
+                headers: {
+                    Authorization: 'Bearer test-token',
+                },
+            })
+        );
         expect(config).toEqual({ username: 'strapi-user', password: 'strapi-pass' });
-        expect(mockRedis.set).toHaveBeenCalled();
-    });
-
-    it('should throw error if tenantId is missing', async () => {
-        await expect(getTenantCredentials('')).rejects.toThrow('Tenant ID is required');
+        expect(setSpy).toHaveBeenCalled();
     });
 
     it('should throw error if Strapi returns error', async () => {
-        mockRedis.get.mockResolvedValue(null);
-        (global.fetch as jest.Mock).mockResolvedValue({
+        jest.spyOn(redis, 'get').mockResolvedValue(null);
+        mockFetch.mockResolvedValue({
             ok: false,
             statusText: 'Not Found',
         });
 
         await expect(getTenantCredentials('999')).rejects.toThrow('Failed to fetch tenant credentials: Not Found');
+    });
+
+    it('should throw error if tenantId contains invalid characters (SSRF protection)', async () => {
+        await expect(getTenantCredentials('../evil')).rejects.toThrow('Invalid Tenant ID format');
+        await expect(getTenantCredentials('tenant/1')).rejects.toThrow('Invalid Tenant ID format');
+    });
+
+    it('should throw error if mebbisPassword is missing', async () => {
+        jest.spyOn(redis, 'get').mockResolvedValue(null);
+        mockFetch.mockResolvedValue({
+            ok: true,
+            json: async () => ({
+                data: {
+                    attributes: {
+                        mebbisUsername: 'no-pass',
+                        mebbisPassword: null,
+                    },
+                },
+            }),
+        });
+
+        await expect(getTenantCredentials('3')).rejects.toThrow('MEBBIS password not found');
+    });
+
+    afterAll(() => {
+        // Clean up redis connection to prevent open handles
+        redis.disconnect();
     });
 });

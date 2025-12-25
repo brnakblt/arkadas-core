@@ -4,6 +4,8 @@
  */
 
 const API_BASE = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+const USE_MOCK = process.env.NEXT_PUBLIC_MOCK_DATA === 'true';
+import { mockAttendanceStats, mockAttendanceRecords } from '../mocks/strapiMocks';
 
 interface AttendanceRecord {
     id: number;
@@ -60,6 +62,8 @@ class AttendanceService {
      * Get attendance records for a specific date
      */
     async getAttendanceByDate(date: string): Promise<AttendanceRecord[]> {
+        if (USE_MOCK) return Promise.resolve(mockAttendanceRecords);
+
         const startOfDay = `${date}T00:00:00.000Z`;
         const endOfDay = `${date}T23:59:59.999Z`;
 
@@ -161,6 +165,8 @@ class AttendanceService {
      * Get daily statistics
      */
     async getDailyStats(date: string): Promise<AttendanceStats> {
+        if (USE_MOCK) return Promise.resolve(mockAttendanceStats);
+
         const records = await this.getAttendanceByDate(date);
 
         // Get total students count

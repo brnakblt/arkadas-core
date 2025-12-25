@@ -62,6 +62,29 @@ if command -v npx &> /dev/null && [ -f "web/playwright.config.ts" ]; then
 fi
 
 # =============================================================================
+# BACKEND TESTS
+# =============================================================================
+echo -e "${BLUE}⚙️  Backend Service Tests${NC}"
+echo "----------------------------------------"
+
+# AI Service (Python)
+if [ -d "ai-service" ]; then
+    # Ensure venv exists or use system python if preferred (CI usually does setup)
+    # We assume 'pytest' is available in path or venv
+    if [ -f "ai-service/venv/bin/pytest" ]; then
+        run_test "AI Service Tests" "PYTHONPATH=. ./venv/bin/pytest --cov=app --cov-report=term-missing" "ai-service"
+    else
+        # Fallback to system pytest or just skip warning
+        run_test "AI Service Tests (System Pytest)" "PYTHONPATH=. pytest --cov=app --cov-report=term-missing" "ai-service"
+    fi
+fi
+
+# Mebbis Service (Node)
+if [ -d "mebbis-service" ]; then
+    run_test "Mebbis Service Unit Tests" "npm test -- --coverage" "mebbis-service"
+fi
+
+# =============================================================================
 # MOBILE TESTS
 # =============================================================================
 echo -e "${BLUE}📱 Mobile Application Tests${NC}"

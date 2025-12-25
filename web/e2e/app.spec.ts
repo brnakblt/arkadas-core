@@ -51,7 +51,7 @@ test.describe('Servis Takip', () => {
 test.describe('Yoklama', () => {
     test('should load attendance page', async ({ page }) => {
         await page.goto('/yoklama');
-        await expect(page.getByText(/Yoklama/i)).toBeVisible();
+        await expect(page.getByRole('heading', { name: /Yoklama/i })).toBeVisible();
     });
 
     test('should show stats cards', async ({ page }) => {
@@ -74,7 +74,7 @@ test.describe('Yoklama', () => {
 test.describe('Program', () => {
     test('should load schedule page', async ({ page }) => {
         await page.goto('/program');
-        await expect(page.getByText(/Program|Takvim/i)).toBeVisible();
+        await expect(page.getByRole('heading', { name: /Program|Takvim/i })).toBeVisible();
     });
 
     test('should show calendar', async ({ page }) => {

@@ -26,7 +26,7 @@ export default async function Home() {
   return (
     <>
       <Hero data={hero.data} />
-      <About data={about?.data as any} />
+      <About data={about?.data || undefined} />
       <Team />
       <Services data={services.data} />
       <Process data={processes.data} />

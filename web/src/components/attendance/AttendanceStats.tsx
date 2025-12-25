@@ -50,7 +50,7 @@ export default function AttendanceStats({ stats }: AttendanceStatsProps) {
             {cards.map((card, index) => (
                 <div
                     key={index}
-                    className={`${card.bgColor} rounded-xl p-5 border border-gray-100`}
+                    className={`stats-card ${card.bgColor} rounded-xl p-5 border border-gray-100`}
                 >
                     <div className="flex justify-between items-start">
                         <div>
@@ -70,10 +70,10 @@ export default function AttendanceStats({ stats }: AttendanceStatsProps) {
                         <p className="text-3xl font-bold text-gray-900">%{stats.attendanceRate.toFixed(1)}</p>
                     </div>
                     <div className={`px-3 py-1 rounded-full text-sm font-medium ${stats.attendanceRate >= 90
-                            ? 'bg-green-100 text-green-700'
-                            : stats.attendanceRate >= 75
-                                ? 'bg-yellow-100 text-yellow-700'
-                                : 'bg-red-100 text-red-700'
+                        ? 'bg-green-100 text-green-700'
+                        : stats.attendanceRate >= 75
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-red-100 text-red-700'
                         }`}>
                         {stats.attendanceRate >= 90 ? 'Mükemmel' : stats.attendanceRate >= 75 ? 'İyi' : 'Düşük'}
                     </div>

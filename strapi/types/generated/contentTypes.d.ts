@@ -1168,6 +1168,7 @@ export interface ApiTenantTenant extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    contactEmail: Schema.Attribute.Email;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     domain: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
@@ -1181,6 +1182,7 @@ export interface ApiTenantTenant extends Struct.CollectionTypeSchema {
     students: Schema.Attribute.Relation<'oneToMany', 'api::student-profile.student-profile'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    users: Schema.Attribute.Relation<'oneToMany', 'plugin::users-permissions.user'>;
   };
 }
 
@@ -1590,6 +1592,7 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
     publishedAt: Schema.Attribute.DateTime;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
     role: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.role'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     username: Schema.Attribute.String &

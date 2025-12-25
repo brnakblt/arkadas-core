@@ -61,7 +61,11 @@ class FaceRecognitionService:
         """
         if not user_id or not isinstance(user_id, str):
             raise ValueError("user_id is required and must be a string")
-        
+            
+        # Security: Strict check for path separators
+        if '/' in user_id or '\\' in user_id:
+            raise ValueError("Invalid user_id: path separators not allowed")
+            
         # Strip whitespace and get basename to prevent directory traversal
         sanitized = os.path.basename(user_id.strip())
         
@@ -79,12 +83,21 @@ class FaceRecognitionService:
         
         return sanitized
     
-    def _get_user_filepath(self, user_id: str) -> str:
+    def _get_user_filepath(self, user_id: str, tenant_id: str) -> str:
         """
-        Safely construct filepath for user data.
+        Safely construct filepath for user data, scoped by tenant.
         """
-        sanitized_id = self._validate_user_id(user_id)
-        filepath = os.path.join(self.encodings_path, f"{sanitized_id}.pkl")
+        if not tenant_id or not isinstance(tenant_id, str):
+            raise ValueError("tenant_id is required")
+
+        sanitized_user_id = self._validate_user_id(user_id)
+        sanitized_tenant_id = self._validate_user_id(tenant_id) # Use same validator for tenant_id
+        
+        # Create tenant directory if it doesn't exist
+        tenant_dir = os.path.join(self.encodings_path, sanitized_tenant_id)
+        os.makedirs(tenant_dir, exist_ok=True)
+
+        filepath = os.path.join(tenant_dir, f"{sanitized_user_id}.pkl")
         
         # Verify the path is within the expected directory
         real_encodings_path = os.path.realpath(self.encodings_path)
@@ -96,24 +109,26 @@ class FaceRecognitionService:
         return filepath
     
     def _load_encodings(self):
-        """Load all face encodings from disk into memory"""
-        for filename in os.listdir(self.encodings_path):
-            if filename.endswith('.pkl'):
-                user_id = filename.replace('.pkl', '')
-                filepath = os.path.join(self.encodings_path, filename)
-                try:
-                    with open(filepath, 'rb') as f:
-                        data = pickle.load(f)
-                        self._encodings_cache[user_id] = data.get('encodings', [])
-                        self._user_metadata[user_id] = data.get('metadata', {})
-                except Exception as e:
-                    print(f"Error loading encodings for {user_id}: {e}")
+        """Load all face encodings from disk into memory (recursive scan for tenants)"""
+        # Walk through tenant directories
+        for root, dirs, files in os.walk(self.encodings_path):
+            for filename in files:
+                if filename.endswith('.pkl'):
+                    user_id = filename.replace('.pkl', '')
+                    filepath = os.path.join(root, filename)
+                    try:
+                        with open(filepath, 'rb') as f:
+                            data = pickle.load(f)
+                            self._encodings_cache[user_id] = data.get('encodings', [])
+                            self._user_metadata[user_id] = data.get('metadata', {})
+                    except Exception as e:
+                        print(f"Error loading encodings for {user_id}: {e}")
         
         print(f"Loaded face encodings for {len(self._encodings_cache)} users")
     
-    def _save_user_encodings(self, user_id: str):
-        """Save user encodings to disk (user_id already validated)"""
-        filepath = self._get_user_filepath(user_id)
+    def _save_user_encodings(self, user_id: str, tenant_id: str):
+        """Save user encodings to disk (scoped by tenant)"""
+        filepath = self._get_user_filepath(user_id, tenant_id)
         data = {
             'encodings': self._encodings_cache.get(user_id, []),
             'metadata': self._user_metadata.get(user_id, {}),
@@ -215,7 +230,7 @@ class FaceRecognitionService:
             self._user_metadata[user_id]["encoding_count"] = len(self._encodings_cache[user_id])
             
             # Save to disk
-            self._save_user_encodings(user_id)
+            self._save_user_encodings(user_id, tenant_id)
             
             return {
                 "success": True,
@@ -345,22 +360,34 @@ class FaceRecognitionService:
             "message": f"Processed {processed}/{len(images_base64)} images",
         }
     
-    async def delete_user_encodings(self, user_id: str) -> bool:
-        """Delete all encodings for a user (with path traversal protection)"""
+    async def delete_user_encodings(self, user_id: str, tenant_id: str) -> bool:
+        """Delete all encodings for a user (tenant-aware + path traversal protection)"""
         # Validate user_id first
         sanitized_id = self._validate_user_id(user_id)
         
+        # Check tenant ownership
+        user_meta = self._user_metadata.get(sanitized_id)
+        if not user_meta:
+            return False # User not found, nothing to delete
+            
+        if user_meta.get("tenant_id") != tenant_id:
+             # Security: Do not reveal if user exists in another tenant
+             # Just return False or raise generic error
+             print(f"SECURITY: Attempt to delete user {user_id} of tenant {user_meta.get('tenant_id')} by tenant {tenant_id}")
+             return False
+
         self._encodings_cache.pop(sanitized_id, None)
         self._user_metadata.pop(sanitized_id, None)
         
-        filepath = self._get_user_filepath(sanitized_id)
+        # We need tenant_id here to construct the path and delete the file
+        filepath = self._get_user_filepath(sanitized_id, tenant_id)
         if os.path.exists(filepath):
             os.remove(filepath)
         
         return True
     
-    async def list_enrolled_users(self) -> List[Dict[str, Any]]:
-        """List all users with face encodings"""
+    async def list_enrolled_users(self, tenant_id: str) -> List[Dict[str, Any]]:
+        """List all users with face encodings for a specific tenant"""
         return [
             {
                 "user_id": user_id,
@@ -368,4 +395,5 @@ class FaceRecognitionService:
                 **metadata,
             }
             for user_id, metadata in self._user_metadata.items()
+            if metadata.get("tenant_id") == tenant_id
         ]

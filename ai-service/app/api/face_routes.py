@@ -3,13 +3,15 @@ Face Recognition API Routes
 With authentication for sensitive endpoints
 """
 
-from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Form
 from pydantic import BaseModel
 from typing import List, Optional
 import base64
 
 from app.services.face_service import FaceRecognitionService
 from app.core.auth import verify_api_key, require_admin
+from app.core.limiter import limiter
+from fastapi import Request
 
 router = APIRouter()
 face_service = FaceRecognitionService()
@@ -102,8 +104,10 @@ async def validate_file_size(file: UploadFile) -> bytes:
 # ============ API Endpoints ============
 
 @router.post("/encode", response_model=FaceEncodeResponse)
+@limiter.limit("10/minute")
 async def encode_face(
-    request: FaceEncodeRequest,
+    request: Request,
+    request_body: FaceEncodeRequest,
     api_key: str = Depends(verify_api_key)  # Requires authentication
 ):
     """
@@ -116,9 +120,9 @@ async def encode_face(
     """
     try:
         result = await face_service.encode_face(
-            image_base64=request.image_base64,
-            user_id=request.user_id,
-            tenant_id=request.tenant_id,
+            image_base64=request_body.image_base64,
+            user_id=request_body.user_id,
+            tenant_id=request_body.tenant_id,
         )
         return result
     except ValueError as e:
@@ -128,64 +132,44 @@ async def encode_face(
 
 
 @router.post("/encode-file", response_model=FaceEncodeResponse)
+@limiter.limit("10/minute")
 async def encode_face_file(
-    user_id: str,
+    request: Request,
+    user_id: str = Form(...),
+    tenant_id: str = Form(...),
     file: UploadFile = File(...),
     api_key: str = Depends(verify_api_key)  # Requires authentication
 ):
     """
     Encode a face from uploaded file
-    
-    - **user_id**: Strapi user ID to associate with face
-    - **file**: Image file (JPEG/PNG, max 10MB)
-    
-    🔐 Requires API key authentication
     """
     try:
-        # Validate file size to prevent DoS
+        # Validate file size
         contents = await validate_file_size(file)
         image_base64 = base64.b64encode(contents).decode('utf-8')
         
         result = await face_service.encode_face(
             image_base64=image_base64,
             user_id=user_id,
+            tenant_id=tenant_id,
         )
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.post("/match", response_model=FaceMatchResponse)
-async def match_face(request: FaceMatchRequest):
-    """
-    Match a face against all stored encodings
-    
-    - **image_base64**: Base64 encoded image to match
-    
-    Returns list of matching users sorted by confidence
-    
-    ℹ️ No authentication required for matching
-    """
-    try:
-        result = await face_service.match_face(
-            image_base64=request.image_base64,
-            tenant_id=request.tenant_id,
-        )
-        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/match-file", response_model=FaceMatchResponse)
-async def match_face_file(file: UploadFile = File(...)):
+@limiter.limit("20/minute")
+async def match_face_file(
+    request: Request,
+    tenant_id: str = Form(...),
+    file: UploadFile = File(...),
+    api_key: str = Depends(verify_api_key)  # Requires authentication
+):
     """
     Match an uploaded face image against database
-    
-    ℹ️ No authentication required for matching
     """
     try:
         # Validate file size
@@ -194,52 +178,28 @@ async def match_face_file(file: UploadFile = File(...)):
         
         result = await face_service.match_face(
             image_base64=image_base64,
+            tenant_id=tenant_id,
         )
         return result
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.post("/train", response_model=TrainResponse)
-async def train_user(
-    request: TrainRequest,
-    api_key: str = Depends(require_admin)  # Requires admin authentication
-):
-    """
-    Train face recognition model with multiple images for a user
-    
-    - **user_id**: User to train
-    - **images_base64**: List of base64 encoded training images
-    
-    🔐 Requires admin API key authentication
-    """
-    try:
-        result = await face_service.train_user(
-            user_id=request.user_id,
-            images_base64=request.images_base64,
-            tenant_id=request.tenant_id,
-        )
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete("/user/{user_id}")
+@limiter.limit("20/minute")
 async def delete_user_encodings(
+    request: Request,
     user_id: str,
-    api_key: str = Depends(require_admin)  # Requires admin authentication
+    tenant_id: str,
+    api_key: str = Depends(require_admin)
 ):
     """
     Delete all face encodings for a user
-    
-    🔐 Requires admin API key authentication
     """
     try:
-        result = await face_service.delete_user_encodings(user_id)
+        result = await face_service.delete_user_encodings(user_id, tenant_id)
+        if not result:
+             raise HTTPException(status_code=404, detail="User not found or access denied")
         return {"success": result, "message": f"Encodings deleted for user {user_id}"}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -248,16 +208,17 @@ async def delete_user_encodings(
 
 
 @router.get("/users")
+@limiter.limit("60/minute")
 async def list_enrolled_users(
-    api_key: str = Depends(verify_api_key)  # Requires authentication
+    request: Request,
+    tenant_id: str,
+    api_key: str = Depends(verify_api_key)
 ):
     """
-    List all users with face encodings
-    
-    🔐 Requires API key authentication
+    List all users with face encodings for a specific tenant
     """
     try:
-        users = await face_service.list_enrolled_users()
+        users = await face_service.list_enrolled_users(tenant_id)
         return {"users": users, "count": len(users)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

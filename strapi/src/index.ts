@@ -1,5 +1,5 @@
-// import type { Core } from '@strapi/strapi';
 import { seedErpRoles } from './bootstrap/seed-roles';
+import { seedAdmin } from './bootstrap/seed-admin';
 
 export default {
   /**
@@ -18,6 +18,9 @@ export default {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }: { strapi: any }) {
+    // Seed Admin Users (Backend & Frontend)
+    await seedAdmin(strapi);
+
     // Seed ERP roles
     await seedErpRoles(strapi);
 

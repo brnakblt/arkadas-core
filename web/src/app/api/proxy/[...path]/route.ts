@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
 
-async function proxyRequest(req: NextRequest, { params }: { params: { path: string[] } }) {
-    const path = params.path.join("/");
+async function proxyRequest(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+    const { path: pathArray } = await params;
+    const path = pathArray.join("/");
     const jwt = req.cookies.get("jwt")?.value;
 
     const headers: HeadersInit = {

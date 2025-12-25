@@ -4,6 +4,8 @@
  */
 
 const API_BASE = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+const USE_MOCK = process.env.NEXT_PUBLIC_MOCK_DATA === 'true';
+import { mockServiceRoutes, mockLocationLog } from '../mocks/strapiMocks';
 
 interface LocationUpdate {
     latitude: number;
@@ -68,6 +70,8 @@ class GPSTrackingService {
      * Get all service routes
      */
     async getRoutes(): Promise<ServiceRoute[]> {
+        if (USE_MOCK) return Promise.resolve(mockServiceRoutes);
+
         const response = await fetch(`${API_BASE}/api/service-routes?populate=*`, {
             headers: this.getHeaders(),
         });
@@ -101,6 +105,8 @@ class GPSTrackingService {
      * Get active routes (currently in transit)
      */
     async getActiveRoutes(): Promise<ServiceRoute[]> {
+        if (USE_MOCK) return Promise.resolve(mockServiceRoutes);
+
         const response = await fetch(
             `${API_BASE}/api/service-routes?filters[isActive][$eq]=true&populate=*`,
             { headers: this.getHeaders() }
@@ -147,6 +153,8 @@ class GPSTrackingService {
      * Get latest location for a route
      */
     async getLatestLocation(routeId: string): Promise<LocationLog | null> {
+        if (USE_MOCK) return Promise.resolve(mockLocationLog);
+
         const response = await fetch(
             `${API_BASE}/api/location-logs?filters[route][id][$eq]=${routeId}&sort=recordedAt:desc&pagination[limit]=1`,
             { headers: this.getHeaders() }

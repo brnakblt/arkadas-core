@@ -29,6 +29,19 @@ generate_simple_secret() {
     openssl rand -base64 12 | tr -d '/+'
 }
 
+# Try to find existing DB password from Strapi env
+get_existing_db_password() {
+    if [ -f "strapi/.env" ]; then
+        grep "DATABASE_PASSWORD" strapi/.env | cut -d '=' -f2
+    elif [ -f "ai-service/.env" ]; then
+        # format might be DATABASE_URL=postgresql://user:pass@localhost...
+        # Parsing might be brittle, stick to Strapi for now or just file check
+        echo ""
+    else
+        echo ""
+    fi
+}
+
 echo ""
 echo -e "${CYAN}╔═══════════════════════════════════════════════════════════╗${NC}"
 echo -e "${CYAN}║     Arkadaş Özel Eğitim ERP - Ubuntu Production Setup     ║${NC}"
@@ -115,7 +128,14 @@ systemctl enable postgresql
 echo_step "Configuring PostgreSQL Database..."
 DB_NAME="arkadas_erp"
 DB_USER="strapi"
-DB_PASSWORD=$(generate_simple_secret)
+
+EXISTING_PASS=$(get_existing_db_password)
+if [ -n "$EXISTING_PASS" ]; then
+    echo_step "Found existing database password in strapi/.env, using it."
+    DB_PASSWORD="$EXISTING_PASS"
+else
+    DB_PASSWORD=$(generate_simple_secret)
+fi
 
 # Check if user exists
 if sudo -u postgres psql -t -c '\du' | cut -d \| -f 1 | grep -qw "$DB_USER"; then
@@ -258,7 +278,9 @@ update_env_key() {
 }
 
 # --- Strapi ---
-if [ -f "strapi/.env.reference" ]; then
+if [ -f "strapi/.env" ]; then
+    echo_step "strapi/.env already exists, skipping generation."
+elif [ -f "strapi/.env.reference" ]; then
     cp strapi/.env.reference strapi/.env
     update_env_key "strapi/.env" "NODE_ENV" "production"
     update_env_key "strapi/.env" "DATABASE_USERNAME" "$DB_USER"
@@ -273,7 +295,9 @@ if [ -f "strapi/.env.reference" ]; then
 fi
 
 # --- Web ---
-if [ -f "web/.env.reference" ]; then
+if [ -f "web/.env.local" ]; then
+    echo_step "web/.env.local already exists, skipping generation."
+elif [ -f "web/.env.reference" ]; then
     cp web/.env.reference web/.env.local
     # Shared keys if any?
     # Web mostly uses public keys, but NEXTAUTH_SECRET needs to be set
@@ -283,7 +307,9 @@ if [ -f "web/.env.reference" ]; then
 fi
 
 # --- AI Service ---
-if [ -f "ai-service/.env.reference" ]; then
+if [ -f "ai-service/.env" ]; then
+    echo_step "ai-service/.env already exists, skipping generation."
+elif [ -f "ai-service/.env.reference" ]; then
     cp ai-service/.env.reference ai-service/.env
     update_env_key "ai-service/.env" "DATABASE_URL" "postgresql://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME"
     update_env_key "ai-service/.env" "STRAPI_API_TOKEN" "$STRAPI_API_TOKEN" # This needs to be synced manually or seeded
@@ -292,7 +318,9 @@ if [ -f "ai-service/.env.reference" ]; then
 fi
 
 # --- Mebbis Service ---
-if [ -f "mebbis-service/.env.reference" ]; then
+if [ -f "mebbis-service/.env" ]; then
+    echo_step "mebbis-service/.env already exists, skipping generation."
+elif [ -f "mebbis-service/.env.reference" ]; then
     cp mebbis-service/.env.reference mebbis-service/.env
     update_env_key "mebbis-service/.env" "STRAPI_API_TOKEN" "$STRAPI_API_TOKEN"
     chown $ACTUAL_USER:$ACTUAL_USER mebbis-service/.env

@@ -161,6 +161,15 @@ sudo ./scripts/setup_arch.sh
 
 </details>
 
+### Kurulum (ÖNEMLİ)
+
+Projeyi ilk kez indirdiğinizde, tüm servislerin bağımlılıklarını (Node.js ve Python) tek komutla kurmak için:
+
+```bash
+npm run install:all
+```
+*Bu komut backend, frontend, mobile ve AI servisi için gerekli ortamları (virtualenv dahil) hazırlar.*
+
 ### Manuel Kurulum
 
 ```bash
@@ -168,11 +177,11 @@ sudo ./scripts/setup_arch.sh
 git clone https://github.com/brnakblt/arkadasozelegitim.git
 cd arkadasozelegitim
 
-# 2. Docker ile tüm servisleri başlat
-docker compose up -d
+# 2. Kurulum (Dependencies + Docker Images)
+npm run install:all
 
-# 3. Servislerin durumunu kotrol et
-docker ps
+# 3. Geliştirme Modunda Başlat (Docker + Node Servers)
+npm run dev:all
 ```
 
 ---
@@ -225,25 +234,29 @@ arkadasozelegitim/
 
 ## ▶️ Çalıştırma
 
-### Geliştirme Modu
-
-**Önerilen Yöntem (Lite Mod):**
-Sadece temel servisleri (Veritabanları + Strapi + Web) başlatır. RAM tasarrufu sağlar.
+**Geliştirme Modu:**
+Docker container'larını ve tüm Node.js servislerini başlatır.
 ```bash
-npm run dev:lite
+npm run dev:all
 ```
 
-**Diğer Seçenekler:**
+**Production Build & Start:**
+Lint/Typecheck işlemleri sonrası build alır ve production modunda başlatır.
 ```bash
-# Sadece Docker servislerini (Veritabanları) başlat
-npm run dev:docker
+npm run build:all
+npm run start:all
+```
 
-# Tüm altyapıyı (Nextcloud, OnlyOffice, AI vb.) başlat
-npm run dev:infra
+**Sistemi Durdurma:**
+Tüm container'ları durdurur ve portları temizler.
+```bash
+npm run stop:all
+```
 
-# Her şeyi başlat (Full Stack)
-npm run dev:docker
-npm run dev
+**Sistemi Sıfırlama:**
+Tüm Docker imajlarını, container'ları ve ağları temizler.
+```bash
+npm run reset:all
 ```
 
 ### Docker Profilleri
@@ -320,7 +333,7 @@ MEBBIS (Milli Eğitim Bakanlığı Bilişim Sistemleri) ile entegrasyon için ot
 ## 🧪 Test
 
 ```bash
-# Tüm testleri çalıştır
+# Tüm testleri çalıştır (Web, Mobile, Mebbis, AI)
 npm run test:all
 
 # Sadece web unit testleri
@@ -330,7 +343,10 @@ npm run test --prefix web
 npm run test:e2e --prefix web
 
 # Mobile testleri
-npm run test --prefix mobile
+npm run test:mobile
+
+# AI Service testleri
+npm run test:ai
 ```
 
 ---

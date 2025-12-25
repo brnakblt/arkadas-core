@@ -3,14 +3,20 @@ import IORedis from 'ioredis';
 import { logger } from '../utils/logger';
 import { MebbisConfig } from '../services/mebbis-automation';
 
+
 // Cache credentials to avoid hitting Strapi on every request
 // In a real app, listen for Strapi webhooks to invalidate this cache
-const redis = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');
+export const redis = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');
 const CACHE_TTL = 300; // 5 minutes
 
 export async function getTenantCredentials(tenantId: string | number): Promise<Partial<MebbisConfig>> {
     if (!tenantId) {
         throw new Error('Tenant ID is required');
+    }
+
+    // SSRF Prevention: Validate tenantId format (alphanumeric, hyphens, underscores)
+    if (!/^[a-zA-Z0-9_-]+$/.test(String(tenantId))) {
+        throw new Error('Invalid Tenant ID format');
     }
 
     const cacheKey = `tenant:${tenantId}:credentials`;
@@ -51,13 +57,17 @@ export async function getTenantCredentials(tenantId: string | number): Promise<P
             logger.warn(`Tenant ${tenantId} missing MEBBIS credentials`);
         }
 
-        // In a real implementation, you would decrypt the password here
-        // For this MVP, we assume Strapi returns the raw (but private) fields if token is admin
+        if (!mebbisPassword) {
+            logger.warn(`Tenant ${tenantId} missing MEBBIS password`);
+            throw new Error('MEBBIS password not found');
+        }
 
         const config: Partial<MebbisConfig> = {
             username: mebbisUsername,
             password: mebbisPassword,
         };
+
+
 
         await redis.set(cacheKey, JSON.stringify(config), 'EX', CACHE_TTL);
 

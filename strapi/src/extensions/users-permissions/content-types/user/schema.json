@@ -73,6 +73,12 @@
                 "teacher"
             ],
             "default": "parent"
+        },
+        "tenant": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::tenant.tenant",
+            "inversedBy": "users"
         }
     }
 }

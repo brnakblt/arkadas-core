@@ -69,7 +69,7 @@ export default defineConfig({
 
     // Start dev server before tests
     webServer: {
-        command: 'npm run dev',
+        command: 'cross-env NEXT_PUBLIC_MOCK_DATA=true npm run dev',
         url: 'http://localhost:3000',
         reuseExistingServer: !process.env.CI,
         timeout: 120 * 1000,

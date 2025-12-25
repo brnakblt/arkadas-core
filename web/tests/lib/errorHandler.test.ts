@@ -18,6 +18,7 @@ describe('errorHandler', () => {
         vi.spyOn(console, 'group').mockImplementation(() => { });
         vi.spyOn(console, 'error').mockImplementation(() => { });
         vi.spyOn(console, 'log').mockImplementation(() => { });
+        vi.spyOn(console, 'debug').mockImplementation(() => { });
         vi.spyOn(console, 'groupEnd').mockImplementation(() => { });
     });
 
@@ -86,14 +87,14 @@ describe('errorHandler', () => {
             const { handleError, reportError: _reportError } = await import('@/lib/errorHandler');
 
             // Mock console to catch output
-            const consoleSpy = vi.spyOn(console, 'log');
+            const consoleSpy = vi.spyOn(console, 'debug');
 
             const _error = handleError('Critical Error', { severity: 'critical', report: true });
 
             // We can check if it logged "Error reported"
             // Since reportError is internal mostly, checking console side effect is one way
             // Or better, we can mock reportError if it was exported/separable?
-            // It calls console.log('[ErrorReporter] Error reported:', ...) inside the file.
+            // It calls console.debug('[ErrorReporter] Error reported:', ...) inside the file.
             // But wait, reportError IS exported. We can spy on it?
             // Not if we import it.
 
@@ -134,7 +135,7 @@ describe('errorHandler', () => {
         it('should report in production', async () => {
             vi.stubEnv('NODE_ENV', 'production');
             const { reportError } = await import('@/lib/errorHandler');
-            const consoleSpy = vi.spyOn(console, 'log');
+            const consoleSpy = vi.spyOn(console, 'debug');
 
             await reportError(createAppError('Prod Error'));
 

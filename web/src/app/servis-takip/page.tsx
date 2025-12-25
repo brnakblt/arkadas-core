@@ -263,7 +263,7 @@ export default function ServiceTrackingPage() {
                                     : (myLocation ? { latitude: myLocation.latitude, longitude: myLocation.longitude } : null)}
                                 showCurrentLocation={true}
                                 height="500px"
-                                className="rounded-lg overflow-hidden"
+                                className="gps-map rounded-lg overflow-hidden"
                                 onMarkerClick={(marker) => {
                                     const route = routes.find(r => r.id === marker.id);
                                     if (route) setSelectedRoute(route);

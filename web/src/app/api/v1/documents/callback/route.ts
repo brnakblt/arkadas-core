@@ -60,6 +60,23 @@ export async function POST(request: NextRequest) {
 
                     if (filePath) {
                         try {
+                            // SSRF Prevention: Validate URL domain
+                            const allowedUrl = process.env.NEXT_PUBLIC_ONLYOFFICE_URL || 'http://localhost:8080';
+
+                            try {
+                                const parsedUrl = new URL(url);
+                                const parsedAllowed = new URL(allowedUrl);
+
+                                // Normalize hostnames for comparison
+                                if (parsedUrl.hostname !== parsedAllowed.hostname) {
+                                    console.error(`Blocked SSRF attempt: ${url}`);
+                                    return NextResponse.json({ error: 1 });
+                                }
+                            } catch (e) {
+                                console.error('Invalid URL in callback:', url);
+                                return NextResponse.json({ error: 1 });
+                            }
+
                             // Download the edited document from OnlyOffice
                             const docResponse = await fetch(url);
                             if (!docResponse.ok) {
@@ -119,10 +136,4 @@ export async function POST(request: NextRequest) {
     }
 }
 
-/**
- * Register a document key with its file path
- * Called when opening editor to enable save callback
- */
-export function registerDocumentKey(key: string, filePath: string): void {
-    documentKeyMap.set(key, filePath);
-}
+

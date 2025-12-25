@@ -4,7 +4,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBell, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
-import { useDashboard } from '@/app/dashboard/layout';
+import { useDashboard } from '@/context/DashboardContext';
 
 const TopBar = () => {
     const { user, searchQuery, setSearchQuery } = useDashboard();

@@ -10,6 +10,21 @@ import cors from 'cors';
 import apiRoutes from './api/routes';
 import { logger } from './utils/logger';
 import './queues'; // Initialize background workers
+import rateLimit from 'express-rate-limit'; // Security: Rate Limiting
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger';
+
+// Rate Limiter Configuration
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    message: {
+        success: false,
+        message: 'Too many requests from this IP, please try again after 15 minutes'
+    }
+});
 
 // Create Express app
 const app: Express = express();
@@ -39,6 +54,9 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
     next();
 });
 
+// Security: Apply Rate Limiting
+app.use(limiter);
+
 // ============================================================================
 // Routes
 // ============================================================================
@@ -56,6 +74,9 @@ app.get('/', (_req: Request, res: Response) => {
 
 // API routes
 app.use('/api', apiRoutes);
+
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ============================================================================
 // Error Handling

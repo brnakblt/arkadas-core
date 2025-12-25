@@ -1,13 +1,18 @@
-import { renderHook, act } from '@testing-library/react-native';
-import { useLocation } from '../hooks/useLocation';
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { useLocation } from '../../hooks/useLocation';
 
 describe('useLocation', () => {
-    it('should return initial state', () => {
+    it('should return initial state', async () => {
         const { result } = renderHook(() => useLocation());
 
         expect(result.current.location).toBeNull();
         expect(result.current.isTracking).toBe(false);
         expect(result.current.error).toBeNull();
+
+        // Wait for usage effect to complete to avoid "act" warning
+        await waitFor(() => {
+            expect(result.current.permissionStatus).not.toBeNull();
+        });
     });
 
     it('should request permission', async () => {

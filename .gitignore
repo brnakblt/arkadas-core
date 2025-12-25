@@ -138,5 +138,22 @@ $RECYCLE.BIN/
 \#*\#
 .fuse_hidden*
 
+
+# ============================================================
+# Databases (Docker Volumes)
+# ============================================================
+databases/
+!databases/.gitkeep
+
+# ============================================================
+# Improved Glob Patterns
+# ============================================================
+**/.DS_Store
+**/.env
+**/.env.production
+**/.env.development
+**/.env.test
+!**/.env.example
+
 # Custom Ignore
 todo.txt

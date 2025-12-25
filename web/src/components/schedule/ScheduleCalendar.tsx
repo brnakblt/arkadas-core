@@ -103,7 +103,7 @@ export default function ScheduleCalendar({ events, onEventClick, onDateClick }: 
     const isCurrentMonth = (date: Date) => date.getMonth() === currentDate.getMonth();
 
     return (
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="schedule-calendar bg-white rounded-xl shadow-sm overflow-hidden">
             {/* Header */}
             <div className="px-6 py-4 border-b flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -219,10 +219,10 @@ export default function ScheduleCalendar({ events, onEventClick, onDateClick }: 
                                 key={index}
                                 onClick={() => onDateClick?.(date)}
                                 className={`min-h-[100px] p-2 border-r border-b cursor-pointer transition-colors ${isToday(date)
-                                        ? 'bg-blue-50'
-                                        : isCurrentMonth(date)
-                                            ? 'bg-white hover:bg-gray-50'
-                                            : 'bg-gray-50/50 text-gray-400'
+                                    ? 'bg-blue-50'
+                                    : isCurrentMonth(date)
+                                        ? 'bg-white hover:bg-gray-50'
+                                        : 'bg-gray-50/50 text-gray-400'
                                     } ${(index + 1) % 7 === 0 ? 'border-r-0' : ''}`}
                             >
                                 <p className={`text-sm font-medium ${isToday(date) ? 'text-blue-600' : ''

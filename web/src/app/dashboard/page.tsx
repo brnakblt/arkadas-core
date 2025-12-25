@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { useDashboard } from './layout';
+import { useDashboard } from '@/context/DashboardContext';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {

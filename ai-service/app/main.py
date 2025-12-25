@@ -4,6 +4,10 @@ FastAPI application for face encoding and matching
 """
 
 import os
+import warnings
+# Silence deprecation warning from face_recognition_models
+warnings.filterwarnings("ignore", category=UserWarning, module="face_recognition_models")
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -11,6 +15,11 @@ from contextlib import asynccontextmanager
 from app.api import face_routes, health_routes
 from app.core.config import settings
 from app.routers import storage
+from app.core.limiter import limiter
+
+# Rate Limiting
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 
 # =============================================================================
@@ -70,7 +79,13 @@ app = FastAPI(
     description="Yüz tanıma ile yoklama takip sistemi",
     version="1.0.0",
     lifespan=lifespan,
+    docs_url="/docs" if settings.DEBUG else None,
+    redoc_url="/redoc" if settings.DEBUG else None,
 )
+
+# Rate Limiting Configuration
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # =============================================================================
 # CORS Middleware - Secure Configuration

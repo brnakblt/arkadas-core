@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [20.x]
+        python-version: [3.11]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+
+    - name: Install Dependencies
+      run: |
+        # Web
+        cd web && npm ci && cd ..
+        
+        # Mebbis Service
+        cd mebbis-service && npm ci && cd ..
+        
+        # AI Service
+        cd ai-service
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+        # Install dlib fallback or use cache if possible, for now basic install
+        cd ..
+
+    - name: Run Tests
+      run: |
+        # Make script executable
+        chmod +x scripts/run-tests.sh
+        
+        # Run script
+        ./scripts/run-tests.sh
+      env:
+        CI: true

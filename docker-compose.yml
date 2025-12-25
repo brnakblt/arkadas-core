@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # ==========================================
   # Infrastructure Services
@@ -25,6 +23,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - "5432:5432"
+
+  # ... (rest of file)
+
+
+
+  # ...
+
+
 
   redis:
     profiles: [ core ]
@@ -44,6 +52,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - "6380:6379"
 
   onlyoffice:
     profiles: [ infra ]
@@ -98,8 +108,8 @@ services:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
       - MYSQL_HOST=nextcloud-db
-      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER:-admin}
-      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD:-NCY.8x0C_sI1dmaUaP37xYUGeR54}
+      # - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER:-admin}
+      # - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD:-NCY.8x0C_sI1dmaUaP37xYUGeR54}
       - NEXTCLOUD_TRUSTED_DOMAINS=localhost
     depends_on:
       - nextcloud-db
@@ -133,6 +143,20 @@ services:
       resources:
         limits:
           memory: 1G
+
+  dozzle:
+    profiles: [ infra ]
+    image: amir20/dozzle:latest
+    restart: always
+    ports:
+      - "8888:8080"
+    environment:
+      DOZZLE_LEVEL: info
+      DOZZLE_TAIL: 100
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - arkadas-net
 
   # ==========================================
   # Application Services
@@ -198,7 +222,7 @@ services:
       - strapi
 
   ai-service:
-    profiles: [ features ]
+    profiles: [ apps ]
     build:
       context: ./ai-service
       dockerfile: Dockerfile
@@ -225,7 +249,7 @@ services:
         condition: service_started
 
   mebbis-service:
-    profiles: [ features ]
+    profiles: [ apps ]
     build:
       context: ./mebbis-service
       dockerfile: Dockerfile

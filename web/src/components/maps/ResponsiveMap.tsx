@@ -185,7 +185,6 @@ export function GoogleMapsEmbed({
 export function OpenStreetMapEmbed({
     latitude,
     longitude,
-    _zoom = 15,
     marker = true,
     className = '',
     ...props

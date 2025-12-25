@@ -3,11 +3,12 @@ import { NextRequest, NextResponse } from 'next/server';
 // WOPI host implementation for OnlyOffice
 // Standard: https://learn.microsoft.com/en-us/microsoft-365/cloud-storage-partner-program/rest/
 
-export async function GET(request: NextRequest, { params }: { params: { path: string[] } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
     // URL pattern: /api/wopi/files/{fileId}
     // params.path = ['files', 'fileId']
 
-    const [resourceType, fileId] = params.path;
+    const { path } = await params;
+    const [resourceType, fileId] = path;
 
     if (resourceType !== 'files' || !fileId) {
         return NextResponse.json({ error: 'Invalid WOPI request' }, { status: 404 });
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest, { params }: { params: { path: st
     return NextResponse.json(metadata);
 }
 
-export async function POST(request: NextRequest, { params: _params }: { params: { path: string[] } }) {
+export async function POST(request: NextRequest, { params: _params }: { params: Promise<{ path: string[] }> }) {
     // Handling contents update (PutFile) usually goes to /api/wopi/files/{id}/contents
     // but Next.js catch-all handles it.
 

@@ -22,6 +22,12 @@ RUN npm run build
 # Install Playwright Browsers (Chromium only to save space, assuming script uses chromium)
 RUN npx playwright install chromium --with-deps
 
+# Security: Change ownership to node user
+RUN chown -R node:node /app
+
+# Switch to non-root user
+USER node
+
 EXPOSE 4000
 
 CMD ["npm", "start"]

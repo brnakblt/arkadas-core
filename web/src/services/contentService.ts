@@ -1,4 +1,14 @@
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
+const USE_MOCK = process.env.NEXT_PUBLIC_MOCK_DATA === 'true';
+
+import {
+  mockHero,
+  mockServices,
+  mockProcesses,
+  mockFAQs,
+  mockGallery,
+  mockAbout
+} from '../mocks/strapiMocks';
 
 export interface StrapiSingleResponse<T> {
   data: T & {
@@ -96,6 +106,8 @@ export interface AboutData {
 
 export const contentService = {
   async getHero(): Promise<StrapiSingleResponse<HeroData>> {
+    if (USE_MOCK) return Promise.resolve(mockHero);
+
     const params = new URLSearchParams();
     params.append("populate[0]", "images");
     params.append("populate[1]", "stats");
@@ -108,6 +120,8 @@ export const contentService = {
   },
 
   async getServices(): Promise<StrapiCollectionResponse<ServiceData>> {
+    if (USE_MOCK) return Promise.resolve(mockServices);
+
     const params = new URLSearchParams();
     params.append("populate[0]", "features");
 
@@ -119,6 +133,8 @@ export const contentService = {
   },
 
   async getProcesses(): Promise<StrapiCollectionResponse<ProcessData>> {
+    if (USE_MOCK) return Promise.resolve(mockProcesses);
+
     // Strapi sorting: sort[0]=field:asc
     const params = new URLSearchParams();
     params.append("sort[0]", "number:asc");
@@ -131,6 +147,8 @@ export const contentService = {
   },
 
   async getFAQs(): Promise<StrapiCollectionResponse<FAQData>> {
+    if (USE_MOCK) return Promise.resolve(mockFAQs);
+
     const response = await fetch(`${STRAPI_URL}/api/faqs`, {
       next: { revalidate: 60 },
     });
@@ -139,6 +157,8 @@ export const contentService = {
   },
 
   async getGallery(): Promise<StrapiCollectionResponse<GalleryData>> {
+    if (USE_MOCK) return Promise.resolve(mockGallery);
+
     const params = new URLSearchParams();
     params.append("populate[0]", "image");
 
@@ -150,6 +170,8 @@ export const contentService = {
   },
 
   async getAbout(): Promise<StrapiSingleResponse<AboutData>> {
+    if (USE_MOCK) return Promise.resolve(mockAbout);
+
     const params = new URLSearchParams();
     params.append("populate[0]", "blocks");
 
