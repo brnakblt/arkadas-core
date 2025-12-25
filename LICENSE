@@ -1,21 +1,61 @@
-MIT License
+ARKADAŞ ERP - TESCİLLİ YAZILIM LİSANSI
+=====================================
 
-Copyright (c) 2025 rain-jpg
+Telif Hakkı (c) 2024-2025 Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi
+Tüm hakları saklıdır.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ÖNEMLİ - DİKKATLİCE OKUYUN
+--------------------------
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Bu yazılım ve ilgili dokümantasyon dosyaları ("Yazılım"), tescilli ve 
+gizli nitelikte olup, Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi'nin
+münhasır mülkiyetindedir.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+YASAKLANAN FAALİYETLER
+----------------------
+
+Aşağıdaki faaliyetler açıkça yasaklanmıştır:
+
+1. Yazılımın herhangi bir şekilde kopyalanması, çoğaltılması veya dağıtılması
+2. Kaynak kodunun değiştirilmesi, adapte edilmesi veya türev çalışmalar oluşturulması
+3. Yazılımın ters mühendislik, derleme çözme veya kaynak kod çıkarma işlemlerine tabi tutulması
+4. Yazılımın alt lisanslanması, kiralanması veya ödünç verilmesi
+5. Yazılımın izinsiz üçüncü taraflara aktarılması
+6. Yazılımın kamuya açık şekilde görüntülenmesi veya performans gösterimi
+
+LİSANS HAKLARI
+--------------
+
+Bu yazılımı kullanmak için geçerli bir lisans sözleşmesi gereklidir.
+Lisans sözleşmesi olmadan bu yazılımı kullanmak yasalara aykırıdır.
+
+Lisanslı kullanıcılar aşağıdaki haklara sahiptir:
+- Yazılımı lisans sözleşmesinde belirtilen kapasitede kullanma
+- Teknik destek alma (destek sözleşmesi dahilinde)
+- Güncellemeleri alma (bakım sözleşmesi dahilinde)
+
+GARANTİ REDDİ
+-------------
+
+BU YAZILIM "OLDUĞU GİBİ" SUNULMAKTADIR. SATILABİLİRLİK, BELİRLİ BİR 
+AMACA UYGUNLUK VE İHLAL ETMEME GARANTİLERİ DAHİL ANCAK BUNLARLA 
+SINIRLI OLMAMAK ÜZERE, AÇIK VEYA ZIMNİ HİÇBİR GARANTİ VERİLMEMEKTEDİR.
+
+SORUMLULUK SINIRLAMASI
+----------------------
+
+HİÇBİR DURUMDA YAZILIM SAHİPLERİ, DOĞRUDAN, DOLAYLI, ARIZİ, ÖZEL, 
+CEZA GEREKTİREN VEYA SONUÇSAL ZARARLARDAN SORUMLU TUTULAMAZ.
+
+İLETİŞİM
+--------
+
+Lisans sorgulamaları ve satın alma için:
+  E-posta: info@arkadas.com.tr
+  Web: https://arkadas.com.tr
+  Telefon: +90 XXX XXX XX XX
+
+---
+
+Son Güncelleme: Aralık 2024
+Versiyon: 1.0.0
