@@ -1,0 +1,84 @@
+{
+    "routes": [
+        {
+            "method": "GET",
+            "path": "/raporlar",
+            "handler": "rapor.find",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "GET",
+            "path": "/raporlar/:id",
+            "handler": "rapor.findOne",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "DELETE",
+            "path": "/raporlar/:id",
+            "handler": "rapor.delete",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "POST",
+            "path": "/raporlar/ek4",
+            "handler": "rapor.generateEk4",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "POST",
+            "path": "/raporlar/donem-sonu",
+            "handler": "rapor.generateDonemSonu",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "POST",
+            "path": "/raporlar/ogrenci-gelisim",
+            "handler": "rapor.generateOgrenciGelisim",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "POST",
+            "path": "/raporlar/kurum-performans",
+            "handler": "rapor.generateKurumPerformans",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "GET",
+            "path": "/raporlar/:id/pdf",
+            "handler": "rapor.downloadPdf",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "GET",
+            "path": "/raporlar/:id/excel",
+            "handler": "rapor.downloadExcel",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "POST",
+            "path": "/raporlar/:id/export-mebbis",
+            "handler": "rapor.exportToMebbis",
+            "config": {
+                "policies": []
+            }
+        }
+    ]
+}
