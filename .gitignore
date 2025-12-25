@@ -161,4 +161,4 @@ web/public/files/
 web/public/icons/
 
 # Custom Ignore
-todo.txt
+*.txt
