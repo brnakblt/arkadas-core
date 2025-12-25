@@ -14,6 +14,7 @@ import {
     createInvoiceService,
     createBepService,
     createWorkPlanService,
+    MEBBIS_PAGES,
 } from '../services';
 import {
     EgitimBilgiGiris,
@@ -176,6 +177,135 @@ router.post('/sync/educators', asyncHandler(async (req: Request, res: Response) 
     };
 
     res.status(202).json(response);
+}));
+
+/**
+ * GET /api/students/:tcKimlikNo/report
+ * Fetch student report (disability assessment) from MEBBIS
+ */
+router.get('/students/:tcKimlikNo/report', asyncHandler(async (req: Request, res: Response) => {
+    const { tcKimlikNo } = req.params;
+    const { tenantId } = req.query;
+
+    if (!tenantId || typeof tenantId !== 'string') {
+        const response: ApiResponse = {
+            success: false,
+            message: 'tenantId parametresi gerekli',
+        };
+        res.status(400).json(response);
+        return;
+    }
+
+    logger.info(`Fetching report for student: ${tcKimlikNo}`);
+
+    const credentials = await getTenantCredentials(tenantId);
+    const mebbis = createMebbisService(credentials);
+    const syncService = createStudentSyncService(mebbis, parseInt(tenantId));
+
+    try {
+        await mebbis.initialize();
+        await mebbis.login();
+        const student = await syncService.fetchStudentDetails(tcKimlikNo);
+
+        if (!student) {
+            const response: ApiResponse = {
+                success: false,
+                message: 'Öğrenci bulunamadı',
+            };
+            res.status(404).json(response);
+            return;
+        }
+
+        const response: ApiResponse<any> = {
+            success: true,
+            data: {
+                tcKimlikNo,
+                ad: student.ad,
+                soyad: student.soyad,
+                raporBilgisi: student.raporBilgisi,
+                okulBilgisi: student.okulBilgisi,
+            },
+        };
+
+        res.json(response);
+    } finally {
+        await mebbis.close();
+    }
+}));
+
+/**
+ * GET /api/students/:tcKimlikNo/modules
+ * Fetch module durations for a student from MEBBIS
+ */
+router.get('/students/:tcKimlikNo/modules', asyncHandler(async (req: Request, res: Response) => {
+    const { tcKimlikNo } = req.params;
+    const { tenantId, donem } = req.query;
+
+    if (!tenantId || typeof tenantId !== 'string') {
+        const response: ApiResponse = {
+            success: false,
+            message: 'tenantId parametresi gerekli',
+        };
+        res.status(400).json(response);
+        return;
+    }
+
+    logger.info(`Fetching modules for student: ${tcKimlikNo}`);
+
+    const credentials = await getTenantCredentials(tenantId);
+    const mebbis = createMebbisService(credentials);
+
+    try {
+        await mebbis.initialize();
+        await mebbis.login();
+
+        // Navigate to education plan view
+        await mebbis.navigateTo(MEBBIS_PAGES.EGITIM_PLANI_GORUNTULEME);
+        await mebbis.waitForPageReady();
+
+        // Search for student
+        await mebbis.fillField('#txtTcKimlik', tcKimlikNo);
+        if (donem && typeof donem === 'string') {
+            await mebbis.selectOption('#ddlDonem', donem);
+        }
+        await mebbis.click('#btnAra');
+        await mebbis.waitForPageReady();
+
+        // Extract module data
+        const modules = await mebbis.executeScript<Array<{
+            modulKodu: string;
+            modulAdi: string;
+            toplamSure: number;
+            kullanilanSure: number;
+            kalanSure: number;
+        }>>(`
+            const rows = document.querySelectorAll('#gvModuller tbody tr');
+            return Array.from(rows).map(row => {
+                const cells = row.querySelectorAll('td');
+                return {
+                    modulKodu: cells[0]?.textContent?.trim() || '',
+                    modulAdi: cells[1]?.textContent?.trim() || '',
+                    toplamSure: parseInt(cells[2]?.textContent?.trim() || '0'),
+                    kullanilanSure: parseInt(cells[3]?.textContent?.trim() || '0'),
+                    kalanSure: parseInt(cells[4]?.textContent?.trim() || '0'),
+                };
+            });
+        `);
+
+        const response: ApiResponse<any> = {
+            success: true,
+            data: {
+                tcKimlikNo,
+                donem: donem || 'current',
+                modules,
+                count: modules.length,
+            },
+        };
+
+        res.json(response);
+    } finally {
+        await mebbis.close();
+    }
 }));
 
 // ============================================================================
