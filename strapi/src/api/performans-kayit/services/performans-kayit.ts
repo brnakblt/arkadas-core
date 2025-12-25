@@ -4,4 +4,4 @@
 
 import { factories } from '@strapi/strapi';
 
-export default factories.createCoreService('api::performans-kayit.performans-kayit');
+export default factories.createCoreService('api::performans-kayit.performans-kayit' as any);

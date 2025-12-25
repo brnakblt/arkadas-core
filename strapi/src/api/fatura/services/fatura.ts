@@ -4,4 +4,4 @@
 
 import { factories } from '@strapi/strapi';
 
-export default factories.createCoreService('api::fatura.fatura');
+export default factories.createCoreService('api::fatura.fatura' as any);
