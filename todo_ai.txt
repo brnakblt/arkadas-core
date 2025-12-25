@@ -50,9 +50,9 @@
 - [x] Error boundary iyileştir
 
 ### 8. Performans
-- [ ] Database query optimizasyonu
-- [ ] Redis cache tenant-aware
-- [ ] Image lazy loading
+- [x] Database query optimizasyonu
+- [x] Redis cache tenant-aware
+- [x] Image lazy loading
 
 ### 9. Dokümantasyon
 - [ ] API dokümantasyonu güncelle
