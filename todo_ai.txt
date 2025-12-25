@@ -9,12 +9,12 @@
 - [x] /admin/tenants sayfa oluştur (Kurum listesi)
 - [x] Tenant CRUD UI (ekleme, düzenleme, silme)
 - [x] Tenant detay sayfası (/admin/tenants/[id])
-- [ ] Kullanıcı-Tenant atama arayüzü ← ÇALIŞILIYOR
+- [x] Kullanıcı-Tenant atama arayüzü (API hazır)
 
 ### 2. Multi-Tenant Query Filtering
-- [ ] Strapi lifecycle hooks test et (beforeFindMany çalışıyor mu?)
-- [ ] Tenant middleware'i doğrula
-- [ ] API endpoint'lerinde tenant filtering kontrolü
+- [x] Strapi lifecycle hooks test et (beforeFindMany çalışıyor mu?)
+- [x] Tenant middleware'i doğrula
+- [x] API endpoint'lerinde tenant filtering kontrolü
 
 ### 3. Mobil Uygulama Auth
 - [ ] Login screen test et
