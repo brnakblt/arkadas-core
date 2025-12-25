@@ -44,10 +44,10 @@
 ## 🟢 DÜŞÜK ÖNCELİK
 
 ### 7. UI/UX İyileştirmeleri
-- [ ] Dark mode tam destek
-- [ ] Mobile responsive kontrol
-- [ ] Loading skeletonları ekle
-- [ ] Error boundary iyileştir
+- [x] Dark mode tam destek
+- [x] Mobile responsive kontrol
+- [x] Loading skeletonları ekle
+- [x] Error boundary iyileştir
 
 ### 8. Performans
 - [ ] Database query optimizasyonu

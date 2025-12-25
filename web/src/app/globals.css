@@ -331,3 +331,217 @@ body {
     stroke-dashoffset: 0;
   }
 }
+
+/* ============================================
+   Enhanced Dark Mode Utilities
+   ============================================ */
+
+.dark .bg-gray-50 {
+  background-color: #1a1a2e;
+}
+
+.dark .shadow-sm {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.dark .shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+.dark .shadow-lg {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Dark mode input styling */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #1e1e2e;
+  border-color: #3d3d5c;
+  color: #ededed;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #6b7280;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: #3b82f6;
+  outline-color: #3b82f6;
+}
+
+/* Dark mode table styling */
+.dark table {
+  border-color: #2d2d3d;
+}
+
+.dark thead {
+  background-color: #1a1a2e;
+}
+
+.dark tbody tr:hover {
+  background-color: #252538;
+}
+
+/* ============================================
+   Responsive Utilities
+   ============================================ */
+
+/* Mobile-first responsive padding */
+.container-responsive {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+/* Responsive text sizes */
+.text-responsive-sm {
+  @apply text-xs sm:text-sm;
+}
+
+.text-responsive-base {
+  @apply text-sm sm:text-base;
+}
+
+.text-responsive-lg {
+  @apply text-base sm:text-lg lg:text-xl;
+}
+
+.text-responsive-xl {
+  @apply text-lg sm:text-xl lg:text-2xl;
+}
+
+.text-responsive-2xl {
+  @apply text-xl sm:text-2xl lg:text-3xl;
+}
+
+/* Responsive card grid */
+.grid-responsive-cards {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+}
+
+/* Mobile-friendly touch targets */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Responsive table */
+.table-responsive {
+  @apply w-full overflow-x-auto;
+}
+
+.table-responsive table {
+  @apply min-w-full;
+}
+
+/* Hide on mobile, show on desktop */
+.hide-mobile {
+  @apply hidden sm:block;
+}
+
+/* Show on mobile, hide on desktop */
+.show-mobile {
+  @apply block sm:hidden;
+}
+
+/* Mobile bottom navigation spacing */
+.mobile-nav-spacing {
+  @apply pb-16 sm:pb-0;
+}
+
+/* ============================================
+   Animation Utilities
+   ============================================ */
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Slide up animation */
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.4s ease-out;
+}
+
+/* Scale in animation */
+@keyframes scaleIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.2s ease-out;
+}
+
+/* Shake animation for errors */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, 
+    var(--surface) 25%, 
+    var(--border) 50%, 
+    var(--surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ============================================
+   Glass morphism effects
+   ============================================ */
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.dark .glass {
+  background: rgba(30, 30, 46, 0.7);
+}
+
+.glass-card {
+  @apply glass rounded-xl border border-white/20 shadow-lg;
+}
+
+.dark .glass-card {
+  @apply border-gray-700/50;
+}
