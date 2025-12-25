@@ -55,8 +55,9 @@
 - [x] Image lazy loading
 
 ### 9. Dokümantasyon
-- [ ] API dokümantasyonu güncelle
-- [ ] Kullanıcı kılavuzu hazırla
+- [x] API dokümantasyonu güncelle
+- [x] Deployment rehberi
+- [x] Multi-tenant kurulum talimatları
 - [ ] Deployment guide son hali
 
 ## ✅ TAMAMLANANLAR
