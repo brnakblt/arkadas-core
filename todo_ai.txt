@@ -31,10 +31,10 @@
 - [x] Aktif kullanıcı sayısı widget
 
 ### 5. Raporlama Sistemi
-- [ ] Tenant bazlı rapor filtreleme
-- [ ] BEP raporu PDF export
-- [ ] Yoklama raporu
-- [ ] Fatura özet raporu
+- [x] Tenant bazlı rapor filtreleme
+- [x] BEP raporu PDF export
+- [x] Yoklama raporu
+- [x] Fatura özet raporu
 
 ### 6. Bildirim Sistemi
 - [ ] Push notification tenant filtering
