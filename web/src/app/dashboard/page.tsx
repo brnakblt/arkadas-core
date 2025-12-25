@@ -16,6 +16,7 @@ import {
     faBookOpen,
     faBus
 } from '@fortawesome/free-solid-svg-icons';
+import DashboardStatsWidgets from '@/components/dashboard/StatsWidgets';
 
 
 
@@ -95,6 +96,9 @@ export default function DashboardPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Statistics Widgets */}
+            <DashboardStatsWidgets />
 
             {/* Apps Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">

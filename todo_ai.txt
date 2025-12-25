@@ -25,10 +25,10 @@
 ## 🟡 ORTA ÖNCELİK
 
 ### 4. Dashboard İyileştirmeleri
-- [ ] Tenant bazlı istatistikler dashboard'a ekle
-- [ ] Öğrenci sayısı widget
-- [ ] Aylık fatura özeti widget
-- [ ] Aktif kullanıcı sayısı widget
+- [x] Tenant bazlı istatistikler dashboard'a ekle
+- [x] Öğrenci sayısı widget
+- [x] Aylık fatura özeti widget
+- [x] Aktif kullanıcı sayısı widget
 
 ### 5. Raporlama Sistemi
 - [ ] Tenant bazlı rapor filtreleme
