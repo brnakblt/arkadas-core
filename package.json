@@ -30,7 +30,7 @@
     "dev:docker": "docker compose -f docker-compose.yml --profile core --profile infra up -d --wait",
     "dev:strapi": "npm run develop --prefix strapi",
     "dev:web": "npm run dev --prefix web",
-    "dev:mobile": "cd mobile && EXPO_ROUTER_APP_ROOT=./app npm run start -- --offline || echo 'Mobile failed, continuing...'",
+    "dev:mobile": "cd mobile && EXPO_ROUTER_APP_ROOT=./app npm run start || echo 'Mobile failed, continuing...'",
     "dev:ai": "cd ai-service && ./venv/bin/python -m uvicorn app.main:app --reload --port 8000",
     "dev:mebbis": "npm run dev --prefix mebbis-service",
     "dev:docs": "cd docs && mkdocs serve -a localhost:8001",
