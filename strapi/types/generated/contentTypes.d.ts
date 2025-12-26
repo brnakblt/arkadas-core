@@ -1121,6 +1121,51 @@ export interface ApiKontrolListesiKontrolListesi extends Struct.CollectionTypeSc
   };
 }
 
+export interface ApiKvkkOnamKvkkOnam extends Struct.CollectionTypeSchema {
+  collectionName: 'kvkk_onamlari';
+  info: {
+    description: 'Ki\u015Fisel Verilerin Korunmas\u0131 Kanunu kapsam\u0131nda al\u0131nan onam formlar\u0131';
+    displayName: 'KVKK Onam Formu';
+    pluralName: 'kvkk-onamlari';
+    singularName: 'kvkk-onam';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    bilgilendirmeMetni: Schema.Attribute.RichText;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    dijitalImza: Schema.Attribute.Text;
+    formVersion: Schema.Attribute.String & Schema.Attribute.DefaultTo<'1.0'>;
+    gecerlilikBitisTarihi: Schema.Attribute.Date;
+    imzaliForm: Schema.Attribute.Media<'images' | 'files'>;
+    ipAddress: Schema.Attribute.String;
+    iptalNedeni: Schema.Attribute.Text;
+    iptalTarihi: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::kvkk-onam.kvkk-onam'> &
+      Schema.Attribute.Private;
+    onamDurumu: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
+    onamTarihi: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    onamTuru: Schema.Attribute.Enumeration<
+      ['bkds_biyometrik', 'genel_kvkk', 'fotograf_video', 'saglik_bilgileri', 'pazarlama_iletisim']
+    > &
+      Schema.Attribute.Required;
+    person: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+    personType: Schema.Attribute.Enumeration<['ogrenci', 'personel', 'veli']> &
+      Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    studentProfile: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    userAgent: Schema.Attribute.Text;
+  };
+}
+
 export interface ApiLocationLogLocationLog extends Struct.CollectionTypeSchema {
   collectionName: 'location_logs';
   info: {
@@ -1804,6 +1849,61 @@ export interface ApiTeamMemberTeamMember extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiTelafiEgitimiTelafiEgitimi extends Struct.CollectionTypeSchema {
+  collectionName: 'telafi_egitimleri';
+  info: {
+    description: 'Yap\u0131lamayan derslerin telafi takibi - MEB mevzuat\u0131na uygun';
+    displayName: 'Telafi E\u011Fitimi';
+    pluralName: 'telafi-egitimleri';
+    singularName: 'telafi-egitimi';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    compensationDate: Schema.Attribute.Date;
+    compensationEndTime: Schema.Attribute.Time;
+    compensationSchedule: Schema.Attribute.Relation<'manyToOne', 'api::schedule.schedule'>;
+    compensationStartTime: Schema.Attribute.Time;
+    completedDate: Schema.Attribute.DateTime;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    deadlineDate: Schema.Attribute.Date & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::telafi-egitimi.telafi-egitimi'> &
+      Schema.Attribute.Private;
+    missedDate: Schema.Attribute.Date & Schema.Attribute.Required;
+    missedDuration: Schema.Attribute.Integer & Schema.Attribute.Required;
+    missedEndTime: Schema.Attribute.Time;
+    missedStartTime: Schema.Attribute.Time;
+    notes: Schema.Attribute.Text;
+    originalSchedule: Schema.Attribute.Relation<'manyToOne', 'api::schedule.schedule'>;
+    publishedAt: Schema.Attribute.DateTime;
+    reason: Schema.Attribute.Enumeration<
+      [
+        'ogrenci_hastalik',
+        'ogrenci_izin',
+        'ogretmen_hastalik',
+        'ogretmen_izin',
+        'kurum_tatil',
+        'mucbir_sebep',
+        'diger',
+      ]
+    > &
+      Schema.Attribute.Required;
+    reasonDetails: Schema.Attribute.Text;
+    status: Schema.Attribute.Enumeration<
+      ['beklemede', 'planlanmis', 'tamamlanmis', 'suresi_dolmus', 'iptal']
+    > &
+      Schema.Attribute.DefaultTo<'beklemede'>;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    teacher: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiTenantTenant extends Struct.CollectionTypeSchema {
   collectionName: 'tenants';
   info: {
@@ -2320,6 +2420,7 @@ declare module '@strapi/strapi' {
       'api::hero.hero': ApiHeroHero;
       'api::kaba-degerlendirme.kaba-degerlendirme': ApiKabaDegerlendirmeKabaDegerlendirme;
       'api::kontrol-listesi.kontrol-listesi': ApiKontrolListesiKontrolListesi;
+      'api::kvkk-onam.kvkk-onam': ApiKvkkOnamKvkkOnam;
       'api::location-log.location-log': ApiLocationLogLocationLog;
       'api::nextcloud-sync.nextcloud-sync': ApiNextcloudSyncNextcloudSync;
       'api::ogrenci-grubu.ogrenci-grubu': ApiOgrenciGrubuOgrenciGrubu;
@@ -2336,6 +2437,7 @@ declare module '@strapi/strapi' {
       'api::student-profile.student-profile': ApiStudentProfileStudentProfile;
       'api::teacher-profile.teacher-profile': ApiTeacherProfileTeacherProfile;
       'api::team-member.team-member': ApiTeamMemberTeamMember;
+      'api::telafi-egitimi.telafi-egitimi': ApiTelafiEgitimiTelafiEgitimi;
       'api::tenant.tenant': ApiTenantTenant;
       'api::terapi-cetveli.terapi-cetveli': ApiTerapiCetveliTerapiCetveli;
       'plugin::content-releases.release': PluginContentReleasesRelease;

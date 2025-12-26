@@ -91,6 +91,57 @@ export const MEB_RULES = {
         max_sapma_yuzdesi: 20, // Öğretmenler arası max %20 fark
         ideal_gunluk_ders: 6,
     },
+
+    // ============================================================
+    // 2024-2025 YENİ MEVZUAT KURALLARI
+    // ============================================================
+
+    // Telafi Eğitimi Kuralları
+    TELAFI_EGITIMI: {
+        max_sure_ay: 24,           // Telafi en geç 24 ay içinde yapılmalı
+        aylik_bireysel_limit: 12,  // Ayda max 12 saat bireysel telafi
+        gunluk_toplam_limit: 3,    // Günde max 3 saat toplam telafi
+    },
+
+    // Gün İçi Plan Değişikliği (YASAK)
+    PLAN_DEGISIKLIGI: {
+        ayni_gun_yasak: true,      // Gün içinde değişiklik yasak
+        minimum_onceden_giris: 1,  // En az 1 gün önceden girilmeli
+        ay_basi_giris_zorunlu: true, // Ay başlamadan girilmeli
+    },
+
+    // Ücret Artış Formülü (MEB 2024)
+    UCRET_ARTISI: {
+        formul: '(UFE + TUFE) / 2 * 0.5 * 1.05',
+        carpan: 1.05,
+        oran: 0.5, // Ortalamanın yarısı
+    },
+
+    // BEP Geliştirme Birimi Üyeleri (2024 Güncellemesi)
+    BEP_BIRIMI_UYELERI: [
+        'ogretmen',
+        'uzman_ogretici',
+        'psikolog',
+        'ergoterapi',  // 2024'te eklendi
+        'fizyoterapi',
+        'veli',
+    ],
+
+    // KVKK Onam Gereksinimleri
+    KVKK_ONAM: {
+        bkds_zorunlu: true,        // BKDS için onam zorunlu
+        foto_video_zorunlu: true,  // Fotoğraf/video için onam zorunlu
+        saglik_zorunlu: true,      // Sağlık bilgileri için onam zorunlu
+        gecerlilik_suresi_yil: 1,  // Onam geçerlilik süresi (yıl)
+    },
+
+    // BKDS (Biyometrik Kimlik Doğrulama) Kuralları - 2025
+    BKDS: {
+        zorunlu_tarih: '2026-01-01',      // Zorunluluk başlangıç tarihi
+        kayit_saklama_gun: 90,            // Kamera kaydı saklama süresi
+        yuz_esleme_esik: 0.85,            // Yüz eşleşme minimum skoru
+        ram_senkron_zorunlu: true,        // RAM ile senkronizasyon zorunlu
+    },
 };
 
 // ============================================================

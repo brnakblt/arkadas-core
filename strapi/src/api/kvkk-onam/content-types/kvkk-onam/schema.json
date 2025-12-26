@@ -1,0 +1,93 @@
+{
+    "kind": "collectionType",
+    "collectionName": "kvkk_onamlari",
+    "info": {
+        "singularName": "kvkk-onam",
+        "pluralName": "kvkk-onamlari",
+        "displayName": "KVKK Onam Formu",
+        "description": "Kişisel Verilerin Korunması Kanunu kapsamında alınan onam formları"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "person": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "plugin::users-permissions.user"
+        },
+        "studentProfile": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::student-profile.student-profile"
+        },
+        "personType": {
+            "type": "enumeration",
+            "enum": [
+                "ogrenci",
+                "personel",
+                "veli"
+            ],
+            "required": true
+        },
+        "onamTuru": {
+            "type": "enumeration",
+            "enum": [
+                "bkds_biyometrik",
+                "genel_kvkk",
+                "fotograf_video",
+                "saglik_bilgileri",
+                "pazarlama_iletisim"
+            ],
+            "required": true
+        },
+        "onamDurumu": {
+            "type": "boolean",
+            "required": true,
+            "default": false
+        },
+        "onamTarihi": {
+            "type": "datetime",
+            "required": true
+        },
+        "ipAddress": {
+            "type": "string"
+        },
+        "userAgent": {
+            "type": "text"
+        },
+        "imzaliForm": {
+            "type": "media",
+            "multiple": false,
+            "allowedTypes": [
+                "images",
+                "files"
+            ]
+        },
+        "dijitalImza": {
+            "type": "text"
+        },
+        "gecerlilikBitisTarihi": {
+            "type": "date"
+        },
+        "iptalTarihi": {
+            "type": "datetime"
+        },
+        "iptalNedeni": {
+            "type": "text"
+        },
+        "bilgilendirmeMetni": {
+            "type": "richtext"
+        },
+        "formVersion": {
+            "type": "string",
+            "default": "1.0"
+        },
+        "tenant": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::tenant.tenant"
+        }
+    }
+}
