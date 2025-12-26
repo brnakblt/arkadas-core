@@ -31,7 +31,7 @@
     "dev:strapi": "npm run develop --prefix strapi",
     "dev:web": "npm run dev --prefix web",
     "dev:mobile": "cd mobile && EXPO_ROUTER_APP_ROOT=./app npx expo start --port 8082",
-    "dev:mobile-spawn": "ghostty -e bash -c 'cd /home/baran/Dev/arkadasozelegitim/mobile && EXPO_ROUTER_APP_ROOT=./app exec npx expo start --port 8082' &",
+    "dev:mobile-spawn": "ghostty -e bash -c 'cd /home/baran/Dev/arkadasozelegitim/mobile && EXPO_ROUTER_APP_ROOT=./app exec npx expo start --clear --port 8082' &",
     "dev:ai": "cd ai-service && ./venv/bin/python -m uvicorn app.main:app --reload --port 8000",
     "dev:mebbis": "npm run dev --prefix mebbis-service",
     "dev:docs": "cd docs && mkdocs serve -a localhost:8001",
