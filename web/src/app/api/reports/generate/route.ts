@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Check if format is supported for this report
-        if (!reportDef.formats.includes(format as ReportFormat)) {
+        if (!(reportDef.formats as readonly string[]).includes(format)) {
             return NextResponse.json(
                 { error: `${reportDef.name} için ${format} formatı desteklenmiyor` },
                 { status: 400 }
@@ -119,8 +119,10 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Return file
-        return new NextResponse(result.data, {
+        // Return file - convert Buffer to Uint8Array for NextResponse
+        const responseBody = new Uint8Array(result.data);
+
+        return new NextResponse(responseBody, {
             headers: {
                 'Content-Type': result.contentType,
                 'Content-Disposition': `attachment; filename="${result.fileName}"`,
