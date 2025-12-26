@@ -62,9 +62,9 @@ const ContactForm: React.FC = () => {
                             value={formData.name}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark bg-white ${touched.name && errors.name
+                            className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark dark:text-neutral-dark bg-white ${touched.name && errors.name
                                 ? "border-red-500 focus:border-red-500"
-                                : "border-gray-300 focus:border-transparent"
+                                : "border-gray-300 dark:border-gray-300 focus:border-transparent"
                                 }`}
                             placeholder="Adınız ve soyadınız"
                         />
@@ -89,9 +89,9 @@ const ContactForm: React.FC = () => {
                             value={formData.email}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark bg-white ${touched.email && errors.email
+                            className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark dark:text-neutral-dark bg-white ${touched.email && errors.email
                                 ? "border-red-500 focus:border-red-500"
-                                : "border-gray-300 focus:border-transparent"
+                                : "border-gray-300 dark:border-gray-300 focus:border-transparent"
                                 }`}
                             placeholder="ornek@email.com"
                         />
@@ -117,9 +117,9 @@ const ContactForm: React.FC = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark bg-white ${touched.phone && errors.phone
+                        className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark dark:text-neutral-dark bg-white ${touched.phone && errors.phone
                             ? "border-red-500 focus:border-red-500"
-                            : "border-gray-300 focus:border-transparent"
+                            : "border-gray-300 dark:border-gray-300 focus:border-transparent"
                             }`}
                         placeholder="+90 555 123 45 67"
                     />
@@ -145,9 +145,9 @@ const ContactForm: React.FC = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         style={{ minHeight: "42px", overflowY: "hidden" }}
-                        className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark bg-white ${touched.address && errors.address
+                        className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark dark:text-neutral-dark bg-white ${touched.address && errors.address
                             ? "border-red-500 focus:border-red-500"
-                            : "border-gray-300 focus:border-transparent"
+                            : "border-gray-300 dark:border-gray-300 focus:border-transparent"
                             }`}
                         placeholder="Sokak, Mahalle, Bina ve Daire No, İlçe / İzmir"
                     />
@@ -173,9 +173,9 @@ const ContactForm: React.FC = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         style={{ minHeight: "84px", overflowY: "hidden" }}
-                        className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark bg-white ${touched.message && errors.message
+                        className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark dark:text-neutral-dark bg-white ${touched.message && errors.message
                             ? "border-red-500 focus:border-red-500"
-                            : "border-gray-300 focus:border-transparent"
+                            : "border-gray-300 dark:border-gray-300 focus:border-transparent"
                             }`}
                         placeholder="Bize çocuğunuzun ve sizin ihtiyaçlarınızı kısaca anlatmak ister misiniz? Böylece size en iyi şekilde destek olabiliriz 💚"
                     />
