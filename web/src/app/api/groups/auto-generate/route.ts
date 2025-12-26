@@ -172,7 +172,7 @@ function groupByAge(students: Student[]): GroupSuggestion[] {
         if (!student.birthDate) return;
         const age = calculateAge(student.birthDate);
 
-        for (const [groupName, group] of Object.entries(ageGroups)) {
+        for (const [_groupName, group] of Object.entries(ageGroups)) {
             if (age >= group.min && age <= group.max) {
                 group.students.push(student);
                 break;

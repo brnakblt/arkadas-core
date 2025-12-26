@@ -244,8 +244,8 @@ export async function getExpiringRecords(
  * Veri saklama durumu raporu
  */
 export async function getRetentionReport(
-    token: string,
-    tenantId?: number
+    _token: string,
+    _tenantId?: number
 ): Promise<{
     entityType: string;
     retentionDays: number;

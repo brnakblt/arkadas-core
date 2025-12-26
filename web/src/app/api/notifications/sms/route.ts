@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
         // Log SMS sending (in production, use actual SMS service)
         const smsResults = targetUsers.map((user) => {
             // In production: smsService.send({ to: user.phone, text: smsText })
-            console.log(`[SMS] To: ${user.phone}, Text: ${smsText.substring(0, 50)}...`);
+            console.warn(`[SMS] To: ${user.phone}, Text: ${smsText.substring(0, 50)}...`);
             return { userId: user.id, phone: user.phone, success: true };
         });
 

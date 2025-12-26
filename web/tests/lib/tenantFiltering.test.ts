@@ -22,7 +22,7 @@ const mockContext = {
 };
 
 // Mock strapi.requestContext
-const mockStrapi = {
+const _mockStrapi = {
     requestContext: {
         get: () => mockContext,
     },
@@ -158,7 +158,6 @@ describe('Multi-Tenant Query Filtering', () => {
             mockContext.state.tenant = null;
 
             const params: { where: Record<string, unknown> } = { where: {} };
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             const tenantValue = mockContext.state.tenant as { id: number } | null;
             if (tenantValue) {
                 params.where.tenant = tenantValue.id;

@@ -147,7 +147,8 @@ export function getCompensationSummary(
             });
         }
 
-        const summary = summaryMap.get(key)!;
+        const summary = summaryMap.get(key);
+        if (!summary) return;
 
         if (c.lessonType === 'bireysel') {
             summary.totalBireyselHours += c.durationMinutes / 60;

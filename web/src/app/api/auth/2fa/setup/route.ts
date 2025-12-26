@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { setup2FA, verify2FA, createTrustedDevice } from "@/lib/twoFactorAuth";
+import { setup2FA, verify2FA } from "@/lib/twoFactorAuth";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
 
@@ -8,7 +8,7 @@ const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337"
  * POST /api/auth/2fa/setup
  * 2FA kurulumu başlatır, QR kod ve yedek kodları döndürür
  */
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
     try {
         const cookieStore = await cookies();
         const token = cookieStore.get("strapi_jwt")?.value;

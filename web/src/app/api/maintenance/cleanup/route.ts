@@ -21,7 +21,7 @@ export async function POST() {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const authToken = token || cronToken!;
+        const authToken = token || cronToken || '';
 
         // Get user tenant if using JWT
         let tenantId: number | undefined;

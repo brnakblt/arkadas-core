@@ -4,7 +4,7 @@
  * PDF ve Excel formatında rapor üretimi
  */
 
-import { MEB_REPORT_TYPES, ReportRequest, ReportResult, ReportId } from './mebReports';
+import { ReportRequest, ReportResult, ReportId } from './mebReports';
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
 
@@ -193,7 +193,8 @@ async function generatePersonelCetveliData(
             if (!teacherSchedules.has(teacherId)) {
                 teacherSchedules.set(teacherId, []);
             }
-            teacherSchedules.get(teacherId)!.push(s);
+            const lessons = teacherSchedules.get(teacherId);
+            if (lessons) lessons.push(s);
         }
     });
 
@@ -245,7 +246,8 @@ async function generateEk4BepData(
             if (!studentSchedules.has(studentId)) {
                 studentSchedules.set(studentId, []);
             }
-            studentSchedules.get(studentId)!.push(s);
+            const lessons = studentSchedules.get(studentId);
+            if (lessons) lessons.push(s);
         }
     });
 
