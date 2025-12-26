@@ -62,7 +62,7 @@ const ContactForm: React.FC = () => {
                             value={formData.name}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark bg-white dark:bg-white ${touched.name && errors.name
+                            className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-gray-900 dark:text-gray-900 bg-white dark:bg-white placeholder:text-gray-400 ${touched.name && errors.name
                                 ? "border-red-500 focus:border-red-500"
                                 : "border-gray-300 focus:border-transparent"
                                 }`}
@@ -89,7 +89,7 @@ const ContactForm: React.FC = () => {
                             value={formData.email}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark bg-white dark:bg-white ${touched.email && errors.email
+                            className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-gray-900 dark:text-gray-900 bg-white dark:bg-white placeholder:text-gray-400 ${touched.email && errors.email
                                 ? "border-red-500 focus:border-red-500"
                                 : "border-gray-300 focus:border-transparent"
                                 }`}
@@ -117,7 +117,7 @@ const ContactForm: React.FC = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark bg-white dark:bg-white ${touched.phone && errors.phone
+                        className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-gray-900 dark:text-gray-900 bg-white dark:bg-white placeholder:text-gray-400 ${touched.phone && errors.phone
                             ? "border-red-500 focus:border-red-500"
                             : "border-gray-300 focus:border-transparent"
                             }`}
@@ -145,7 +145,7 @@ const ContactForm: React.FC = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         style={{ minHeight: "42px", overflowY: "hidden" }}
-                        className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark bg-white dark:bg-white ${touched.address && errors.address
+                        className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-gray-900 dark:text-gray-900 bg-white dark:bg-white placeholder:text-gray-400 ${touched.address && errors.address
                             ? "border-red-500 focus:border-red-500"
                             : "border-gray-300 focus:border-transparent"
                             }`}
@@ -173,7 +173,7 @@ const ContactForm: React.FC = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         style={{ minHeight: "84px", overflowY: "hidden" }}
-                        className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-neutral-dark bg-white dark:bg-white ${touched.message && errors.message
+                        className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-primary transition-all duration-200 font-body text-gray-900 dark:text-gray-900 bg-white dark:bg-white placeholder:text-gray-400 ${touched.message && errors.message
                             ? "border-red-500 focus:border-red-500"
                             : "border-gray-300 focus:border-transparent"
                             }`}
