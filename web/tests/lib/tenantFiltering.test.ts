@@ -157,9 +157,11 @@ describe('Multi-Tenant Query Filtering', () => {
             // Admin user without tenant restriction
             mockContext.state.tenant = null;
 
-            const params = { where: {} };
-            if (mockContext.state.tenant) {
-                (params.where as Record<string, unknown>).tenant = mockContext.state.tenant.id;
+            const params: { where: Record<string, unknown> } = { where: {} };
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            const tenantValue = mockContext.state.tenant as { id: number } | null;
+            if (tenantValue) {
+                params.where.tenant = tenantValue.id;
             }
 
             // No tenant filter should be added
