@@ -235,7 +235,7 @@ const AccessibilityMenu: React.FC = () => {
                 role="dialog"
                 aria-label="Erişilebilirlik Ayarları"
                 aria-modal="true"
-                className={`fixed z-[10000] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-300
+                className={`fixed z-[10000] bg-white/95 dark:bg-neutral-800/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200 dark:border-neutral-700 overflow-hidden transition-all duration-300
                     /* Mobile: centered like cookie modal */
                     inset-x-4 top-1/2 -translate-y-1/2 max-w-sm mx-auto
                     /* Desktop: positioned bottom-left */
@@ -268,21 +268,21 @@ const AccessibilityMenu: React.FC = () => {
 
                 {/* Menu Items - NO data-accessibility-menu so TTS reads them */}
                 <nav aria-label="Erişilebilirlik Profilleri">
-                    <ul className="p-3 space-y-2 max-h-[50vh] overflow-y-auto bg-white dark:bg-gray-800">
+                    <ul className="p-3 space-y-2 max-h-[50vh] overflow-y-auto">
                         {menuItems.map((item) => (
                             <li key={item.id}>
                                 <button
                                     onClick={() => handleProfileSelect(item.id as AccessibilityProfile)}
                                     className={`w-full p-3 rounded-xl flex items-center gap-3 transition-all duration-200 text-left group ${activeProfile === item.id
                                         ? "bg-primary/10 dark:bg-primary/20 ring-2 ring-primary"
-                                        : "bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                        : "bg-white/50 dark:bg-neutral-700/50 hover:bg-white dark:hover:bg-neutral-700"
                                         }`}
                                     aria-pressed={activeProfile === item.id}
                                     aria-label={`${item.label}. ${item.description}${activeProfile === item.id ? ' Aktif.' : ''}`}
                                 >
                                     <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${activeProfile === item.id
                                         ? "bg-primary text-white"
-                                        : "bg-white dark:bg-gray-600 shadow-sm text-gray-500 dark:text-gray-300 group-hover:text-primary"
+                                        : "bg-white dark:bg-neutral-600 shadow-sm text-gray-500 dark:text-gray-300 group-hover:text-primary"
                                         }`}>
                                         <FontAwesomeIcon icon={item.icon} className="w-5 h-5" />
                                     </div>
@@ -309,7 +309,7 @@ const AccessibilityMenu: React.FC = () => {
                 </nav>
 
                 {/* Footer */}
-                <div className="p-3 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                <div className="p-3 border-t border-gray-200 dark:border-neutral-700">
                     <button
                         onClick={() => setActiveProfile(null)}
                         className="w-full py-2 px-4 text-sm text-gray-600 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
