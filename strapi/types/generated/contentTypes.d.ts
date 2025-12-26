@@ -525,6 +525,63 @@ export interface ApiAttendanceLogAttendanceLog extends Struct.CollectionTypeSche
   };
 }
 
+export interface ApiAuditLogAuditLog extends Struct.CollectionTypeSchema {
+  collectionName: 'audit_logs';
+  info: {
+    description: 'KVKK uyumlu de\u011Fi\u015Ftirilemez eri\u015Fim loglar\u0131';
+    displayName: 'Denetim Kayd\u0131 (Audit Log)';
+    pluralName: 'audit-logs';
+    singularName: 'audit-log';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    action: Schema.Attribute.Enumeration<
+      [
+        'create',
+        'read',
+        'update',
+        'delete',
+        'login',
+        'logout',
+        'login_failed',
+        'twofa_setup',
+        'twofa_verify',
+        'twofa_disable',
+        'export',
+        'print',
+        'bkds_verify',
+        'kvkk_consent',
+      ]
+    > &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    entityId: Schema.Attribute.String;
+    entityName: Schema.Attribute.String;
+    entityType: Schema.Attribute.String & Schema.Attribute.Required;
+    errorMessage: Schema.Attribute.Text;
+    hash: Schema.Attribute.String;
+    ipAddress: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::audit-log.audit-log'> &
+      Schema.Attribute.Private;
+    metadata: Schema.Attribute.JSON;
+    newValues: Schema.Attribute.JSON;
+    previousHash: Schema.Attribute.String;
+    previousValues: Schema.Attribute.JSON;
+    publishedAt: Schema.Attribute.DateTime;
+    sessionId: Schema.Attribute.String;
+    success: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+    userAgent: Schema.Attribute.Text;
+  };
+}
+
 export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
   collectionName: 'authors';
   info: {
@@ -2478,6 +2535,7 @@ declare module '@strapi/strapi' {
       'api::appointment.appointment': ApiAppointmentAppointment;
       'api::article.article': ApiArticleArticle;
       'api::attendance-log.attendance-log': ApiAttendanceLogAttendanceLog;
+      'api::audit-log.audit-log': ApiAuditLogAuditLog;
       'api::author.author': ApiAuthorAuthor;
       'api::bep-gelisim-izleme.bep-gelisim-izleme': ApiBepGelisimIzlemeBepGelisimIzleme;
       'api::bireysel-egitim-plani.bireysel-egitim-plani': ApiBireyselEgitimPlaniBireyselEgitimPlani;
