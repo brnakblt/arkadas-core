@@ -1,0 +1,59 @@
+{
+    "kind": "collectionType",
+    "collectionName": "two_factor_auths",
+    "info": {
+        "singularName": "two-factor-auth",
+        "pluralName": "two-factor-auths",
+        "displayName": "İki Faktörlü Doğrulama (2FA)",
+        "description": "TOTP tabanlı iki faktörlü kimlik doğrulama"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "user": {
+            "type": "relation",
+            "relation": "oneToOne",
+            "target": "plugin::users-permissions.user",
+            "unique": true
+        },
+        "secret": {
+            "type": "string",
+            "private": true,
+            "required": true
+        },
+        "isEnabled": {
+            "type": "boolean",
+            "default": false
+        },
+        "isVerified": {
+            "type": "boolean",
+            "default": false
+        },
+        "backupCodes": {
+            "type": "json",
+            "private": true,
+            "default": []
+        },
+        "lastUsedAt": {
+            "type": "datetime"
+        },
+        "failedAttempts": {
+            "type": "integer",
+            "default": 0
+        },
+        "lockedUntil": {
+            "type": "datetime"
+        },
+        "trustedDevices": {
+            "type": "json",
+            "default": []
+        },
+        "tenant": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::tenant.tenant"
+        }
+    }
+}

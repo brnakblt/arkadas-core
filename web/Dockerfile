@@ -1,43 +1,67 @@
-# Base stage
-FROM node:22-bullseye-slim AS base
+# ============================================================
+# Next.js Web Production Dockerfile - Security Hardened
+# Alpine-based, Multi-stage, Non-root
+# ============================================================
+
+# Stage 1: Dependencies
+FROM node:20-alpine AS deps
 WORKDIR /app
-COPY package.json ./
 
-# Development stage
-FROM base AS dev
-RUN npm install
-ENV NODE_ENV=development
-CMD ["npm", "run", "dev"]
+# Install build dependencies
+RUN apk add --no-cache libc6-compat
 
-# Builder stage
-FROM base AS builder
-RUN npm install
+# Copy package files
+COPY package.json package-lock.json ./
+RUN npm ci && npm cache clean --force
+
+# Stage 2: Builder
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# Copy dependencies
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
 # Build Next.js app
 ENV NODE_ENV=production
-# Next.js telemetry disable
 ENV NEXT_TELEMETRY_DISABLED=1
+
 RUN npm run build
 
-# Runner Stage
-FROM node:22-bullseye-slim AS runner
-
+# Stage 3: Production Runner (Minimal Alpine)
+FROM node:20-alpine AS runner
 WORKDIR /app
+
+# Install tini for graceful shutdown
+RUN apk add --no-cache tini && rm -rf /var/cache/apk/*
+
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
 
 # Create non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -u 1001 -S nextjs -G nodejs
 
-# Copy built assets
+# Copy public assets
 COPY --from=builder /app/public ./public
+
+# Copy built application with correct ownership
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Switch to non-root user
 USER nextjs
 
+# Expose port
 EXPOSE 3000
 
-ENV PORT=3000
+# Use tini for proper signal handling (graceful shutdown)
+ENTRYPOINT ["/sbin/tini", "--"]
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
+
+# Start Next.js
 CMD ["node", "server.js"]

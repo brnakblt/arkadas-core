@@ -1970,6 +1970,79 @@ export interface ApiTerapiCetveliTerapiCetveli extends Struct.CollectionTypeSche
   };
 }
 
+export interface ApiTwoFactorAuthTwoFactorAuth extends Struct.CollectionTypeSchema {
+  collectionName: 'two_factor_auths';
+  info: {
+    description: 'TOTP tabanl\u0131 iki fakt\u00F6rl\u00FC kimlik do\u011Frulama';
+    displayName: '\u0130ki Fakt\u00F6rl\u00FC Do\u011Frulama (2FA)';
+    pluralName: 'two-factor-auths';
+    singularName: 'two-factor-auth';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    backupCodes: Schema.Attribute.JSON & Schema.Attribute.Private & Schema.Attribute.DefaultTo<[]>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    failedAttempts: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    isEnabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    isVerified: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    lastUsedAt: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::two-factor-auth.two-factor-auth'> &
+      Schema.Attribute.Private;
+    lockedUntil: Schema.Attribute.DateTime;
+    publishedAt: Schema.Attribute.DateTime;
+    secret: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Private;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    trustedDevices: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<'oneToOne', 'plugin::users-permissions.user'> &
+      Schema.Attribute.Unique;
+  };
+}
+
+export interface ApiUcretHesaplamaUcretHesaplama extends Struct.CollectionTypeSchema {
+  collectionName: 'ucret_hesaplamalari';
+  info: {
+    description: 'MEB \u00FCcret art\u0131\u015F form\u00FCl\u00FC hesaplama - \u00DCFE+T\u00DCFE tabanl\u0131';
+    displayName: '\u00DCcret Hesaplama';
+    pluralName: 'ucret-hesaplamalari';
+    singularName: 'ucret-hesaplama';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    academicYear: Schema.Attribute.String & Schema.Attribute.Required;
+    allowedIncreaseRate: Schema.Attribute.Decimal;
+    averageInflation: Schema.Attribute.Decimal;
+    basePriceBireysel: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    basePriceGrup: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    effectiveDate: Schema.Attribute.Date & Schema.Attribute.Required;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::ucret-hesaplama.ucret-hesaplama'> &
+      Schema.Attribute.Private;
+    mebApprovalDate: Schema.Attribute.Date;
+    mebApprovalNumber: Schema.Attribute.String;
+    multiplier: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<1.05>;
+    newPriceBireysel: Schema.Attribute.Decimal;
+    newPriceGrup: Schema.Attribute.Decimal;
+    notes: Schema.Attribute.Text;
+    previousYearDecemberTufe: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    previousYearDecemberUfe: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
   info: {
@@ -2440,6 +2513,8 @@ declare module '@strapi/strapi' {
       'api::telafi-egitimi.telafi-egitimi': ApiTelafiEgitimiTelafiEgitimi;
       'api::tenant.tenant': ApiTenantTenant;
       'api::terapi-cetveli.terapi-cetveli': ApiTerapiCetveliTerapiCetveli;
+      'api::two-factor-auth.two-factor-auth': ApiTwoFactorAuthTwoFactorAuth;
+      'api::ucret-hesaplama.ucret-hesaplama': ApiUcretHesaplamaUcretHesaplama;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
