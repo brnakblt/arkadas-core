@@ -7,7 +7,7 @@ module.exports = function (api) {
         "process.env.EXPO_ROUTER_APP_ROOT": "../../app",
         "process.env.EXPO_ROUTER_IMPORT_MODE": "sync"
       }],
-      "react-native-reanimated/plugin",
+      // "react-native-reanimated/plugin",
       [
         "module-resolver",
         {
