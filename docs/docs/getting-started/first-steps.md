@@ -8,8 +8,6 @@ Arkadaş ERP sistemini kullanmaya başlamak için bu rehberi takip edin.
 2. Kullanıcı adı ve şifrenizi girin
 3. **Giriş Yap** butonuna tıklayın
 
-![Giriş Ekranı](../assets/login.png)
-
 ## 2. Dashboard
 
 Giriş yaptıktan sonra ana panel karşınıza çıkar:
