@@ -8,7 +8,7 @@ const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337"
  */
 export async function GET() {
     try {
-        const response = await fetch(`${STRAPI_URL}/api/tenants?fields[0]=name&fields[1]=domain`, {
+        const response = await fetch(`${STRAPI_URL}/api/tenants/public`, {
             headers: {
                 "Content-Type": "application/json",
             },

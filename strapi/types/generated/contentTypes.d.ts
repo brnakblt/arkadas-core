@@ -2481,7 +2481,6 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -2515,8 +2514,9 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
       Schema.Attribute.SetMinMaxLength<{
         minLength: 3;
       }>;
-    userType: Schema.Attribute.Enumeration<['parent', 'teacher']> &
-      Schema.Attribute.DefaultTo<'parent'>;
+    userType: Schema.Attribute.Enumeration<['parent', 'teacher', 'admin']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'admin'>;
   };
 }
 
