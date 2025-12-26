@@ -138,7 +138,7 @@ export const MEB_RULES = {
     // BKDS (Biyometrik Kimlik Doğrulama) Kuralları - 2025
     BKDS: {
         zorunlu_tarih: '2026-01-01',      // Zorunluluk başlangıç tarihi
-        kayit_saklama_gun: 90,            // Kamera kaydı saklama süresi
+        kayit_saklama_gun: 150,           // Kamera kaydı saklama süresi (90 gün zorunlu + 60 gün güvenlik payı)
         yuz_esleme_esik: 0.85,            // Yüz eşleşme minimum skoru
         ram_senkron_zorunlu: true,        // RAM ile senkronizasyon zorunlu
     },
