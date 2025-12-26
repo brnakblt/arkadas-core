@@ -552,6 +552,121 @@ export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBepGelisimIzlemeBepGelisimIzleme extends Struct.CollectionTypeSchema {
+  collectionName: 'bep_gelisim_izlemeleri';
+  info: {
+    description: 'BEP Geli\u015Fimi \u0130zleme \u00D6zet Formu - d\u00F6nemlik de\u011Ferlendirme';
+    displayName: 'BEP Geli\u015Fim \u0130zleme (Ek-5 G\u00D6F)';
+    pluralName: 'bep-gelisim-izlemeleri';
+    singularName: 'bep-gelisim-izleme';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    academicYear: Schema.Attribute.String & Schema.Attribute.Required;
+    achievedGoals: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
+    akademikProgress: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    approvalStatus: Schema.Attribute.Enumeration<
+      ['taslak', 'ogretmen_onay', 'veli_onay', 'tamamlandi']
+    > &
+      Schema.Attribute.DefaultTo<'taslak'>;
+    bep: Schema.Attribute.Relation<'manyToOne', 'api::bireysel-egitim-plani.bireysel-egitim-plani'>;
+    bepUpdateRequired: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    bilisselProgress: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    challenges: Schema.Attribute.Text;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    dilIletisimProgress: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    evaluationDate: Schema.Attribute.Date & Schema.Attribute.Required;
+    evaluationPeriod: Schema.Attribute.Enumeration<
+      ['donem_basi', 'ara_degerlendirme', 'donem_sonu']
+    > &
+      Schema.Attribute.Required;
+    evaluator: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+    inProgressGoals: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::bep-gelisim-izleme.bep-gelisim-izleme'
+    > &
+      Schema.Attribute.Private;
+    motorProgress: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    nextSteps: Schema.Attribute.Text;
+    notAchievedGoals: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
+    overallProgress: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    ozbakimProgress: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    parentFeedback: Schema.Attribute.Text;
+    parentSignatureDate: Schema.Attribute.Date;
+    publishedAt: Schema.Attribute.DateTime;
+    recommendedChanges: Schema.Attribute.Text;
+    semester: Schema.Attribute.Enumeration<['guz', 'bahar']> & Schema.Attribute.Required;
+    skillAreaProgress: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
+    sosyalProgress: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    strengths: Schema.Attribute.Text;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiBireyselEgitimPlaniBireyselEgitimPlani extends Struct.CollectionTypeSchema {
   collectionName: 'bireysel_egitim_planlari';
   info: {
@@ -959,6 +1074,53 @@ export interface ApiKabaDegerlendirmeKabaDegerlendirme extends Struct.Collection
   };
 }
 
+export interface ApiKontrolListesiKontrolListesi extends Struct.CollectionTypeSchema {
+  collectionName: 'kontrol_listeleri';
+  info: {
+    description: '\u00D6\u00C7\u00C7/MEB Kontrol Listesi formu - Beceri de\u011Ferlendirme';
+    displayName: 'Kontrol Listesi (Ek-2)';
+    pluralName: 'kontrol-listeleri';
+    singularName: 'kontrol-listesi';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    attachments: Schema.Attribute.Media<'images' | 'files' | 'videos', true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    evaluationCriteria: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
+    evaluationDate: Schema.Attribute.Date & Schema.Attribute.Required;
+    evaluator: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::kontrol-listesi.kontrol-listesi'> &
+      Schema.Attribute.Private;
+    notes: Schema.Attribute.Text;
+    performanceLevel: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      >;
+    publishedAt: Schema.Attribute.DateTime;
+    result: Schema.Attribute.Enumeration<
+      ['basarili', 'gelisiyor', 'basarisiz', 'degerlendirilemedi']
+    >;
+    skillArea: Schema.Attribute.Enumeration<
+      ['ozbak\u0131m', 'gunluk_yasam', 'akademik', 'sosyal', 'motor', 'dil_iletisim', 'bilissel']
+    > &
+      Schema.Attribute.Required;
+    skillName: Schema.Attribute.String & Schema.Attribute.Required;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    targetBehavior: Schema.Attribute.Text & Schema.Attribute.Required;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiLocationLogLocationLog extends Struct.CollectionTypeSchema {
   collectionName: 'location_logs';
   info: {
@@ -1066,6 +1228,167 @@ export interface ApiPerformansKayitPerformansKayit extends Struct.CollectionType
     tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPortfolyoKontrolPortfolyoKontrol extends Struct.CollectionTypeSchema {
+  collectionName: 'portfolyo_kontrol_listeleri';
+  info: {
+    description: '\u00D6\u011Frenci portfolyosu de\u011Ferlendirme kontrol listesi';
+    displayName: 'Portfolyo Kontrol Listesi (Ek-6)';
+    pluralName: 'portfolyo-kontrol-listeleri';
+    singularName: 'portfolyo-kontrol';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    academicYear: Schema.Attribute.String & Schema.Attribute.Required;
+    assessmentFormsExist: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    attachments: Schema.Attribute.Media<'images' | 'files' | 'videos', true>;
+    bepCopyExists: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    evaluationDate: Schema.Attribute.Date & Schema.Attribute.Required;
+    evaluator: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::portfolyo-kontrol.portfolyo-kontrol'
+    > &
+      Schema.Attribute.Private;
+    notes: Schema.Attribute.Text;
+    overallCompleteness: Schema.Attribute.Enumeration<['eksik', 'kismen_tam', 'tam', 'mukemmel']>;
+    parentFeedbackExists: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    photoCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    portfolyoItems: Schema.Attribute.JSON &
+      Schema.Attribute.DefaultTo<{
+        bepKopyasi: false;
+        calismaOrnekleri: false;
+        digerMateryaller: false;
+        fotograflar: false;
+        kabaDegerlendirme: false;
+        kontrolListesi: false;
+        ogrenciOzdegerlendirme: false;
+        performansKayitlari: false;
+        veliGorusleri: false;
+        videolar: false;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    selfEvaluationExists: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    semester: Schema.Attribute.Enumeration<['guz', 'bahar']> & Schema.Attribute.Required;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    videoCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    workSamplesCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+  };
+}
+
+export interface ApiPortfolyoPuanlamaPortfolyoPuanlama extends Struct.CollectionTypeSchema {
+  collectionName: 'portfolyo_puanlamalari';
+  info: {
+    description: 'Portfolyo dereceli puanlama anahtar\u0131 - rubrik de\u011Ferlendirme';
+    displayName: 'Portfolyo Dereceli Puanlama (Ek-7)';
+    pluralName: 'portfolyo-puanlamalari';
+    singularName: 'portfolyo-puanlama';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    academicYear: Schema.Attribute.String & Schema.Attribute.Required;
+    areasForImprovement: Schema.Attribute.Text;
+    contentQualityNotes: Schema.Attribute.Text;
+    contentQualityScore: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 4;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<1>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    evaluationDate: Schema.Attribute.Date & Schema.Attribute.Required;
+    evaluator: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::portfolyo-puanlama.portfolyo-puanlama'
+    > &
+      Schema.Attribute.Private;
+    organizationNotes: Schema.Attribute.Text;
+    organizationScore: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 4;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<1>;
+    overallGrade: Schema.Attribute.Enumeration<
+      ['yetersiz', 'gelisiyor', 'yeterli', 'iyi', 'cok_iyi']
+    >;
+    presentationNotes: Schema.Attribute.Text;
+    presentationScore: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 4;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<1>;
+    progressEvidenceNotes: Schema.Attribute.Text;
+    progressEvidenceScore: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 4;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<1>;
+    publishedAt: Schema.Attribute.DateTime;
+    recommendations: Schema.Attribute.Text;
+    selfReflectionNotes: Schema.Attribute.Text;
+    selfReflectionScore: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 4;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<1>;
+    semester: Schema.Attribute.Enumeration<['guz', 'bahar']> & Schema.Attribute.Required;
+    strengths: Schema.Attribute.Text;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    totalScore: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 24;
+          min: 6;
+        },
+        number
+      >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    varietyNotes: Schema.Attribute.Text;
+    varietyScore: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 4;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<1>;
   };
 }
 
@@ -1903,6 +2226,7 @@ declare module '@strapi/strapi' {
       'api::article.article': ApiArticleArticle;
       'api::attendance-log.attendance-log': ApiAttendanceLogAttendanceLog;
       'api::author.author': ApiAuthorAuthor;
+      'api::bep-gelisim-izleme.bep-gelisim-izleme': ApiBepGelisimIzlemeBepGelisimIzleme;
       'api::bireysel-egitim-plani.bireysel-egitim-plani': ApiBireyselEgitimPlaniBireyselEgitimPlani;
       'api::category.category': ApiCategoryCategory;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
@@ -1915,9 +2239,12 @@ declare module '@strapi/strapi' {
       'api::global.global': ApiGlobalGlobal;
       'api::hero.hero': ApiHeroHero;
       'api::kaba-degerlendirme.kaba-degerlendirme': ApiKabaDegerlendirmeKabaDegerlendirme;
+      'api::kontrol-listesi.kontrol-listesi': ApiKontrolListesiKontrolListesi;
       'api::location-log.location-log': ApiLocationLogLocationLog;
       'api::nextcloud-sync.nextcloud-sync': ApiNextcloudSyncNextcloudSync;
       'api::performans-kayit.performans-kayit': ApiPerformansKayitPerformansKayit;
+      'api::portfolyo-kontrol.portfolyo-kontrol': ApiPortfolyoKontrolPortfolyoKontrol;
+      'api::portfolyo-puanlama.portfolyo-puanlama': ApiPortfolyoPuanlamaPortfolyoPuanlama;
       'api::process.process': ApiProcessProcess;
       'api::rapor.rapor': ApiRaporRapor;
       'api::route-stop.route-stop': ApiRouteStopRouteStop;
