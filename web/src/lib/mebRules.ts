@@ -41,11 +41,33 @@ export const MEB_RULES = {
         grup: 8,
     },
 
+    // Öğretmen çalışma limitleri
+    TEACHER_LIMITS: {
+        gunluk_ders: 8,      // Günde max ders
+        haftalik_ders: 40,   // Haftada max ders
+        gunluk_saat: 8,      // Günde max saat
+        haftalik_saat: 40,   // Haftada max saat
+    },
+
+    // Okul saatleri (okula giden öğrenciler için)
+    SCHOOL_HOURS: {
+        baslangic: '08:00',
+        bitis: '15:00',
+        ogle_arasi_baslangic: '12:00',
+        ogle_arasi_bitis: '13:00',
+    },
+
     // BEP süreleri
     BEP_DEADLINES: {
         hazirlama_suresi: 30, // gün (kayıttan sonra)
         guncelleme_periyodu: 90, // gün (dönemlik)
         veli_bilgilendirme: 7, // gün (değişiklik sonrası)
+    },
+
+    // Modül süreleri (saat cinsinden)
+    MODULE_DURATIONS: {
+        minimum: 8,    // Modül başına minimum saat
+        varsayilan: 16, // Varsayılan modül süresi
     },
 
     // Fatura kesim kuralları
@@ -63,6 +85,12 @@ export const MEB_RULES = {
         'kimlik_fotokopisi',
         'veli_izin_belgesi',
     ],
+
+    // Dengeli dağılım hedefleri
+    BALANCED_DISTRIBUTION: {
+        max_sapma_yuzdesi: 20, // Öğretmenler arası max %20 fark
+        ideal_gunluk_ders: 6,
+    },
 };
 
 // ============================================================

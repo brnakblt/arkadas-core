@@ -1,0 +1,69 @@
+{
+    "kind": "collectionType",
+    "collectionName": "terapi_cetvelleri",
+    "info": {
+        "singularName": "terapi-cetveli",
+        "pluralName": "terapi-cetvelleri",
+        "displayName": "Terapi Cetveli (Ek-4)",
+        "description": "Aylık terapi cetveli - MEBBİS'ten çekilir"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "student": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::student-profile.student-profile"
+        },
+        "month": {
+            "type": "string",
+            "required": true
+        },
+        "year": {
+            "type": "integer",
+            "required": true
+        },
+        "sessions": {
+            "type": "json",
+            "default": []
+        },
+        "totalBireysel": {
+            "type": "integer",
+            "default": 0
+        },
+        "totalGrup": {
+            "type": "integer",
+            "default": 0
+        },
+        "totalHours": {
+            "type": "decimal",
+            "default": 0
+        },
+        "importedFromMebbis": {
+            "type": "boolean",
+            "default": false
+        },
+        "mebbisImportDate": {
+            "type": "datetime"
+        },
+        "status": {
+            "type": "enumeration",
+            "enum": [
+                "taslak",
+                "onaylandi",
+                "mebbise_aktarildi"
+            ],
+            "default": "taslak"
+        },
+        "notes": {
+            "type": "text"
+        },
+        "tenant": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::tenant.tenant"
+        }
+    }
+}
