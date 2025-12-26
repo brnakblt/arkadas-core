@@ -40,8 +40,8 @@ const ContactForm: React.FC = () => {
     };
 
     return (
-        <div className="bg-white rounded-3xl px-8 pt-8 pb-0 card-shadow transition-all duration-300 ease-in-out">
-            <h3 className="font-display text-2xl font-bold text-neutral-dark mb-6 leading-normal pb-1">
+        <div className="bg-white/95 dark:bg-neutral-800/95 backdrop-blur-md rounded-3xl px-8 pt-8 pb-0 card-shadow border border-gray-200 dark:border-neutral-700 transition-all duration-300 ease-in-out">
+            <h3 className="font-display text-2xl font-bold text-neutral-dark dark:text-white mb-6 leading-normal pb-1">
                 Bize Mesaj Gönderin
             </h3>
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>
@@ -49,7 +49,7 @@ const ContactForm: React.FC = () => {
                     <div>
                         <label
                             htmlFor="name"
-                            className="block font-body font-medium text-neutral-dark mb-2"
+                            className="block font-body font-medium text-neutral-dark dark:text-gray-200 mb-2"
                         >
                             Ad Soyad
                         </label>
@@ -76,7 +76,7 @@ const ContactForm: React.FC = () => {
                     <div>
                         <label
                             htmlFor="email"
-                            className="block font-body font-medium text-neutral-dark mb-2"
+                            className="block font-body font-medium text-neutral-dark dark:text-gray-200 mb-2"
                         >
                             E-posta Adresi
                         </label>
@@ -104,7 +104,7 @@ const ContactForm: React.FC = () => {
                 <div>
                     <label
                         htmlFor="phone"
-                        className="block font-body font-medium text-neutral-dark mb-2"
+                        className="block font-body font-medium text-neutral-dark dark:text-gray-200 mb-2"
                     >
                         Telefon Numarası
                     </label>
@@ -131,7 +131,7 @@ const ContactForm: React.FC = () => {
                 <div>
                     <label
                         htmlFor="address"
-                        className="block font-body font-medium text-neutral-dark mb-2"
+                        className="block font-body font-medium text-neutral-dark dark:text-gray-200 mb-2"
                     >
                         Adres
                     </label>
@@ -159,7 +159,7 @@ const ContactForm: React.FC = () => {
                 <div>
                     <label
                         htmlFor="message"
-                        className="block font-body font-medium text-neutral-dark mb-2"
+                        className="block font-body font-medium text-neutral-dark dark:text-gray-200 mb-2"
                     >
                         Mesajınız
                     </label>
@@ -186,10 +186,10 @@ const ContactForm: React.FC = () => {
 
                 <div className="space-y-4">
                     {/* KVKK Section with Accordion */}
-                    <div className="bg-gray-50 rounded-xl overflow-hidden">
+                    <div className="bg-gray-50 dark:bg-neutral-700/50 rounded-xl overflow-hidden">
                         <div
                             onClick={handleKvkkHeaderClick}
-                            className="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-100 transition-colors duration-200"
+                            className="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-600/50 transition-colors duration-200"
                         >
                             <div className="flex items-start space-x-3">
                                 <div className="flex items-center h-5 mt-1">
@@ -213,7 +213,7 @@ const ContactForm: React.FC = () => {
                                 <div className="flex-initial">
                                     <label
                                         htmlFor="kvkk"
-                                        className="font-body text-sm text-gray-600"
+                                        className="font-body text-sm text-gray-600 dark:text-gray-300"
                                     >
                                         Kişisel verilerimin işlenmesi hakkında bilgilendirmeyi
                                         okudum ve onaylıyorum.
@@ -241,7 +241,7 @@ const ContactForm: React.FC = () => {
                             className={`transition-all duration-300 ease-in-out ${isKvkkOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
                                 } overflow-hidden`}
                         >
-                            <div className="p-4 text-sm text-gray-600 leading-relaxed border-t border-gray-200">
+                            <div className="p-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed border-t border-gray-200 dark:border-neutral-600">
                                 <p className="mb-2">İlgili kanun ve yönetmelikler:</p>
                                 <ul className="list-disc pl-5 space-y-2 mb-2">
                                     <li>
