@@ -65,7 +65,7 @@ export default function LoginScreen() {
 
     const handleLogin = async () => {
         if (!email || !password) {
-            setError("E-posta ve şifre gereklidir");
+            setError("Kullanıcı adı/E-posta ve şifre gereklidir");
             return;
         }
 
@@ -159,16 +159,14 @@ export default function LoginScreen() {
 
                     {/* Email Input */}
                     <View style={styles.inputContainer}>
-                        <Text style={styles.label}>E-posta</Text>
+                        <Text style={styles.label}>E-posta veya Kullanıcı Adı</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="ornek@email.com"
-                            placeholderTextColor="#9ca3af"
+                            placeholder="E-posta veya Kullanıcı Adı"
                             value={email}
                             onChangeText={setEmail}
-                            keyboardType="email-address"
+                            keyboardType="default"
                             autoCapitalize="none"
-                            autoCorrect={false}
                         />
                     </View>
 

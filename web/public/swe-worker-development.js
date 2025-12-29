@@ -65,6 +65,10 @@ eval(__webpack_require__.ts("__webpack_require__.r(__webpack_exports__);\nself.o
 /******/ 		__webpack_require__.i.push((options) => {
 /******/ 			const originalFactory = options.factory;
 /******/ 			options.factory = (moduleObject, moduleExports, webpackRequire) => {
+/******/ 				if (!originalFactory) {
+/******/ 					document.location.reload();
+/******/ 					return;
+/******/ 				}
 /******/ 				const hasRefresh = typeof self !== "undefined" && !!self.$RefreshInterceptModuleExecution$;
 /******/ 				const cleanup = hasRefresh ? self.$RefreshInterceptModuleExecution$(moduleObject.id) : () => {};
 /******/ 				try {

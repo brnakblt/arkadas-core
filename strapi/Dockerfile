@@ -1,29 +1,36 @@
 # ============================================================
-# Strapi Production Dockerfile - Security Hardened
-# Alpine-based, Multi-stage, Non-root
+# Strapi Production Dockerfile - Optimized
+# Debian-based (Slim) for faster builds
 # ============================================================
 
 # Stage 1: Dependencies
-FROM node:20-alpine AS deps
+FROM node:20-slim AS deps
 WORKDIR /opt/app
 
 # Install build dependencies for native modules
-RUN apk add --no-cache \
+# python3, make, g++ are often needed for node-gyp
+RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
-    vips-dev
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy package files
 COPY package.json package-lock.json ./
 RUN npm ci --only=production && npm cache clean --force
 
 # Stage 2: Builder
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 WORKDIR /opt/app
 
 # Install build tools
-RUN apk add --no-cache python3 make g++ vips-dev
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy dependencies from deps stage
 COPY --from=deps /opt/app/node_modules ./node_modules
@@ -40,25 +47,24 @@ ENV NODE_ENV=production
 RUN npm run build
 
 # Stage 3: Production Runner (Minimal)
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
 WORKDIR /opt/app
 
 # Security: Install only runtime dependencies
-RUN apk add --no-cache \
-    vips \
+# tini for signal handling
+RUN apt-get update && apt-get install -y \
     tini \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
-RUN addgroup -g 1001 -S strapi && \
-    adduser -u 1001 -S strapi -G strapi
+RUN groupadd -g 1001 strapi && \
+    useradd -u 1001 -g strapi -s /bin/bash strapi
 
 # Copy production dependencies
 COPY --from=deps --chown=strapi:strapi /opt/app/node_modules ./node_modules
 
 # Copy built application
 COPY --from=builder --chown=strapi:strapi /opt/app/dist ./dist
-COPY --from=builder --chown=strapi:strapi /opt/app/build ./build
 COPY --from=builder --chown=strapi:strapi /opt/app/public ./public
 COPY --from=builder --chown=strapi:strapi /opt/app/config ./config
 COPY --from=builder --chown=strapi:strapi /opt/app/src ./src
@@ -81,11 +87,13 @@ ENV PORT=1337
 EXPOSE 1337
 
 # Use tini for proper signal handling (graceful shutdown)
-ENTRYPOINT ["/sbin/tini", "--"]
+ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:1337/_health || exit 1
+    CMD try_wget() { command -v wget > /dev/null && wget --no-verbose --tries=1 --spider http://localhost:1337/_health; }; \
+    try_curl() { command -v curl > /dev/null && curl -f -s http://localhost:1337/_health; }; \
+    try_wget || try_curl || exit 1
 
 # Start Strapi
 CMD ["node", "node_modules/@strapi/strapi/bin/strapi.js", "start"]

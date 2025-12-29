@@ -13,6 +13,7 @@ import './queues'; // Initialize background workers
 import rateLimit from 'express-rate-limit'; // Security: Rate Limiting
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
+import { serverAdapter } from './utils/bull-board';
 
 // Rate Limiter Configuration
 const limiter = rateLimit({
@@ -71,6 +72,9 @@ app.get('/', (_req: Request, res: Response) => {
         health: '/api/health',
     });
 });
+
+// Queue Dashboard
+app.use('/admin/queues', serverAdapter.getRouter());
 
 // API routes
 app.use('/api', apiRoutes);

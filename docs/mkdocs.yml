@@ -59,6 +59,13 @@ nav:
   - Ana Sayfa: index.md
   - Başlarken:
     - Kurulum: getting-started/installation.md
+    - İlk Adımlar: getting-started/first-steps.md
+    - Hızlı Başlangıç: getting-started/quickstart.md
+  - Kullanıcı Kılavuzu:
+    - Hizmet Takibi: user-guide/service-tracking.md
+    - Ders Programı: user-guide/schedule.md
+    - Yoklama: user-guide/attendance.md
+    - Dosya Yönetimi: user-guide/file-management.md
   - Sistem Mimarisi:
     - Genel Bakış: architecture/system-architecture.md
   - API Referansı:

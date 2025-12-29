@@ -9,8 +9,7 @@
   ],
   "dependencies": {
     "@sentry/react": "^10.27.0",
-    "@sentry/tracing": "^7.120.4",
-    "expo-location": "^19.0.8"
+    "@sentry/tracing": "^7.120.4"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
@@ -18,6 +17,12 @@
     "kill-port": "^2.0.1",
     "rimraf": "^6.1.2",
     "wait-on": "^7.2.0"
+  },
+  "overrides": {
+    "react-native": "0.81.5",
+    "expo": "54.0.30",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
   },
   "scripts": {
     "------- DEV -------": "",
@@ -27,7 +32,7 @@
     "dev:strapi": "npm run develop --prefix strapi",
     "dev:web": "npm run dev --prefix web",
     "dev:mobile": "cd mobile && EXPO_ROUTER_APP_ROOT=./app npx expo start --port 8082",
-    "dev:mobile-spawn": "ghostty -e bash -c 'cd /home/baran/Dev/arkadasozelegitim/mobile && EXPO_ROUTER_APP_ROOT=./app exec npx expo start --clear --port 8082' &",
+    "dev:mobile-spawn": "ghostty -e bash -c 'source ~/.nvm/nvm.sh; cd mobile && nvm install && nvm use && rm -rf .expo && EXPO_ROUTER_APP_ROOT=$(pwd)/app npx expo start --clear --port 8082; exec bash' > /dev/null 2>&1 &",
     "dev:ai": "cd ai-service && ./venv/bin/python -m uvicorn app.main:app --reload --port 8000",
     "dev:mebbis": "npm run dev --prefix mebbis-service",
     "dev:docs": "cd docs && mkdocs serve -a localhost:8001",
@@ -80,8 +85,7 @@
     "test:mebbis": "npm test --prefix mebbis-service",
     "test:ai": "cd ai-service && PYTHONPATH=. ./venv/bin/pytest",
     "test:e2e": "npm run test:e2e --prefix web",
-    "test:coverage": "npm run test:coverage --prefix web",
-    "prepare": "husky"
+    "test:coverage": "npm run test:coverage --prefix web"
   },
   "engines": {
     "node": ">=18.0.0 <23.0.0"
