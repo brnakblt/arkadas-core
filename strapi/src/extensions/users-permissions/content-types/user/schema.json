@@ -9,9 +9,9 @@
     "displayName": "User"
   },
   "options": {
-    "draftAndPublish": false
+    "draftAndPublish": false,
+    "timestamps": true
   },
-  "pluginOptions": {},
   "attributes": {
     "username": {
       "type": "string",
@@ -24,7 +24,7 @@
       "type": "email",
       "minLength": 6,
       "configurable": false,
-      "required": true
+      "required": false
     },
     "provider": {
       "type": "string",
@@ -34,20 +34,17 @@
       "type": "password",
       "minLength": 6,
       "configurable": false,
-      "private": true,
-      "searchable": false
+      "private": true
     },
     "resetPasswordToken": {
       "type": "string",
       "configurable": false,
-      "private": true,
-      "searchable": false
+      "private": true
     },
     "confirmationToken": {
       "type": "string",
       "configurable": false,
-      "private": true,
-      "searchable": false
+      "private": true
     },
     "confirmed": {
       "type": "boolean",
@@ -66,21 +63,14 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "userType": {
-      "type": "enumeration",
-      "required": true,
-      "default": "admin",
-      "enum": [
-        "parent",
-        "teacher",
-        "admin"
-      ]
+    "isPasswordResetRequired": {
+      "type": "boolean",
+      "default": true
     },
     "tenant": {
       "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::tenant.tenant",
-      "inversedBy": "users"
+      "relation": "oneToOne",
+      "target": "api::tenant.tenant"
     }
   }
 }

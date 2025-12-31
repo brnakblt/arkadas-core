@@ -123,17 +123,16 @@ arkadasozelegitim/
 
 ## 🔐 Environment Variables
 
-Secret yönetimi için **Infisical** kullanılması önerilir:
+Secret ve Environment Variable yönetimi için **Infisical** kullanılmaktadır.
 
 ```bash
-# Infisical'dan secret sync
-./scripts/sync_secrets.sh prod
+# Infisical Kurulumu ve Secret Import (İlk Kez)
+bash scripts/setup_infisical.sh
 ```
 
-Manuel kurulum için:
-```bash
-./scripts/generate_envs.sh
-```
+Sonrasında tüm komutlar (`npm run dev`) otomatik olarak Infisical üzerinden secret'ları çekecektir.
+
+Eğer yeni bir kurulum yapıyorsanız ve elinizde secret yoksa, önce `scripts/generate_envs.sh` ile rastgele secret üretip sonra import edebilirsiniz.
 
 ---
 

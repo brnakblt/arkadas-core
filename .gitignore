@@ -162,3 +162,8 @@ web/public/icons/
 
 # Custom Ignore
 *.txt
+
+# Added by Agent
+backups/
+.turbo/
+.infisical.json

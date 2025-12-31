@@ -68,7 +68,7 @@ export default (config: unknown, { strapi }: { strapi: Core.Strapi }) => {
             const fullUser = await strapi.entityService.findOne(
                 'plugin::users-permissions.user',
                 user.id,
-                { populate: ['tenant'] }
+                { populate: ['tenant'] as any }
             );
             userTenant = (fullUser as any)?.tenant;
         }

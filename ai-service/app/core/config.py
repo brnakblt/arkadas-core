@@ -34,6 +34,10 @@ class Settings(BaseSettings):
     AI_SERVICE_API_KEY: Optional[str] = None
     CORS_ALLOWED_ORIGINS: Optional[str] = None
     
+    # LLM Settings (OpenAI)
+    OPENAI_API_KEY: Optional[str] = None
+    OPENAI_MODEL: str = "gpt-4o"
+    
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=True,

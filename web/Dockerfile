@@ -11,8 +11,8 @@ WORKDIR /app
 RUN apk add --no-cache libc6-compat
 
 # Copy package files
-COPY package.json package-lock.json ./
-RUN npm ci && npm cache clean --force
+COPY package.json ./
+RUN npm install && npm cache clean --force
 
 # Stage 2: Builder
 FROM node:20-alpine AS builder

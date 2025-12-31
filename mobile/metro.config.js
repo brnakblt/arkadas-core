@@ -1,6 +1,37 @@
+const path = require("path");
 const { getDefaultConfig } = require("expo/metro-config");
 const { withNativeWind } = require("nativewind/metro");
 
-const config = getDefaultConfig(__dirname);
+const projectRoot = __dirname;
+const workspaceRoot = path.resolve(projectRoot, "..");
+
+const config = getDefaultConfig(projectRoot);
+
+// 1. Watch all files within the monorepo
+config.watchFolders = [workspaceRoot];
+
+// 2. Let Metro know where to resolve packages and in what order
+config.resolver.nodeModulesPaths = [
+    path.resolve(projectRoot, "node_modules"),
+    path.resolve(workspaceRoot, "node_modules"),
+];
+
+// 3. Force Metro to resolve (sub)dependencies only from the `nodeModulesPaths`
+config.resolver.disableHierarchicalLookup = true;
+
+// 4. Force React to resolve from mobile/node_modules only
+config.resolver.extraNodeModules = {
+    react: path.resolve(projectRoot, "node_modules", "react"),
+    "react-dom": path.resolve(projectRoot, "node_modules", "react-dom"),
+    "react-native": path.resolve(projectRoot, "node_modules", "react-native"),
+};
+
+// 5. Exclude databases and other non-code directories from watcher to avoid EACCES errors
+config.resolver.blockList = [
+    ...Array.from(config.resolver.blockList || []),
+    /\/databases\/.*/,
+    /\/backups\/.*/,
+    /\/logging\/.*/,
+];
 
 module.exports = withNativeWind(config, { input: "./global.css" });

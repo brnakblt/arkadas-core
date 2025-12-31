@@ -12,7 +12,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from app.api import face_routes, health_routes
+from app.api import face_routes, health_routes, iep_routes
 from app.core.config import settings
 from app.routers import storage
 from app.core.limiter import limiter
@@ -116,6 +116,7 @@ else:
 app.include_router(health_routes.router, prefix="/api", tags=["Health"])
 app.include_router(face_routes.router, prefix="/api", tags=["Face Recognition"])
 app.include_router(storage.router, prefix="/api", tags=["Storage"])
+app.include_router(iep_routes.router, prefix="/api/iep", tags=["IEP Generation"])
 
 
 @app.get("/")

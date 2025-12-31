@@ -25,7 +25,10 @@ python-dotenv
 pydantic
 pydantic-settings
 httpx
+pydantic-settings
+httpx
 setuptools
+openai
 
 # Development
 pytest

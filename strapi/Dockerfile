@@ -17,8 +17,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy package files
-COPY package.json package-lock.json ./
-RUN npm ci --only=production && npm cache clean --force
+# Copy package files (Lockfile might be missing in monorepo dev)
+COPY package.json ./
+# Run install (will generate lockfile)
+RUN npm install --omit=dev
 
 # Stage 2: Builder
 FROM node:20-slim AS builder
@@ -34,10 +36,10 @@ RUN apt-get update && apt-get install -y \
 
 # Copy dependencies from deps stage
 COPY --from=deps /opt/app/node_modules ./node_modules
-COPY package.json package-lock.json ./
+COPY package.json ./
 
 # Install ALL dependencies for build
-RUN npm ci
+RUN npm install
 
 # Copy source code
 COPY . .
@@ -56,20 +58,23 @@ RUN apt-get update && apt-get install -y \
     tini \
     && rm -rf /var/lib/apt/lists/*
 
-# Create non-root user
+# Create non-root user with home directory
 RUN groupadd -g 1001 strapi && \
-    useradd -u 1001 -g strapi -s /bin/bash strapi
+    useradd -m -u 1001 -g strapi -s /bin/bash strapi
 
 # Copy production dependencies
 COPY --from=deps --chown=strapi:strapi /opt/app/node_modules ./node_modules
 
 # Copy built application
+# Copy built application
 COPY --from=builder --chown=strapi:strapi /opt/app/dist ./dist
 COPY --from=builder --chown=strapi:strapi /opt/app/public ./public
-COPY --from=builder --chown=strapi:strapi /opt/app/config ./config
-COPY --from=builder --chown=strapi:strapi /opt/app/src ./src
-COPY --from=builder --chown=strapi:strapi /opt/app/database ./database
-COPY --chown=strapi:strapi package.json ./
+# Rely on compiled code in dist/ for these:
+# COPY --from=builder --chown=strapi:strapi /opt/app/config ./config
+# COPY --from=builder --chown=strapi:strapi /opt/app/src ./src
+# COPY --from=builder --chown=strapi:strapi /opt/app/database ./database
+COPY --chown=strapi:strapi package.json server.js ./
+COPY --chown=strapi:strapi scripts ./scripts
 
 # Create necessary directories
 RUN mkdir -p /opt/app/.tmp /opt/app/public/uploads && \
@@ -96,4 +101,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     try_wget || try_curl || exit 1
 
 # Start Strapi
-CMD ["node", "node_modules/@strapi/strapi/bin/strapi.js", "start"]
+# Start Strapi via custom entry point
+CMD ["node", "server.js"]

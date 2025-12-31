@@ -24,21 +24,21 @@ git clone <repository-url>
 cd arkadasozelegitim
 ```
 
-### Configure Environment Variables
-We use **Infisical** for secret management, but for local development, you can create a `.env` file in the root directory if you don't have the SDK configured locally.
+### Configure Environment Variables (Infisical)
+We use **Infisical** for secret management. You do **not** need to manually create `.env` files.
 
-**Create `.env`:**
+**Run the setup script:**
 ```bash
-cp .env.example .env
+bash scripts/setup_infisical.sh
 ```
-*(If `.env.example` doesn't exist, create one based on `docker-compose.yml` defaults)*
 
-**Required Variables for Infisical (if used):**
-```bash
-export INFISICAL_CLIENT_ID="<your-client-id>"
-export INFISICAL_CLIENT_SECRET="<your-client-secret>"
-export INFISICAL_PROJECT_ID="<your-project-id>"
-```
+This script will:
+1. Install Infisical CLI.
+2. Authenticate you.
+3. Link your local repo to the cloud project.
+4. Import any existing `.env` files you might have (optional).
+
+Once setup, all `npm run dev` commands will automatically fetch the latest secrets.
 
 ---
 

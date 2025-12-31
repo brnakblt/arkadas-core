@@ -48,6 +48,9 @@ jobs:
         # Install dlib fallback or use cache if possible, for now basic install
         cd ..
 
+        # Strapi
+        cd strapi && npm ci && cd ..
+
     - name: Run Tests
       run: |
         # Make script executable
@@ -55,11 +58,45 @@ jobs:
         
         # Run script
         ./scripts/run-tests.sh
+
+    - name: Run Strapi Lint/Build Check
+      run: |
+        cd strapi
+        npm run lint
+        npm run build -- --no-optimization
       env:
         CI: true
 
-  deploy:
+    - name: Run MEBBIS/AI Tests
+      run: |
+        npm run test:mebbis
+        npm run test:ai
+      env:
+        CI: true
+
+  e2e:
     needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run E2E Tests
+        run: npx turbo run test:e2e
+        env:
+          CI: true
+
+  deploy:
+    needs: [test, e2e]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:

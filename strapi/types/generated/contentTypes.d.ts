@@ -1837,6 +1837,12 @@ export interface ApiStudentProfileStudentProfile extends Struct.CollectionTypeSc
     parentGuardian: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
     publishedAt: Schema.Attribute.DateTime;
     studentNumber: Schema.Attribute.String & Schema.Attribute.Unique;
+    tckimlikno: Schema.Attribute.String &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 11;
+        minLength: 11;
+      }>;
     tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
@@ -1869,6 +1875,12 @@ export interface ApiTeacherProfileTeacherProfile extends Struct.CollectionTypeSc
     officeLocation: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     specialization: Schema.Attribute.String;
+    tckimlikno: Schema.Attribute.String &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 11;
+        minLength: 11;
+      }>;
     tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
@@ -1980,6 +1992,7 @@ export interface ApiTenantTenant extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::tenant.tenant'> &
       Schema.Attribute.Private;
+    logo: Schema.Attribute.Media<'images'>;
     mebbisPassword: Schema.Attribute.String & Schema.Attribute.Private;
     mebbisUsername: Schema.Attribute.String & Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
@@ -2481,6 +2494,7 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
   };
   options: {
     draftAndPublish: false;
+    timestamps: true;
   };
   attributes: {
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -2489,10 +2503,10 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     email: Schema.Attribute.Email &
-      Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    isPasswordResetRequired: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'plugin::users-permissions.user'> &
       Schema.Attribute.Private;
@@ -2505,7 +2519,7 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
     publishedAt: Schema.Attribute.DateTime;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
     role: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.role'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    tenant: Schema.Attribute.Relation<'oneToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     username: Schema.Attribute.String &
@@ -2514,9 +2528,6 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
       Schema.Attribute.SetMinMaxLength<{
         minLength: 3;
       }>;
-    userType: Schema.Attribute.Enumeration<['parent', 'teacher', 'admin']> &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'admin'>;
   };
 }
 

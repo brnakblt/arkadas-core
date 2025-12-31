@@ -44,6 +44,14 @@
       "relation": "oneToMany",
       "target": "plugin::users-permissions.user",
       "mappedBy": "tenant"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }

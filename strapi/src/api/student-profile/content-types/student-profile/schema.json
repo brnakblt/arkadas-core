@@ -16,6 +16,12 @@
             "type": "string",
             "unique": true
         },
+        "tckimlikno": {
+            "type": "string",
+            "unique": true,
+            "minLength": 11,
+            "maxLength": 11
+        },
         "dateOfBirth": {
             "type": "date"
         },

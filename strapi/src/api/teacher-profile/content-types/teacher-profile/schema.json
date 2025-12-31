@@ -19,6 +19,12 @@
         "specialization": {
             "type": "string"
         },
+        "tckimlikno": {
+            "type": "string",
+            "unique": true,
+            "minLength": 11,
+            "maxLength": 11
+        },
         "certifications": {
             "type": "json"
         },
