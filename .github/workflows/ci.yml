@@ -34,22 +34,18 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        # Web
-        cd web && npm ci && cd ..
-        
-        # Mebbis Service
-        cd mebbis-service && npm ci && cd ..
-        
-        # AI Service
+        # Install all Node.js dependencies (Root + Workspaces)
+        npm ci
+
+        # AI Service Python Setup
         cd ai-service
         python -m venv venv
         source venv/bin/activate
         pip install -r requirements.txt
-        # Install dlib fallback or use cache if possible, for now basic install
         cd ..
 
-        # Strapi
-        cd strapi && npm ci && cd ..
+        # Install Documentation Tools
+        pip install mkdocs-material
 
     - name: Run Tests
       run: |
