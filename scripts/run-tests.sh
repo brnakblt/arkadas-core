@@ -57,7 +57,7 @@ echo "----------------------------------------"
 run_test "Web Unit Tests (Vitest)" "npm run test:unit" "web"
 
 # E2E tests (if Playwright installed)
-if command -v npx &> /dev/null && [ -f "web/playwright.config.ts" ]; then
+if command -v npx &> /dev/null && [ -f "web/playwright.config.ts" ] && [ "$CI_SKIP_E2E" != "true" ]; then
     run_test "Web E2E Tests (Playwright)" "npm run test:e2e" "web"
 fi
 

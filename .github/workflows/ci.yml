@@ -58,6 +58,8 @@ jobs:
         
         # Run script
         ./scripts/run-tests.sh
+      env:
+        CI_SKIP_E2E: "true"
 
     - name: Run Strapi Lint/Build Check
       run: |

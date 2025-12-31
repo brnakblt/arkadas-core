@@ -166,4 +166,6 @@ web/public/icons/
 # Added by Agent
 backups/
 .turbo/
-.infisical.json
+
+# Docs
+docs/site/
