@@ -2,143 +2,125 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+
+env:
+  NODE_VERSION: '20'
+  PYTHON_VERSION: '3.11'
 
 jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        node-version: [20.x]
-        python-version: [3.11]
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: arkadas_erp
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-        cache: 'pip'
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
 
-    - name: Install Dependencies
-      run: |
-        # Install all Node.js dependencies (Root + Workspaces)
-        # Use --legacy-peer-deps to handle Strapi's React 18 peer deps with React 19 in workspaces
-        npm ci --legacy-peer-deps
+      - name: Install Dependencies
+        run: |
+          npm ci --legacy-peer-deps
+          
+          # AI Service
+          cd ai-service
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          cd ..
+          
+          # Docs
+          pip install mkdocs-material mkdocs
 
-        # AI Service Python Setup
-        cd ai-service
-        python -m venv venv
-        source venv/bin/activate
-        pip install -r requirements.txt
-        cd ..
+      - name: Run Web Tests
+        run: npm run test:web
+        env:
+          CI: true
 
-        # Install Documentation Tools (system-wide for run-tests.sh)
-        pip install mkdocs-material mkdocs
+      - name: Run Strapi Build Check
+        run: |
+          cd strapi
+          npm run build -- --no-optimization
+        env:
+          CI: true
+          DATABASE_CLIENT: postgres
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
+          DATABASE_NAME: arkadas_erp
+          DATABASE_USERNAME: postgres
+          DATABASE_PASSWORD: postgres
 
-    - name: Run Tests
-      run: |
-        # Add pip user scripts to PATH (for mkdocs)
-        export PATH="$HOME/.local/bin:$PATH"
-        
-        # Make script executable
-        chmod +x scripts/run-tests.sh
-        
-        # Run script
-        ./scripts/run-tests.sh
-      env:
-        CI_SKIP_E2E: "true"
+      - name: Run Mebbis Tests
+        run: npm run test:mebbis
+        env:
+          CI: true
 
-    - name: Run Strapi Lint/Build Check
-      run: |
-        cd strapi
-        npm run lint
-        npm run build -- --no-optimization
-      env:
-        CI: true
+      - name: Run AI Tests
+        run: npm run test:ai
+        env:
+          CI: true
 
-    - name: Run MEBBIS/AI Tests
-      run: |
-        npm run test:mebbis
-        npm run test:ai
-      env:
-        CI: true
+      - name: Build Docs
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          cd docs && mkdocs build --strict
 
   e2e:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20.x
-          cache: 'npm'
       
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
       - name: Install Dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
 
       - name: Run E2E Tests
-        run: npx turbo run test:e2e
+        run: npm run test:e2e
         env:
           CI: true
-
-  deploy:
-    needs: [test, e2e]
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and Push Docker Images
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./strapi/Dockerfile
-          push: true
-          tags: ghcr.io/${{ github.repository }}/strapi:latest
-          # Add other services here similarly using matrix or separate steps if contexts differ
-          
-      - name: Deploy to Production
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            echo "Login to GHCR..."
-            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            
-            echo "Pulling latest images..."
-            docker pull ghcr.io/${{ github.repository }}/strapi:latest
-            
-            echo "Restarting services..."
-            # Assuming docker-compose.prod.yml is present
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d strapi
