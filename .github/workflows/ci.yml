@@ -78,7 +78,7 @@ jobs:
       - name: Run Strapi Build Check
         run: |
           cd strapi
-          npm run build -- --no-optimization
+          npm run build
         env:
           CI: true
           DATABASE_CLIENT: postgres
