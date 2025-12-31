@@ -1,6 +1,6 @@
 /**
  * FileManager Component
- * Displays files from Nextcloud with upload, download, and delete functionality
+ * Displays files from SFTPGo with upload, download, and delete functionality
  */
 
 "use client";

@@ -2,7 +2,7 @@
 
 /**
  * Virtual File System Service
- * Abstracts storage backends (local, S3/MinIO, Nextcloud)
+ * Abstracts storage backends (local, S3/MinIO, WebDAV/SFTPGo)
  */
 
 const fs = require('fs/promises');
@@ -45,16 +45,16 @@ module.exports = {
                 Body: content,
                 ContentType: file.mimeType,
             }));
-        } else if (backend === 'nextcloud') {
-            // Nextcloud WebDAV implementation
-            const nextcloudUrl = process.env.NEXTCLOUD_URL;
-            const nextcloudUser = process.env.NEXTCLOUD_USER;
-            const nextcloudPass = process.env.NEXTCLOUD_PASSWORD;
+        } else if (backend === 'webdav') {
+            // WebDAV implementation (SFTPGo)
+            const webdavUrl = process.env.WEBDAV_URL || 'http://localhost:8090';
+            const webdavUser = process.env.SFTPGO_ADMIN_USER || 'admin';
+            const webdavPass = process.env.SFTPGO_ADMIN_PASSWORD;
 
-            await fetch(`${nextcloudUrl}/remote.php/dav/files/${nextcloudUser}/${storagePath}`, {
+            await fetch(`${webdavUrl}/${storagePath}`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': 'Basic ' + Buffer.from(`${nextcloudUser}:${nextcloudPass}`).toString('base64'),
+                    'Authorization': 'Basic ' + Buffer.from(`${webdavUser}:${webdavPass}`).toString('base64'),
                     'Content-Type': file.mimeType || 'application/octet-stream',
                 },
                 body: content,
@@ -82,14 +82,14 @@ module.exports = {
             }));
 
             return streamToBuffer(response.Body);
-        } else if (file.storageBackend === 'nextcloud') {
-            const nextcloudUrl = process.env.NEXTCLOUD_URL;
-            const nextcloudUser = process.env.NEXTCLOUD_USER;
-            const nextcloudPass = process.env.NEXTCLOUD_PASSWORD;
+        } else if (file.storageBackend === 'webdav') {
+            const webdavUrl = process.env.WEBDAV_URL || 'http://localhost:8090';
+            const webdavUser = process.env.SFTPGO_ADMIN_USER || 'admin';
+            const webdavPass = process.env.SFTPGO_ADMIN_PASSWORD;
 
-            const response = await fetch(`${nextcloudUrl}/remote.php/dav/files/${nextcloudUser}/${file.storagePath}`, {
+            const response = await fetch(`${webdavUrl}/${file.storagePath}`, {
                 headers: {
-                    'Authorization': 'Basic ' + Buffer.from(`${nextcloudUser}:${nextcloudPass}`).toString('base64'),
+                    'Authorization': 'Basic ' + Buffer.from(`${webdavUser}:${webdavPass}`).toString('base64'),
                 },
             });
 

@@ -14,7 +14,7 @@
 
 /* eslint-disable no-console */
 import { NextRequest, NextResponse } from 'next/server';
-import { createNextcloudClient, uploadFile } from '@/lib/nextcloud';
+import storageService from '@/services/storageService';
 
 interface OnlyOfficeCallback {
     key: string;
@@ -85,11 +85,10 @@ export async function POST(request: NextRequest) {
 
                             const docBuffer = Buffer.from(await docResponse.arrayBuffer());
 
-                            // Save to Nextcloud
-                            const client = createNextcloudClient();
-                            await uploadFile(client, filePath, docBuffer, { overwrite: true });
+                            // Save to storage via WebDAV
+                            await storageService.uploadFile(filePath, docBuffer);
 
-                            console.debug(`Document saved to Nextcloud: ${filePath}`);
+                            console.debug(`Document saved to storage: ${filePath}`);
 
                             // Clean up key mapping
                             documentKeyMap.delete(key);
@@ -135,5 +134,3 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 1 });
     }
 }
-
-

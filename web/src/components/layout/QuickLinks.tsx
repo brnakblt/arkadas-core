@@ -49,7 +49,7 @@ const QUICK_LINKS: QuickLink[] = [
         label: 'Dosyalar',
         href: '/dosyalar',
         color: 'from-indigo-500 to-blue-400',
-        description: 'Nextcloud dosya yönetimi',
+        description: 'SFTPGo dosya yönetimi',
     },
     {
         icon: '👤',

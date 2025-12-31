@@ -1,17 +1,20 @@
+/**
+ * User Lifecycle Hooks
+ * Provisions storage for new users via SFTPGo
+ */
 module.exports = {
     async afterCreate(event) {
         const { result } = event;
         try {
-            // Only sync if the user is confirmed and not blocked (optional check)
-            // or just sync everyone. Let's sync everyone but maybe check provider.
-
-            console.log(`[Nextcloud Sync] New user created: ${result.username} (${result.email}). Provisioning...`);
-
-            await strapi.service('api::nextcloud-sync.nextcloud-sync').provisionUser(result.id);
-
-            console.log(`[Nextcloud Sync] User ${result.username} provisioned successfully.`);
+            // Try to provision SFTPGo user (optional - service may not exist)
+            const sftpgoService = strapi.service('api::storage-file.sftpgo');
+            if (sftpgoService?.provisionUser) {
+                console.log(`[Storage] New user created: ${result.username} (${result.email}). Provisioning storage...`);
+                await sftpgoService.provisionUser(result.id, result.username, result.email);
+                console.log(`[Storage] User ${result.username} provisioned successfully.`);
+            }
         } catch (err) {
-            console.error('[Nextcloud Sync] Failed to provision user:', err);
+            console.error('[Storage] Failed to provision user:', err);
             // We don't throw here to avoid rolling back the user creation
         }
     },
@@ -19,16 +22,17 @@ module.exports = {
     async afterUpdate(event) {
         const { result, params } = event;
         try {
-            // If blocked status changed
-            if (params.data.blocked !== undefined) {
+            // If blocked status changed, update storage access
+            const sftpgoService = strapi.service('api::storage-file.sftpgo');
+            if (sftpgoService && params.data.blocked !== undefined) {
                 if (result.blocked) {
-                    await strapi.service('api::nextcloud-sync.nextcloud-sync').suspendUser(result.id);
+                    await sftpgoService.disableUser?.(result.username);
                 } else {
-                    await strapi.service('api::nextcloud-sync.nextcloud-sync').reactivateUser(result.id);
+                    await sftpgoService.enableUser?.(result.username);
                 }
             }
         } catch (err) {
-            console.error('[Nextcloud Sync] Failed to update user status:', err);
+            console.error('[Storage] Failed to update user status:', err);
         }
     }
 };
