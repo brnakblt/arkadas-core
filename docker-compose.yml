@@ -1,115 +1,64 @@
+# Minimal Docker Compose - Core Infrastructure Only
+# Apps (Web, Strapi, AI, Mebbis) run natively for faster development
+
 services:
   # ==========================================
-  # Infrastructure Services
+  # Core Infrastructure (Always Required)
   # ==========================================
   postgres:
-    profiles: [ core ]
     image: postgres:15-alpine
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-arkadas_erp}
     volumes:
       - ./databases/postgres:/var/lib/postgresql/data
-    networks:
-      - arkadas-net
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
     ports:
       - "5432:5432"
-
-  gateway:
-    profiles: [ apps ]
-    image: nginx:alpine
-    restart: always
-    ports:
-      - "80:80"
-    volumes:
-      - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro
-    networks:
-      - arkadas-net
-    depends_on:
-      - web
-      - strapi
-      - mebbis-service
-      - ai-service
-
-  # ... (rest of file)
-
-
-
-  # ...
-
-
-
-  redis:
-    profiles: [ core ]
-    image: redis:7-alpine
-    restart: always
-    command: redis-server --save 60 1 --loglevel warning
-    volumes:
-      - ./databases/redis:/data
-    networks:
-      - arkadas-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     deploy:
       resources:
         limits:
           memory: 512M
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - ./databases/redis:/data
+    ports:
+      - "6379:6379"
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
-      interval: 10s
-      timeout: 5s
+      interval: 5s
+      timeout: 3s
       retries: 5
-    ports:
-      - "6380:6379"
-
-  onlyoffice:
-    profiles: [ infra ]
-    image: onlyoffice/documentserver:latest
-    restart: always
-    ports:
-      - "8081:80"
-    environment:
-      - JWT_ENABLED=true
-      - JWT_SECRET=${JWT_SECRET:-changeme}
-    volumes:
-      - ./databases/onlyoffice/data:/var/www/onlyoffice/Data
-      - ./databases/onlyoffice/log:/var/log/onlyoffice
-      - ./databases/onlyoffice/lib:/var/lib/onlyoffice
-      - ./databases/onlyoffice/db:/var/lib/postgresql
-    networks:
-      - arkadas-net
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 128M
 
+  # ==========================================
+  # Optional: SFTPGo for file storage
+  # ==========================================
   sftpgo:
-    profiles: [ infra ]
+    profiles: [ storage ]
     image: drakkan/sftpgo:latest
-    restart: always
+    restart: unless-stopped
     ports:
-      - "8082:8080"   # WebAdmin/WebClient/REST API
-      - "2022:2022"   # SFTP
-      - "8090:8090"   # WebDAV
+      - "8082:8080" # WebAdmin/API
+      - "8090:8090" # WebDAV
     environment:
       SFTPGO_HTTPD__BINDINGS__0__PORT: 8080
-      SFTPGO_HTTPD__BINDINGS__0__ADDRESS: ""
       SFTPGO_HTTPD__BINDINGS__0__ENABLE_WEB_ADMIN: "true"
-      SFTPGO_HTTPD__BINDINGS__0__ENABLE_WEB_CLIENT: "true"
       SFTPGO_HTTPD__BINDINGS__0__ENABLE_REST_API: "true"
       SFTPGO_WEBDAVD__BINDINGS__0__PORT: 8090
-      SFTPGO_WEBDAVD__BINDINGS__0__ADDRESS: ""
-      SFTPGO_SFTPD__BINDINGS__0__PORT: 2022
-      SFTPGO_SFTPD__BINDINGS__0__ADDRESS: ""
       SFTPGO_DATA_PROVIDER__DRIVER: sqlite
       SFTPGO_DATA_PROVIDER__NAME: /var/lib/sftpgo/sftpgo.db
       SFTPGO_DEFAULT_ADMIN_USERNAME: ${SFTPGO_ADMIN_USER:-admin}
@@ -117,215 +66,7 @@ services:
     volumes:
       - ./databases/sftpgo/data:/srv/sftpgo/data
       - ./databases/sftpgo/config:/var/lib/sftpgo
-    networks:
-      - arkadas-net
     deploy:
       resources:
         limits:
-          memory: 256M
-
-  n8n:
-    profiles: [ infra ]
-    image: n8nio/n8n:latest
-    restart: always
-    ports:
-      - "5678:5678"
-    environment:
-      - N8N_HOST=localhost
-      - N8N_PORT=5678
-      - N8N_PROTOCOL=http
-      - NODE_ENV=production
-      - WEBHOOK_URL=http://localhost:5678/
-      - GENERIC_TIMEZONE=Europe/Istanbul
-    volumes:
-      - ./databases/n8n:/home/node/.n8n
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    networks:
-      - arkadas-net
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-
-  dozzle:
-    profiles: [ infra ]
-    image: amir20/dozzle:latest
-    restart: always
-    ports:
-      - "8888:8080"
-    environment:
-      DOZZLE_LEVEL: info
-      DOZZLE_TAIL: 100
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - arkadas-net
-
-  # ==========================================
-  # Observability Services
-  # ==========================================
-  loki:
-    profiles: [ logging ]
-    image: grafana/loki:latest
-    restart: always
-    ports:
-      - "3100:3100"
-    volumes:
-      - ./logging/loki-config.yaml:/etc/loki/local-config.yaml:ro
-    command: -config.file=/etc/loki/local-config.yaml
-    networks:
-      - arkadas-net
-
-  promtail:
-    profiles: [ logging ]
-    image: grafana/promtail:latest
-    restart: always
-    volumes:
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./logging/promtail-config.yaml:/etc/promtail/config.yml:ro
-    command: -config.file=/etc/promtail/config.yml
-    networks:
-      - arkadas-net
-
-  grafana:
-    profiles: [ logging ]
-    image: grafana/grafana:latest
-    restart: always
-    ports:
-      - "3001:3000" # Map to 3001 to avoid conflict with Web (3000)
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_USERS_ALLOW_SIGN_UP=false
-    volumes:
-      - ./databases/grafana:/var/lib/grafana
-    networks:
-      - arkadas-net
-
-  # ==========================================
-  # Application Services
-  # ==========================================
-  strapi:
-    profiles: [ apps ]
-    build:
-      context: ./strapi
-      dockerfile: Dockerfile
-    restart: always
-    environment:
-      DATABASE_CLIENT: postgres
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_NAME: ${POSTGRES_DB:-arkadas_erp}
-      DATABASE_USERNAME: ${POSTGRES_USER:-postgres}
-      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      HOST: 0.0.0.0
-      PORT: 1337
-      NODE_ENV: ${NODE_ENV:-development}
-      JWT_SECRET: ${JWT_SECRET:-changeme}
-      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET:-changeme}
-      APP_KEYS: ${APP_KEYS:-changeme,changeme}
-      API_TOKEN_SALT: ${API_TOKEN_SALT:-changeme}
-      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT:-changeme}
-      STRAPI_ADMIN_EMAIL: ${STRAPI_ADMIN_EMAIL:-admin@arkadas.com.tr}
-      SFTPGO_URL: http://sftpgo:8080
-      SFTPGO_ADMIN_USER: ${SFTPGO_ADMIN_USER:-admin}
-      SFTPGO_ADMIN_PASSWORD: ${SFTPGO_ADMIN_PASSWORD:-changeme}
-      WEBDAV_URL: http://sftpgo:8090
-      STRAPI_ADMIN_PASSWORD: ${STRAPI_ADMIN_PASSWORD:-Strapi123!}
-    volumes:
-      - ./strapi/public/uploads:/opt/app/public/uploads
-      # Uncomment for development hot-reload
-      # - ./strapi/src:/opt/app/src
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - arkadas-net
-    ports:
-      - "1337:1337"
-    deploy:
-      resources:
-        limits:
-          memory: 3G
-
-  web:
-    profiles: [ apps ]
-    build:
-      context: ./web
-      dockerfile: Dockerfile
-    restart: always
-    environment:
-      NEXT_PUBLIC_STRAPI_URL: http://strapi:1337 # Internal Docker URL
-      # NEXT_PUBLIC_STRAPI_URL_CLIENT: http://localhost:1337 # External Browser URL (Client-side)
-      NEXT_PUBLIC_AI_SERVICE_URL: http://localhost:8000
-      NEXT_PUBLIC_MEBBIS_SERVICE_URL: http://localhost:4000
-      NODE_ENV: ${NODE_ENV:-production}
-    networks:
-      - arkadas-net
-    ports:
-      - "3000:3000"
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-    depends_on:
-      - strapi
-
-  ai-service:
-    profiles: [ apps ]
-    build:
-      context: ./ai-service
-      dockerfile: Dockerfile
-    restart: always
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-arkadas_erp}
-      STRAPI_URL: http://strapi:1337
-      HOST: 0.0.0.0
-      PORT: 8000
-    volumes:
-      - ./ai-service/data:/app/data
-    networks:
-      - arkadas-net
-    ports:
-      - "8000:8000"
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-    depends_on:
-      postgres:
-        condition: service_healthy
-      strapi:
-        condition: service_started
-
-  mebbis-service:
-    profiles: [ apps ]
-    build:
-      context: ./mebbis-service
-      dockerfile: Dockerfile
-    restart: always
-    environment:
-      STRAPI_URL: http://strapi:1337
-      REDIS_URL: redis://redis:6379
-      PORT: 4000
-      MEBBIS_USERNAME: ${MEBBIS_USERNAME}
-      MEBBIS_PASSWORD: ${MEBBIS_PASSWORD}
-    networks:
-      - arkadas-net
-    ports:
-      - "4000:4000"
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-    depends_on:
-      strapi:
-        condition: service_started
-      redis:
-        condition: service_healthy
-
-networks:
-  arkadas-net:
-    driver: bridge
+          memory: 128M
