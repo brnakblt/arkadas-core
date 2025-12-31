@@ -8,7 +8,6 @@ Bu belge, Arkadaş Özel Eğitim ERP sisteminin teknik mimarisini açıklar.
 graph TB
     subgraph Client["İstemciler"]
         Web["Web App<br/>(Next.js)"]
-        Mobile["Mobil App<br/>(React Native)"]
         PWA["PWA"]
     end
 
@@ -24,7 +23,6 @@ graph TB
     end
 
     Web --> Strapi
-    Mobile --> Strapi
     PWA --> Strapi
     
     Strapi --> PG
@@ -42,7 +40,6 @@ graph TB
 | Bileşen | Teknoloji | Port | Açıklama |
 |---------|-----------|------|----------|
 | Web | Next.js 15 | 3000 | Admin panel ve veli portalı |
-| Mobile | Expo/RN | 8082 | iOS/Android uygulaması |
 | PWA | Next.js | 3000 | Progressive Web App |
 
 ### Backend
