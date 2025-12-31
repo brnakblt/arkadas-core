@@ -14,8 +14,6 @@
     "concurrently": "^9.2.1",
     "husky": "^9.0.11",
     "kill-port": "^2.0.1",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
     "rimraf": "^6.1.2",
     "turbo": "^2.7.2",
     "wait-on": "^7.2.0"

@@ -35,7 +35,8 @@ jobs:
     - name: Install Dependencies
       run: |
         # Install all Node.js dependencies (Root + Workspaces)
-        npm ci
+        # Use --legacy-peer-deps to handle Strapi's React 18 peer deps with React 19 in workspaces
+        npm ci --legacy-peer-deps
 
         # AI Service Python Setup
         cd ai-service
@@ -44,8 +45,8 @@ jobs:
         pip install -r requirements.txt
         cd ..
 
-        # Install Documentation Tools
-        pip install mkdocs-material
+        # Install Documentation Tools (system-wide for run-tests.sh)
+        pip install mkdocs-material mkdocs
 
     - name: Run Tests
       run: |
@@ -83,7 +84,7 @@ jobs:
           cache: 'npm'
       
       - name: Install Dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
