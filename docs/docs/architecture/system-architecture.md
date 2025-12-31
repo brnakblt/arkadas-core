@@ -15,7 +15,7 @@ graph TB
     subgraph Backend["Backend Servisleri"]
         Strapi["Strapi CMS<br/>:1337"]
         AI["AI Servisi<br/>(Python Flask)"]
-        NC["Nextcloud<br/>+ OnlyOffice"]
+        NC["SFTPGo<br/>+ OnlyOffice"]
     end
 
     subgraph Database["Veritabanı"]
@@ -52,7 +52,7 @@ graph TB
 | API | Strapi 4 | 1337 | REST/GraphQL API |
 | AI | Flask | 5000 | Yüz tanıma servisi |
 | Docs | OnlyOffice | 80 | Döküman editörü |
-| Files | Nextcloud | 443 | Dosya yönetimi |
+| Files | SFTPGo | 443 | Dosya yönetimi |
 
 ## 🔄 Veri Akışı
 
@@ -103,7 +103,7 @@ sequenceDiagram
 erDiagram
     User ||--o{ StudentProfile : has
     User ||--o{ TeacherProfile : has
-    User ||--o{ NextcloudSync : has
+    User ||--o{ SFTPGoSync : has
     
     StudentProfile ||--o{ AttendanceLog : has
     StudentProfile }o--o{ Schedule : participates
@@ -266,7 +266,7 @@ graph TB
 
 | Sistem | Protokol | Amaç |
 |--------|----------|------|
-| Nextcloud | WebDAV/OCS | Dosya depolama |
+| SFTPGo | WebDAV/OCS | Dosya depolama |
 | OnlyOffice | iframe | Döküman düzenleme |
 | Google Maps | REST | Harita ve konum |
 | Firebase | FCM | Push notifications |

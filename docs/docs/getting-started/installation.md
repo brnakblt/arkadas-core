@@ -99,9 +99,9 @@ cp ai-service/.env.example ai-service/.env
 
 ```env
 DATABASE_CLIENT=sqlite  # veya postgres
-NEXTCLOUD_URL=http://localhost:8080
-NEXTCLOUD_ADMIN_USER=admin
-NEXTCLOUD_ADMIN_PASSWORD=your_password
+SFTPGO_URL=http://localhost:8080
+SFTPGO_ADMIN_USER=admin
+SFTPGO_ADMIN_PASSWORD=your_password
 ```
 
 ### Web (.env.local)
@@ -116,7 +116,7 @@ NEXT_PUBLIC_AI_SERVICE_URL=http://localhost:8000
 
 ## Docker Servisleri
 
-Nextcloud, OnlyOffice ve diğer altyapı servisleri için:
+SFTPGo, OnlyOffice ve diğer altyapı servisleri için:
 
 ```bash
 npm run dev:docker

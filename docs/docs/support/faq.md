@@ -67,7 +67,7 @@ Evet, yönetici veya yetkili öğretmenler yoklama kayıtlarını düzeltebilir.
 Dosyalarınıza iki yolla erişebilirsiniz:
 
 1. **Web:** `https://ofis.arkadasozelegitim.com` adresinden
-2. **Mobil:** Nextcloud mobil uygulaması ile
+2. **Mobil:** SFTPGo mobil uygulaması ile
 
 ---
 

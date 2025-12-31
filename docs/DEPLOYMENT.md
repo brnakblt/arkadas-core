@@ -30,7 +30,7 @@
 | AI Service | 1-2 GB |
 | MEBBIS Service | 512 MB |
 | OnlyOffice | 2 GB |
-| Nextcloud | 512 MB |
+| SFTPGo | 512 MB |
 | Infisical | 512 MB |
 | **Toplam** | **~8-10 GB** |
 

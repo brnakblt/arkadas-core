@@ -1,6 +1,6 @@
 # 📁 Dosya Yönetimi
 
-Nextcloud entegrasyonu ile güvenli dosya paylaşımı.
+SFTPGo entegrasyonu ile güvenli dosya paylaşımı.
 
 ## Dosya Paneli
 

@@ -22,7 +22,7 @@ echo "Generating secure secrets..."
 # Admin Credentials (Universal)
 echo -e "\n${YELLOW}Setup Universal Admin Credentials${NC}"
 echo "This password will be used for:"
-echo " - Nextcloud Admin"
+echo " - SFTPGo Admin"
 echo " - Strapi Panel (Initial)"
 echo " - Web/Mobile Admin User"
 
@@ -33,19 +33,16 @@ if [ -z "$GLOBAL_ADMIN_PASSWORD" ]; then
 fi
 echo ""
 
-NC_PWD=$GLOBAL_ADMIN_PASSWORD
 APP_PWD=$GLOBAL_ADMIN_PASSWORD
 
 # Default Usernames
 STRAPI_USER="barannakblut@gmail.com"
 APP_USER_EMAIL="admin@arkadas.com.tr"
 APP_USER_USERNAME="admin"
-NC_USER="admin"
 
 # Generate Shared Secrets
 POSTGRES_PASSWORD=$(generate_secret)
-MYSQL_ROOT_PASSWORD=$(generate_secret)
-MYSQL_PASSWORD=$(generate_secret)
+SFTPGO_ADMIN_PASSWORD=$GLOBAL_ADMIN_PASSWORD
 REDIS_PASSWORD=$(generate_secret)
 JWT_SECRET=$(generate_secret)
 ADMIN_JWT_SECRET=$(generate_secret)
@@ -84,10 +81,9 @@ generate_env_file() {
         sed -i "s|STRAPI_ADMIN_EMAIL=.*|STRAPI_ADMIN_EMAIL=${STRAPI_USER}|" "$target_file" || true
         sed -i "s|NEXTAUTH_SECRET=.*|NEXTAUTH_SECRET=${NEXTAUTH_SECRET}|" "$target_file" || true
         
-        # Nextcloud Admin (Global Consistency)
-        sed -i "s|NEXTCLOUD_ADMIN_PASSWORD=.*|NEXTCLOUD_ADMIN_PASSWORD=${NC_PWD}|" "$target_file" || true
-        sed -i "s|NEXTCLOUD_ADMIN_USER=.*|NEXTCLOUD_ADMIN_USER=${NC_USER}|" "$target_file" || true
-        sed -i "s|NEXTCLOUD_DB_PASSWORD=.*|NEXTCLOUD_DB_PASSWORD=${MYSQL_PASSWORD}|" "$target_file" || true
+        # SFTPGo Admin (Global Consistency)
+        sed -i "s|SFTPGO_ADMIN_PASSWORD=.*|SFTPGO_ADMIN_PASSWORD=${SFTPGO_ADMIN_PASSWORD}|" "$target_file" || true
+        sed -i "s|SFTPGO_ADMIN_USER=.*|SFTPGO_ADMIN_USER=admin|" "$target_file" || true
 
         # Specialized Replacements
         
@@ -133,5 +129,5 @@ if [ -f "${PROJECT_ROOT}/mobile/.env.example" ]; then
 fi
 
 echo -e "\n${GREEN}=== Environment Generation Complete ===${NC}"
-echo -e "Nextcloud Admin Password: ${YELLOW}${NC_PWD}${NC}"
+echo -e "SFTPGo Admin Password: ${YELLOW}${SFTPGO_ADMIN_PASSWORD}${NC}"
 echo -e "Please run ${YELLOW}bash scripts/setup_infisical.sh${NC} to import these into Infisical."

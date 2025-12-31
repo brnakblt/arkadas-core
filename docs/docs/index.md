@@ -58,7 +58,7 @@ Ders, terapi ve etkinlik programlarını kolayca planlayın ve yönetin.
 
 ### 📁 Dosya Yönetimi
 
-Nextcloud entegrasyonu ile güvenli dosya paylaşımı. OnlyOffice ile belge düzenleme.
+SFTPGo entegrasyonu ile güvenli dosya paylaşımı. OnlyOffice ile belge düzenleme.
 
 [Daha fazla bilgi →](user-guide/file-management.md)
 

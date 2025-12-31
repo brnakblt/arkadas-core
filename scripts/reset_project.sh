@@ -6,7 +6,7 @@ NC='\033[0m'
 
 echo -e "${RED}!!! WARNING: THIS WILL WIPE ALL DATA !!!${NC}"
 echo -e "${RED}* All Docker volumes will be deleted.${NC}"
-echo -e "${RED}* All Local Database files (Postgres, Redis, Nextcloud) will be deleted.${NC}"
+echo -e "${RED}* All Local Database files (Postgres, Redis, SFTPGo) will be deleted.${NC}"
 echo -e "${RED}* Environment files will be regenerated.${NC}"
 echo "-------------------------------------------------------"
 read -p "Are you sure you want to continue? (y/N) " -n 1 -r
@@ -24,7 +24,7 @@ infisical run --path / -- docker compose down --remove-orphans --volumes --rmi l
 
 echo -e "\n${YELLOW}2. Cleaning local data files...${NC}"
 sudo rm -rf databases
-mkdir -p databases/postgres databases/redis databases/nextcloud databases/nextcloud_db databases/onlyoffice databases/n8n
+mkdir -p databases/postgres databases/redis databases/sftpgo/data databases/sftpgo/config databases/onlyoffice databases/n8n
 
 echo -e "\n${YELLOW}3. Cleaning Strapi cache...${NC}"
 rm -rf strapi/.tmp strapi/dist strapi/build
