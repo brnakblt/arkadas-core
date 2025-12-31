@@ -8,16 +8,16 @@ FROM node:20-slim AS deps
 WORKDIR /app
 
 # Copy package files
-COPY package.json package-lock.json ./
-RUN npm ci --only=production && npm cache clean --force
+COPY package.json ./
+RUN npm install --only=production && npm cache clean --force
 
 # Stage 2: Builder
 FROM node:20-slim AS builder
 WORKDIR /app
 
 # Copy all dependencies
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json ./
+RUN npm install
 
 # Copy source
 COPY . .
@@ -61,7 +61,7 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-    CMD curl -f http://localhost:4000/health || exit 1
+    CMD curl -f http://localhost:4000/api/health || exit 1
 
 # Start application
 CMD ["node", "dist/index.js"]

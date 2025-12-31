@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libx11-dev \
     libgtk-3-dev \
     libboost-python-dev \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python Dependencies into a virtual environment
@@ -31,6 +32,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     libx11-6 \
     libgtk-3-0 \
+    libgl1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy virtual environment from builder
