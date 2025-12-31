@@ -26,10 +26,6 @@ export default defineConfig({
                 'src/components/**/__tests__/**',
             ] : []),
         ],
-        deps: {
-            // Force inline bundling of these modules to use correct React version
-            inline: [/@testing-library/],
-        },
         coverage: {
             provider: 'v8',
             reporter: ['text', 'json', 'html'],

@@ -50,6 +50,9 @@ jobs:
 
     - name: Run Tests
       run: |
+        # Add pip user scripts to PATH (for mkdocs)
+        export PATH="$HOME/.local/bin:$PATH"
+        
         # Make script executable
         chmod +x scripts/run-tests.sh
         
