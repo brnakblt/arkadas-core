@@ -59,8 +59,6 @@ echo -e "  → ${YELLOW}mebbis-service/.env${NC}"
 infisical export --env="$ENV" --path="/mebbis-service" > mebbis-service/.env 2>/dev/null || echo "# No mebbis-service secrets found" > mebbis-service/.env
 
 # Mobile (optional)
-echo -e "  → ${YELLOW}mobile/.env${NC}"
-infisical export --env="$ENV" --path="/mobile" > mobile/.env 2>/dev/null || echo "# No mobile secrets found" > mobile/.env
 
 echo -e "\n${GREEN}✅ Secrets synced successfully!${NC}"
 

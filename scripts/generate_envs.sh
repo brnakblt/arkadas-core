@@ -24,7 +24,7 @@ echo -e "\n${YELLOW}Setup Universal Admin Credentials${NC}"
 echo "This password will be used for:"
 echo " - SFTPGo Admin"
 echo " - Strapi Panel (Initial)"
-echo " - Web/Mobile Admin User"
+echo " - Web Admin User"
 
 read -sp "   Enter Global Admin Password (leave empty to generate random): " GLOBAL_ADMIN_PASSWORD
 if [ -z "$GLOBAL_ADMIN_PASSWORD" ]; then
@@ -124,8 +124,6 @@ fi
 if [ -f "${PROJECT_ROOT}/ai-service/.env.example" ]; then
     generate_env_file "${PROJECT_ROOT}/ai-service/.env.example" "${PROJECT_ROOT}/ai-service/.env" "AI Service"
 fi
-if [ -f "${PROJECT_ROOT}/mobile/.env.example" ]; then
-    generate_env_file "${PROJECT_ROOT}/mobile/.env.example" "${PROJECT_ROOT}/mobile/.env" "Mobile"
 fi
 
 echo -e "\n${GREEN}=== Environment Generation Complete ===${NC}"

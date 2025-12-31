@@ -83,16 +83,7 @@ fi
 if [ -d "mebbis-service" ]; then
     run_test "Mebbis Service Unit Tests" "npm test -- --coverage" "mebbis-service"
 fi
-
-# =============================================================================
-# MOBILE TESTS
-# =============================================================================
-echo -e "${BLUE}📱 Mobile Application Tests${NC}"
-echo "----------------------------------------"
-
-if [ -f "mobile/jest.config.js" ]; then
-    run_test "Mobile Unit Tests (Jest)" "npm test" "mobile"
-fi
+# Note: Mobile app removed - using PWA instead
 
 # =============================================================================
 # DOCS TESTS

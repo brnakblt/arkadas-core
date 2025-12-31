@@ -6,7 +6,6 @@
   "packageManager": "npm@10.9.0",
   "workspaces": [
     "web",
-    "mobile",
     "strapi",
     "mebbis-service"
   ],
@@ -18,10 +17,7 @@
     "turbo": "^2.7.2",
     "wait-on": "^7.2.0"
   },
-  "overrides": {
-    "react-native": "0.81.5",
-    "expo": "54.0.30"
-  },
+  "overrides": {},
   "scripts": {
     "------- DEV -------": "",
     "dev": "npm run dev:docker && turbo run dev",
@@ -29,8 +25,8 @@
     "dev:docker": "infisical run --path / -- docker compose -f docker-compose.yml --profile core --profile infra up -d --wait",
     "dev:strapi": "infisical run --path /strapi -- npm run develop --prefix strapi",
     "dev:web": "infisical run --path /web -- npm run dev --prefix web",
-    "dev:mobile": "cd mobile && infisical run --path /mobile -- EXPO_ROUTER_APP_ROOT=./app npx expo start --port 8082",
-    "dev:mobile-spawn": "ghostty -e bash -c 'source ~/.nvm/nvm.sh; cd mobile && infisical run --path /mobile -- nvm install && nvm use && rm -rf .expo && EXPO_ROUTER_APP_ROOT=$(pwd)/app npx expo start --clear --port 8082; exec bash' > /dev/null 2>&1 &",
+    "dev:mobile": "echo 'Mobile removed - use PWA instead'",
+    "dev:mobile-spawn": "echo 'Mobile removed - use PWA instead'",
     "dev:ai": "cd ai-service && infisical run --path /ai-service -- ./venv/bin/python -m uvicorn app.main:app --reload --port 8000",
     "dev:mebbis": "infisical run --path /mebbis-service -- npm run dev --prefix mebbis-service",
     "dev:docs": "cd docs && mkdocs serve -a localhost:8001",
@@ -43,7 +39,7 @@
     "build:strapi": "infisical run --path /strapi -- npm run build --prefix strapi",
     "build:web": "infisical run --path /web -- npm run build --prefix web",
     "build:mebbis": "npm run build --prefix mebbis-service",
-    "build:mobile": "cd mobile && eas build --platform all --profile production --local",
+    "build:mobile": "echo 'Mobile removed - use PWA instead'",
     "build:ai": "echo 'AI Service: No build step required (Python)'",
     "build:docs": "cd docs && mkdocs build",
     "------- START (Production) -------": "",
@@ -53,7 +49,7 @@
     "start:web": "infisical run --path /web -- npm run start --prefix web",
     "start:mebbis": "infisical run --path /mebbis-service -- npm run start --prefix mebbis-service",
     "start:ai": "cd ai-service && infisical run --path /ai-service -- ./venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000",
-    "start:mobile": "cd mobile && infisical run --path /mobile -- EXPO_ROUTER_APP_ROOT=./app npx expo start --no-dev --minify",
+    "start:mobile": "echo 'Mobile removed - use PWA instead'",
     "start:docker": "infisical run --path / -- docker compose -f docker-compose.yml --profile core --profile features up -d",
     "------- STOP -------": "",
     "stop": "npm run stop:all",
@@ -74,7 +70,7 @@
     "test": "turbo run test",
     "test:all": "turbo run test",
     "test:web": "npm run test:unit --prefix web",
-    "test:mobile": "npm test --prefix mobile",
+    "test:mobile": "echo 'Mobile removed - use PWA instead'",
     "test:mebbis": "npm test --prefix mebbis-service",
     "test:ai": "cd ai-service && PYTHONPATH=. ./venv/bin/pytest",
     "test:e2e": "npm run test:e2e --prefix web",

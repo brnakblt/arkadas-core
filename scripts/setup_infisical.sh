@@ -87,8 +87,6 @@ create_folder "mebbis-service"
 import_secrets "mebbis-service/.env" "/mebbis-service"
 
 # Mobile
-create_folder "mobile"
-import_secrets "mobile/.env" "/mobile"
 
 echo -e "\n${GREEN}Migration Complete!${NC}"
 echo "You can now verify secrets in the Dashboard."
