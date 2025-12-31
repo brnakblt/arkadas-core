@@ -1,7 +1,12 @@
-/// <reference types="vitest" />
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { createRequire } from 'module';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const require = createRequire(import.meta.url);
 
 export default defineConfig({
     plugins: [react() as any],
@@ -24,9 +29,10 @@ export default defineConfig({
         },
     },
     resolve: {
-        dedupe: ['react', 'react-dom'],
         alias: {
             '@': path.resolve(__dirname, './src'),
+            react: path.dirname(require.resolve('react')),
+            'react-dom': path.dirname(require.resolve('react-dom')),
         },
     },
 });

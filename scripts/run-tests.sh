@@ -101,7 +101,7 @@ echo -e "${BLUE}📚 Documentation Tests${NC}"
 echo "----------------------------------------"
 
 if [ -f "docs/mkdocs.yml" ]; then
-    run_test "MkDocs Build" "mkdocs build --strict" "docs"
+    run_test "MkDocs Build" "python -m mkdocs build --strict || mkdocs build --strict" "docs"
 fi
 
 # =============================================================================
