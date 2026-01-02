@@ -19,7 +19,7 @@ export default factories.createCoreController('api::student-profile.student-prof
         if (ctx.state.filterByParent && ctx.state.parentUserId) {
             // SECURITY: Enforce mandatory filter for parent role
             // Merge with any existing filters from query
-            const existingFilters = ctx.query.filters || {};
+            const existingFilters = (ctx.query.filters as Record<string, unknown>) || {};
 
             ctx.query.filters = {
                 ...existingFilters,
