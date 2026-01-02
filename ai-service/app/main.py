@@ -87,6 +87,33 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+
+# =============================================================================
+# Tenant Middleware - Multi-tenancy Support
+# =============================================================================
+import re
+from starlette.requests import Request
+
+SAFE_TENANT_PATTERN = re.compile(r'^[a-zA-Z0-9_-]+$')
+
+def sanitize_tenant_id(tenant_id: str) -> str:
+    """Sanitize tenant ID to prevent injection"""
+    if not tenant_id:
+        return "default"
+    sanitized = tenant_id.strip()[:50]
+    sanitized = sanitized.replace('*', '').replace('?', '').replace('[', '').replace(']', '')
+    if not SAFE_TENANT_PATTERN.match(sanitized):
+        return "default"
+    return sanitized
+
+@app.middleware("http")
+async def tenant_middleware(request: Request, call_next):
+    """Extract tenant from x-tenant-id header"""
+    tenant_id = request.headers.get("x-tenant-id", "default")
+    request.state.tenant_id = sanitize_tenant_id(tenant_id)
+    response = await call_next(request)
+    return response
+
 # =============================================================================
 # CORS Middleware - Secure Configuration
 # =============================================================================
@@ -99,7 +126,7 @@ if allowed_origins:
         allow_origins=allowed_origins,
         allow_credentials=True,
         allow_methods=["GET", "POST", "DELETE"],  # Only methods we need
-        allow_headers=["Authorization", "Content-Type", "X-API-Key"],
+        allow_headers=["Authorization", "Content-Type", "X-API-Key", "X-Tenant-ID"],
         max_age=600,  # Cache preflight for 10 minutes
     )
 else:

@@ -1,0 +1,52 @@
+{
+    "kind": "collectionType",
+    "collectionName": "device_tokens",
+    "info": {
+        "singularName": "device-token",
+        "pluralName": "device-tokens",
+        "displayName": "Device Token",
+        "description": "Mobile push notification tokens"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "token": {
+            "type": "string",
+            "required": true
+        },
+        "platform": {
+            "type": "enumeration",
+            "enum": [
+                "ios",
+                "android",
+                "web"
+            ],
+            "required": true
+        },
+        "deviceName": {
+            "type": "string"
+        },
+        "deviceId": {
+            "type": "string"
+        },
+        "isActive": {
+            "type": "boolean",
+            "default": true
+        },
+        "lastUsedAt": {
+            "type": "datetime"
+        },
+        "user": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "plugin::users-permissions.user"
+        },
+        "tenant": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::tenant.tenant"
+        }
+    }
+}
