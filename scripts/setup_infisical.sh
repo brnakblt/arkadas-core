@@ -31,7 +31,12 @@ fi
 
 # 2. Login
 echo -e "\n${YELLOW}Step 1: Authentication${NC}"
-# infisical login
+if infisical secrets list --env dev --path "/" >/dev/null 2>&1; then
+    echo "Already authenticated."
+else
+    echo "Authentication required."
+    infisical login
+fi
 
 # 3. Init Project
 echo -e "\n${YELLOW}Step 2: Initialize Project${NC}"

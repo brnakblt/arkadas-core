@@ -300,7 +300,23 @@ async function seedPersonnel(xmlPath, authenticatedRole) {
             };
 
             const formattedTitle = toTitleCase(title);
-            const formattedCategory = formattedTitle; // Store as string, not array
+            let formattedCategory = formattedTitle;
+
+            // Smart Category Mapping
+            if (formattedTitle.toLowerCase().includes('müdür') || formattedTitle.toLowerCase().includes('kurucu')) {
+                formattedCategory = 'Yönetim';
+            } else if (formattedTitle.toLowerCase().includes('psikolog')) {
+                formattedCategory = 'Psikolog';
+            } else if (formattedTitle.toLowerCase().includes('fizyoterapist')) {
+                formattedCategory = 'Fizyoterapist';
+            } else if (formattedTitle.toLowerCase().includes('dil ve konuşma')) {
+                formattedCategory = 'Dil ve Konuşma Terapisti';
+            } else if (formattedTitle.toLowerCase().includes('öğretmen')) {
+                // Keep specific teacher types if needed, or group? 
+                // User didn't ask to group all teachers, but "Özel Eğitim Alanı Öğretmeni" is fine as is.
+                // But let's keep default behavior for others.
+                formattedCategory = formattedTitle;
+            }
 
             // 1. Handle Image
             let imageId = null;
@@ -468,6 +484,33 @@ async function seedAdmin() {
     }
 }
 
+async function seedAppUser(authenticatedRole) {
+    console.log('🚀 Seeding App Admin User (Frontend)...');
+    try {
+        const email = process.env.STRAPI_ADMIN_EMAIL || 'barannakblut@gmail.com';
+        const password = process.env.STRAPI_ADMIN_PASSWORD || 'Strapi123!';
+        const username = 'barannakblut';
+
+        const user = await strapi.db.query('plugin::users-permissions.user').findOne({ where: { email } });
+
+        if (!user) {
+            await strapi.plugin('users-permissions').service('user').add({
+                username,
+                email,
+                password,
+                role: authenticatedRole.id,
+                confirmed: true,
+                provider: 'local',
+            });
+            console.log(`   + App User created: ${email}`);
+        } else {
+            console.log(`   ~ App User already exists: ${email}`);
+        }
+    } catch (e) {
+        console.error('   ❌ Failed to seed App User:', e.message);
+    }
+}
+
 // --- Content Seeding (Service, About, FAQ, Process) ---
 async function setPublicPermissions(strapi) {
     console.log('🚀 Setting Public Permissions...');
@@ -491,7 +534,7 @@ async function setPublicPermissions(strapi) {
 async function seedContent(strapi) {
     console.log('🚀 Seeding Static Content...');
     // About
-    await strapi.db.query('api::about.about').delete({});
+    await strapi.db.query('api::about.about').deleteMany({ where: {} });
     await strapi.entityService.create('api::about.about', {
         data: {
             title: 'Hakkımızda',
@@ -501,7 +544,7 @@ async function seedContent(strapi) {
     });
 
     // Services
-    await strapi.db.query('api::service.service').deleteMany({});
+    await strapi.db.query('api::service.service').deleteMany({ where: {} });
     const services = [
         { title: 'Dil ve Konuşma Terapisi', description: 'Dil ve konuşma bozuklukları olan çocuklar için bireysel terapi.', icon: '💬', features: [{ text: 'Artikülasyon Terapisi' }, { text: 'Dil Gelişimi' }] },
         { title: 'Özel Eğitim', description: 'Bireysel eğitim planları ve akademik destek.', icon: '🧩', features: [{ text: 'Bireysel Eğitim Planı' }] },
@@ -510,7 +553,7 @@ async function seedContent(strapi) {
     for (const s of services) await strapi.entityService.create('api::service.service', { data: { ...s, publishedAt: new Date() } });
 
     // Processes
-    await strapi.db.query('api::process.process').deleteMany({});
+    await strapi.db.query('api::process.process').deleteMany({ where: {} });
     const processes = [
         { number: '01', title: 'İlk Görüşme', description: 'Tanışma ve değerlendirme.', icon: '👥' },
         { number: '02', title: 'Planlama', description: 'Bireysel eğitim planı hazırlığı.', icon: '📋' },
@@ -519,7 +562,7 @@ async function seedContent(strapi) {
     for (const p of processes) await strapi.entityService.create('api::process.process', { data: { ...p, publishedAt: new Date() } });
 
     // FAQ
-    await strapi.db.query('api::faq.faq').deleteMany({});
+    await strapi.db.query('api::faq.faq').deleteMany({ where: {} });
     const faqs = [
         { question: 'Hangi yaş gruplarına hizmet veriyorsunuz?', answer: '0-18 yaş arası tüm çocuklara.' },
         { question: 'Nasıl kayıt olabilirim?', answer: 'İletişim sayfamızdan veya telefonla randevu alabilirsiniz.' }
@@ -527,6 +570,87 @@ async function seedContent(strapi) {
     for (const f of faqs) await strapi.entityService.create('api::faq.faq', { data: { ...f, publishedAt: new Date() } });
 
     console.log('   Static content seeded.');
+}
+
+async function seedGallery(strapi) {
+    console.log('🚀 Seeding Gallery...');
+    await strapi.db.query('api::gallery.gallery').deleteMany({ where: {} });
+
+    try {
+        const galleryItems = [
+            { src: '1.webp', title: 'Bireysel Çalışmalar', category: 'Eğitim', alt: 'Bireysel çalışma ortamı' },
+            { src: '2.webp', title: 'Özel Eğitim Sınıfları', category: 'Eğitim', alt: 'Sınıf ortamı' },
+            { src: '3.webp', title: 'Eğitici Aktiviteler', category: 'Sosyal Aktivite', alt: 'Aktivite' },
+            { src: '4.webp', title: 'Bireysel Eğitim', category: 'Eğitim', alt: 'Bireysel eğitim' },
+            { src: '5.webp', title: 'Grup Çalışmaları', category: 'Sosyal Aktivite', alt: 'Grup çalışması' },
+            { src: '6.webp', title: 'Aile Danışmanlığı', category: 'Danışmanlık', alt: 'Danışmanlık' },
+        ];
+
+        for (const item of galleryItems) {
+            // Find image by name (uploaded by seedHero)
+            const files = await strapi.documents('plugin::upload.file').findMany({
+                filters: { name: { $contains: item.src } }
+            });
+
+            if (files && files.length > 0) {
+                await strapi.entityService.create('api::gallery.gallery', {
+                    data: {
+                        title: item.title,
+                        category: item.category,
+                        alt: item.alt,
+                        image: files[0].id,
+                        publishedAt: new Date()
+                    }
+                });
+            }
+        }
+        console.log('   Gallery seeded.');
+    } catch (e) {
+        console.error('   ❌ Failed to seed Gallery:', e.message);
+    }
+}
+
+
+async function seedApiToken(strapi) {
+    console.log('🚀 Seeding API Token...');
+    const tokenService = strapi.service('admin::api-token');
+    if (!tokenService) return console.error('   ❌ API Token service not found.');
+
+    const tokenName = 'Full Access Token';
+
+    // Check if exists
+    const existing = await strapi.db.query('admin::api-token').findOne({ where: { name: tokenName } });
+    let accessToken = existing ? existing.accessKey : null;
+
+    if (!accessToken) {
+        // Create new
+        const token = await tokenService.create({
+            name: tokenName,
+            description: 'Generated by seed script for services',
+            type: 'full-access',
+            lifespan: null, // Unlimited
+        });
+        accessToken = token.accessKey;
+        console.log('   + API Token created.');
+    } else {
+        console.log('   ~ API Token already exists.');
+    }
+
+    // Sync to Infisical
+    if (accessToken) {
+        try {
+            const { execSync } = require('child_process');
+            console.log('   Syncing token to Infisical...');
+
+            const paths = ['/', '/ai-service', '/mebbis-service'];
+            for (const p of paths) {
+                execSync(`infisical secrets set --env dev --path "${p}" STRAPI_API_TOKEN="${accessToken}"`, { stdio: 'ignore' });
+            }
+            console.log('   ✅ Token synced to Infisical (Root, AI, Mebbis).');
+        } catch (e) {
+            console.error('   ❌ Failed to sync token to Infisical:', e.message);
+        }
+    }
 }
 
 async function main() {
@@ -541,11 +665,15 @@ async function main() {
         const authenticatedRole = await strapi.db.query('plugin::users-permissions.role').findOne({ where: { type: 'authenticated' } });
 
         await seedAdmin();
+        await seedAppUser(authenticatedRole);
         await setPublicPermissions(app);
         await seedContent(app);
         await seedStudents(studentXml, authenticatedRole);
         await seedPersonnel(staffXml, authenticatedRole);
         await seedHero(heroImages);
+        await seedHero(heroImages);
+        await seedGallery(app);
+        await seedApiToken(app);
 
     } catch (err) {
         console.error("Seeding Error:", err);

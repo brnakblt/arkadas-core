@@ -26,10 +26,15 @@ echo " - SFTPGo Admin"
 echo " - Strapi Panel (Initial)"
 echo " - Web Admin User"
 
-read -sp "   Enter Global Admin Password (leave empty to generate random): " GLOBAL_ADMIN_PASSWORD
-if [ -z "$GLOBAL_ADMIN_PASSWORD" ]; then
+if [ "$AUTO_CONFIRM" = "true" ]; then
     GLOBAL_ADMIN_PASSWORD=$(generate_secret)
-    echo -e "\n   Generated: ${YELLOW}${GLOBAL_ADMIN_PASSWORD}${NC}"
+    echo -e "\n   Auto-Generated Admin Password: ${YELLOW}${GLOBAL_ADMIN_PASSWORD}${NC}"
+else
+    read -sp "   Enter Global Admin Password (leave empty to generate random): " GLOBAL_ADMIN_PASSWORD
+    if [ -z "$GLOBAL_ADMIN_PASSWORD" ]; then
+        GLOBAL_ADMIN_PASSWORD=$(generate_secret)
+        echo -e "\n   Generated: ${YELLOW}${GLOBAL_ADMIN_PASSWORD}${NC}"
+    fi
 fi
 echo ""
 
@@ -37,8 +42,8 @@ APP_PWD=$GLOBAL_ADMIN_PASSWORD
 
 # Default Usernames
 STRAPI_USER="barannakblut@gmail.com"
-APP_USER_EMAIL="admin@arkadas.com.tr"
-APP_USER_USERNAME="admin"
+APP_USER_EMAIL="barannakblut@gmail.com"
+APP_USER_USERNAME="barannakblut"
 
 # Generate Shared Secrets
 POSTGRES_PASSWORD=$(generate_secret)
@@ -51,6 +56,7 @@ API_TOKEN_SALT=$(generate_secret)
 TRANSFER_TOKEN_SALT=$(generate_secret)
 NEXTAUTH_SECRET=$(generate_secret)
 MEBBIS_PASSWORD=$(generate_secret)
+ENCRYPTION_KEY=$(openssl rand -hex 32)  # 256-bit key for AES-256
 OPENAI_API_KEY="" # Prompt or leave empty
 
 # Function to process an env file
@@ -69,8 +75,6 @@ generate_env_file() {
         # Sync DATABASE_PASSWORD and USERNAME (used by Strapi) with POSTGRES
         sed -i "s|DATABASE_PASSWORD=.*|DATABASE_PASSWORD=${POSTGRES_PASSWORD}|" "$target_file" || true
         sed -i "s|DATABASE_USERNAME=.*|DATABASE_USERNAME=postgres|" "$target_file" || true
-        sed -i "s|MYSQL_ROOT_PASSWORD=.*|MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}|" "$target_file" || true
-        sed -i "s|MYSQL_PASSWORD=.*|MYSQL_PASSWORD=${MYSQL_PASSWORD}|" "$target_file" || true
         sed -i "s|REDIS_PASSWORD=.*|REDIS_PASSWORD=${REDIS_PASSWORD}|" "$target_file" || true
         sed -i "s|JWT_SECRET=.*|JWT_SECRET=${JWT_SECRET}|" "$target_file" || true
         sed -i "s|ADMIN_JWT_SECRET=.*|ADMIN_JWT_SECRET=${ADMIN_JWT_SECRET}|" "$target_file" || true
@@ -93,6 +97,9 @@ generate_env_file() {
 
         # MEBBIS (Root & Service)
         sed -i "s|MEBBIS_PASSWORD=.*|MEBBIS_PASSWORD=${MEBBIS_PASSWORD}|" "$target_file" || true
+        
+        # Encryption Key for PII
+        sed -i "s|ENCRYPTION_KEY=.*|ENCRYPTION_KEY=${ENCRYPTION_KEY}|" "$target_file" || true
         # Assuming MEBBIS_USERNAME is static or prompted? It's not prompted currently. 
         # Using default placeholder or we should prompt? 
         # For now, let's just ensure the var maps if present.

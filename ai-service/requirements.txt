@@ -19,6 +19,8 @@ Pillow
 
 # Database
 sqlalchemy
+psycopg2-binary
+redis
 
 # Utilities
 python-dotenv

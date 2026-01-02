@@ -15,24 +15,39 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 1
 fi
 
+
+
+# Pre-flight check: Is Docker running?
+if ! docker info > /dev/null 2>&1; then
+    echo -e "${RED}Error: Docker is not running.${NC}"
+    echo "Please start Docker (e.g., sudo systemctl start docker) and try again."
+    exit 1
+fi
+
 echo -e "\n${YELLOW}1. Stopping Docker...${NC}"
 docker compose down --volumes --remove-orphans
 
 echo -e "\n${YELLOW}2. Cleaning local data files...${NC}"
 # Use Docker to remove root-owned database files
 docker run --rm -v "$(pwd):/app" -w /app alpine rm -rf databases
-mkdir -p databases/postgres databases/redis
+mkdir -p databases/postgres databases/redis databases/onlyoffice/data databases/onlyoffice/log databases/onlyoffice/cache
 
 echo -e "\n${YELLOW}3. Cleaning Strapi cache...${NC}"
 rm -rf strapi/.tmp strapi/dist strapi/build
 
 echo -e "\n${YELLOW}4. Regenerating Environment Variables & Secrets...${NC}"
+export AUTO_CONFIRM=true
 bash scripts/generate_envs.sh
 echo -e "${YELLOW}Uploading new secrets to Infisical...${NC}"
 bash scripts/setup_infisical.sh
 
+# Exit on error
+set -e
+
 echo -e "\n${YELLOW}5. Starting Infrastructure...${NC}"
 docker compose up -d --wait
+echo "Waiting 5s for database stability..."
+sleep 5
 
 echo -e "\n${YELLOW}6. Building and Starting Strapi...${NC}"
 mkdir -p strapi/public/uploads
