@@ -33,7 +33,7 @@
       ]
     },
     "category": {
-      "type": "json"
+      "type": "string"
     },
     "order": {
       "type": "integer"

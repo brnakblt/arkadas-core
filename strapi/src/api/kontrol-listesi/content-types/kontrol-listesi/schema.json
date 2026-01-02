@@ -1,86 +1,81 @@
 {
-    "kind": "collectionType",
-    "collectionName": "kontrol_listeleri",
-    "info": {
-        "singularName": "kontrol-listesi",
-        "pluralName": "kontrol-listeleri",
-        "displayName": "Kontrol Listesi (Ek-2)",
-        "description": "ÖÇÇ/MEB Kontrol Listesi formu - Beceri değerlendirme"
+  "kind": "collectionType",
+  "collectionName": "kontrol_listeleri",
+  "info": {
+    "singularName": "kontrol-listesi",
+    "pluralName": "kontrol-listeleri",
+    "displayName": "Kontrol Listesi (Ek-2)",
+    "description": "ÖÇÇ/MEB Kontrol Listesi formu - Beceri değerlendirme"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::student-profile.student-profile"
     },
-    "options": {
-        "draftAndPublish": true
+    "evaluationDate": {
+      "type": "date",
+      "required": true
     },
-    "pluginOptions": {},
-    "attributes": {
-        "student": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::student-profile.student-profile"
-        },
-        "evaluationDate": {
-            "type": "date",
-            "required": true
-        },
-        "evaluator": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "plugin::users-permissions.user"
-        },
-        "skillArea": {
-            "type": "enumeration",
-            "enum": [
-                "ozbakım",
-                "gunluk_yasam",
-                "akademik",
-                "sosyal",
-                "motor",
-                "dil_iletisim",
-                "bilissel"
-            ],
-            "required": true
-        },
-        "skillName": {
-            "type": "string",
-            "required": true
-        },
-        "targetBehavior": {
-            "type": "text",
-            "required": true
-        },
-        "evaluationCriteria": {
-            "type": "json",
-            "default": []
-        },
-        "result": {
-            "type": "enumeration",
-            "enum": [
-                "basarili",
-                "gelisiyor",
-                "basarisiz",
-                "degerlendirilemedi"
-            ]
-        },
-        "performanceLevel": {
-            "type": "integer",
-            "min": 0,
-            "max": 100
-        },
-        "notes": {
-            "type": "text"
-        },
-        "attachments": {
-            "type": "media",
-            "multiple": true,
-            "allowedTypes": [
-                "images",
-                "files",
-                "videos"
-            ]
-        },
-        "tenant": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::tenant.tenant"
-        }
+    "evaluator": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "skillArea": {
+      "type": "enumeration",
+      "enum": [
+        "ozbakım",
+        "gunluk_yasam",
+        "akademik",
+        "sosyal",
+        "motor",
+        "dil_iletisim",
+        "bilissel"
+      ],
+      "required": true
+    },
+    "skillName": {
+      "type": "string",
+      "required": true
+    },
+    "targetBehavior": {
+      "type": "text",
+      "required": true
+    },
+    "evaluationCriteria": {
+      "type": "json",
+      "default": []
+    },
+    "result": {
+      "type": "enumeration",
+      "enum": [
+        "basarili",
+        "gelisiyor",
+        "basarisiz",
+        "degerlendirilemedi"
+      ]
+    },
+    "performanceLevel": {
+      "type": "integer",
+      "min": 0,
+      "max": 100
+    },
+    "notes": {
+      "type": "text"
+    },
+    "attachments": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ]
     }
+  }
 }

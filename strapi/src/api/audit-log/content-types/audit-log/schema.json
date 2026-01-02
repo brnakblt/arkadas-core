@@ -1,87 +1,82 @@
 {
-    "kind": "collectionType",
-    "collectionName": "audit_logs",
-    "info": {
-        "singularName": "audit-log",
-        "pluralName": "audit-logs",
-        "displayName": "Denetim Kaydı (Audit Log)",
-        "description": "KVKK uyumlu değiştirilemez erişim logları"
+  "kind": "collectionType",
+  "collectionName": "audit_logs",
+  "info": {
+    "singularName": "audit-log",
+    "pluralName": "audit-logs",
+    "displayName": "Denetim Kaydı (Audit Log)",
+    "description": "KVKK uyumlu değiştirilemez erişim logları"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
     },
-    "options": {
-        "draftAndPublish": false
+    "action": {
+      "type": "enumeration",
+      "enum": [
+        "create",
+        "read",
+        "update",
+        "delete",
+        "login",
+        "logout",
+        "login_failed",
+        "twofa_setup",
+        "twofa_verify",
+        "twofa_disable",
+        "export",
+        "print",
+        "bkds_verify",
+        "kvkk_consent"
+      ],
+      "required": true
     },
-    "pluginOptions": {},
-    "attributes": {
-        "user": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "plugin::users-permissions.user"
-        },
-        "action": {
-            "type": "enumeration",
-            "enum": [
-                "create",
-                "read",
-                "update",
-                "delete",
-                "login",
-                "logout",
-                "login_failed",
-                "twofa_setup",
-                "twofa_verify",
-                "twofa_disable",
-                "export",
-                "print",
-                "bkds_verify",
-                "kvkk_consent"
-            ],
-            "required": true
-        },
-        "entityType": {
-            "type": "string",
-            "required": true
-        },
-        "entityId": {
-            "type": "string"
-        },
-        "entityName": {
-            "type": "string"
-        },
-        "previousValues": {
-            "type": "json"
-        },
-        "newValues": {
-            "type": "json"
-        },
-        "ipAddress": {
-            "type": "string"
-        },
-        "userAgent": {
-            "type": "text"
-        },
-        "sessionId": {
-            "type": "string"
-        },
-        "success": {
-            "type": "boolean",
-            "default": true
-        },
-        "errorMessage": {
-            "type": "text"
-        },
-        "metadata": {
-            "type": "json"
-        },
-        "hash": {
-            "type": "string"
-        },
-        "previousHash": {
-            "type": "string"
-        },
-        "tenant": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::tenant.tenant"
-        }
+    "entityType": {
+      "type": "string",
+      "required": true
+    },
+    "entityId": {
+      "type": "string"
+    },
+    "entityName": {
+      "type": "string"
+    },
+    "previousValues": {
+      "type": "json"
+    },
+    "newValues": {
+      "type": "json"
+    },
+    "ipAddress": {
+      "type": "string"
+    },
+    "userAgent": {
+      "type": "text"
+    },
+    "sessionId": {
+      "type": "string"
+    },
+    "success": {
+      "type": "boolean",
+      "default": true
+    },
+    "errorMessage": {
+      "type": "text"
+    },
+    "metadata": {
+      "type": "json"
+    },
+    "hash": {
+      "type": "string"
+    },
+    "previousHash": {
+      "type": "string"
     }
+  }
 }

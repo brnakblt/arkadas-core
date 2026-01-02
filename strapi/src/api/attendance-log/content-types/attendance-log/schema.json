@@ -1,76 +1,71 @@
 {
-    "kind": "collectionType",
-    "collectionName": "attendance_logs",
-    "info": {
-        "singularName": "attendance-log",
-        "pluralName": "attendance-logs",
-        "displayName": "Attendance Log",
-        "description": "Yoklama kayıtları (yüz tanıma dahil)"
+  "kind": "collectionType",
+  "collectionName": "attendance_logs",
+  "info": {
+    "singularName": "attendance-log",
+    "pluralName": "attendance-logs",
+    "displayName": "Attendance Log",
+    "description": "Yoklama kayıtları (yüz tanıma dahil)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "eventType": {
+      "type": "enumeration",
+      "enum": [
+        "check_in",
+        "check_out"
+      ],
+      "required": true
     },
-    "options": {
-        "draftAndPublish": false
+    "method": {
+      "type": "enumeration",
+      "enum": [
+        "face_recognition",
+        "manual",
+        "qr_code",
+        "card"
+      ],
+      "required": true
     },
-    "pluginOptions": {},
-    "attributes": {
-        "eventType": {
-            "type": "enumeration",
-            "enum": [
-                "check_in",
-                "check_out"
-            ],
-            "required": true
-        },
-        "method": {
-            "type": "enumeration",
-            "enum": [
-                "face_recognition",
-                "manual",
-                "qr_code",
-                "card"
-            ],
-            "required": true
-        },
-        "confidenceScore": {
-            "type": "decimal"
-        },
-        "location": {
-            "type": "string"
-        },
-        "photoUrl": {
-            "type": "string"
-        },
-        "deviceId": {
-            "type": "string"
-        },
-        "notes": {
-            "type": "text"
-        },
-        "recordedAt": {
-            "type": "datetime",
-            "required": true
-        },
-        "user": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "plugin::users-permissions.user"
-        },
-        "verifiedBy": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "plugin::users-permissions.user"
-        },
-        "photo": {
-            "type": "media",
-            "multiple": false,
-            "required": false,
-            "allowedTypes": [
-                "images"
-            ]
-        },
-        "tenant": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::tenant.tenant"
-        }
+    "confidenceScore": {
+      "type": "decimal"
+    },
+    "location": {
+      "type": "string"
+    },
+    "photoUrl": {
+      "type": "string"
+    },
+    "deviceId": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "text"
+    },
+    "recordedAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "verifiedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "photo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
     }
+  }
 }

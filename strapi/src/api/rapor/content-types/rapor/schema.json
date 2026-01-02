@@ -1,93 +1,88 @@
 {
-    "kind": "collectionType",
-    "collectionName": "raporlar",
-    "info": {
-        "singularName": "rapor",
-        "pluralName": "raporlar",
-        "displayName": "Rapor",
-        "description": "Otomatik oluşturulan raporlar - Ek-4, Dönem Sonu, Kurum Performans vb."
+  "kind": "collectionType",
+  "collectionName": "raporlar",
+  "info": {
+    "singularName": "rapor",
+    "pluralName": "raporlar",
+    "displayName": "Rapor",
+    "description": "Otomatik oluşturulan raporlar - Ek-4, Dönem Sonu, Kurum Performans vb."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "raporTipi": {
+      "type": "enumeration",
+      "enum": [
+        "ek4",
+        "donem_sonu",
+        "ogrenci_gelisim",
+        "kurum_performans",
+        "devamsizlik",
+        "fatura_ozet"
+      ],
+      "required": true
     },
-    "options": {
-        "draftAndPublish": false
+    "baslik": {
+      "type": "string",
+      "required": true
     },
-    "pluginOptions": {},
-    "attributes": {
-        "raporTipi": {
-            "type": "enumeration",
-            "enum": [
-                "ek4",
-                "donem_sonu",
-                "ogrenci_gelisim",
-                "kurum_performans",
-                "devamsizlik",
-                "fatura_ozet"
-            ],
-            "required": true
-        },
-        "baslik": {
-            "type": "string",
-            "required": true
-        },
-        "donem": {
-            "type": "string"
-        },
-        "ay": {
-            "type": "integer",
-            "min": 1,
-            "max": 12
-        },
-        "yil": {
-            "type": "integer"
-        },
-        "baslangicTarihi": {
-            "type": "date"
-        },
-        "bitisTarihi": {
-            "type": "date"
-        },
-        "olusturmaTarihi": {
-            "type": "datetime",
-            "required": true
-        },
-        "student": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::student-profile.student-profile"
-        },
-        "teacher": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::teacher-profile.teacher-profile"
-        },
-        "icerik": {
-            "type": "json"
-        },
-        "ozet": {
-            "type": "richtext"
-        },
-        "pdfUrl": {
-            "type": "string"
-        },
-        "excelUrl": {
-            "type": "string"
-        },
-        "status": {
-            "type": "enumeration",
-            "enum": [
-                "generating",
-                "ready",
-                "error"
-            ],
-            "default": "generating"
-        },
-        "mebbisExported": {
-            "type": "boolean",
-            "default": false
-        },
-        "tenant": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::tenant.tenant"
-        }
+    "donem": {
+      "type": "string"
+    },
+    "ay": {
+      "type": "integer",
+      "min": 1,
+      "max": 12
+    },
+    "yil": {
+      "type": "integer"
+    },
+    "baslangicTarihi": {
+      "type": "date"
+    },
+    "bitisTarihi": {
+      "type": "date"
+    },
+    "olusturmaTarihi": {
+      "type": "datetime",
+      "required": true
+    },
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::student-profile.student-profile"
+    },
+    "teacher": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::teacher-profile.teacher-profile"
+    },
+    "icerik": {
+      "type": "json"
+    },
+    "ozet": {
+      "type": "richtext"
+    },
+    "pdfUrl": {
+      "type": "string"
+    },
+    "excelUrl": {
+      "type": "string"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "generating",
+        "ready",
+        "error"
+      ],
+      "default": "generating"
+    },
+    "mebbisExported": {
+      "type": "boolean",
+      "default": false
     }
+  }
 }

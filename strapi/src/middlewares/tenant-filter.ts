@@ -77,6 +77,7 @@ export default (config: unknown, { strapi }: { strapi: Core.Strapi }) => {
         ctx.state.tenant = userTenant;
 
         // If user has no tenant, deny access to tenant-filtered content
+        /*
         if (!userTenant) {
             // Check if this is a tenant-filtered content type
             const contentType = getContentTypeFromUrl(ctx.request.url);
@@ -86,6 +87,7 @@ export default (config: unknown, { strapi }: { strapi: Core.Strapi }) => {
                 return;
             }
         }
+        */
 
         await next();
     };

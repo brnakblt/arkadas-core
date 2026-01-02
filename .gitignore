@@ -143,6 +143,7 @@ $RECYCLE.BIN/
 # Databases (Docker Volumes)
 # ============================================================
 databases/
+database/
 !databases/.gitkeep
 
 # ============================================================
@@ -166,6 +167,11 @@ web/public/icons/
 # Added by Agent
 backups/
 .turbo/
+todo.txt
+
+# Sensitive User Data
+web/public/excel/*.xml
+web/public/tenants/
 
 # Docs
 docs/site/

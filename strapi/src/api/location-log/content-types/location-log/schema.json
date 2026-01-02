@@ -1,61 +1,56 @@
 {
-    "kind": "collectionType",
-    "collectionName": "location_logs",
-    "info": {
-        "singularName": "location-log",
-        "pluralName": "location-logs",
-        "displayName": "Location Log",
-        "description": "GPS konum kayıtları"
+  "kind": "collectionType",
+  "collectionName": "location_logs",
+  "info": {
+    "singularName": "location-log",
+    "pluralName": "location-logs",
+    "displayName": "Location Log",
+    "description": "GPS konum kayıtları"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "latitude": {
+      "type": "decimal",
+      "required": true
     },
-    "options": {
-        "draftAndPublish": false
+    "longitude": {
+      "type": "decimal",
+      "required": true
     },
-    "pluginOptions": {},
-    "attributes": {
-        "latitude": {
-            "type": "decimal",
-            "required": true
-        },
-        "longitude": {
-            "type": "decimal",
-            "required": true
-        },
-        "accuracyMeters": {
-            "type": "decimal"
-        },
-        "speedKmh": {
-            "type": "decimal"
-        },
-        "heading": {
-            "type": "decimal"
-        },
-        "recordedAt": {
-            "type": "datetime",
-            "required": true
-        },
-        "source": {
-            "type": "enumeration",
-            "enum": [
-                "gps",
-                "network",
-                "manual"
-            ],
-            "default": "gps"
-        },
-        "user": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "plugin::users-permissions.user"
-        },
-        "route": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::service-route.service-route"
-        },
-        "tenant": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::tenant.tenant"
-        }
+    "accuracyMeters": {
+      "type": "decimal"
+    },
+    "speedKmh": {
+      "type": "decimal"
+    },
+    "heading": {
+      "type": "decimal"
+    },
+    "recordedAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "source": {
+      "type": "enumeration",
+      "enum": [
+        "gps",
+        "network",
+        "manual"
+      ],
+      "default": "gps"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "route": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::service-route.service-route"
     }
+  }
 }

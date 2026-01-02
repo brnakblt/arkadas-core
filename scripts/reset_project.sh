@@ -19,7 +19,8 @@ echo -e "\n${YELLOW}1. Stopping Docker...${NC}"
 docker compose down --volumes --remove-orphans
 
 echo -e "\n${YELLOW}2. Cleaning local data files...${NC}"
-sudo rm -rf databases
+# Use Docker to remove root-owned database files
+docker run --rm -v "$(pwd):/app" -w /app alpine rm -rf databases
 mkdir -p databases/postgres databases/redis
 
 echo -e "\n${YELLOW}3. Cleaning Strapi cache...${NC}"
@@ -41,25 +42,8 @@ chmod 755 strapi/public/uploads
 infisical run --path /strapi -- npm run build --prefix strapi
 
 echo -e "\n${YELLOW}7. Seeding Database...${NC}"
-# Run Strapi with seed in background, wait for it
-infisical run --path /strapi -- npm run develop --prefix strapi &
-STRAPI_PID=$!
-
-echo "Waiting for Strapi to be ready..."
-for i in {1..60}; do
-    if curl -s http://localhost:1337/_health > /dev/null 2>&1; then
-        echo -e "${GREEN}Strapi is up!${NC}"
-        break
-    fi
-    echo -n "."
-    sleep 2
-done
-
-# Run seed script
-cd strapi && node scripts/seed.js && cd ..
-
-echo -e "\n${YELLOW}8. Stopping Strapi...${NC}"
-kill $STRAPI_PID 2>/dev/null
+# Run seed script directly (it loads its own Strapi instance)
+cd strapi && infisical run --path /strapi -- node scripts/seed.js && cd ..
 
 echo -e "\n${GREEN}=== RESET & SEED COMPLETE ===${NC}"
 echo -e "Run: ${YELLOW}npm run dev${NC} to start development"

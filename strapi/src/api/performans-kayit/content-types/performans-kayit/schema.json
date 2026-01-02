@@ -1,75 +1,70 @@
 {
-    "kind": "collectionType",
-    "collectionName": "performans_kayitlari",
-    "info": {
-        "singularName": "performans-kayit",
-        "pluralName": "performans-kayitlari",
-        "displayName": "Performans Kayıt Tablosu (PKT)",
-        "description": "Performans Kayıt Tablosu - Planlama ekranından saat ve modüller otomatik gelir"
+  "kind": "collectionType",
+  "collectionName": "performans_kayitlari",
+  "info": {
+    "singularName": "performans-kayit",
+    "pluralName": "performans-kayitlari",
+    "displayName": "Performans Kayıt Tablosu (PKT)",
+    "description": "Performans Kayıt Tablosu - Planlama ekranından saat ve modüller otomatik gelir"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "bep": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::bireysel-egitim-plani.bireysel-egitim-plani"
     },
-    "options": {
-        "draftAndPublish": false
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::student-profile.student-profile"
     },
-    "pluginOptions": {},
-    "attributes": {
-        "bep": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::bireysel-egitim-plani.bireysel-egitim-plani"
-        },
-        "student": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::student-profile.student-profile"
-        },
-        "donem": {
-            "type": "string",
-            "required": true
-        },
-        "baslangicTarihi": {
-            "type": "date",
-            "required": true
-        },
-        "bitisTarihi": {
-            "type": "date",
-            "required": true
-        },
-        "calismaModulleri": {
-            "type": "json"
-        },
-        "haftalikSaatler": {
-            "type": "json"
-        },
-        "degerlendirmeler": {
-            "type": "json"
-        },
-        "egitimciDegerlendirmeleri": {
-            "type": "json"
-        },
-        "genelDegerlendirme": {
-            "type": "enumeration",
-            "enum": [
-                "basarisiz",
-                "gelisiyor",
-                "basarili",
-                "cok_iyi"
-            ],
-            "default": "gelisiyor"
-        },
-        "notes": {
-            "type": "richtext"
-        },
-        "mebbisRefId": {
-            "type": "string"
-        },
-        "syncedToMebbis": {
-            "type": "boolean",
-            "default": false
-        },
-        "tenant": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::tenant.tenant"
-        }
+    "donem": {
+      "type": "string",
+      "required": true
+    },
+    "baslangicTarihi": {
+      "type": "date",
+      "required": true
+    },
+    "bitisTarihi": {
+      "type": "date",
+      "required": true
+    },
+    "calismaModulleri": {
+      "type": "json"
+    },
+    "haftalikSaatler": {
+      "type": "json"
+    },
+    "degerlendirmeler": {
+      "type": "json"
+    },
+    "egitimciDegerlendirmeleri": {
+      "type": "json"
+    },
+    "genelDegerlendirme": {
+      "type": "enumeration",
+      "enum": [
+        "basarisiz",
+        "gelisiyor",
+        "basarili",
+        "cok_iyi"
+      ],
+      "default": "gelisiyor"
+    },
+    "notes": {
+      "type": "richtext"
+    },
+    "mebbisRefId": {
+      "type": "string"
+    },
+    "syncedToMebbis": {
+      "type": "boolean",
+      "default": false
     }
+  }
 }

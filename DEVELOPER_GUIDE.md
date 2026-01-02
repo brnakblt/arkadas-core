@@ -58,6 +58,14 @@ This is a TurboRepo monorepo.
     npm run dev
     ```
 
+6.  **Seed Initial Data (Students & Staff)**:
+    Required for the first run. Populates database from Excel/XML files.
+    ```bash
+    cd strapi
+    npm run script scripts/seed_xml.js
+    ```
+    *Note: Ensure `web/public/excel/ogrencilistesi.xml` and `personellistesi.xml` are present. These files are git-ignored for privacy.*
+
 ---
 
 ## 🛠️ Development Workflow

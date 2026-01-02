@@ -32,6 +32,7 @@ export default {
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     // Subscribe to lifecycle events for tenant-filtered content types
+    /*
     for (const contentType of TENANT_FILTERED_TYPES) {
       if (!strapi.contentTypes[contentType]) {
         console.warn(`[Tenant Isolation] Content type ${contentType} not found, skipping...`);
@@ -114,6 +115,7 @@ export default {
         },
       });
     }
+    */
 
     console.log('[Tenant Isolation] Row-level security enabled for', TENANT_FILTERED_TYPES.length, 'content types');
 

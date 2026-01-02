@@ -1,101 +1,96 @@
 {
-    "kind": "collectionType",
-    "collectionName": "telafi_egitimleri",
-    "info": {
-        "singularName": "telafi-egitimi",
-        "pluralName": "telafi-egitimleri",
-        "displayName": "Telafi Eğitimi",
-        "description": "Yapılamayan derslerin telafi takibi - MEB mevzuatına uygun"
+  "kind": "collectionType",
+  "collectionName": "telafi_egitimleri",
+  "info": {
+    "singularName": "telafi-egitimi",
+    "pluralName": "telafi-egitimleri",
+    "displayName": "Telafi Eğitimi",
+    "description": "Yapılamayan derslerin telafi takibi - MEB mevzuatına uygun"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::student-profile.student-profile"
     },
-    "options": {
-        "draftAndPublish": false
+    "originalSchedule": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::schedule.schedule"
     },
-    "pluginOptions": {},
-    "attributes": {
-        "student": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::student-profile.student-profile"
-        },
-        "originalSchedule": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::schedule.schedule"
-        },
-        "missedDate": {
-            "type": "date",
-            "required": true
-        },
-        "missedStartTime": {
-            "type": "time"
-        },
-        "missedEndTime": {
-            "type": "time"
-        },
-        "missedDuration": {
-            "type": "integer",
-            "required": true
-        },
-        "reason": {
-            "type": "enumeration",
-            "enum": [
-                "ogrenci_hastalik",
-                "ogrenci_izin",
-                "ogretmen_hastalik",
-                "ogretmen_izin",
-                "kurum_tatil",
-                "mucbir_sebep",
-                "diger"
-            ],
-            "required": true
-        },
-        "reasonDetails": {
-            "type": "text"
-        },
-        "deadlineDate": {
-            "type": "date",
-            "required": true
-        },
-        "status": {
-            "type": "enumeration",
-            "enum": [
-                "beklemede",
-                "planlanmis",
-                "tamamlanmis",
-                "suresi_dolmus",
-                "iptal"
-            ],
-            "default": "beklemede"
-        },
-        "compensationDate": {
-            "type": "date"
-        },
-        "compensationStartTime": {
-            "type": "time"
-        },
-        "compensationEndTime": {
-            "type": "time"
-        },
-        "compensationSchedule": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::schedule.schedule"
-        },
-        "completedDate": {
-            "type": "datetime"
-        },
-        "teacher": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "plugin::users-permissions.user"
-        },
-        "notes": {
-            "type": "text"
-        },
-        "tenant": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::tenant.tenant"
-        }
+    "missedDate": {
+      "type": "date",
+      "required": true
+    },
+    "missedStartTime": {
+      "type": "time"
+    },
+    "missedEndTime": {
+      "type": "time"
+    },
+    "missedDuration": {
+      "type": "integer",
+      "required": true
+    },
+    "reason": {
+      "type": "enumeration",
+      "enum": [
+        "ogrenci_hastalik",
+        "ogrenci_izin",
+        "ogretmen_hastalik",
+        "ogretmen_izin",
+        "kurum_tatil",
+        "mucbir_sebep",
+        "diger"
+      ],
+      "required": true
+    },
+    "reasonDetails": {
+      "type": "text"
+    },
+    "deadlineDate": {
+      "type": "date",
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "beklemede",
+        "planlanmis",
+        "tamamlanmis",
+        "suresi_dolmus",
+        "iptal"
+      ],
+      "default": "beklemede"
+    },
+    "compensationDate": {
+      "type": "date"
+    },
+    "compensationStartTime": {
+      "type": "time"
+    },
+    "compensationEndTime": {
+      "type": "time"
+    },
+    "compensationSchedule": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::schedule.schedule"
+    },
+    "completedDate": {
+      "type": "datetime"
+    },
+    "teacher": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "notes": {
+      "type": "text"
     }
+  }
 }

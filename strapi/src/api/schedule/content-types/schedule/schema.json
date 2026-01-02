@@ -1,78 +1,73 @@
 {
-    "kind": "collectionType",
-    "collectionName": "schedules",
-    "info": {
-        "singularName": "schedule",
-        "pluralName": "schedules",
-        "displayName": "Schedule",
-        "description": "Ders, terapi, toplantı programları"
+  "kind": "collectionType",
+  "collectionName": "schedules",
+  "info": {
+    "singularName": "schedule",
+    "pluralName": "schedules",
+    "displayName": "Schedule",
+    "description": "Ders, terapi, toplantı programları"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
     },
-    "options": {
-        "draftAndPublish": false
+    "description": {
+      "type": "richtext"
     },
-    "pluginOptions": {},
-    "attributes": {
-        "title": {
-            "type": "string",
-            "required": true
-        },
-        "description": {
-            "type": "richtext"
-        },
-        "scheduleType": {
-            "type": "enumeration",
-            "enum": [
-                "class",
-                "therapy",
-                "meeting",
-                "event"
-            ],
-            "required": true
-        },
-        "location": {
-            "type": "string"
-        },
-        "startTime": {
-            "type": "datetime",
-            "required": true
-        },
-        "endTime": {
-            "type": "datetime",
-            "required": true
-        },
-        "recurrenceRule": {
-            "type": "string"
-        },
-        "isAllDay": {
-            "type": "boolean",
-            "default": false
-        },
-        "color": {
-            "type": "string"
-        },
-        "status": {
-            "type": "enumeration",
-            "enum": [
-                "scheduled",
-                "cancelled",
-                "completed"
-            ],
-            "default": "scheduled"
-        },
-        "createdBy": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "plugin::users-permissions.user"
-        },
-        "attendees": {
-            "type": "relation",
-            "relation": "manyToMany",
-            "target": "plugin::users-permissions.user"
-        },
-        "tenant": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::tenant.tenant"
-        }
+    "scheduleType": {
+      "type": "enumeration",
+      "enum": [
+        "class",
+        "therapy",
+        "meeting",
+        "event"
+      ],
+      "required": true
+    },
+    "location": {
+      "type": "string"
+    },
+    "startTime": {
+      "type": "datetime",
+      "required": true
+    },
+    "endTime": {
+      "type": "datetime",
+      "required": true
+    },
+    "recurrenceRule": {
+      "type": "string"
+    },
+    "isAllDay": {
+      "type": "boolean",
+      "default": false
+    },
+    "color": {
+      "type": "string"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "scheduled",
+        "cancelled",
+        "completed"
+      ],
+      "default": "scheduled"
+    },
+    "createdBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "attendees": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user"
     }
+  }
 }

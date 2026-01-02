@@ -31,7 +31,7 @@ fi
 
 # 2. Login
 echo -e "\n${YELLOW}Step 1: Authentication${NC}"
-infisical login
+# infisical login
 
 # 3. Init Project
 echo -e "\n${YELLOW}Step 2: Initialize Project${NC}"

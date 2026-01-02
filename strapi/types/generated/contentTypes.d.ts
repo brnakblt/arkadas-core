@@ -445,7 +445,6 @@ export interface ApiAppointmentAppointment extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<'pending'>;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
     teacher: Schema.Attribute.Relation<'manyToOne', 'api::teacher-profile.teacher-profile'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     type: Schema.Attribute.Enumeration<['in-person', 'online', 'phone']> &
       Schema.Attribute.DefaultTo<'in-person'>;
@@ -517,7 +516,6 @@ export interface ApiAttendanceLogAttendanceLog extends Struct.CollectionTypeSche
     photoUrl: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     recordedAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
@@ -574,7 +572,6 @@ export interface ApiAuditLogAuditLog extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     sessionId: Schema.Attribute.String;
     success: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
@@ -718,7 +715,6 @@ export interface ApiBepGelisimIzlemeBepGelisimIzleme extends Struct.CollectionTy
       Schema.Attribute.DefaultTo<0>;
     strengths: Schema.Attribute.Text;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -763,7 +759,6 @@ export interface ApiBireyselEgitimPlaniBireyselEgitimPlani extends Struct.Collec
     status: Schema.Attribute.Enumeration<['draft', 'active', 'completed', 'archived']> &
       Schema.Attribute.DefaultTo<'draft'>;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     uzunVadeliAmaclar: Schema.Attribute.JSON;
@@ -858,7 +853,6 @@ export interface ApiDonemSonuDegerlendirmeDonemSonuDegerlendirme
       Schema.Attribute.DefaultTo<'draft'>;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
     syncedToMebbis: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     ulasilamayanAmaclar: Schema.Attribute.JSON;
     ulasilanAmaclar: Schema.Attribute.JSON;
     updatedAt: Schema.Attribute.DateTime;
@@ -965,7 +959,6 @@ export interface ApiFaturaFatura extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<'draft'>;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
     syncedToMebbis: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     toplamSaat: Schema.Attribute.Decimal;
     toplamTutar: Schema.Attribute.Decimal & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
@@ -1125,7 +1118,6 @@ export interface ApiKabaDegerlendirmeKabaDegerlendirme extends Struct.Collection
     status: Schema.Attribute.Enumeration<['draft', 'completed', 'approved']> &
       Schema.Attribute.DefaultTo<'draft'>;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1172,7 +1164,6 @@ export interface ApiKontrolListesiKontrolListesi extends Struct.CollectionTypeSc
     skillName: Schema.Attribute.String & Schema.Attribute.Required;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
     targetBehavior: Schema.Attribute.Text & Schema.Attribute.Required;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1216,7 +1207,6 @@ export interface ApiKvkkOnamKvkkOnam extends Struct.CollectionTypeSchema {
       Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     studentProfile: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     userAgent: Schema.Attribute.Text;
@@ -1250,7 +1240,6 @@ export interface ApiLocationLogLocationLog extends Struct.CollectionTypeSchema {
     source: Schema.Attribute.Enumeration<['gps', 'network', 'manual']> &
       Schema.Attribute.DefaultTo<'gps'>;
     speedKmh: Schema.Attribute.Decimal;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
@@ -1295,7 +1284,6 @@ export interface ApiOgrenciGrubuOgrenciGrubu extends Struct.CollectionTypeSchema
     schedule: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
     skillLevel: Schema.Attribute.Enumeration<['baslangic', 'orta', 'ileri']>;
     students: Schema.Attribute.Relation<'manyToMany', 'api::student-profile.student-profile'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1338,7 +1326,6 @@ export interface ApiPerformansKayitPerformansKayit extends Struct.CollectionType
     publishedAt: Schema.Attribute.DateTime;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
     syncedToMebbis: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1391,7 +1378,6 @@ export interface ApiPortfolyoKontrolPortfolyoKontrol extends Struct.CollectionTy
     selfEvaluationExists: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     semester: Schema.Attribute.Enumeration<['guz', 'bahar']> & Schema.Attribute.Required;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     videoCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
@@ -1481,7 +1467,6 @@ export interface ApiPortfolyoPuanlamaPortfolyoPuanlama extends Struct.Collection
     semester: Schema.Attribute.Enumeration<['guz', 'bahar']> & Schema.Attribute.Required;
     strengths: Schema.Attribute.Text;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     totalScore: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
@@ -1576,7 +1561,6 @@ export interface ApiRaporRapor extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<'generating'>;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
     teacher: Schema.Attribute.Relation<'manyToOne', 'api::teacher-profile.teacher-profile'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     yil: Schema.Attribute.Integer;
@@ -1608,7 +1592,6 @@ export interface ApiRouteStopRouteStop extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     route: Schema.Attribute.Relation<'manyToOne', 'api::service-route.service-route'>;
     stopOrder: Schema.Attribute.Integer & Schema.Attribute.Required;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1644,7 +1627,6 @@ export interface ApiScheduleSchedule extends Struct.CollectionTypeSchema {
     startTime: Schema.Attribute.DateTime & Schema.Attribute.Required;
     status: Schema.Attribute.Enumeration<['scheduled', 'cancelled', 'completed']> &
       Schema.Attribute.DefaultTo<'scheduled'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
@@ -1683,7 +1665,6 @@ export interface ApiServiceRouteServiceRoute extends Struct.CollectionTypeSchema
     name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     stops: Schema.Attribute.Relation<'oneToMany', 'api::route-stop.route-stop'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     vehiclePlate: Schema.Attribute.String;
@@ -1810,7 +1791,6 @@ export interface ApiStudentProfileStudentProfile extends Struct.CollectionTypeSc
         maxLength: 11;
         minLength: 11;
       }>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'oneToOne', 'plugin::users-permissions.user'>;
@@ -1848,7 +1828,6 @@ export interface ApiTeacherProfileTeacherProfile extends Struct.CollectionTypeSc
         maxLength: 11;
         minLength: 11;
       }>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'oneToOne', 'plugin::users-permissions.user'>;
@@ -1867,7 +1846,7 @@ export interface ApiTeamMemberTeamMember extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    category: Schema.Attribute.JSON;
+    category: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
@@ -1934,40 +1913,8 @@ export interface ApiTelafiEgitimiTelafiEgitimi extends Struct.CollectionTypeSche
       Schema.Attribute.DefaultTo<'beklemede'>;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
     teacher: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiTenantTenant extends Struct.CollectionTypeSchema {
-  collectionName: 'tenants';
-  info: {
-    description: 'Companies using the ERP system';
-    displayName: 'Tenant';
-    pluralName: 'tenants';
-    singularName: 'tenant';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    contactEmail: Schema.Attribute.Email;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    domain: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::tenant.tenant'> &
-      Schema.Attribute.Private;
-    logo: Schema.Attribute.Media<'images'>;
-    mebbisPassword: Schema.Attribute.String & Schema.Attribute.Private;
-    mebbisUsername: Schema.Attribute.String & Schema.Attribute.Private;
-    name: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
-    publishedAt: Schema.Attribute.DateTime;
-    students: Schema.Attribute.Relation<'oneToMany', 'api::student-profile.student-profile'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    users: Schema.Attribute.Relation<'oneToMany', 'plugin::users-permissions.user'>;
   };
 }
 
@@ -1997,7 +1944,6 @@ export interface ApiTerapiCetveliTerapiCetveli extends Struct.CollectionTypeSche
     status: Schema.Attribute.Enumeration<['taslak', 'onaylandi', 'mebbise_aktarildi']> &
       Schema.Attribute.DefaultTo<'taslak'>;
     student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     totalBireysel: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     totalGrup: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     totalHours: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
@@ -2032,7 +1978,6 @@ export interface ApiTwoFactorAuthTwoFactorAuth extends Struct.CollectionTypeSche
     lockedUntil: Schema.Attribute.DateTime;
     publishedAt: Schema.Attribute.DateTime;
     secret: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Private;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     trustedDevices: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
@@ -2074,7 +2019,6 @@ export interface ApiUcretHesaplamaUcretHesaplama extends Struct.CollectionTypeSc
     previousYearDecemberTufe: Schema.Attribute.Decimal & Schema.Attribute.Required;
     previousYearDecemberUfe: Schema.Attribute.Decimal & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -2486,7 +2430,6 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
     publishedAt: Schema.Attribute.DateTime;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
     role: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.role'>;
-    tenant: Schema.Attribute.Relation<'oneToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     username: Schema.Attribute.String &
@@ -2546,7 +2489,6 @@ declare module '@strapi/strapi' {
       'api::teacher-profile.teacher-profile': ApiTeacherProfileTeacherProfile;
       'api::team-member.team-member': ApiTeamMemberTeamMember;
       'api::telafi-egitimi.telafi-egitimi': ApiTelafiEgitimiTelafiEgitimi;
-      'api::tenant.tenant': ApiTenantTenant;
       'api::terapi-cetveli.terapi-cetveli': ApiTerapiCetveliTerapiCetveli;
       'api::two-factor-auth.two-factor-auth': ApiTwoFactorAuthTwoFactorAuth;
       'api::ucret-hesaplama.ucret-hesaplama': ApiUcretHesaplamaUcretHesaplama;

@@ -124,7 +124,7 @@ fi
 if [ -f "${PROJECT_ROOT}/ai-service/.env.example" ]; then
     generate_env_file "${PROJECT_ROOT}/ai-service/.env.example" "${PROJECT_ROOT}/ai-service/.env" "AI Service"
 fi
-fi
+
 
 echo -e "\n${GREEN}=== Environment Generation Complete ===${NC}"
 echo -e "SFTPGo Admin Password: ${YELLOW}${SFTPGO_ADMIN_PASSWORD}${NC}"

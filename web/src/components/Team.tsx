@@ -31,7 +31,7 @@ const Team: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const STRAPI_URL = "http://127.0.0.1:1337"; // Strapi sunucunuzun adresi
+  // const STRAPI_URL = "http://127.0.0.1:1337"; // Moved below or used from env
 
   const fetchTeamMembers = useCallback(async () => {
     const defaultCategories = [
@@ -94,9 +94,16 @@ const Team: React.FC = () => {
 
       setTeamMembers(formattedMembers);
 
+      setTeamMembers(formattedMembers);
+
+      // Helper to title case
+      const toTitleCase = (str: string) => {
+        return str.toLocaleLowerCase('tr-TR').split(' ').map(word => word.charAt(0).toLocaleUpperCase('tr-TR') + word.slice(1)).join(' ');
+      };
+
       const uniqueCategories = [
         ...new Set(
-          formattedMembers.flatMap((member) => member.category)
+          formattedMembers.flatMap((member) => member.category.map(c => toTitleCase(c)))
         ),
       ];
       // Remove "Tümü" and ensure categories are unique and valid, excluding English roles and quoted duplicates
@@ -107,7 +114,7 @@ const Team: React.FC = () => {
             // Skip if empty, excluded, or contains quotes
             if (!value || excludedCategories.includes(value) || value.includes('"')) return false;
             // Check for duplicates (case-insensitive)
-            return self.findIndex(v => v.toLowerCase() === value.toLowerCase()) === index;
+            return self.findIndex(v => v.toLocaleLowerCase('tr-TR') === value.toLocaleLowerCase('tr-TR')) === index;
           }
         )
       );
@@ -117,7 +124,10 @@ const Team: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [STRAPI_URL]);
+  }, []); // Removed dependency on local var, using env inside fetch or hardcoded for now implies we need to fix the URL source.
+
+  // NOTE: Ideally import STRAPI_URL from config/constants
+  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
 
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
@@ -128,14 +138,19 @@ const Team: React.FC = () => {
 
   const filteredMembers = useMemo(() => {
     if (!activeCategory) {
-      return teamMembers.slice(0, 8);
+      return teamMembers.slice(0, 8); // return teamMembers; if we want all
     }
-    // Case-insensitive category matching
-    const activeLower = activeCategory.toLowerCase();
+    // Robust comparison: normalize both sides
+    // Also handle Turkish "i" problem if possible via localeCompare but toLowerCase is usually enough for english keys
+    // The seed data has uppercase categories like "PSİKOLOG". The default categories are Title Case "Psikolog".
+    // We should normalize everything to lower case for comparison.
+    // Turkish-aware lowercasing:
+    const activeLower = activeCategory.toLocaleLowerCase('tr-TR');
+
     return teamMembers.filter(
       (member) =>
         member.category &&
-        member.category.some(cat => cat.toLowerCase() === activeLower)
+        member.category.some(cat => cat.toLocaleLowerCase('tr-TR') === activeLower)
     );
   }, [activeCategory, teamMembers]);
 
@@ -186,8 +201,8 @@ const Team: React.FC = () => {
               {member.name}
             </h3>
 
-            <p className="text-primary dark:text-primary-light font-body font-medium text-sm mb-3">
-              {member.title}
+            <p className="text-primary dark:text-primary-light font-body font-medium text-sm mb-3 capitalize">
+              {member.title?.toLocaleLowerCase('tr-TR')}
             </p>
           </div>
         </div>

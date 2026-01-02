@@ -1,151 +1,146 @@
 {
-    "kind": "collectionType",
-    "collectionName": "bep_gelisim_izlemeleri",
-    "info": {
-        "singularName": "bep-gelisim-izleme",
-        "pluralName": "bep-gelisim-izlemeleri",
-        "displayName": "BEP Gelişim İzleme (Ek-5 GÖF)",
-        "description": "BEP Gelişimi İzleme Özet Formu - dönemlik değerlendirme"
+  "kind": "collectionType",
+  "collectionName": "bep_gelisim_izlemeleri",
+  "info": {
+    "singularName": "bep-gelisim-izleme",
+    "pluralName": "bep-gelisim-izlemeleri",
+    "displayName": "BEP Gelişim İzleme (Ek-5 GÖF)",
+    "description": "BEP Gelişimi İzleme Özet Formu - dönemlik değerlendirme"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::student-profile.student-profile"
     },
-    "options": {
-        "draftAndPublish": true
+    "bep": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::bireysel-egitim-plani.bireysel-egitim-plani"
     },
-    "pluginOptions": {},
-    "attributes": {
-        "student": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::student-profile.student-profile"
-        },
-        "bep": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::bireysel-egitim-plani.bireysel-egitim-plani"
-        },
-        "academicYear": {
-            "type": "string",
-            "required": true
-        },
-        "semester": {
-            "type": "enumeration",
-            "enum": [
-                "guz",
-                "bahar"
-            ],
-            "required": true
-        },
-        "evaluationPeriod": {
-            "type": "enumeration",
-            "enum": [
-                "donem_basi",
-                "ara_degerlendirme",
-                "donem_sonu"
-            ],
-            "required": true
-        },
-        "evaluationDate": {
-            "type": "date",
-            "required": true
-        },
-        "evaluator": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "plugin::users-permissions.user"
-        },
-        "skillAreaProgress": {
-            "type": "json",
-            "default": []
-        },
-        "ozbakimProgress": {
-            "type": "integer",
-            "min": 0,
-            "max": 100,
-            "default": 0
-        },
-        "akademikProgress": {
-            "type": "integer",
-            "min": 0,
-            "max": 100,
-            "default": 0
-        },
-        "sosyalProgress": {
-            "type": "integer",
-            "min": 0,
-            "max": 100,
-            "default": 0
-        },
-        "motorProgress": {
-            "type": "integer",
-            "min": 0,
-            "max": 100,
-            "default": 0
-        },
-        "dilIletisimProgress": {
-            "type": "integer",
-            "min": 0,
-            "max": 100,
-            "default": 0
-        },
-        "bilisselProgress": {
-            "type": "integer",
-            "min": 0,
-            "max": 100,
-            "default": 0
-        },
-        "overallProgress": {
-            "type": "integer",
-            "min": 0,
-            "max": 100,
-            "default": 0
-        },
-        "achievedGoals": {
-            "type": "json",
-            "default": []
-        },
-        "inProgressGoals": {
-            "type": "json",
-            "default": []
-        },
-        "notAchievedGoals": {
-            "type": "json",
-            "default": []
-        },
-        "strengths": {
-            "type": "text"
-        },
-        "challenges": {
-            "type": "text"
-        },
-        "recommendedChanges": {
-            "type": "text"
-        },
-        "parentFeedback": {
-            "type": "text"
-        },
-        "nextSteps": {
-            "type": "text"
-        },
-        "bepUpdateRequired": {
-            "type": "boolean",
-            "default": false
-        },
-        "approvalStatus": {
-            "type": "enumeration",
-            "enum": [
-                "taslak",
-                "ogretmen_onay",
-                "veli_onay",
-                "tamamlandi"
-            ],
-            "default": "taslak"
-        },
-        "parentSignatureDate": {
-            "type": "date"
-        },
-        "tenant": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::tenant.tenant"
-        }
+    "academicYear": {
+      "type": "string",
+      "required": true
+    },
+    "semester": {
+      "type": "enumeration",
+      "enum": [
+        "guz",
+        "bahar"
+      ],
+      "required": true
+    },
+    "evaluationPeriod": {
+      "type": "enumeration",
+      "enum": [
+        "donem_basi",
+        "ara_degerlendirme",
+        "donem_sonu"
+      ],
+      "required": true
+    },
+    "evaluationDate": {
+      "type": "date",
+      "required": true
+    },
+    "evaluator": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "skillAreaProgress": {
+      "type": "json",
+      "default": []
+    },
+    "ozbakimProgress": {
+      "type": "integer",
+      "min": 0,
+      "max": 100,
+      "default": 0
+    },
+    "akademikProgress": {
+      "type": "integer",
+      "min": 0,
+      "max": 100,
+      "default": 0
+    },
+    "sosyalProgress": {
+      "type": "integer",
+      "min": 0,
+      "max": 100,
+      "default": 0
+    },
+    "motorProgress": {
+      "type": "integer",
+      "min": 0,
+      "max": 100,
+      "default": 0
+    },
+    "dilIletisimProgress": {
+      "type": "integer",
+      "min": 0,
+      "max": 100,
+      "default": 0
+    },
+    "bilisselProgress": {
+      "type": "integer",
+      "min": 0,
+      "max": 100,
+      "default": 0
+    },
+    "overallProgress": {
+      "type": "integer",
+      "min": 0,
+      "max": 100,
+      "default": 0
+    },
+    "achievedGoals": {
+      "type": "json",
+      "default": []
+    },
+    "inProgressGoals": {
+      "type": "json",
+      "default": []
+    },
+    "notAchievedGoals": {
+      "type": "json",
+      "default": []
+    },
+    "strengths": {
+      "type": "text"
+    },
+    "challenges": {
+      "type": "text"
+    },
+    "recommendedChanges": {
+      "type": "text"
+    },
+    "parentFeedback": {
+      "type": "text"
+    },
+    "nextSteps": {
+      "type": "text"
+    },
+    "bepUpdateRequired": {
+      "type": "boolean",
+      "default": false
+    },
+    "approvalStatus": {
+      "type": "enumeration",
+      "enum": [
+        "taslak",
+        "ogretmen_onay",
+        "veli_onay",
+        "tamamlandi"
+      ],
+      "default": "taslak"
+    },
+    "parentSignatureDate": {
+      "type": "date"
     }
+  }
 }

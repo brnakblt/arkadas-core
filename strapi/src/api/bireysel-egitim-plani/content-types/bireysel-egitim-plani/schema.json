@@ -1,83 +1,78 @@
 {
-    "kind": "collectionType",
-    "collectionName": "bireysel_egitim_planlari",
-    "info": {
-        "singularName": "bireysel-egitim-plani",
-        "pluralName": "bireysel-egitim-planlari",
-        "displayName": "Bireysel Eğitim Planı (BEP)",
-        "description": "Bireysel Eğitim Planı - Kaba değerlendirmeden otomatik oluşur"
+  "kind": "collectionType",
+  "collectionName": "bireysel_egitim_planlari",
+  "info": {
+    "singularName": "bireysel-egitim-plani",
+    "pluralName": "bireysel-egitim-planlari",
+    "displayName": "Bireysel Eğitim Planı (BEP)",
+    "description": "Bireysel Eğitim Planı - Kaba değerlendirmeden otomatik oluşur"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::student-profile.student-profile"
     },
-    "options": {
-        "draftAndPublish": false
+    "kabaDegerlendirme": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::kaba-degerlendirme.kaba-degerlendirme"
     },
-    "pluginOptions": {},
-    "attributes": {
-        "student": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::student-profile.student-profile"
-        },
-        "kabaDegerlendirme": {
-            "type": "relation",
-            "relation": "oneToOne",
-            "target": "api::kaba-degerlendirme.kaba-degerlendirme"
-        },
-        "donem": {
-            "type": "string",
-            "required": true
-        },
-        "baslangicTarihi": {
-            "type": "date",
-            "required": true
-        },
-        "bitisTarihi": {
-            "type": "date",
-            "required": true
-        },
-        "uzunVadeliAmaclar": {
-            "type": "json"
-        },
-        "kisaVadeliAmaclar": {
-            "type": "json"
-        },
-        "altBasamaklar": {
-            "type": "json",
-            "required": true
-        },
-        "egitimOrtami": {
-            "type": "string"
-        },
-        "kullanilanMateryaller": {
-            "type": "json"
-        },
-        "degerlendirmeYontemleri": {
-            "type": "json"
-        },
-        "status": {
-            "type": "enumeration",
-            "enum": [
-                "draft",
-                "active",
-                "completed",
-                "archived"
-            ],
-            "default": "draft"
-        },
-        "approvedBy": {
-            "type": "relation",
-            "relation": "oneToOne",
-            "target": "plugin::users-permissions.user"
-        },
-        "approvedAt": {
-            "type": "datetime"
-        },
-        "notes": {
-            "type": "richtext"
-        },
-        "tenant": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::tenant.tenant"
-        }
+    "donem": {
+      "type": "string",
+      "required": true
+    },
+    "baslangicTarihi": {
+      "type": "date",
+      "required": true
+    },
+    "bitisTarihi": {
+      "type": "date",
+      "required": true
+    },
+    "uzunVadeliAmaclar": {
+      "type": "json"
+    },
+    "kisaVadeliAmaclar": {
+      "type": "json"
+    },
+    "altBasamaklar": {
+      "type": "json",
+      "required": true
+    },
+    "egitimOrtami": {
+      "type": "string"
+    },
+    "kullanilanMateryaller": {
+      "type": "json"
+    },
+    "degerlendirmeYontemleri": {
+      "type": "json"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "draft",
+        "active",
+        "completed",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "approvedBy": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "approvedAt": {
+      "type": "datetime"
+    },
+    "notes": {
+      "type": "richtext"
     }
+  }
 }

@@ -1,54 +1,49 @@
 {
-    "kind": "collectionType",
-    "collectionName": "teacher_profiles",
-    "info": {
-        "singularName": "teacher-profile",
-        "pluralName": "teacher-profiles",
-        "displayName": "Teacher Profile",
-        "description": "Öğretmen profil bilgileri"
+  "kind": "collectionType",
+  "collectionName": "teacher_profiles",
+  "info": {
+    "singularName": "teacher-profile",
+    "pluralName": "teacher-profiles",
+    "displayName": "Teacher Profile",
+    "description": "Öğretmen profil bilgileri"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "employeeNumber": {
+      "type": "string",
+      "unique": true
     },
-    "options": {
-        "draftAndPublish": false
+    "specialization": {
+      "type": "string"
     },
-    "pluginOptions": {},
-    "attributes": {
-        "employeeNumber": {
-            "type": "string",
-            "unique": true
-        },
-        "specialization": {
-            "type": "string"
-        },
-        "tckimlikno": {
-            "type": "string",
-            "unique": true,
-            "minLength": 11,
-            "maxLength": 11
-        },
-        "certifications": {
-            "type": "json"
-        },
-        "hireDate": {
-            "type": "date"
-        },
-        "department": {
-            "type": "string"
-        },
-        "officeLocation": {
-            "type": "string"
-        },
-        "bio": {
-            "type": "richtext"
-        },
-        "user": {
-            "type": "relation",
-            "relation": "oneToOne",
-            "target": "plugin::users-permissions.user"
-        },
-        "tenant": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::tenant.tenant"
-        }
+    "tckimlikno": {
+      "type": "string",
+      "unique": true,
+      "minLength": 11,
+      "maxLength": 11
+    },
+    "certifications": {
+      "type": "json"
+    },
+    "hireDate": {
+      "type": "date"
+    },
+    "department": {
+      "type": "string"
+    },
+    "officeLocation": {
+      "type": "string"
+    },
+    "bio": {
+      "type": "richtext"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
+  }
 }
