@@ -1,11 +1,16 @@
 """
 Redis Cache for Face Encodings
 Provides fast in-memory cache with TTL for face encoding data
+
+SECURITY:
+- Uses SCAN instead of KEYS to prevent blocking Redis
+- Sanitizes tenant_id to prevent wildcard injection
 """
 
 import json
+import re
 import numpy as np
-from typing import Optional, Dict, List, Any
+from typing import Optional, Dict, List, Any, Iterator
 import redis
 
 from app.core.config import settings
@@ -17,6 +22,10 @@ class RedisCache:
     ENCODING_PREFIX = "face:encoding:"
     METADATA_PREFIX = "face:meta:"
     DEFAULT_TTL = 300  # 5 minutes
+    
+    # SECURITY: Pattern for valid tenant/user IDs
+    # Only alphanumeric, underscore, hyphen allowed
+    SAFE_ID_PATTERN = re.compile(r'^[a-zA-Z0-9_-]+$')
     
     def __init__(self):
         self._client: Optional[redis.Redis] = None
@@ -32,11 +41,35 @@ class RedisCache:
             )
         return self._client
     
+    def _sanitize_id(self, id_value: str) -> str:
+        """
+        SECURITY: Sanitize ID to prevent Redis pattern injection
+        Strips wildcard characters and validates format
+        """
+        if not id_value:
+            raise ValueError("ID cannot be empty")
+        
+        # Strip whitespace
+        sanitized = id_value.strip()
+        
+        # SECURITY: Remove Redis wildcard characters
+        sanitized = sanitized.replace('*', '').replace('?', '').replace('[', '').replace(']', '')
+        
+        # Validate against safe pattern
+        if not self.SAFE_ID_PATTERN.match(sanitized):
+            raise ValueError(f"Invalid ID format: {id_value[:50]}")
+        
+        return sanitized
+    
     def _encoding_key(self, user_id: str, tenant_id: str) -> str:
-        return f"{self.ENCODING_PREFIX}{tenant_id}:{user_id}"
+        safe_tenant = self._sanitize_id(tenant_id)
+        safe_user = self._sanitize_id(user_id)
+        return f"{self.ENCODING_PREFIX}{safe_tenant}:{safe_user}"
     
     def _metadata_key(self, user_id: str, tenant_id: str) -> str:
-        return f"{self.METADATA_PREFIX}{tenant_id}:{user_id}"
+        safe_tenant = self._sanitize_id(tenant_id)
+        safe_user = self._sanitize_id(user_id)
+        return f"{self.METADATA_PREFIX}{safe_tenant}:{safe_user}"
     
     def get_encoding(self, user_id: str, tenant_id: str) -> Optional[List[np.ndarray]]:
         """Get encodings from cache"""
@@ -93,25 +126,48 @@ class RedisCache:
             self._metadata_key(user_id, tenant_id)
         )
     
+    def _scan_keys(self, pattern: str) -> Iterator[bytes]:
+        """
+        SECURITY FIX: Use SCAN instead of KEYS to prevent blocking Redis
+        SCAN is non-blocking and iterates cursor-based
+        """
+        cursor = 0
+        while True:
+            cursor, keys = self.client.scan(cursor=cursor, match=pattern, count=100)
+            for key in keys:
+                yield key
+            if cursor == 0:
+                break
+    
     def invalidate_tenant(self, tenant_id: str) -> None:
-        """Invalidate all cache entries for a tenant"""
-        pattern = f"{self.ENCODING_PREFIX}{tenant_id}:*"
-        keys = self.client.keys(pattern)
-        if keys:
-            self.client.delete(*keys)
+        """
+        Invalidate all cache entries for a tenant
+        SECURITY: Uses SCAN instead of blocking KEYS command
+        """
+        safe_tenant = self._sanitize_id(tenant_id)
         
-        pattern = f"{self.METADATA_PREFIX}{tenant_id}:*"
-        keys = self.client.keys(pattern)
-        if keys:
-            self.client.delete(*keys)
+        # Invalidate encoding keys
+        pattern = f"{self.ENCODING_PREFIX}{safe_tenant}:*"
+        keys_to_delete = list(self._scan_keys(pattern))
+        if keys_to_delete:
+            self.client.delete(*keys_to_delete)
+        
+        # Invalidate metadata keys
+        pattern = f"{self.METADATA_PREFIX}{safe_tenant}:*"
+        keys_to_delete = list(self._scan_keys(pattern))
+        if keys_to_delete:
+            self.client.delete(*keys_to_delete)
     
     def get_all_for_tenant(self, tenant_id: str) -> Dict[str, List[np.ndarray]]:
-        """Get all encodings for a tenant (for matching)"""
-        pattern = f"{self.ENCODING_PREFIX}{tenant_id}:*"
-        keys = self.client.keys(pattern)
+        """
+        Get all encodings for a tenant (for matching)
+        SECURITY: Uses SCAN instead of blocking KEYS command
+        """
+        safe_tenant = self._sanitize_id(tenant_id)
+        pattern = f"{self.ENCODING_PREFIX}{safe_tenant}:*"
         
         result = {}
-        for key in keys:
+        for key in self._scan_keys(pattern):
             # Extract user_id from key
             key_str = key.decode() if isinstance(key, bytes) else key
             user_id = key_str.split(':')[-1]

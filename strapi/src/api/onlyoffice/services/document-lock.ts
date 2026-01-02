@@ -1,6 +1,10 @@
 /**
  * Redis-based Document Locking Service
  * Prevents concurrent editing conflicts in OnlyOffice
+ * 
+ * SECURITY:
+ * - Uses Lua script for atomic lock release (prevents race conditions)
+ * - Validates ownership before any operation
  */
 
 import Redis from 'ioredis';
@@ -30,6 +34,36 @@ export interface LockInfo {
     lockedAt: string;
     expiresAt: string;
 }
+
+// ============================================================================
+// SECURITY FIX: Lua Script for Atomic Lock Release
+// This ensures "check ownership" and "delete key" happen atomically
+// Prevents race condition where lock expires between check and delete
+// ============================================================================
+
+const RELEASE_LOCK_SCRIPT = `
+-- Atomic lock release script
+-- KEYS[1] = lock key
+-- ARGV[1] = expected user ID
+
+local lockData = redis.call('GET', KEYS[1])
+if not lockData then
+    -- Lock already released
+    return 1
+end
+
+local lock = cjson.decode(lockData)
+local expectedUserId = tonumber(ARGV[1])
+
+if lock.userId ~= expectedUserId then
+    -- Lock owned by someone else, don't delete
+    return 0
+end
+
+-- Ownership verified, delete the lock
+redis.call('DEL', KEYS[1])
+return 1
+`;
 
 /**
  * Acquire a lock on a document
@@ -83,7 +117,8 @@ export async function acquireLock(
 }
 
 /**
- * Release a document lock
+ * Release a document lock atomically
+ * Uses Lua script to prevent race conditions
  * Only the lock owner can release
  */
 export async function releaseLock(
@@ -93,19 +128,19 @@ export async function releaseLock(
     const client = getRedis();
     const lockKey = `${LOCK_PREFIX}${documentId}`;
 
-    const existingLock = await client.get(lockKey);
-    if (!existingLock) {
-        return true; // Already unlocked
+    // Execute atomic release script
+    const result = await client.eval(
+        RELEASE_LOCK_SCRIPT,
+        1,           // Number of keys
+        lockKey,     // KEYS[1]
+        String(userId) // ARGV[1]
+    );
+
+    if (result === 0) {
+        console.warn(`User ${userId} attempted to release lock owned by another user`);
     }
 
-    const existing: LockInfo = JSON.parse(existingLock);
-    if (existing.userId !== userId) {
-        console.warn(`User ${userId} attempted to release lock owned by ${existing.userId}`);
-        return false;
-    }
-
-    await client.del(lockKey);
-    return true;
+    return result === 1;
 }
 
 /**
@@ -141,8 +176,31 @@ export async function isLocked(documentId: string): Promise<boolean> {
 }
 
 /**
- * Extend lock TTL (heartbeat)
+ * Extend lock TTL atomically (heartbeat)
+ * Uses Lua script to verify ownership before extending
  */
+const EXTEND_LOCK_SCRIPT = `
+-- Atomic lock extension script
+-- KEYS[1] = lock key
+-- ARGV[1] = expected user ID
+-- ARGV[2] = new TTL in seconds
+
+local lockData = redis.call('GET', KEYS[1])
+if not lockData then
+    return 0
+end
+
+local lock = cjson.decode(lockData)
+local expectedUserId = tonumber(ARGV[1])
+
+if lock.userId ~= expectedUserId then
+    return 0
+end
+
+redis.call('EXPIRE', KEYS[1], tonumber(ARGV[2]))
+return 1
+`;
+
 export async function extendLock(
     documentId: string,
     userId: number,
@@ -151,16 +209,13 @@ export async function extendLock(
     const client = getRedis();
     const lockKey = `${LOCK_PREFIX}${documentId}`;
 
-    const existingLock = await client.get(lockKey);
-    if (!existingLock) {
-        return false;
-    }
+    const result = await client.eval(
+        EXTEND_LOCK_SCRIPT,
+        1,                // Number of keys
+        lockKey,          // KEYS[1]
+        String(userId),   // ARGV[1]
+        String(ttlSeconds) // ARGV[2]
+    );
 
-    const existing: LockInfo = JSON.parse(existingLock);
-    if (existing.userId !== userId) {
-        return false;
-    }
-
-    await client.expire(lockKey, ttlSeconds);
-    return true;
+    return result === 1;
 }

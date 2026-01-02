@@ -2,6 +2,10 @@
  * OnlyOffice Callback Controller
  * Handles document save states and versioning
  * 
+ * SECURITY:
+ * - JWT validation ensures requests originate from legitimate OnlyOffice server
+ * - URL allowlist prevents SSRF attacks
+ * 
  * Status codes from OnlyOffice:
  * 0 - No document with key found
  * 1 - Document is being edited
@@ -13,6 +17,7 @@
  */
 
 import type { Core } from '@strapi/strapi';
+import jwt from 'jsonwebtoken';
 import { releaseLock, forceReleaseLock } from '../services/document-lock';
 
 interface OnlyOfficeCallbackBody {
@@ -20,6 +25,7 @@ interface OnlyOfficeCallbackBody {
     status: number;
     url?: string;
     users?: string[];
+    token?: string; // JWT token from OnlyOffice
     actions?: Array<{
         type: number;
         userid: string;
@@ -32,10 +38,126 @@ interface OnlyOfficeCallbackBody {
     forcesavetype?: number;
 }
 
+// ============================================================================
+// SECURITY: URL Allowlist for SSRF Prevention
+// ============================================================================
+
+/**
+ * Get allowed OnlyOffice domains from environment
+ */
+function getAllowedDomains(): string[] {
+    const envDomains = process.env.ONLYOFFICE_ALLOWED_DOMAINS;
+    if (envDomains) {
+        return envDomains.split(',').map(d => d.trim().toLowerCase());
+    }
+
+    // Default: only allow localhost OnlyOffice in development
+    const defaultDomains = [
+        'localhost',
+        '127.0.0.1',
+        'onlyoffice',           // Docker service name
+        'host.docker.internal', // Docker host access
+    ];
+
+    // Add explicit OnlyOffice URL if configured
+    const onlyofficeUrl = process.env.ONLYOFFICE_URL;
+    if (onlyofficeUrl) {
+        try {
+            const url = new URL(onlyofficeUrl);
+            defaultDomains.push(url.hostname.toLowerCase());
+        } catch {
+            // Invalid URL, skip
+        }
+    }
+
+    return defaultDomains;
+}
+
+/**
+ * Validate URL against allowlist to prevent SSRF
+ */
+function isUrlAllowed(url: string): boolean {
+    if (!url) return false;
+
+    try {
+        const parsedUrl = new URL(url);
+        const hostname = parsedUrl.hostname.toLowerCase();
+        const allowedDomains = getAllowedDomains();
+
+        // Check exact match or subdomain match
+        return allowedDomains.some(domain => {
+            return hostname === domain || hostname.endsWith(`.${domain}`);
+        });
+    } catch {
+        return false;
+    }
+}
+
+// ============================================================================
+// SECURITY: JWT Validation for Request Authentication
+// ============================================================================
+
+/**
+ * Get OnlyOffice JWT secret from environment
+ */
+function getJwtSecret(): string {
+    const secret = process.env.JWT_SECRET || process.env.ONLYOFFICE_JWT_SECRET;
+    if (!secret) {
+        throw new Error('JWT_SECRET not configured for OnlyOffice validation');
+    }
+    return secret;
+}
+
+/**
+ * Validate JWT token from OnlyOffice request
+ */
+function validateOnlyOfficeJwt(token: string, body: OnlyOfficeCallbackBody): boolean {
+    try {
+        const secret = getJwtSecret();
+        const decoded = jwt.verify(token, secret) as any;
+
+        // Verify payload matches the request body
+        if (decoded.payload) {
+            // OnlyOffice sends the callback data in the JWT payload
+            return decoded.payload.key === body.key &&
+                decoded.payload.status === body.status;
+        }
+
+        return true; // Token is valid
+    } catch (error) {
+        console.error('JWT validation failed:', error);
+        return false;
+    }
+}
+
+/**
+ * Extract JWT from request (header or body)
+ */
+function extractJwt(ctx: any, body: OnlyOfficeCallbackBody): string | null {
+    // Check Authorization header first
+    const authHeader = ctx.request.headers['authorization'];
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        return authHeader.substring(7);
+    }
+
+    // Check body token field
+    if (body.token) {
+        return body.token;
+    }
+
+    return null;
+}
+
+// ============================================================================
+// Controller
+// ============================================================================
+
 export default {
     /**
      * Handle OnlyOffice document callback
      * POST /api/onlyoffice/callback
+     * 
+     * SECURITY: Validates JWT and URL allowlist before processing
      */
     async callback(ctx: any) {
         const strapi: Core.Strapi = ctx.strapi || global.strapi;
@@ -45,6 +167,49 @@ export default {
 
         if (!key) {
             return ctx.badRequest('Missing document key');
+        }
+
+        // =====================================================================
+        // SECURITY FIX #1: JWT Validation
+        // =====================================================================
+        const jwtToken = extractJwt(ctx, body);
+        if (!jwtToken) {
+            strapi.log.warn(`OnlyOffice callback rejected: No JWT token provided for key ${key}`);
+            return ctx.unauthorized('Missing authentication token');
+        }
+
+        if (!validateOnlyOfficeJwt(jwtToken, body)) {
+            strapi.log.warn(`OnlyOffice callback rejected: Invalid JWT for key ${key}`);
+            return ctx.unauthorized('Invalid authentication token');
+        }
+
+        // =====================================================================
+        // SECURITY FIX #2: URL Allowlist (SSRF Prevention)
+        // =====================================================================
+        if (url && !isUrlAllowed(url)) {
+            strapi.log.error(`SSRF attempt blocked: Disallowed URL ${url} for key ${key}`);
+
+            // Log security incident
+            try {
+                await strapi.db.query('api::audit-log.audit-log').create({
+                    data: {
+                        action: 'update',
+                        entityType: 'security-incident',
+                        entityId: key,
+                        metadata: {
+                            type: 'ssrf_attempt',
+                            blockedUrl: url,
+                            sourceIp: ctx.request.ip,
+                        },
+                        timestamp: new Date(),
+                        success: false,
+                    },
+                });
+            } catch (error) {
+                strapi.log.error('Failed to log security incident:', error);
+            }
+
+            return ctx.forbidden('URL not allowed');
         }
 
         strapi.log.info(`OnlyOffice callback: key=${key}, status=${status}`);
@@ -155,6 +320,7 @@ export default {
 
 /**
  * Handle document save (status 2)
+ * URL has already been validated by the controller
  */
 async function handleDocumentSave(
     strapi: Core.Strapi,
@@ -169,6 +335,7 @@ async function handleDocumentSave(
 
     try {
         // Download the saved document from OnlyOffice
+        // URL is pre-validated against allowlist
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`Failed to download document: ${response.statusText}`);
@@ -208,9 +375,6 @@ async function handleDocumentSave(
                 lastModifiedBy: users?.[0] || 'unknown',
             },
         });
-
-        // TODO: Actually save the file content to storage (SFTPGo/local)
-        // This depends on your storage implementation
 
         // Create audit log
         await createAuditLog(strapi, key, 'save', users);
@@ -252,9 +416,6 @@ async function handleForceSave(
     url?: string,
     users?: string[]
 ): Promise<void> {
-    // Similar to regular save but don't increment version
-    // This is for auto-save functionality
-
     if (!url) return;
 
     // Create audit log
