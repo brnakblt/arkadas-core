@@ -169,9 +169,8 @@ backups/
 .turbo/
 todo.txt
 
-# Sensitive User Data
-web/public/excel/*.xml
-web/public/tenants/
+# Sensitive User Data (student/staff lists with personal info)
+web/public/tenants/*/excel/*.xml
 
 # Docs
 docs/site/

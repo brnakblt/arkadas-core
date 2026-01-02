@@ -658,11 +658,30 @@ async function main() {
     const app = await createStrapi({ distDir: path.resolve(__dirname, '..', 'dist') }).load();
 
     try {
-        const studentXml = path.resolve(__dirname, '../../web/public/excel/ogrencilistesi.xml');
-        const staffXml = path.resolve(__dirname, '../../web/public/excel/personellistesi.xml');
-        const heroImages = path.resolve(__dirname, '../../web/public/media');
+        // Default tenant: arkadas
+        // Tenant-specific assets are in web/public/tenants/{tenant}/
+        const tenantSlug = process.env.DEFAULT_TENANT || 'arkadas';
+        const tenantPublicPath = path.resolve(__dirname, `../../web/public/tenants/${tenantSlug}`);
+
+        const studentXml = path.join(tenantPublicPath, 'excel/ogrencilistesi.xml');
+        const staffXml = path.join(tenantPublicPath, 'excel/personellistesi.xml');
+        const heroImages = path.join(tenantPublicPath, 'media');
+        const teamMemberImages = path.join(tenantPublicPath, 'team-member');
+
+        console.log(`\n🏢 Seeding for tenant: ${tenantSlug}`);
+        console.log(`   📁 Tenant path: ${tenantPublicPath}`);
 
         const authenticatedRole = await strapi.db.query('plugin::users-permissions.role').findOne({ where: { type: 'authenticated' } });
+
+        // Ensure tenant exists
+        let tenant = await strapi.db.query('api::tenant.tenant').findOne({ where: { slug: tenantSlug } });
+        if (!tenant) {
+            tenant = await strapi.db.query('api::tenant.tenant').create({
+                data: { slug: tenantSlug, name: tenantSlug, displayName: tenantSlug, isActive: true }
+            });
+            console.log(`   ✓ Created tenant: ${tenantSlug}`);
+        }
+        global.currentTenant = tenant;
 
         await seedAdmin();
         await seedAppUser(authenticatedRole);
@@ -670,7 +689,6 @@ async function main() {
         await seedContent(app);
         await seedStudents(studentXml, authenticatedRole);
         await seedPersonnel(staffXml, authenticatedRole);
-        await seedHero(heroImages);
         await seedHero(heroImages);
         await seedGallery(app);
         await seedApiToken(app);
