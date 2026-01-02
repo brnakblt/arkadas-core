@@ -55,6 +55,7 @@
     "install:docs": "pipx install mkdocs-material || pip install --user mkdocs-material --break-system-packages",
     "------- UTILS -------": "",
     "setup:env": "bash scripts/generate_envs.sh",
+    "seed:tenants": "cd strapi && node scripts/tenant-seeder.js",
     "reset": "bash scripts/reset_project.sh",
     "clean": "turbo run clean",
     "clean:all": "turbo run clean",

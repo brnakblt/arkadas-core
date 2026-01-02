@@ -1,0 +1,14 @@
+{
+    "name": "arkadas",
+    "displayName": "Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi",
+    "subdomain": "arkadas",
+    "settings": {
+        "timezone": "Europe/Istanbul",
+        "language": "tr",
+        "features": {
+            "faceRecognition": true,
+            "onlyoffice": true,
+            "mebbisSync": true
+        }
+    }
+}

@@ -1,0 +1,958 @@
+<html xmlns:x="urn:schemas-microsoft-com:office:excel">
+<head><meta http-equiv=Content-Type content="text/html; charset=utf-8"><meta name=ProgId content=Excel.Sheet><meta name=Generator content="Microsoft Excel 11">
+<!--[if gte mso 9]><xml>
+<x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Lila_OzelEgitim_Mobile_V40</x:Name><x:WorksheetOptions><x:Print><x:ValidPrinterInfo/>
+</x:Print></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook>
+</xml><![endif]--><style type="text/css">.baslikStyle{color: black; font-size: 20pt;font-weight: 700;font-style: normal;text-decoration: none;font-family: Arial, sans-serif;text-align: center;vertical-align: middle;white-space: nowrap;border: .5pt solid windowtext;padding-left: 1px;padding-right: 1px;padding-top: 1px;background: #EEECE1;}
+.headerPerStyle{color: black; font-size: 11pt;font-weight: 700;font-style: normal;text-decoration: none;font-family: Arial, sans-serif;text-align: center;vertical-align:middle; white-space:normal;border:.5pt solid windowtext;padding-left: 1px;padding-right: 1px;padding-top: 1px;background: #EEECE1;}
+.itemPerStyle{color: black; font-size: 11pt;font-weight: 400;font-style: normal;text-decoration: none;font-family: Arial, sans-serif;vertical-align:middle; white-space:nowrap;border:.5pt solid windowtext;padding-left: 1px;padding-right: 1px;padding-top: 1px;}</style></head><body><table border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+	<tr height="30">
+		<td class="baslikStyle" colspan="33" height="30">PERSONEL LİSTESİ</td>
+	</tr>
+	<tr height="60">
+		<td class="headerPerStyle" height="30" width="35">SIRA</td>
+		<td class="headerPerStyle" height="30" width="78">PERSONEL NO</td>
+		<td class="headerPerStyle" height="30" width="148">ADI</td>
+		<td class="headerPerStyle" height="30" width="148">SOYADI</td>
+		<td class="headerPerStyle" height="30" width="107">T.C. KİMLİK NO</td>
+		<td class="headerPerStyle" height="30" width="100">CİNSİYETİ</td>
+		<td class="headerPerStyle" height="30" width="116">ÜNVANI</td>
+		<td class="headerPerStyle" height="30" width="100">GÖREVİ</td>
+		<td class="headerPerStyle" height="30" width="100">KADRO</td>
+		<td class="headerPerStyle" height="30" width="85">KAN GRUBU</td>
+		<td class="headerPerStyle" height="30" width="105">DOĞUM TARİHİ</td>
+		<td class="headerPerStyle" height="30" width="168">DOĞUM YERİ</td>
+		<td class="headerPerStyle" height="30" width="120">ANNE ADI</td>
+		<td class="headerPerStyle" height="30" width="120">BABA ADI</td>
+		<td class="headerPerStyle" height="30" width="163">TELEFON</td>
+		<td class="headerPerStyle" height="30" width="163">TELEFON</td>
+		<td class="headerPerStyle" height="30" width="163">CEP TELEFONU</td>
+		<td class="headerPerStyle" height="30" width="310">ADRES</td>
+		<td class="headerPerStyle" height="30" width="105">KAYIT TARİHİ</td>
+		<td class="headerPerStyle" height="30" width="105">AYRILIŞ TARİHİ</td>
+		<td class="headerPerStyle" height="30" width="105">SÖZLEŞME BAŞLAMA TARİHİ</td>
+		<td class="headerPerStyle" height="30" width="105">SÖZLEŞME BİTİŞ TARİHİ</td>
+		<td class="headerPerStyle" height="30" width="105">ÇALIŞMA İZNİ İL ONAY BİTİŞ TARİHİ</td>
+		<td class="headerPerStyle" height="30" width="100">ÇALIŞMA İZNİ İL ONAY SAYISI</td>
+		<td class="headerPerStyle" height="30" width="105">KURUMA ATAMA TEKNİK ÜST YAZI TARİHİ</td>
+		<td class="headerPerStyle" height="30" width="100">KURUMA ATAMA TEKNİK ÜST YAZI SAYISI</td>
+		<td class="headerPerStyle" height="30" width="105">İLK ATAMA (KAYMAKAMLIK) TARİHİ</td>
+		<td class="headerPerStyle" height="30" width="100">İLK ATAMA (KAYMAKAMLIK) SAYISI</td>
+		<td class="headerPerStyle" height="30" width="100">GÜNLÜK DERS SAYISI</td>
+		<td class="headerPerStyle" height="30" width="100">HAFTALIK DERS SAYISI</td>
+		<td class="headerPerStyle" height="30" width="100">AYLIK DERS SAYISI</td>
+		<td class="headerPerStyle" height="30" width="100">MEBBİS ONAY NUMARASI</td>
+		<td class="headerPerStyle" height="30" width="200">AÇIKLAMA</td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">1</td>
+		<td class="itemPerStyle" height="30" align="center">21</td>
+		<td class="itemPerStyle" height="30" align="left">AHMET SAİT</td>
+		<td class="itemPerStyle" height="30" align="left">KURT</td>
+		<td class="itemPerStyle" height="30" align="left">10918374384</td>
+		<td class="itemPerStyle" height="30" align="left">Erkek</td>
+		<td class="itemPerStyle" height="30" align="left">DİL VE KONUŞMA TERAPİSTİ</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">18.07.2023</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6359996</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">2</td>
+		<td class="itemPerStyle" height="30" align="center">42</td>
+		<td class="itemPerStyle" height="30" align="left">AYBÜKE</td>
+		<td class="itemPerStyle" height="30" align="left">BALI</td>
+		<td class="itemPerStyle" height="30" align="left">33427995574</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Psikolog</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">01.03.2024</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6301760</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">3</td>
+		<td class="itemPerStyle" height="30" align="center">52</td>
+		<td class="itemPerStyle" height="30" align="left">AYSİMA</td>
+		<td class="itemPerStyle" height="30" align="left">EROĞLU</td>
+		<td class="itemPerStyle" height="30" align="left">22070584334</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Psikolog</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">18.11.2025</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6560719</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">4</td>
+		<td class="itemPerStyle" height="30" align="center">44</td>
+		<td class="itemPerStyle" height="30" align="left">BUKET</td>
+		<td class="itemPerStyle" height="30" align="left">DEDE</td>
+		<td class="itemPerStyle" height="30" align="left">30157474270</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">28.07.2025</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6532570</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">5</td>
+		<td class="itemPerStyle" height="30" align="center">43</td>
+		<td class="itemPerStyle" height="30" align="left">CANSU</td>
+		<td class="itemPerStyle" height="30" align="left">KÜÇÜKGÖKÇE</td>
+		<td class="itemPerStyle" height="30" align="left">43975358790</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Psikolog</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">21.07.2025</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6361085</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">6</td>
+		<td class="itemPerStyle" height="30" align="center">47</td>
+		<td class="itemPerStyle" height="30" align="left">CEREN</td>
+		<td class="itemPerStyle" height="30" align="left">ASA</td>
+		<td class="itemPerStyle" height="30" align="left">52165265664</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">DİL VE KONUŞMA TERAPİSTİ</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">01.09.2025</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6422964</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">7</td>
+		<td class="itemPerStyle" height="30" align="center">2</td>
+		<td class="itemPerStyle" height="30" align="left">DAMLA</td>
+		<td class="itemPerStyle" height="30" align="left">MERCAN</td>
+		<td class="itemPerStyle" height="30" align="left">17744779994</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">30.10.2020</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">5890941</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">3</td>
+		<td class="itemPerStyle" height="30" align="left">DERYA</td>
+		<td class="itemPerStyle" height="30" align="left">IŞIK</td>
+		<td class="itemPerStyle" height="30" align="left">42616509508</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Ücretli</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">28.07.2009</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">0</td>
+		<td class="itemPerStyle" height="30" align="left">6576056</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">9</td>
+		<td class="itemPerStyle" height="30" align="center">50</td>
+		<td class="itemPerStyle" height="30" align="left">EDA</td>
+		<td class="itemPerStyle" height="30" align="left">İZMİRLİ</td>
+		<td class="itemPerStyle" height="30" align="left">24905272966</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Çocuk Gelişimi ve Eğitimcisi</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">22.10.2025</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6545855</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">10</td>
+		<td class="itemPerStyle" height="30" align="center">5</td>
+		<td class="itemPerStyle" height="30" align="left">EMİNE ARZU</td>
+		<td class="itemPerStyle" height="30" align="left">HORZUM</td>
+		<td class="itemPerStyle" height="30" align="left">42508542774</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">01.07.2009</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">0</td>
+		<td class="itemPerStyle" height="30" align="left">5015070</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">11</td>
+		<td class="itemPerStyle" height="30" align="center">32</td>
+		<td class="itemPerStyle" height="30" align="left">GAYE NUR</td>
+		<td class="itemPerStyle" height="30" align="left">YILDIZ</td>
+		<td class="itemPerStyle" height="30" align="left">34115069492</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">09.08.2024</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6570033</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">12</td>
+		<td class="itemPerStyle" height="30" align="center">7</td>
+		<td class="itemPerStyle" height="30" align="left">HALİL</td>
+		<td class="itemPerStyle" height="30" align="left">ÇETİNKAYA</td>
+		<td class="itemPerStyle" height="30" align="left">39148174052</td>
+		<td class="itemPerStyle" height="30" align="left">Erkek</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni + Kurum Müdürü</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">02.10.2017</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">12</td>
+		<td class="itemPerStyle" height="30" align="center">100</td>
+		<td class="itemPerStyle" height="30" align="left">5911901</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">13</td>
+		<td class="itemPerStyle" height="30" align="center">9</td>
+		<td class="itemPerStyle" height="30" align="left">HANDE</td>
+		<td class="itemPerStyle" height="30" align="left">ÖZCAN</td>
+		<td class="itemPerStyle" height="30" align="left">23186466590</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">01.07.2009</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">0</td>
+		<td class="itemPerStyle" height="30" align="left">530904</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">14</td>
+		<td class="itemPerStyle" height="30" align="center">26</td>
+		<td class="itemPerStyle" height="30" align="left">HANİFE NUR</td>
+		<td class="itemPerStyle" height="30" align="left">KÜÇÜK</td>
+		<td class="itemPerStyle" height="30" align="left">19321280916</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">01.11.2023</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">5893804</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">15</td>
+		<td class="itemPerStyle" height="30" align="center">10</td>
+		<td class="itemPerStyle" height="30" align="left">HATİCE</td>
+		<td class="itemPerStyle" height="30" align="left">KARKIN</td>
+		<td class="itemPerStyle" height="30" align="left">39514162720</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Ücretli</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">10.09.2015</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">0</td>
+		<td class="itemPerStyle" height="30" align="left">6299812</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">16</td>
+		<td class="itemPerStyle" height="30" align="center">11</td>
+		<td class="itemPerStyle" height="30" align="left">HÜSEYİN</td>
+		<td class="itemPerStyle" height="30" align="left">İBZE</td>
+		<td class="itemPerStyle" height="30" align="left">24175218190</td>
+		<td class="itemPerStyle" height="30" align="left">Erkek</td>
+		<td class="itemPerStyle" height="30" align="left">Fizyoterapist</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">31.07.2015</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">0</td>
+		<td class="itemPerStyle" height="30" align="left">3637453</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">17</td>
+		<td class="itemPerStyle" height="30" align="center">49</td>
+		<td class="itemPerStyle" height="30" align="left">İBRAHİM</td>
+		<td class="itemPerStyle" height="30" align="left">HACI</td>
+		<td class="itemPerStyle" height="30" align="left">26729141978</td>
+		<td class="itemPerStyle" height="30" align="left">Erkek</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">15.09.2025</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6461162</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">18</td>
+		<td class="itemPerStyle" height="30" align="center">12</td>
+		<td class="itemPerStyle" height="30" align="left">İBRAHİM</td>
+		<td class="itemPerStyle" height="30" align="left">KAYAALP</td>
+		<td class="itemPerStyle" height="30" align="left">27889241652</td>
+		<td class="itemPerStyle" height="30" align="left">Erkek</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Ücretli</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">10.03.2017</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">36</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6532563</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">19</td>
+		<td class="itemPerStyle" height="30" align="center">37</td>
+		<td class="itemPerStyle" height="30" align="left">İPEK</td>
+		<td class="itemPerStyle" height="30" align="left">KURT</td>
+		<td class="itemPerStyle" height="30" align="left">26449093748</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">01.12.2024</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6532487</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">20</td>
+		<td class="itemPerStyle" height="30" align="center">46</td>
+		<td class="itemPerStyle" height="30" align="left">NAZLI MİHRİBAN</td>
+		<td class="itemPerStyle" height="30" align="left">ERDİNÇ</td>
+		<td class="itemPerStyle" height="30" align="left">12697757532</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">DİL VE KONUŞMA TERAPİSTİ</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Ücretli</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">04.08.2025</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6368666</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">21</td>
+		<td class="itemPerStyle" height="30" align="center">14</td>
+		<td class="itemPerStyle" height="30" align="left">ÖMÜR</td>
+		<td class="itemPerStyle" height="30" align="left">MUTLU</td>
+		<td class="itemPerStyle" height="30" align="left">67039140268</td>
+		<td class="itemPerStyle" height="30" align="left">Erkek</td>
+		<td class="itemPerStyle" height="30" align="left">Fizyoterapist</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">01.10.2019</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">0</td>
+		<td class="itemPerStyle" height="30" align="left">4728759</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">22</td>
+		<td class="itemPerStyle" height="30" align="center">15</td>
+		<td class="itemPerStyle" height="30" align="left">PINAR</td>
+		<td class="itemPerStyle" height="30" align="left">SELÇUK</td>
+		<td class="itemPerStyle" height="30" align="left">25667074300</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Ücretli</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">01.07.2009</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">0</td>
+		<td class="itemPerStyle" height="30" align="left">6381127</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">23</td>
+		<td class="itemPerStyle" height="30" align="center">17</td>
+		<td class="itemPerStyle" height="30" align="left">SİBEL</td>
+		<td class="itemPerStyle" height="30" align="left">GÖREN</td>
+		<td class="itemPerStyle" height="30" align="left">32689840448</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">05.03.2019</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">0</td>
+		<td class="itemPerStyle" height="30" align="left">4677509</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">24</td>
+		<td class="itemPerStyle" height="30" align="center">18</td>
+		<td class="itemPerStyle" height="30" align="left">SİNEM</td>
+		<td class="itemPerStyle" height="30" align="left">MUTLU</td>
+		<td class="itemPerStyle" height="30" align="left">16916384042</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">10.09.2015</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">0</td>
+		<td class="itemPerStyle" height="30" align="left">3681728</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">25</td>
+		<td class="itemPerStyle" height="30" align="center">51</td>
+		<td class="itemPerStyle" height="30" align="left">YAĞMUR</td>
+		<td class="itemPerStyle" height="30" align="left">DAĞLI</td>
+		<td class="itemPerStyle" height="30" align="left">13328434266</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Çocuk Gelişimi ve Eğitimcisi</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Kadrolu</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">18.11.2025</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6560742</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+	<tr height="20">
+		<td class="itemPerStyle" height="30" align="center">26</td>
+		<td class="itemPerStyle" height="30" align="center">19</td>
+		<td class="itemPerStyle" height="30" align="left">ZÜLAL EFE</td>
+		<td class="itemPerStyle" height="30" align="left">İLGÜN</td>
+		<td class="itemPerStyle" height="30" align="left">36664911758</td>
+		<td class="itemPerStyle" height="30" align="left">Kız</td>
+		<td class="itemPerStyle" height="30" align="left">Özel Eğitim Alanı Öğretmeni</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left">Ücretli</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">08.12.2021</td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+		<td class="itemPerStyle" height="30" align="center">8</td>
+		<td class="itemPerStyle" height="30" align="center">40</td>
+		<td class="itemPerStyle" height="30" align="center">200</td>
+		<td class="itemPerStyle" height="30" align="left">6336286</td>
+		<td class="itemPerStyle" height="30" align="left"><span style='mso-spacerun:yes'> </span></td>
+	</tr>
+</table>
+</body></html>
