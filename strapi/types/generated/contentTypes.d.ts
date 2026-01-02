@@ -1257,39 +1257,6 @@ export interface ApiLocationLogLocationLog extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiNextcloudSyncNextcloudSync extends Struct.CollectionTypeSchema {
-  collectionName: 'nextcloud_syncs';
-  info: {
-    description: 'Nextcloud kullan\u0131c\u0131 e\u015Fle\u015Ftirme';
-    displayName: 'Nextcloud Sync';
-    pluralName: 'nextcloud-syncs';
-    singularName: 'nextcloud-sync';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    homeFolderPath: Schema.Attribute.String;
-    lastError: Schema.Attribute.Text;
-    lastSyncAt: Schema.Attribute.DateTime;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::nextcloud-sync.nextcloud-sync'> &
-      Schema.Attribute.Private;
-    nextcloudDisplayName: Schema.Attribute.String;
-    nextcloudUserId: Schema.Attribute.String & Schema.Attribute.Required;
-    publishedAt: Schema.Attribute.DateTime;
-    quotaTotal: Schema.Attribute.BigInteger;
-    quotaUsed: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<'0'>;
-    syncStatus: Schema.Attribute.Enumeration<['active', 'suspended', 'error']> &
-      Schema.Attribute.DefaultTo<'active'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<'oneToOne', 'plugin::users-permissions.user'>;
-  };
-}
-
 export interface ApiOgrenciGrubuOgrenciGrubu extends Struct.CollectionTypeSchema {
   collectionName: 'ogrenci_gruplari';
   info: {
@@ -1783,7 +1750,7 @@ export interface ApiStorageFileStorageFile extends Struct.CollectionTypeSchema {
     path: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     size: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<'0'>;
-    storageBackend: Schema.Attribute.Enumeration<['local', 's3', 'nextcloud']> &
+    storageBackend: Schema.Attribute.Enumeration<['local', 's3', 'webdav']> &
       Schema.Attribute.DefaultTo<'local'>;
     storagePath: Schema.Attribute.String;
     thumbnailUrl: Schema.Attribute.String;
@@ -2564,7 +2531,6 @@ declare module '@strapi/strapi' {
       'api::kontrol-listesi.kontrol-listesi': ApiKontrolListesiKontrolListesi;
       'api::kvkk-onam.kvkk-onam': ApiKvkkOnamKvkkOnam;
       'api::location-log.location-log': ApiLocationLogLocationLog;
-      'api::nextcloud-sync.nextcloud-sync': ApiNextcloudSyncNextcloudSync;
       'api::ogrenci-grubu.ogrenci-grubu': ApiOgrenciGrubuOgrenciGrubu;
       'api::performans-kayit.performans-kayit': ApiPerformansKayitPerformansKayit;
       'api::portfolyo-kontrol.portfolyo-kontrol': ApiPortfolyoKontrolPortfolyoKontrol;

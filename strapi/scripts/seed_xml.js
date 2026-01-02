@@ -1,0 +1,466 @@
+'use strict';
+
+const fs = require('fs-extra');
+const path = require('path');
+const xml2js = require('xml2js');
+const crypto = require('crypto');
+const mime = require('mime-types');
+
+// Map "Kan Grubu" from Turkish to Enum
+const BLOOD_TYPE_MAP = {
+    'A RH+': 'A_positive', 'A RH +': 'A_positive', 'A(+)': 'A_positive',
+    'A RH-': 'A_negative', 'A RH -': 'A_negative', 'A(-)': 'A_negative',
+    'B RH+': 'B_positive', 'B RH +': 'B_positive', 'B(+)': 'B_positive',
+    'B RH-': 'B_negative', 'B RH -': 'B_negative', 'B(-)': 'B_negative',
+    'AB RH+': 'AB_positive', 'AB RH +': 'AB_positive', 'AB(+)': 'AB_positive',
+    'AB RH-': 'AB_negative', 'AB RH -': 'AB_negative', 'AB(-)': 'AB_negative',
+    '0 RH+': 'O_positive', '0 RH +': 'O_positive', '0(+)': 'O_positive',
+    '0 RH-': 'O_negative', '0 RH -': 'O_negative', '0(-)': 'O_negative',
+};
+
+const GENDER_MAP = {
+    'Erkek': 'male',
+    'Kız': 'female',
+};
+
+const DISABILITY_LEVEL_MAP = {
+    'Hafif': 'mild',
+    'Orta': 'moderate',
+    'Ağır': 'severe',
+    'Çok Ağır': 'profound',
+};
+
+// Helper for Turkish char conversion and normalization
+const turkishToEnglish = (str) => {
+    if (!str) return '';
+    return str
+        .replace(/Ğ/g, 'G').replace(/ğ/g, 'g')
+        .replace(/Ü/g, 'U').replace(/ü/g, 'u')
+        .replace(/Ş/g, 'S').replace(/ş/g, 's')
+        .replace(/İ/g, 'I').replace(/ı/g, 'i')
+        .replace(/Ö/g, 'O').replace(/ö/g, 'o')
+        .replace(/Ç/g, 'C').replace(/ç/g, 'c');
+};
+
+const normalizeString = (str) => {
+    if (!str) return '';
+    return turkishToEnglish(str)
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '');
+};
+
+const generateUsername = (first, last) => {
+    const raw = `${first}${last}`;
+    return normalizeString(raw);
+};
+
+async function parseXmlFile(filePath) {
+    const parser = new xml2js.Parser({ explicitArray: false });
+    const xmlData = await fs.readFile(filePath, 'utf8');
+    const result = await parser.parseStringPromise(xmlData);
+
+    let worksheet = result['Workbook']?.['ss:Worksheet'] || result['Workbook']?.['Worksheet'];
+    if (Array.isArray(worksheet)) worksheet = worksheet[0];
+
+    let table = worksheet?.['Table'] || worksheet?.['ss:Table'];
+    if (Array.isArray(table)) table = table[0];
+
+    let rows = table?.['Row'] || table?.['ss:Row'];
+    if (!rows) return [];
+
+    return rows;
+}
+
+function getRowData(row) {
+    let cells = row['Cell'] || row['ss:Cell'];
+    if (!cells) return [];
+    if (!Array.isArray(cells)) cells = [cells];
+
+    const rowData = [];
+    let currentIndex = 1;
+
+    cells.forEach(cell => {
+        const cellIndex = parseInt(cell['$']?.['ss:Index'] || cell['$']?.['Index'] || currentIndex);
+        // Fill gaps
+        while (currentIndex < cellIndex) {
+            rowData[currentIndex] = '';
+            currentIndex++;
+        }
+
+        let data = cell['Data'] || cell['ss:Data'];
+        if (typeof data === 'object' && data['_']) data = data['_'];
+        if (typeof data !== 'string' && typeof data !== 'number') data = '';
+
+        rowData[currentIndex] = String(data).trim();
+        currentIndex++;
+    });
+
+    return rowData;
+}
+
+// Manual upload to bypass Service complexity
+async function manualUpload(filePath) {
+    if (!fs.existsSync(filePath)) return null;
+
+    const stats = fs.statSync(filePath);
+    const fileName = path.basename(filePath);
+    const ext = path.extname(fileName);
+    const mimeType = mime.lookup(fileName) || 'application/octet-stream';
+    const hash = crypto.randomBytes(16).toString('hex');
+    const destName = `${hash}${ext}`;
+
+    // Ensure upload dir exists
+    const uploadDir = path.resolve(__dirname, '../public/uploads');
+    await fs.ensureDir(uploadDir);
+
+    const destPath = path.join(uploadDir, destName);
+    await fs.copy(filePath, destPath);
+
+    const fileEntry = await strapi.db.query('plugin::upload.file').create({
+        data: {
+            name: fileName,
+            alternativeText: fileName,
+            caption: fileName,
+            width: 0, // Should read dimensions but fine for seed
+            height: 0,
+            formats: null,
+            hash: hash,
+            ext: ext,
+            mime: mimeType,
+            size: stats.size / 1000,
+            url: `/uploads/${destName}`,
+            previewUrl: null,
+            provider: 'local',
+            provider_metadata: null,
+            folderPath: '/',
+        }
+    });
+
+    return fileEntry;
+}
+
+async function seedStudents(xmlPath, tenant, authenticatedRole) {
+    console.log('🚀 Seeding Students from XML...');
+    if (!fs.existsSync(xmlPath)) return;
+
+    const rows = await parseXmlFile(xmlPath);
+    let dataStartIndex = 0;
+
+    // Header detection
+    for (let i = 0; i < Math.min(10, rows.length); i++) {
+        const rowData = getRowData(rows[i]);
+        if (rowData[3] && rowData[3].includes('ÖĞRENCİ NO') && rowData[6] && rowData[6].includes('KİMLİK')) {
+            dataStartIndex = i + 1;
+            break;
+        }
+    }
+    if (dataStartIndex === 0) return console.error('❌ Student Header not found');
+
+    const userService = strapi.plugin('users-permissions').service('user');
+
+    for (let i = dataStartIndex; i < rows.length; i++) {
+        try {
+            const row = getRowData(rows[i]);
+            if (!row[6]) continue;
+
+            const raw = {
+                studentNo: row[3],
+                firstName: row[4],
+                lastName: row[5],
+                tckn: row[6],
+                gender: row[7],
+                disabilityType: row[8],
+                bloodType: row[9],
+                dob: row[10],
+                phone: row[14],
+                address: row[15],
+            };
+
+            if (!raw.tckn || raw.tckn.length !== 11) continue;
+
+            const targetUsername = generateUsername(raw.firstName, raw.lastName);
+
+            // 1. Create/Find User
+            let user = await strapi.query('plugin::users-permissions.user').findOne({
+                where: {
+                    $or: [
+                        { username: targetUsername },
+                        { username: raw.tckn }
+                    ]
+                }
+            });
+
+            if (!user) {
+                try {
+                    user = await userService.add({
+                        username: targetUsername,
+                        email: `${raw.studentNo}@arkadas.com.tr`,
+                        password: raw.tckn,
+                        role: authenticatedRole.id,
+                        confirmed: true,
+                        provider: 'local',
+                        tenant: tenant.id
+                    });
+                } catch (e) {
+                    continue;
+                }
+            } else if (user.username === raw.tckn) {
+                await strapi.entityService.update('plugin::users-permissions.user', user.id, {
+                    data: { username: targetUsername }
+                });
+            }
+
+            // 2. Profile
+            const parseDate = (d) => {
+                if (!d) return null;
+                const parts = d.split('.');
+                if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+                return null;
+            };
+
+            const profileData = {
+                studentNumber: raw.studentNo,
+                tckimlikno: raw.tckn,
+                dateOfBirth: parseDate(raw.dob),
+                gender: GENDER_MAP[raw.gender] || 'other',
+                bloodType: BLOOD_TYPE_MAP[raw.bloodType] || null,
+                disabilityType: raw.disabilityType,
+                user: user.id,
+                tenant: tenant.id,
+            };
+
+            const existingProfile = await strapi.db.query('api::student-profile.student-profile').findOne({ where: { tckimlikno: raw.tckn } });
+
+            if (existingProfile) {
+                await strapi.entityService.update('api::student-profile.student-profile', existingProfile.id, { data: profileData });
+            } else {
+                await strapi.entityService.create('api::student-profile.student-profile', { data: profileData });
+            }
+
+        } catch (err) {
+            console.error(`Error processing student row ${i}:`, err);
+        }
+    }
+}
+
+async function seedPersonnel(xmlPath, tenant, authenticatedRole) {
+    console.log('🚀 Seeding Personnel from XML...');
+    if (!fs.existsSync(xmlPath)) return;
+
+    const rows = await parseXmlFile(xmlPath);
+    let dataStartIndex = 0;
+
+    // Header detection
+    for (let i = 0; i < Math.min(10, rows.length); i++) {
+        const rowData = getRowData(rows[i]);
+        if (rowData.some(c => c && c.toString().includes('PERSONEL NO'))) {
+            dataStartIndex = i + 1;
+            break;
+        }
+    }
+    if (dataStartIndex === 0) return console.error("❌ Personnel Header not found");
+
+    const headerRow = getRowData(rows[dataStartIndex - 1]);
+    const idxName = headerRow.indexOf('ADI');
+    const idxLast = headerRow.indexOf('SOYADI');
+    const idxTitle = headerRow.indexOf('ÜNVANI');
+    const idxTCKN = headerRow.indexOf('T.C. KİMLİK NO');
+    const idxEmpNo = headerRow.indexOf('PERSONEL NO');
+
+    if (idxName === -1 || idxTCKN === -1) return console.error("❌ Critical personnel columns missing");
+
+    const userService = strapi.plugin('users-permissions').service('user');
+    const allStaff = await strapi.db.query('api::team-member.team-member').findMany();
+    const staffMap = {};
+    allStaff.forEach(s => { if (s.name) staffMap[normalizeString(s.name)] = s; });
+
+    for (let i = dataStartIndex; i < rows.length; i++) {
+        try {
+            const row = getRowData(rows[i]);
+            const name = row[idxName];
+            const last = row[idxLast];
+            const tckn = row[idxTCKN];
+            const empNo = row[idxEmpNo];
+            const title = row[idxTitle] || 'Personel';
+
+            if (!name || !tckn || tckn.length !== 11) continue;
+
+            const fullName = `${name} ${last}`.trim().toUpperCase();
+            const targetUsername = generateUsername(name, last);
+            const normalizedName = normalizeString(fullName);
+
+            // 1. Create TeamMember (Public)
+            if (!staffMap[normalizedName]) {
+                await strapi.entityService.create('api::team-member.team-member', {
+                    data: {
+                        name: fullName,
+                        title: title,
+                        category: ['Personel'],
+                        publishedAt: new Date(),
+                        order: i
+                    }
+                });
+                console.log(`   + Staff TeamMember: ${fullName}`);
+            }
+
+            // 2. Create User + TeacherProfile (Internal)
+            let user = await strapi.query('plugin::users-permissions.user').findOne({ where: { username: targetUsername } });
+
+            if (!user) {
+                try {
+                    user = await userService.add({
+                        username: targetUsername,
+                        email: `${empNo || tckn}@arkadas.com.tr`,
+                        password: tckn,
+                        role: authenticatedRole.id,
+                        confirmed: true,
+                        provider: 'local',
+                        tenant: tenant.id
+                    });
+                } catch (e) {
+                    continue;
+                }
+            }
+
+            // Check TeacherProfile
+            const existingProfile = await strapi.db.query('api::teacher-profile.teacher-profile').findOne({ where: { tckimlikno: tckn } });
+
+            if (!existingProfile) {
+                await strapi.entityService.create('api::teacher-profile.teacher-profile', {
+                    data: {
+                        employeeNumber: empNo || tckn,
+                        tckimlikno: tckn,
+                        specialization: title,
+                        user: user.id,
+                        tenant: tenant.id
+                    }
+                });
+                console.log(`   + TeacherProfile: ${fullName}`);
+            }
+
+        } catch (e) {
+            console.error(`Error processing staff row ${i}:`, e.message);
+        }
+    }
+}
+
+async function seedHero(imagesPath) {
+    console.log('🚀 Seeding Hero...');
+    const imagesDir = path.resolve(imagesPath);
+    if (!fs.existsSync(imagesDir)) return console.error('❌ Hero images dir not found');
+
+    const files = fs.readdirSync(imagesDir).filter(f => f.endsWith('.webp') || f.endsWith('.jpg') || f.endsWith('.png'));
+    console.log(`   Found ${files.length} images to sync.`);
+
+    const uploadedIds = [];
+    for (const f of files) {
+        try {
+            const up = await manualUpload(path.join(imagesDir, f));
+            if (up) uploadedIds.push(up.id);
+        } catch (e) {
+            console.error(`   Failed to upload ${f}:`, e.message);
+        }
+    }
+
+    if (uploadedIds.length === 0) return console.log('   No images uploaded.');
+
+    let hero = await strapi.entityService.findMany('api::hero.hero', { populate: ['images'] });
+
+    const heroData = {
+        title: 'Arkadaş Özel Eğitim',
+        subtitle: 'Sevgi ve İlgiyle...',
+        description: 'Özel çocuklarımız için özel bir dünya.',
+        images: uploadedIds, // Set images
+        stats: [
+            { label: 'Öğrenci', value: '500+' },
+            { label: 'Uzman', value: '50+' },
+            { label: 'Yıl Deneyim', value: '10+' },
+        ],
+        publishedAt: new Date(),
+    };
+
+    if (hero) {
+        await strapi.entityService.update('api::hero.hero', hero.id, { data: heroData });
+        console.log('   ~ Hero updated with gallery.');
+    } else {
+        await strapi.entityService.create('api::hero.hero', { data: heroData });
+        console.log('   + Hero created.');
+    }
+}
+
+async function seedAdmin() {
+    console.log('🚀 Seeding Super Admin user...');
+    try {
+        const roleQuery = strapi.db.query('admin::role');
+        const userQuery = strapi.db.query('admin::user');
+
+        const superAdminRole = await roleQuery.findOne({ where: { code: 'strapi-super-admin' } });
+        if (!superAdminRole) return console.log('   Super Admin role not found.');
+
+        const adminsCount = await userQuery.count();
+        if (adminsCount > 0) {
+            console.log('   Admin user already exists.');
+            return;
+        }
+
+        const email = process.env.STRAPI_ADMIN_EMAIL || 'admin@arkadas.com.tr';
+        const password = process.env.STRAPI_ADMIN_PASSWORD || 'Strapi123!';
+
+        if (!strapi.admin) {
+            console.log('   strapi.admin service not available, skipping admin seed.');
+            return;
+        }
+
+        const hashedPassword = await strapi.admin.services.auth.hashPassword(password);
+
+        await userQuery.create({
+            data: {
+                username: 'admin',
+                email,
+                password: hashedPassword,
+                firstname: 'Super',
+                lastname: 'Admin',
+                roles: [superAdminRole.id],
+                isActive: true,
+                blocked: false,
+            }
+        });
+
+        console.log(`   + Admin created: ${email}`);
+    } catch (error) {
+        console.error('   ❌ Could not seed admin user:', error.message);
+    }
+}
+
+async function main() {
+    const { createStrapi } = require('@strapi/strapi');
+    const app = await createStrapi({ distDir: path.resolve(__dirname, '..', 'dist') }).load();
+
+    try {
+        const studentXml = path.resolve(__dirname, '../../web/public/tenants/arkadas/excel/ogrencilistesi.xml');
+        const staffXml = path.resolve(__dirname, '../../web/public/tenants/arkadas/excel/personellistesi.xml');
+        const heroImages = path.resolve(__dirname, '../../web/public/tenants/arkadas/images/media');
+
+        let tenant = await strapi.db.query('api::tenant.tenant').findOne({ where: { domain: 'arkadas' } });
+        if (!tenant) tenant = await strapi.entityService.create('api::tenant.tenant', { data: { name: 'Arkadaş', domain: 'arkadas' } });
+
+        const authenticatedRole = await strapi.db.query('plugin::users-permissions.role').findOne({ where: { type: 'authenticated' } });
+
+        await seedAdmin();
+        await seedStudents(studentXml, tenant, authenticatedRole);
+        await seedPersonnel(staffXml, tenant, authenticatedRole);
+        await seedHero(heroImages);
+
+    } catch (err) {
+        console.error("Seeding Error:", err);
+    }
+
+    await app.destroy();
+    process.exit(0);
+}
+
+main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+});
