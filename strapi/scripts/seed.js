@@ -658,28 +658,45 @@ async function main() {
     const app = await createStrapi({ distDir: path.resolve(__dirname, '..', 'dist') }).load();
 
     try {
-        // Default tenant: arkadas
-        // Tenant-specific assets are in web/public/tenants/{tenant}/
+        // Tenant slug from env or default
         const tenantSlug = process.env.DEFAULT_TENANT || 'arkadas';
-        const tenantPublicPath = path.resolve(__dirname, `../../web/public/tenants/${tenantSlug}`);
+        const tenantDataPath = path.resolve(__dirname, `../../data/tenants/${tenantSlug}`);
+        const configPath = path.join(tenantDataPath, 'config.json');
 
-        const studentXml = path.join(tenantPublicPath, 'excel/ogrencilistesi.xml');
-        const staffXml = path.join(tenantPublicPath, 'excel/personellistesi.xml');
-        const heroImages = path.join(tenantPublicPath, 'media');
-        const teamMemberImages = path.join(tenantPublicPath, 'team-member');
+        // Load tenant config
+        if (!fs.existsSync(configPath)) {
+            throw new Error(`Tenant config not found: ${configPath}`);
+        }
+        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
-        console.log(`\n🏢 Seeding for tenant: ${tenantSlug}`);
-        console.log(`   📁 Tenant path: ${tenantPublicPath}`);
+        console.log(`\n🏢 Seeding for tenant: ${config.displayName || tenantSlug}`);
+        console.log(`   📁 Data path: ${tenantDataPath}`);
+
+        // Resolve paths from config
+        const studentXml = path.join(tenantDataPath, config.seed?.students || 'seed/ogrencilistesi.xml');
+        const staffXml = path.join(tenantDataPath, config.seed?.personnelXml || config.seed?.personnel || 'seed/personellistesi.xml');
+        const heroImages = path.join(tenantDataPath, config.seed?.heroImages || 'assets/hero/');
+        const teamMemberImages = path.join(tenantDataPath, config.seed?.teamPhotos || 'assets/team/');
+
+        console.log(`   📋 Students: ${fs.existsSync(studentXml) ? '✓' : '✗'} ${studentXml}`);
+        console.log(`   👥 Personnel: ${fs.existsSync(staffXml) ? '✓' : '✗'} ${staffXml}`);
 
         const authenticatedRole = await strapi.db.query('plugin::users-permissions.role').findOne({ where: { type: 'authenticated' } });
 
-        // Ensure tenant exists
+        // Ensure tenant exists with full config
         let tenant = await strapi.db.query('api::tenant.tenant').findOne({ where: { slug: tenantSlug } });
         if (!tenant) {
             tenant = await strapi.db.query('api::tenant.tenant').create({
-                data: { slug: tenantSlug, name: tenantSlug, displayName: tenantSlug, isActive: true }
+                data: {
+                    slug: config.slug || tenantSlug,
+                    name: config.name || tenantSlug,
+                    displayName: config.displayName || tenantSlug,
+                    subdomain: config.subdomain || tenantSlug,
+                    isActive: true,
+                    settings: config.settings || {},
+                }
             });
-            console.log(`   ✓ Created tenant: ${tenantSlug}`);
+            console.log(`   ✓ Created tenant: ${config.displayName || tenantSlug}`);
         }
         global.currentTenant = tenant;
 
@@ -692,6 +709,8 @@ async function main() {
         await seedHero(heroImages);
         await seedGallery(app);
         await seedApiToken(app);
+
+        console.log(`\n✅ Seeding complete for: ${config.displayName || tenantSlug}`);
 
     } catch (err) {
         console.error("Seeding Error:", err);
