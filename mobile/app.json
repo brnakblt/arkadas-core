@@ -1,22 +1,24 @@
 {
   "expo": {
-    "name": "Arkadaş ERP",
-    "slug": "arkadas-erp-mobile",
+    "name": "Arkadaş Mobil",
+    "slug": "arkadas-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "arkadas",
     "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#2563eb"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.arkadas.erp",
+      "bundleIdentifier": "com.arkadas.mobile",
       "infoPlist": {
-        "NSCameraUsageDescription": "Yüz tanıma ile yoklama almak için kamera erişimi gereklidir."
+        "NSCameraUsageDescription": "Yüz tanıma ile yoklama almak için kamera erişimi gereklidir.",
+        "NSFaceIDUsageDescription": "Güvenli giriş için Face ID kullanılacaktır."
       }
     },
     "android": {
@@ -24,19 +26,42 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#2563eb"
       },
-      "package": "com.arkadas.erp",
+      "package": "com.arkadas.mobile",
       "permissions": [
-        "CAMERA"
+        "CAMERA",
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE"
       ]
     },
     "web": {
       "bundler": "metro",
-      "output": "static"
+      "output": "static",
+      "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router",
-      "expo-camera",
-      "expo-notifications",
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Yüz tanıma ile yoklama almak için kamera erişimi gereklidir."
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Güvenli giriş için Face ID kullanılacaktır."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#2563eb"
+        }
+      ],
       "expo-secure-store"
     ],
     "experiments": {
@@ -47,7 +72,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "arkadas-erp"
+        "projectId": "arkadas-mobile"
       }
     }
   }

@@ -1,24 +1,26 @@
 /**
- * Entry screen - redirects based on auth status
+ * Entry Screen - Redirects based on auth status
  */
 
 import { Redirect } from 'expo-router';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import { useAuthStore } from '../src/stores';
+import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
+import { useAuthStore } from '@/stores/auth';
 
 export default function Index() {
-    const { isAuthenticated, isLoading } = useAuthStore();
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+    const isLoading = useAuthStore((state) => state.isLoading);
 
     if (isLoading) {
         return (
             <View style={styles.container}>
                 <ActivityIndicator size="large" color="#2563eb" />
+                <Text style={styles.loadingText}>Yükleniyor...</Text>
             </View>
         );
     }
 
     if (isAuthenticated) {
-        return <Redirect href="/(tabs)/home" />;
+        return <Redirect href="/(tabs)" />;
     }
 
     return <Redirect href="/(auth)/login" />;
@@ -29,6 +31,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#f8fafc',
+    },
+    loadingText: {
+        marginTop: 12,
+        color: '#64748b',
+        fontSize: 16,
     },
 });

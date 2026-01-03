@@ -1,12 +1,17 @@
 /**
- * Auth Layout
+ * Auth Layout - Screens before login
  */
 
 import { Stack } from 'expo-router';
 
 export default function AuthLayout() {
     return (
-        <Stack screenOptions={{ headerShown: false }}>
+        <Stack
+            screenOptions={{
+                headerShown: false,
+                animation: 'fade',
+            }}
+        >
             <Stack.Screen name="login" />
         </Stack>
     );

@@ -1,26 +1,40 @@
 /**
- * Tab Navigation Layout
+ * Tab Layout - Main app navigation
  */
 
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet } from 'react-native';
+
+interface TabIconProps {
+    focused: boolean;
+    icon: string;
+    label: string;
+}
+
+function TabIcon({ focused, icon, label }: TabIconProps) {
+    return (
+        <View style={styles.tabItem}>
+            <Text style={[styles.icon, focused && styles.iconFocused]}>{icon}</Text>
+            <Text style={[styles.label, focused && styles.labelFocused]}>{label}</Text>
+        </View>
+    );
+}
 
 export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
-                tabBarActiveTintColor: '#2563eb',
-                tabBarInactiveTintColor: '#999',
-                headerStyle: { backgroundColor: '#2563eb' },
-                headerTintColor: '#fff',
+                headerShown: false,
+                tabBarStyle: styles.tabBar,
+                tabBarShowLabel: false,
             }}
         >
             <Tabs.Screen
-                name="home"
+                name="index"
                 options={{
                     title: 'Ana Sayfa',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="home" size={size} color={color} />
+                    tabBarIcon: ({ focused }) => (
+                        <TabIcon focused={focused} icon="🏠" label="Ana Sayfa" />
                     ),
                 }}
             />
@@ -28,8 +42,8 @@ export default function TabLayout() {
                 name="attendance"
                 options={{
                     title: 'Yoklama',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="camera" size={size} color={color} />
+                    tabBarIcon: ({ focused }) => (
+                        <TabIcon focused={focused} icon="📸" label="Yoklama" />
                     ),
                 }}
             />
@@ -37,8 +51,8 @@ export default function TabLayout() {
                 name="schedule"
                 options={{
                     title: 'Program',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="calendar" size={size} color={color} />
+                    tabBarIcon: ({ focused }) => (
+                        <TabIcon focused={focused} icon="📅" label="Program" />
                     ),
                 }}
             />
@@ -46,11 +60,42 @@ export default function TabLayout() {
                 name="profile"
                 options={{
                     title: 'Profil',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="person" size={size} color={color} />
+                    tabBarIcon: ({ focused }) => (
+                        <TabIcon focused={focused} icon="👤" label="Profil" />
                     ),
                 }}
             />
         </Tabs>
     );
 }
+
+const styles = StyleSheet.create({
+    tabBar: {
+        backgroundColor: '#fff',
+        borderTopWidth: 1,
+        borderTopColor: '#e2e8f0',
+        height: 80,
+        paddingTop: 8,
+        paddingBottom: 20,
+    },
+    tabItem: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    icon: {
+        fontSize: 24,
+        marginBottom: 2,
+    },
+    iconFocused: {
+        transform: [{ scale: 1.1 }],
+    },
+    label: {
+        fontSize: 11,
+        color: '#94a3b8',
+        fontWeight: '500',
+    },
+    labelFocused: {
+        color: '#2563eb',
+        fontWeight: '600',
+    },
+});
