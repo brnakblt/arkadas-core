@@ -15,7 +15,12 @@ import { usePathname } from 'next/navigation';
 
 const navItems = [
     {
-        label: 'Dashboard',
+        label: 'Admin Home',
+        href: '/admin',
+        icon: '🛠️',
+    },
+    {
+        label: 'Geri: Dashboard',
         href: '/dashboard',
         icon: '📊',
     },
@@ -28,6 +33,16 @@ const navItems = [
         label: 'Kullanıcılar',
         href: '/admin/kullanicilar',
         icon: '👥',
+    },
+    {
+        label: 'Öğrenciler',
+        href: '/admin/ogrenciler',
+        icon: '🎓',
+    },
+    {
+        label: 'Yüz Tanıma',
+        href: '/admin/face-management',
+        icon: '📸',
     },
     {
         label: 'Roller & İzinler',
