@@ -11,11 +11,11 @@ import { useAuthStore } from '../src/stores';
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
-    const { checkAuth, isLoading } = useAuthStore();
+    const { checkAuth } = useAuthStore();
 
     useEffect(() => {
         checkAuth();
-    }, []);
+    }, [checkAuth]);
 
     return (
         <QueryClientProvider client={queryClient}>

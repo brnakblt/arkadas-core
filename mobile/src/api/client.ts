@@ -143,7 +143,10 @@ class ApiClient {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ refreshToken: this.refreshToken }),
                 });
-            } catch { }
+            } catch (e) {
+                // Ignore logout errors - token may already be invalid
+                console.debug('Logout request failed:', e);
+            }
         }
 
         this.accessToken = null;
