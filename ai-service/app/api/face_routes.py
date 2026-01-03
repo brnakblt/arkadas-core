@@ -253,10 +253,27 @@ async def mobile_identify_face(
     Uses x-tenant-id header for multi-tenancy.
     Returns student info if match found.
     
-    🔐 No API key required - uses tenant header
+    🔐 Requires valid x-tenant-id header (validated tenant)
     """
     try:
-        tenant_id = getattr(request.state, 'tenant_id', 'default')
+        # SECURITY FIX: Validate tenant ID before processing
+        tenant_id = getattr(request.state, 'tenant_id', None)
+        
+        if not tenant_id or tenant_id == 'default':
+            return MobileIdentifyResponse(
+                match=False,
+                confidence=0.0,
+                message="x-tenant-id header is required"
+            )
+        
+        # Validate tenant_id format (alphanumeric with hyphens/underscores only)
+        import re
+        if not re.match(r'^[a-zA-Z0-9_-]+$', tenant_id):
+            return MobileIdentifyResponse(
+                match=False,
+                confidence=0.0,
+                message="Invalid tenant ID format"
+            )
         
         # Call face matching service
         result = await face_service.match_face(

@@ -25,12 +25,18 @@ async def verify_api_key(api_key: Optional[str] = Security(api_key_header)) -> s
     Verify the API key from the request header.
     
     Raises HTTPException 401 if key is missing or invalid.
+    Raises HTTPException 503 if API key is not configured (fail-closed).
     Returns the validated API key.
     """
+    # SECURITY FIX: Fail-closed - reject requests if API key is not configured
     if not API_KEY:
-        # If no API key is configured, allow all requests (dev mode warning)
-        print("⚠️  Warning: AI_SERVICE_API_KEY not set. Authentication disabled.")
-        return "dev-mode"
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "error": "Service Configuration Error",
+                "message": "AI_SERVICE_API_KEY is not configured. Service cannot accept authenticated requests.",
+            },
+        )
     
     if not api_key:
         raise HTTPException(
