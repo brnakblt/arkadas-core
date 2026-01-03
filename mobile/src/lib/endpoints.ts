@@ -51,58 +51,17 @@ export interface DaySummary {
 export const endpoints = {
     /**
      * Get today's summary for dashboard
+     * Uses optimized mobile endpoint
      */
     async getTodaySummary(): Promise<DaySummary> {
-        const today = new Date().toISOString().split('T')[0];
-
         try {
-            // Aggregate attendance stats
-            const attendance = await api.fetch<{ data: { attributes: { status: string } }[] }>(
-                `/api/attendance-logs?filters[date][$eq]=${today}&fields[0]=status`
-            );
-
-            const stats = attendance.data.reduce(
-                (acc, record) => {
-                    const status = record.attributes.status;
-                    if (status === 'present') acc.present++;
-                    else if (status === 'late') acc.late++;
-                    else if (status === 'absent') acc.absent++;
-                    return acc;
-                },
-                { present: 0, late: 0, absent: 0 }
-            );
-
-            // Get session counts
-            const sessions = await api.fetch<{ data: { attributes: { status: string } }[] }>(
-                `/api/schedules?filters[date][$eq]=${today}&fields[0]=status`
-            );
-
-            const sessionStats = sessions.data.reduce(
-                (acc, session) => {
-                    if (session.attributes.status === 'completed') acc.completed++;
-                    else if (session.attributes.status === 'scheduled') acc.upcoming++;
-                    return acc;
-                },
-                { completed: 0, upcoming: 0 }
-            );
-
-            const total = stats.present + stats.late + stats.absent;
-
-            return {
-                date: today,
-                totalStudents: total,
-                presentCount: stats.present,
-                absentCount: stats.absent,
-                lateCount: stats.late,
-                attendanceRate: total > 0 ? Math.round((stats.present / total) * 100) : 0,
-                upcomingSessions: sessionStats.upcoming,
-                completedSessions: sessionStats.completed,
-            };
+            const response = await api.fetch<DaySummary>('/api/mobile/today');
+            return response;
         } catch (error) {
             console.error('[Endpoints] getTodaySummary failed:', error);
-            // Return mock data for offline
+            // Return fallback data for offline
             return {
-                date: today,
+                date: new Date().toISOString().split('T')[0],
                 totalStudents: 0,
                 presentCount: 0,
                 absentCount: 0,
@@ -116,17 +75,14 @@ export const endpoints = {
 
     /**
      * Get schedule for a specific date
+     * Uses optimized mobile endpoint
      */
     async getSchedule(date: string): Promise<Session[]> {
         try {
-            const response = await api.fetch<{ data: Array<{ id: number; attributes: Record<string, unknown> }> }>(
-                `/api/schedules?filters[date][$eq]=${date}&populate[student][fields][0]=firstName&populate[student][fields][1]=lastName&sort=startTime:asc`
+            const response = await api.fetch<{ sessions: Session[] }>(
+                `/api/mobile/schedule/${date}`
             );
-
-            return response.data.map((item) => ({
-                id: item.id,
-                ...(item.attributes as unknown as Omit<Session, 'id'>),
-            }));
+            return response.sessions || [];
         } catch (error) {
             console.error('[Endpoints] getSchedule failed:', error);
             return [];

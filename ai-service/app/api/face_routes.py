@@ -222,3 +222,129 @@ async def list_enrolled_users(
         return {"users": users, "count": len(users)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============ Mobile-Optimized Endpoints ============
+
+class MobileIdentifyRequest(BaseModel):
+    """Mobile face identification request"""
+    image: str  # Base64 encoded image
+    threshold: float = 0.6  # Confidence threshold
+
+
+class MobileIdentifyResponse(BaseModel):
+    """Mobile face identification response"""
+    match: bool
+    student_id: Optional[int] = None
+    student_name: Optional[str] = None
+    student_photo: Optional[str] = None
+    confidence: float = 0.0
+    message: str
+
+
+@router.post("/face/identify", response_model=MobileIdentifyResponse)
+@limiter.limit("30/minute")
+async def mobile_identify_face(
+    request: Request,
+    body: MobileIdentifyRequest,
+):
+    """
+    Mobile-optimized face identification for attendance.
+    Uses x-tenant-id header for multi-tenancy.
+    Returns student info if match found.
+    
+    🔐 No API key required - uses tenant header
+    """
+    try:
+        tenant_id = getattr(request.state, 'tenant_id', 'default')
+        
+        # Call face matching service
+        result = await face_service.match_face(
+            image_base64=body.image,
+            tenant_id=tenant_id,
+        )
+        
+        if not result.get('success') or not result.get('best_match'):
+            return MobileIdentifyResponse(
+                match=False,
+                confidence=0.0,
+                message="Yüz tanınamadı. Lütfen tekrar deneyin."
+            )
+        
+        best = result['best_match']
+        confidence = best.get('confidence', 0)
+        
+        if confidence < body.threshold:
+            return MobileIdentifyResponse(
+                match=False,
+                confidence=confidence,
+                message=f"Eşleşme güven skoru düşük: {confidence:.2f}"
+            )
+        
+        # Parse user_id - format is typically "student_123"
+        user_id_str = best.get('user_id', '')
+        student_id = None
+        if user_id_str.startswith('student_'):
+            try:
+                student_id = int(user_id_str.split('_')[1])
+            except (ValueError, IndexError):
+                pass
+        elif user_id_str.isdigit():
+            student_id = int(user_id_str)
+        
+        return MobileIdentifyResponse(
+            match=True,
+            student_id=student_id,
+            student_name=best.get('display_name', user_id_str),
+            student_photo=None,  # Could fetch from Strapi
+            confidence=confidence,
+            message="Başarılı"
+        )
+        
+    except ValueError as e:
+        return MobileIdentifyResponse(
+            match=False,
+            confidence=0.0,
+            message=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/face/students")
+@limiter.limit("30/minute")
+async def get_students_for_mobile(request: Request):
+    """
+    Get list of students with face encodings for offline caching.
+    Uses x-tenant-id header for multi-tenancy.
+    """
+    try:
+        tenant_id = getattr(request.state, 'tenant_id', 'default')
+        users = await face_service.list_enrolled_users(tenant_id)
+        
+        # Format for mobile
+        students = []
+        for user in users:
+            user_id = user.get('user_id', '')
+            student_id = None
+            if user_id.startswith('student_'):
+                try:
+                    student_id = int(user_id.split('_')[1])
+                except (ValueError, IndexError):
+                    pass
+            
+            students.append({
+                'id': student_id,
+                'user_id': user_id,
+                'name': user.get('display_name', user_id),
+                'has_encoding': True,
+            })
+        
+        return {
+            'students': students,
+            'count': len(students),
+            'tenant': tenant_id,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+

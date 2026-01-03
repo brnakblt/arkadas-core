@@ -90,27 +90,23 @@ class FaceRecognitionService {
     }
 
     /**
-     * Record attendance check-in via Strapi
+     * Record attendance check-in via Strapi mobile API
      */
     async checkIn(
         studentId: number,
         method: 'face_recognition' | 'manual' = 'face_recognition',
-        confidenceScore?: number
+        confidenceScore?: number,
+        offlineId?: string
     ): Promise<AttendanceRecord | null> {
         try {
             const response = await api.fetch<{ data: AttendanceRecord }>(
-                '/api/attendance-logs',
+                '/api/mobile/checkin',
                 {
                     method: 'POST',
                     body: JSON.stringify({
-                        data: {
-                            student: studentId,
-                            checkInTime: new Date().toISOString(),
-                            status: this.getAttendanceStatus(),
-                            verificationMethod: method,
-                            confidenceScore,
-                            date: new Date().toISOString().split('T')[0],
-                        },
+                        studentId,
+                        confidenceScore,
+                        offlineId,
                     }),
                 }
             );
@@ -143,14 +139,12 @@ class FaceRecognitionService {
     }
 
     /**
-     * Get today's attendance for current tenant
+     * Get today's attendance using mobile API
      */
     async getTodayAttendance(): Promise<AttendanceRecord[]> {
-        const today = new Date().toISOString().split('T')[0];
-
         try {
             const response = await api.fetch<{ data: AttendanceRecord[] }>(
-                `/api/attendance-logs?filters[date][$eq]=${today}&populate=student&sort=checkInTime:desc`
+                '/api/mobile/attendance'
             );
             return response.data || [];
         } catch (error) {
