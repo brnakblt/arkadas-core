@@ -39,6 +39,7 @@ docker compose down --volumes --remove-orphans
 echo -e "\n${YELLOW}2. Cleaning database files...${NC}"
 docker run --rm -v "$(pwd):/app" -w /app alpine rm -rf databases
 mkdir -p databases/postgres databases/redis databases/onlyoffice/data databases/onlyoffice/log databases/onlyoffice/cache
+mkdir -p databases/sftpgo/data databases/sftpgo/config
 
 echo -e "\n${YELLOW}3. Cleaning Strapi cache...${NC}"
 rm -rf strapi/.tmp strapi/dist strapi/build strapi/.cache
@@ -99,8 +100,12 @@ echo -e "${GREEN}========================================${NC}"
 echo ""
 echo -e "Services running:"
 echo -e "  • PostgreSQL: ${BLUE}localhost:5432${NC}"
-echo -e "  • Redis:      ${BLUE}localhost:6379${NC}"
-echo -e "  • OnlyOffice: ${BLUE}localhost:8081${NC}"
+echo -e "  • Redis:      ${BLUE}localhost:6380${NC}"
+echo -e "  • OnlyOffice: ${BLUE}localhost:8080${NC}"
+echo ""
+echo -e "Optional services:"
+echo -e "  • SFTPGo:     ${YELLOW}docker compose --profile storage up -d${NC}"
+echo -e "                ${BLUE}http://localhost:8088${NC} (admin: check .env)"
 echo ""
 echo -e "Next steps:"
 echo -e "  1. Run: ${YELLOW}npm run dev${NC} to start all services"

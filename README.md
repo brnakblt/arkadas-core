@@ -20,54 +20,61 @@
 # 1. Bağımlılıkları kur
 npm run install:all
 
-# 2. Geliştirme modunda başlat
+# 2. Environment dosyalarını oluştur
+npm run setup:env
+
+# 3. Projeyi sıfırdan başlat (DB + Seed)
+npm run reset
+
+# 4. Geliştirme modunda başlat
 npm run dev
 ```
 
-**Servis Adresleri:**
+---
 
-| Servis | URL | Port |
-|--------|-----|------|
-| Web Frontend | http://localhost:3000 | 3000 |
-| Strapi CMS | http://localhost:1337/admin | 1337 |
-| AI Service | http://localhost:8000/docs | 8000 |
-| MEBBIS Service | http://localhost:4000/api | 4000 |
-| Mobile (Expo) | http://localhost:8082 | 8082 |
+## 🌐 Port Haritası
+
+| Servis | Port | URL | Açıklama |
+|--------|------|-----|----------|
+| **Web** | 3000 | http://localhost:3000 | Next.js Frontend |
+| **Strapi** | 1337 | http://localhost:1337/admin | CMS Admin Panel |
+| **AI Service** | 8000 | http://localhost:8000/docs | Yüz Tanıma API |
+| **Mebbis** | 4000 | http://localhost:4000/api | MEBBİS Otomasyon |
+| **PostgreSQL** | 5432 | - | Veritabanı |
+| **Redis** | 6380 | - | Cache & Queue |
+| **OnlyOffice** | 8080 | http://localhost:8080 | Doküman Editörü |
+| **Mobile** | 8085 | expo://localhost:8085 | Expo Dev Server |
+| **SFTPGo** | 8088 | http://localhost:8088 | Dosya Yönetimi (opsiyonel) |
 
 ---
 
-## ✨ Tamamlanan Özellikler
+## ✨ Özellikler
 
-### ✅ Phase 1: MEBBIS Entegrasyonu
-- İş Planı Aktarımı
-- Eğitim Bilgi Girişi
-- Öğrenci Rapor Çekme
-- Modül Süreleri Çekme
-- Fatura Aktarımı
+### 🔐 Güvenlik
+- **Fail-Closed** kimlik doğrulama (API key yoksa erişim yok)
+- Login rate limiting (5 deneme/15 dakika)
+- Redis şifreli bağlantı
+- PII verileri AES-256 şifreleme
+- RBAC yetkilendirme sistemi
 
-### ✅ Phase 2: BEP Otomasyonu
-- Kaba Değerlendirme
-- Bireysel Eğitim Planı (BEP)
-- Performans Kayıt Tablosu (PKT)
-- Dönem Sonu Değerlendirme
+### 📱 Mobil Uygulama
+- Yüz tanıma ile yoklama
+- Biyometrik giriş (Face ID / Touch ID)
+- Offline çalışma desteği
+- Push bildirimler
+- Mesajlaşma
 
-### ✅ Phase 3: Planlama Sistemi
-- Drag-drop haftalık planlama (`@dnd-kit`)
-- Multi-user WebSocket senkronizasyonu
-- Kural motoru (öğrenci/öğretmen limitleri)
+### 🤖 MEBBİS Entegrasyonu
+- Öğrenci senkronizasyonu
+- Eğitim bilgi girişi otomasyonu
+- Fatura aktarımı
+- BEP form otomasyonu
 
-### ✅ Phase 4: Fatura & Servis
-- Fatura modülü (Strapi schema)
-- Dönem bazlı otomatik fatura oluşturma
-- MEBBIS senkronizasyonu
-- PDF export
-
-### ✅ Phase 5: Raporlama
-- Ek-4 Raporu (Devam Takip)
-- Dönem Sonu Raporu
-- Öğrenci Gelişim Raporu
-- Kurum Performans Raporu
-- PDF/Excel/MEBBIS export
+### 📊 Raporlama
+- Ek-4 Devam Takip Raporu
+- Dönem sonu raporları
+- PDF/Excel export
+- Kurum performans raporu
 
 ---
 
@@ -75,27 +82,45 @@ npm run dev
 
 ```
 arkadasozelegitim/
-├── strapi/           # Backend CMS (Strapi v5)
-├── web/              # Frontend (Next.js 16)
-├── mobile/           # Mobile App (React Native/Expo)
-├── ai-service/       # AI Face Recognition (Python/FastAPI)
-├── mebbis-service/   # MEBBIS Automation (Node.js)
-├── docs/             # Documentation
-├── scripts/          # Utility scripts
-└── databases/        # Docker volume data
+├── web/              # Next.js 16 Frontend
+├── strapi/           # Strapi v5 Backend CMS
+├── mobile/           # React Native/Expo Mobil Uygulama
+├── ai-service/       # Python/FastAPI Yüz Tanıma
+├── mebbis-service/   # MEBBİS Otomasyon Servisi
+├── docs/             # MkDocs Dokümantasyon
+├── scripts/          # Yardımcı Scriptler
+├── databases/        # Docker Volume Data
+└── docker-compose.yml
 ```
 
 ---
 
-## 🛠️ Komutlar
+## 🛠️ NPM Komutları
 
+### Geliştirme
 | Komut | Açıklama |
 |-------|----------|
-| `npm run dev` | Geliştirme modunda başlat |
+| `npm run dev` | Tüm servisleri başlat |
+| `npm run dev:strapi` | Sadece Strapi |
+| `npm run dev:web` | Sadece Web |
+| `npm run dev:mobile` | Sadece Mobile |
+| `npm run dev:ai` | Sadece AI Service |
+| `npm run dev:mebbis` | Sadece Mebbis |
+
+### Build & Test
+| Komut | Açıklama |
+|-------|----------|
 | `npm run build` | Production build |
 | `npm run lint` | Lint kontrolü |
+| `npm run typecheck` | TypeScript kontrolü |
+| `npm run test` | Testleri çalıştır |
+
+### Yönetim
+| Komut | Açıklama |
+|-------|----------|
+| `npm run reset` | DB sıfırla ve seed |
 | `npm run stop` | Tüm servisleri durdur |
-| `npm run reset` | Docker container'ları sıfırla |
+| `npm run setup:env` | Environment dosyaları oluştur |
 
 ---
 
@@ -110,29 +135,51 @@ arkadasozelegitim/
 
 ---
 
-## 📖 Dokümantasyon
+## 🔐 Environment & Secrets
 
-| Dosya | Açıklama |
-|-------|----------|
-| [DEPLOYMENT.md](./docs/DEPLOYMENT.md) | Production kurulum rehberi |
-| [DEVELOPMENT.md](./docs/DEVELOPMENT.md) | Geliştirme ortamı |
-| [DISASTER_RECOVERY.md](./docs/DISASTER_RECOVERY.md) | Felaket kurtarma |
-| [INFISICAL_STRATEGY.md](./docs/INFISICAL_STRATEGY.md) | Secret yönetimi |
-
----
-
-## 🔐 Environment Variables
-
-Secret ve Environment Variable yönetimi için **Infisical** kullanılmaktadır.
-
+### Infisical (Önerilen)
 ```bash
-# Infisical Kurulumu ve Secret Import (İlk Kez)
+# Infisical kurulumu
 bash scripts/setup_infisical.sh
 ```
 
-Sonrasında tüm komutlar (`npm run dev`) otomatik olarak Infisical üzerinden secret'ları çekecektir.
+### Manuel Kurulum
+```bash
+# Environment dosyalarını oluştur
+npm run setup:env
 
-Eğer yeni bir kurulum yapıyorsanız ve elinizde secret yoksa, önce `scripts/generate_envs.sh` ile rastgele secret üretip sonra import edebilirsiniz.
+# Her servis için .env dosyaları oluşturulur:
+# - .env (root - Docker)
+# - strapi/.env
+# - web/.env.local
+# - ai-service/.env
+# - mebbis-service/.env
+```
+
+---
+
+## � Docker Servisleri
+
+### Core (Her zaman çalışır)
+```bash
+docker compose up -d
+```
+
+### Opsiyonel: SFTPGo
+```bash
+docker compose --profile storage up -d
+# Admin: http://localhost:8088
+```
+
+---
+
+## �📖 Dokümantasyon
+
+| Dosya | Açıklama |
+|-------|----------|
+| [DEPLOYMENT.md](./docs/DEPLOYMENT.md) | Production kurulum |
+| [DEVELOPMENT.md](./docs/DEVELOPMENT.md) | Geliştirme ortamı |
+| [SECURITY_AUDIT_BASELINE.md](./SECURITY_AUDIT_BASELINE.md) | Güvenlik denetim raporu |
 
 ---
 
