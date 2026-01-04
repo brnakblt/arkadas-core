@@ -30,7 +30,7 @@ This is a TurboRepo monorepo.
 | Redis | 6380 | - |
 | OnlyOffice | 8080 | http://localhost:8080 |
 | Mobile (Expo) | 8085 | expo://localhost:8085 |
-| SFTPGo | 8088 | http://localhost:8088 (optional) |
+| SFTPGo | 8088 | http://localhost:8088 |
 
 ---
 
@@ -100,12 +100,7 @@ npm run dev
 
 ### Core Infrastructure
 ```bash
-docker compose up -d  # PostgreSQL, Redis, OnlyOffice
-```
-
-### Optional: SFTPGo
-```bash
-docker compose --profile storage up -d
+docker compose up -d  # PostgreSQL, Redis, OnlyOffice, SFTPGo
 ```
 
 ### Check Status

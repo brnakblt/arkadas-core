@@ -12,8 +12,8 @@
 # AI Service:     8000
 # Docs (MkDocs):  8001
 # OnlyOffice:     8080
-# SFTPGo Admin:   8088 (optional)
-# SFTPGo WebDAV:  8089 (optional)
+# SFTPGo Admin:   8088
+# SFTPGo WebDAV:  8089
 # Mobile (Expo):  8085
 # ==========================================
 
@@ -86,11 +86,9 @@ services:
           memory: 1G
 
   # ==========================================
-  # Optional: SFTPGo for file storage
-  # Start with: docker compose --profile storage up -d
+  # SFTPGo - File Storage & WebDAV
   # ==========================================
   sftpgo:
-    profiles: [ storage ]
     image: drakkan/sftpgo:latest
     restart: unless-stopped
     ports:

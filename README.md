@@ -44,7 +44,7 @@ npm run dev
 | **Redis** | 6380 | - | Cache & Queue |
 | **OnlyOffice** | 8080 | http://localhost:8080 | Doküman Editörü |
 | **Mobile** | 8085 | expo://localhost:8085 | Expo Dev Server |
-| **SFTPGo** | 8088 | http://localhost:8088 | Dosya Yönetimi (opsiyonel) |
+| **SFTPGo** | 8088 | http://localhost:8088 | Dosya Yönetimi |
 
 ---
 
@@ -158,22 +158,18 @@ npm run setup:env
 
 ---
 
-## � Docker Servisleri
+## 🐳 Docker Servisleri
 
-### Core (Her zaman çalışır)
 ```bash
+# Start all core services
 docker compose up -d
 ```
 
-### Opsiyonel: SFTPGo
-```bash
-docker compose --profile storage up -d
-# Admin: http://localhost:8088
-```
+**Included Services:** PostgreSQL, Redis, OnlyOffice, SFTPGo
 
 ---
 
-## �📖 Dokümantasyon
+## 📖 Dokümantasyon
 
 | Dosya | Açıklama |
 |-------|----------|
