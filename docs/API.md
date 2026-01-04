@@ -2,13 +2,14 @@
 
 Bu doküman, Arkadaş ERP sisteminin API endpoint'lerini açıklar.
 
-## İçindekiler
+## Servis Mimarisi
 
-1. [Kimlik Doğrulama](#kimlik-doğrulama)
-2. [Dashboard API](#dashboard-api)
-3. [Tenant Yönetimi](#tenant-yönetimi)
-4. [Bildirim Sistemi](#bildirim-sistemi)
-5. [Raporlama](#raporlama)
+| Servis | Port | Açıklama |
+|--------|------|----------|
+| **Web API** | 3000 | Next.js API Routes |
+| **Strapi API** | 1337 | Strapi REST/GraphQL |
+| **AI Service** | 8000 | Yüz Tanıma API |
+| **Mebbis Service** | 4000 | MEBBİS Otomasyon |
 
 ---
 
@@ -16,7 +17,7 @@ Bu doküman, Arkadaş ERP sisteminin API endpoint'lerini açıklar.
 
 ### POST `/api/auth/login`
 
-Kullanıcı girişi yapar.
+Kullanıcı girişi yapar. **Rate limited:** 5 deneme/15 dakika.
 
 **Request Body:**
 ```json
@@ -39,6 +40,10 @@ Kullanıcı girişi yapar.
 }
 ```
 
+**Hata Kodları:**
+- `401` - Geçersiz kimlik bilgileri
+- `429` - Çok fazla deneme (rate limited)
+
 ### GET `/api/tenants`
 
 Aktif tenant listesini döndürür (login dropdown için).
@@ -51,6 +56,65 @@ Aktif tenant listesini döndürür (login dropdown için).
   ]
 }
 ```
+
+---
+
+## AI Service API (Port 8000)
+
+### GET `/docs`
+Swagger UI dokümantasyonu.
+
+### POST `/face/enroll`
+Yüz kaydı yapar.
+
+**Headers:**
+- `x-api-key: <AI_SERVICE_API_KEY>`
+- `x-tenant-id: <tenant_id>`
+
+**Request (multipart/form-data):**
+- `image`: Yüz fotoğrafı
+- `user_id`: Kullanıcı ID
+- `name`: İsim
+
+### POST `/face/identify`
+Yüz tanıma yapar.
+
+**Headers:**
+- `x-api-key: <AI_SERVICE_API_KEY>`
+- `x-tenant-id: <tenant_id>` (zorunlu)
+
+**Request (multipart/form-data):**
+- `image`: Yüz fotoğrafı
+
+**Response:**
+```json
+{
+  "matches": [
+    {
+      "user_id": "123",
+      "name": "Ahmet Yılmaz",
+      "confidence": 0.95
+    }
+  ]
+}
+```
+
+---
+
+## Mebbis Service API (Port 4000)
+
+### GET `/health`
+Servis sağlık kontrolü.
+
+### POST `/api/sync/students`
+Öğrenci senkronizasyonu başlatır.
+
+**Headers:**
+- `x-api-key: <MEBBIS_SERVICE_API_KEY>`
+- `x-tenant-id: <tenant_id>`
+
+### POST `/api/education/entry`
+Eğitim bilgi girişi yapar.
 
 ---
 
@@ -85,57 +149,19 @@ Mevcut kullanıcının tenant'ına ait istatistikleri döndürür.
 > **Not:** Admin yetkisi gerektirir.
 
 ### GET `/api/admin/tenants`
-
 Tüm tenant'ları listeler.
 
-**Query Parameters:**
-- `search` - Arama terimi
-- `page` - Sayfa numarası
-- `pageSize` - Sayfa boyutu
-
 ### POST `/api/admin/tenants`
-
 Yeni tenant oluşturur.
 
-**Request Body:**
-```json
-{
-  "name": "Yeni Kurum",
-  "domain": "yeni.example.com",
-  "contactEmail": "admin@yeni.example.com",
-  "mebbisUsername": "mebbis_user",
-  "mebbisPassword": "encrypted_password"
-}
-```
-
 ### GET `/api/admin/tenants/[id]`
-
-Tenant detaylarını (kullanıcılar ve öğrenciler dahil) döndürür.
+Tenant detaylarını döndürür.
 
 ### PUT `/api/admin/tenants/[id]`
-
 Tenant bilgilerini günceller.
 
 ### DELETE `/api/admin/tenants/[id]`
-
 Tenant'ı siler.
-
-### GET `/api/admin/tenants/[id]/users`
-
-Tenant'a atanmış kullanıcıları listeler.
-
-### POST `/api/admin/tenants/[id]/users`
-
-Kullanıcıyı tenant'a atar.
-
-**Request Body:**
-```json
-{ "userId": 5 }
-```
-
-### DELETE `/api/admin/tenants/[id]/users?userId=5`
-
-Kullanıcıyı tenant'tan çıkarır.
 
 ---
 
@@ -143,15 +169,14 @@ Kullanıcıyı tenant'tan çıkarır.
 
 ### POST `/api/notifications/send`
 
-Tenant kullanıcılarına push bildirim gönderir.
+Push bildirim gönderir.
 
 **Request Body:**
 ```json
 {
   "type": "attendance",
   "message": "Öğrenci yoklama bildirimi",
-  "userIds": [1, 2, 3],
-  "data": { "studentName": "Ali" }
+  "userIds": [1, 2, 3]
 }
 ```
 
@@ -164,13 +189,9 @@ Tenant kullanıcılarına push bildirim gönderir.
 - `reminder` - Hatırlatma
 - `report` - Rapor hazır
 
-### GET `/api/notifications/send`
-
-Mevcut bildirim tiplerini listeler.
-
 ### POST `/api/notifications/sms`
 
-Tenant velilerine SMS gönderir.
+SMS gönderir.
 
 **Request Body:**
 ```json
@@ -184,59 +205,19 @@ Tenant velilerine SMS gönderir.
 }
 ```
 
-**SMS Şablonları:**
-- `attendance_alert` - Yoklama bildirimi
-- `schedule_reminder` - Program hatırlatması
-- `emergency` - Acil durum
-- `payment_reminder` - Ödeme hatırlatması
-- `parent_notification` - Veli bilgilendirmesi
-
-### GET `/api/notifications/sms`
-
-SMS şablon bilgilerini döndürür.
-
 ---
 
-## Raporlama
+## API Proxy
 
-### GET `/api/reports`
+### `/api/proxy/*`
 
-Tenant bazlı rapor listesi döndürür.
+Strapi API'ye proxy yapar. **Kısıtlı:** Sadece `api/*` path'lerine izin verir.
 
-**Query Parameters:**
-- `type` - Rapor tipi (`bep`, `yoklama`, `fatura`, `ilerleme`)
-- `studentId` - Öğrenci ID
-- `startDate` - Başlangıç tarihi
-- `endDate` - Bitiş tarihi
-- `page` - Sayfa numarası
-- `pageSize` - Sayfa boyutu
-
-**Response:**
-```json
-{
-  "reports": [
-    {
-      "id": 1,
-      "documentId": "abc123",
-      "title": "Ocak 2024 BEP",
-      "type": "bep",
-      "studentName": "Ali Yılmaz",
-      "createdAt": "2024-01-15T10:00:00Z",
-      "status": "published"
-    }
-  ],
-  "pagination": { "page": 1, "pageSize": 20, "total": 45 }
-}
-```
-
-### GET `/api/reports/[id]/pdf?type=bep`
-
-Raporu yazdırılabilir HTML formatında döndürür.
-
-**Query Parameters:**
-- `type` - Rapor tipi (`bep`, `yoklama`, `fatura`)
-
-**Response:** HTML doküman (tarayıcıda yazdır/PDF kaydet)
+**Engellenen Path'ler:**
+- `admin/*`
+- `_health`
+- `users/me`
+- `upload/*`
 
 ---
 
@@ -248,7 +229,9 @@ Raporu yazdırılabilir HTML formatında döndürür.
 | 401 | Yetkisiz erişim |
 | 403 | Erişim reddedildi |
 | 404 | Kaynak bulunamadı |
+| 429 | Rate limit aşıldı |
 | 500 | Sunucu hatası |
+| 503 | Servis yapılandırma hatası |
 
 ---
 
@@ -260,16 +243,7 @@ Tüm API endpoint'leri otomatik olarak tenant bazlı filtreleme uygular:
 2. Strapi lifecycle hook'ları tüm sorgulara tenant filtresi ekler
 3. Cross-tenant veri erişimi engellenir
 
-**Korunan Content Type'lar:**
-- student-profile
-- bireysel-egitim-plani
-- rapor
-- yoklama
-- fatura
-- schedule
-- appointment
-- attendance-log
-- teacher-profile
-- service-route
-- route-stop
-- location-log
+**Güvenlik:**
+- `x-tenant-id` header zorunlu (AI/Mebbis servisleri)
+- 'default' tenant değeri reddedilir
+- Geçersiz format kontrolü

@@ -363,9 +363,11 @@ services:
   redis:
     image: redis:7-alpine
     restart: always
-    command: redis-server --save 60 1
+    command: redis-server --requirepass ${REDIS_PASSWORD} --maxmemory-policy noeviction
     volumes:
       - redis_data:/data
+    ports:
+      - "6380:6379"
 
   strapi:
     build: ./strapi

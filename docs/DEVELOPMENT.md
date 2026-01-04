@@ -6,104 +6,208 @@ Welcome to the development guide for **Arkadaş Özel Eğitim ERP**. This docume
 
 Before starting, ensure you have the following installed:
 
-*   **Docker** & **Docker Compose** (v2.0+)
-*   **Node.js** (v18 or v20 LTS)
-*   **Git**
+| Software | Minimum | Recommended |
+|----------|---------|-------------|
+| Node.js | 18.x | 22.x |
+| Python | 3.10 | 3.13 |
+| Docker | 20.x | 24.x |
+| RAM | 8 GB | 16 GB |
 
 ### Optional but Recommended
-*   **Infisical CLI**: For managing secrets locally (or use `.env` files).
-*   **TablePlus** or **DBeaver**: For database inspection.
+- **Infisical CLI**: For managing secrets locally
+- **TablePlus** or **DBeaver**: For database inspection
 
 ---
 
-## 1. Initial Setup
+## 1. Quick Start
 
-### Clone the Repository
 ```bash
+# 1. Clone and install
 git clone <repository-url>
 cd arkadasozelegitim
+npm run install:all
+
+# 2. Generate environment files
+npm run setup:env
+
+# 3. Reset and seed database
+npm run reset
+
+# 4. Start development
+npm run dev
 ```
 
-### Configure Environment Variables (Infisical)
-We use **Infisical** for secret management. You do **not** need to manually create `.env` files.
+---
 
-**Run the setup script:**
+## 2. Port Map
+
+| Service | Port | URL |
+|---------|------|-----|
+| Web (Next.js) | 3000 | http://localhost:3000 |
+| Strapi CMS | 1337 | http://localhost:1337/admin |
+| AI Service | 8000 | http://localhost:8000/docs |
+| Mebbis Service | 4000 | http://localhost:4000 |
+| PostgreSQL | 5432 | - |
+| Redis | 6380 | - |
+| OnlyOffice | 8080 | http://localhost:8080 |
+| Mobile (Expo) | 8085 | expo://localhost:8085 |
+| SFTPGo | 8088 | http://localhost:8088 (optional) |
+
+---
+
+## 3. Running Services
+
+### All Services
+```bash
+npm run dev
+```
+
+### Individual Services
+```bash
+npm run dev:strapi    # Strapi CMS
+npm run dev:web       # Next.js Frontend
+npm run dev:ai        # AI Face Recognition
+npm run dev:mebbis    # MEBBIS Automation
+npm run dev:mobile    # Expo Mobile
+npm run dev:docs      # MkDocs (port 8001)
+```
+
+---
+
+## 4. Docker Services
+
+### Core Infrastructure (always running)
+```bash
+docker compose up -d
+```
+
+### Optional: SFTPGo File Storage
+```bash
+# Create directories first
+mkdir -p databases/sftpgo/data databases/sftpgo/config
+
+# Start SFTPGo
+docker compose --profile storage up -d
+
+# Access: http://localhost:8088
+# Credentials: check SFTPGO_ADMIN_* in .env
+```
+
+### View Logs
+```bash
+docker compose logs -f           # All services
+docker compose logs -f postgres  # Specific service
+```
+
+---
+
+## 5. Environment Variables
+
+### With Infisical (Recommended)
 ```bash
 bash scripts/setup_infisical.sh
 ```
 
-This script will:
-1. Install Infisical CLI.
-2. Authenticate you.
-3. Link your local repo to the cloud project.
-4. Import any existing `.env` files you might have (optional).
+### Manual Setup
+```bash
+npm run setup:env
+```
 
-Once setup, all `npm run dev` commands will automatically fetch the latest secrets.
+This generates:
+- `.env` - Root (Docker)
+- `strapi/.env` - Strapi
+- `web/.env.local` - Next.js
+- `ai-service/.env` - Python AI
+- `mebbis-service/.env` - Mebbis
 
 ---
 
-## 2. Running the Application
+## 6. Database Management
 
- We use Docker Compose to spin up all services (Postgres, Redis, Strapi, Web, AI Service, Mebbis Service).
-
-### Start Development Environment
+### Reset Everything
 ```bash
-npm run dev:docker
-```
-*This command starts the `core` profile services (Postgres, Redis).*
-
-To start **ALL** services (including apps):
-```bash
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+npm run reset
 ```
 
-### Access Points
-*   **Web App**: [http://localhost:3000](http://localhost:3000)
-*   **Strapi Admin**: [http://localhost:1337/admin](http://localhost:1337/admin)
-*   **Mebbis Service**: [http://localhost:4000](http://localhost:4000)
-*   **AI Service**: [http://localhost:8000/docs](http://localhost:8000/docs)
-*   **Uptime Kuma**: [http://localhost:3001](http://localhost:3001) (if enabled)
-*   **Dozzle (Logs)**: [http://localhost:8888](http://localhost:8888)
+This will:
+1. Stop and remove all containers
+2. Delete database volumes
+3. Regenerate environment files
+4. Rebuild Strapi
+5. Seed default data
+
+### Direct Database Access
+```bash
+# PostgreSQL
+psql -h localhost -p 5432 -U postgres -d arkadas_erp
+
+# Redis
+redis-cli -h localhost -p 6380 -a <REDIS_PASSWORD>
+```
 
 ---
 
-## 3. Database Management
+## 7. Testing
 
-### Resetting the Database
-If you need a completely fresh start (wiping all data):
+### All Tests
 ```bash
-./scripts/reset_docker.sh
+npm run test
 ```
-*Warning: This deletes all docker volumes!*
+
+### By Service
+```bash
+npm run test:web      # Next.js tests
+npm run test:strapi   # Strapi build check
+npm run test:ai       # Python pytest
+npm run test:mebbis   # Mebbis tests
+npm run test:mobile   # TypeScript check
+```
+
+### E2E Tests
+```bash
+npm run test:e2e
+```
+
+---
+
+## 8. Troubleshooting
 
 ### Port Conflicts
-*   **Redis**: Mapped to host port `6380` to avoid conflicts with local Redis instances.
-*   **Postgres**: Mapped to host port `5432`.
+```bash
+# Find what's using a port
+ss -tlnp | grep <PORT>
+
+# Kill process on port
+fuser -k <PORT>/tcp
+```
+
+### Redis Authentication
+Ensure `REDIS_PASSWORD` matches in:
+- `.env` (Docker)
+- `mebbis-service/.env`
+
+### Mobile Build Errors
+```bash
+cd mobile
+npm install babel-plugin-module-resolver --save-dev
+npx expo start -c  # Clear cache
+```
+
+### Strapi Build Fails
+```bash
+rm -rf strapi/.tmp strapi/dist strapi/.cache
+npm run build:strapi
+```
 
 ---
 
-## 4. Testing
+## 9. Common Commands
 
-### Run All Tests
 ```bash
-./scripts/run-tests.sh
+npm run dev           # Start all services
+npm run stop          # Stop all services
+npm run reset         # Full reset with seed
+npm run lint          # Run linters
+npm run typecheck     # TypeScript check
+npm run build         # Production build
 ```
-
-### Web Unit Tests
-```bash
-cd web
-npm run test:unit
-```
-
-### E2E Tests (Playwright)
-```bash
-cd web
-npx playwright test --project=chromium
-```
-
----
-
-## 5. Troubleshooting
-
-*   **"React not found"**: Run `npm install` in `web/` to link dependencies.
-*   **Port 5432/6379 in use**: Check if you have local Postgres/Redis running (`sudo systemctl status postgresql`) or use the `scripts/reset_docker.sh` script.
