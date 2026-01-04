@@ -7,5 +7,7 @@ export { default as isAdmin } from './is-admin';
 export { default as isTeacher } from './is-teacher';
 export { default as isParent } from './is-parent';
 export { default as isDriver } from './is-driver';
+export { default as isAuthenticated } from './is-authenticated';
 export { default as hasPermission } from './has-permission';
 export { default as isOwner } from './is-owner';
+

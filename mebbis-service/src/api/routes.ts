@@ -31,8 +31,11 @@ import { logger } from '../utils/logger';
 import { getTenantCredentials } from '../utils/tenant';
 
 // Redis connection for job queue
-const redisConnection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', {
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6380';
+const redisPassword = process.env.REDIS_PASSWORD || 'changeme';
+const redisConnection = new IORedis(redisUrl, {
     maxRetriesPerRequest: null,
+    password: redisPassword,
 });
 
 // Job queues

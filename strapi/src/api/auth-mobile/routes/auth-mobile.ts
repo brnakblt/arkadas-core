@@ -36,8 +36,10 @@ export default {
             path: '/auth/mobile/me',
             handler: 'auth-mobile.me',
             config: {
-                policies: ['is-authenticated'],
+                // Use Strapi's built-in auth instead of custom policy
+                policies: [],
             },
         },
     ],
 };
+

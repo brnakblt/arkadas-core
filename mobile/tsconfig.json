@@ -48,5 +48,6 @@
     ".expo",
     "dist",
     "babel.config.js"
-  ]
+  ],
+  "extends": "expo/tsconfig.base"
 }

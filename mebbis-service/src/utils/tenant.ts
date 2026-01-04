@@ -6,7 +6,9 @@ import { MebbisConfig } from '../services/mebbis-automation';
 
 // Cache credentials to avoid hitting Strapi on every request
 // In a real app, listen for Strapi webhooks to invalidate this cache
-export const redis = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');
+export const redis = new IORedis(process.env.REDIS_URL || 'redis://localhost:6380', {
+    password: process.env.REDIS_PASSWORD || 'changeme',
+});
 const CACHE_TTL = 300; // 5 minutes
 
 export async function getTenantCredentials(tenantId: string | number): Promise<Partial<MebbisConfig>> {

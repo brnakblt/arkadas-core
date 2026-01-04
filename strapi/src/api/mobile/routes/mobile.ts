@@ -1,5 +1,6 @@
 /**
  * Mobile API Routes
+ * All routes require authentication (handled by controller)
  */
 
 export default {
@@ -9,7 +10,7 @@ export default {
             path: '/mobile/today',
             handler: 'mobile.today',
             config: {
-                policies: ['is-authenticated'],
+                policies: [],
                 middlewares: [],
             },
         },
@@ -18,7 +19,7 @@ export default {
             path: '/mobile/schedule/:date',
             handler: 'mobile.schedule',
             config: {
-                policies: ['is-authenticated'],
+                policies: [],
                 middlewares: [],
             },
         },
@@ -27,7 +28,7 @@ export default {
             path: '/mobile/checkin',
             handler: 'mobile.checkin',
             config: {
-                policies: ['is-authenticated'],
+                policies: [],
                 middlewares: [],
             },
         },
@@ -36,7 +37,7 @@ export default {
             path: '/mobile/attendance',
             handler: 'mobile.attendance',
             config: {
-                policies: ['is-authenticated'],
+                policies: [],
                 middlewares: [],
             },
         },
@@ -45,7 +46,7 @@ export default {
             path: '/mobile/my-students',
             handler: 'mobile.myStudents',
             config: {
-                policies: ['is-authenticated'],
+                policies: [],
                 middlewares: [],
             },
         },

@@ -11,8 +11,9 @@ import {
     createBepService,
 } from '../services';
 
-const redisConnection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', {
+const redisConnection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6380', {
     maxRetriesPerRequest: null,
+    password: process.env.REDIS_PASSWORD || 'changeme',
 });
 
 /**

@@ -1,6 +1,22 @@
 # Minimal Docker Compose - Core Infrastructure Only
 # Apps (Web, Strapi, AI, Mebbis) run natively for faster development
 
+# ==========================================
+# PORT ALLOCATION (Conflict-Free)
+# ==========================================
+# PostgreSQL:     5432
+# Redis:          6380
+# Web (Next.js):  3000
+# Strapi CMS:     1337
+# Mebbis Service: 4000
+# AI Service:     8000
+# Docs (MkDocs):  8001
+# OnlyOffice:     8080
+# SFTPGo Admin:   8088 (optional)
+# SFTPGo WebDAV:  8089 (optional)
+# Mobile (Expo):  8085
+# ==========================================
+
 services:
   # ==========================================
   # Core Infrastructure (Always Required)
@@ -49,7 +65,7 @@ services:
     image: onlyoffice/documentserver:latest
     restart: unless-stopped
     ports:
-      - "8081:80"
+      - "8080:80"
     environment:
       JWT_ENABLED: "true"
       JWT_SECRET: ${JWT_SECRET:-secret}
@@ -59,6 +75,11 @@ services:
       - ./databases/onlyoffice/data:/var/www/onlyoffice/Data
       - ./databases/onlyoffice/log:/var/log/onlyoffice
       - ./databases/onlyoffice/cache:/var/lib/onlyoffice/documentserver/App_Data/cache/files
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost/healthcheck" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     deploy:
       resources:
         limits:
@@ -66,19 +87,20 @@ services:
 
   # ==========================================
   # Optional: SFTPGo for file storage
+  # Start with: docker compose --profile storage up -d
   # ==========================================
   sftpgo:
     profiles: [ storage ]
     image: drakkan/sftpgo:latest
     restart: unless-stopped
     ports:
-      - "8082:8080" # WebAdmin/API
-      - "8090:8090" # WebDAV
+      - "8088:8080" # WebAdmin/API
+      - "8089:8089" # WebDAV
     environment:
       SFTPGO_HTTPD__BINDINGS__0__PORT: 8080
       SFTPGO_HTTPD__BINDINGS__0__ENABLE_WEB_ADMIN: "true"
       SFTPGO_HTTPD__BINDINGS__0__ENABLE_REST_API: "true"
-      SFTPGO_WEBDAVD__BINDINGS__0__PORT: 8090
+      SFTPGO_WEBDAVD__BINDINGS__0__PORT: 8089
       SFTPGO_DATA_PROVIDER__DRIVER: sqlite
       SFTPGO_DATA_PROVIDER__NAME: /var/lib/sftpgo/sftpgo.db
       SFTPGO_DEFAULT_ADMIN_USERNAME: ${SFTPGO_ADMIN_USER:-admin}

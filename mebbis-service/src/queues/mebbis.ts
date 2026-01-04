@@ -2,9 +2,10 @@ import { Worker, Job } from 'bullmq';
 import { Redis } from 'ioredis';
 import { chromium } from 'playwright';
 
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6380';
 const connection = new Redis(redisUrl, {
     maxRetriesPerRequest: null,
+    password: process.env.REDIS_PASSWORD || 'changeme',
 });
 
 export const mebbisWorker = new Worker('mebbis-automation', async (job: Job) => {

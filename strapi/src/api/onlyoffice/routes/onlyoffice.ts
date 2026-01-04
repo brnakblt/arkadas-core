@@ -18,7 +18,7 @@ export default {
             path: '/onlyoffice/lock/:documentId',
             handler: 'callback.getLock',
             config: {
-                policies: ['is-authenticated'],
+                policies: [],
             },
         },
         {
@@ -26,7 +26,7 @@ export default {
             path: '/onlyoffice/lock/:documentId',
             handler: 'callback.acquireLock',
             config: {
-                policies: ['is-authenticated'],
+                policies: [],
             },
         },
         {
@@ -34,7 +34,7 @@ export default {
             path: '/onlyoffice/lock/:documentId',
             handler: 'callback.releaseLock',
             config: {
-                policies: ['is-authenticated'],
+                policies: [],
             },
         },
     ],
