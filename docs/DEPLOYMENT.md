@@ -1,6 +1,40 @@
-# Arkadaş ERP Production Deployment Guide
+## 🌐 Deployment to a Home Server (Laptop)
 
-> **Hedef**: Sıfırdan sunucu kurulumu, Infisical ile secret yönetimi, ve production deployment
+If you are using a laptop (Ubuntu) as your production server and want to avoid port conflicts with existing services (like `lila.arkadasozelegitim.com` on Windows), follow this path.
+
+### 1. Install Docker & Coolify
+Follow the standard Docker installation for Ubuntu. Then install Coolify to manage your deployments via GitHub.
+```bash
+curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+```
+
+### 2. Bypass Port Forwarding (Cloudflare Tunnels)
+Since Port 80/443 might be in use by other office systems, use a tunnel.
+
+1. **Install cloudflared:**
+   ```bash
+   curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o cloudflared.deb
+   sudo dpkg -i cloudflared.deb
+   ```
+
+2. **Setup Tunnel:**
+   ```bash
+   cloudflared tunnel login
+   cloudflared tunnel create arkadas-prod
+   cloudflared tunnel route dns arkadas-prod arkadasozelegitim.com
+   ```
+
+3. **Configure the Tunnel to point to your Web container:**
+   Edit the config or run:
+   ```bash
+   cloudflared tunnel run --url http://localhost:3000 arkadas-prod
+   ```
+
+### 3. Coolify Workflow
+1. Connect your GitHub.
+2. Point the project to `main` branch.
+3. Use `docker-compose.prod.yml` (located in root).
+4. Coolify will build and restart services on every `git push`.
 
 ---
 
