@@ -516,6 +516,7 @@ export interface ApiAttendanceLogAttendanceLog extends Struct.CollectionTypeSche
     photoUrl: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     recordedAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
@@ -816,6 +817,37 @@ export interface ApiContactMessageContactMessage extends Struct.CollectionTypeSc
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiDeviceTokenDeviceToken extends Struct.CollectionTypeSchema {
+  collectionName: 'device_tokens';
+  info: {
+    description: 'Mobile push notification tokens';
+    displayName: 'Device Token';
+    pluralName: 'device-tokens';
+    singularName: 'device-token';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    deviceId: Schema.Attribute.String;
+    deviceName: Schema.Attribute.String;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    lastUsedAt: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::device-token.device-token'> &
+      Schema.Attribute.Private;
+    platform: Schema.Attribute.Enumeration<['ios', 'android', 'web']> & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
+    token: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
   };
 }
 
@@ -1627,6 +1659,7 @@ export interface ApiScheduleSchedule extends Struct.CollectionTypeSchema {
     startTime: Schema.Attribute.DateTime & Schema.Attribute.Required;
     status: Schema.Attribute.Enumeration<['scheduled', 'cancelled', 'completed']> &
       Schema.Attribute.DefaultTo<'scheduled'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
@@ -1791,6 +1824,7 @@ export interface ApiStudentProfileStudentProfile extends Struct.CollectionTypeSc
         maxLength: 11;
         minLength: 11;
       }>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'oneToOne', 'plugin::users-permissions.user'>;
@@ -1915,6 +1949,37 @@ export interface ApiTelafiEgitimiTelafiEgitimi extends Struct.CollectionTypeSche
     teacher: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTenantTenant extends Struct.CollectionTypeSchema {
+  collectionName: 'tenants';
+  info: {
+    description: 'Multi-tenant organization';
+    displayName: 'Tenant';
+    pluralName: 'tenants';
+    singularName: 'tenant';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    displayName: Schema.Attribute.String;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::tenant.tenant'> &
+      Schema.Attribute.Private;
+    logo: Schema.Attribute.Media<'images'>;
+    name: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    settings: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<{}>;
+    slug: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
+    subdomain: Schema.Attribute.String & Schema.Attribute.Unique;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    users: Schema.Attribute.Relation<'oneToMany', 'plugin::users-permissions.user'>;
   };
 }
 
@@ -2462,6 +2527,7 @@ declare module '@strapi/strapi' {
       'api::bireysel-egitim-plani.bireysel-egitim-plani': ApiBireyselEgitimPlaniBireyselEgitimPlani;
       'api::category.category': ApiCategoryCategory;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
+      'api::device-token.device-token': ApiDeviceTokenDeviceToken;
       'api::donem-sonu-degerlendirme.donem-sonu-degerlendirme': ApiDonemSonuDegerlendirmeDonemSonuDegerlendirme;
       'api::erp-role.erp-role': ApiErpRoleErpRole;
       'api::faq.faq': ApiFaqFaq;
@@ -2489,6 +2555,7 @@ declare module '@strapi/strapi' {
       'api::teacher-profile.teacher-profile': ApiTeacherProfileTeacherProfile;
       'api::team-member.team-member': ApiTeamMemberTeamMember;
       'api::telafi-egitimi.telafi-egitimi': ApiTelafiEgitimiTelafiEgitimi;
+      'api::tenant.tenant': ApiTenantTenant;
       'api::terapi-cetveli.terapi-cetveli': ApiTerapiCetveliTerapiCetveli;
       'api::two-factor-auth.two-factor-auth': ApiTwoFactorAuthTwoFactorAuth;
       'api::ucret-hesaplama.ucret-hesaplama': ApiUcretHesaplamaUcretHesaplama;

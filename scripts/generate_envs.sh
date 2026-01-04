@@ -98,6 +98,10 @@ generate_env_file() {
         # MEBBIS (Root & Service)
         sed -i "s|MEBBIS_PASSWORD=.*|MEBBIS_PASSWORD=${MEBBIS_PASSWORD}|" "$target_file" || true
         
+        # Redis credentials (for services that need it)
+        sed -i "s|REDIS_PASSWORD=.*|REDIS_PASSWORD=${REDIS_PASSWORD}|" "$target_file" || true
+        sed -i "s|REDIS_URL=.*|REDIS_URL=redis://localhost:6380|" "$target_file" || true
+        
         # Encryption Key for PII
         sed -i "s|ENCRYPTION_KEY=.*|ENCRYPTION_KEY=${ENCRYPTION_KEY}|" "$target_file" || true
         # Assuming MEBBIS_USERNAME is static or prompted? It's not prompted currently. 
