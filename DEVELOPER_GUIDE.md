@@ -6,12 +6,31 @@ Welcome to the development guide for the Arkadaş Özel Eğitim Monorepo. This p
 
 This is a TurboRepo monorepo.
 
-*   **`web`**: Next.js 14 application (Teacher/Parent Dashboard).
-*   **`mobile`**: Expo / React Native application (Parent App).
-*   **`strapi`**: Headless CMS & Source of Truth (Postgres).
-*   **`mebbis-service`**: Node.js/Express service for MEBBIS automation.
-*   **`ai-service`**: FastAPI Python service for Face Recognition & LLM features.
-*   **`scripts`**: Utility scripts for setup, maintenance, and backup.
+| Directory | Description |
+|-----------|-------------|
+| `web/` | Next.js 16 Frontend (Teacher/Parent Dashboard) |
+| `mobile/` | Expo / React Native (Parent App) |
+| `strapi/` | Strapi v5 CMS (Postgres backend) |
+| `mebbis-service/` | MEBBİS automation (Node.js/Express) |
+| `ai-service/` | Face Recognition & LLM (Python/FastAPI) |
+| `docs/` | MkDocs documentation |
+| `scripts/` | Utility scripts |
+
+---
+
+## 🌐 Port Map
+
+| Service | Port | URL |
+|---------|------|-----|
+| Web (Next.js) | 3000 | http://localhost:3000 |
+| Strapi CMS | 1337 | http://localhost:1337/admin |
+| AI Service | 8000 | http://localhost:8000/docs |
+| Mebbis Service | 4000 | http://localhost:4000 |
+| PostgreSQL | 5432 | - |
+| Redis | 6380 | - |
+| OnlyOffice | 8080 | http://localhost:8080 |
+| Mobile (Expo) | 8085 | expo://localhost:8085 |
+| SFTPGo | 8088 | http://localhost:8088 (optional) |
 
 ---
 
@@ -19,121 +38,183 @@ This is a TurboRepo monorepo.
 
 ### Prerequisites
 
-*   **Node.js**: v20+ (Managed via `nvm` recommended).
-*   **Docker & Docker Compose**: Essential for database and backend services.
-*   **Python**: v3.11+ (For AI Service).
-*   **Git**: Version control.
-*   **Infisical CLI**: For secret management (Installed automatically by setup script if on Linux).
+| Software | Minimum | Recommended |
+|----------|---------|-------------|
+| Node.js | 18.x | 22.x |
+| Python | 3.10 | 3.13 |
+| Docker | 20.x | 24.x |
+| RAM | 8 GB | 16 GB |
 
-### Initial Setup
+### Quick Setup
 
-1.  **Clone the repository**:
-    ```bash
-    git clone <repo-url>
-    cd arkadasozelegitim
-    ```
+```bash
+# 1. Clone
+git clone <repo-url>
+cd arkadasozelegitim
 
-2.  **Install Dependencies**:
-    Dependencies are managed at the root level via npm workspaces.
-    ```bash
-    npm install
-    ```
+# 2. Install all dependencies
+npm run install:all
 
-3.  **Setup Infisical (Secret Management)**:
-    We use Infisical to manage secrets centrally. Run the setup script to install the CLI and configure the project.
-    ```bash
-    bash scripts/setup_infisical.sh
-    ```
-    *Follow the on-screen prompts to login and select the project.*
+# 3. Generate environment files
+npm run setup:env
 
-4.  **Start Docker Infrastructure**:
-    Before running apps, ensure databases (Postgres, Redis) are up.
-    ```bash
-    npm run dev:docker
-    ```
+# 4. Reset and seed database
+npm run reset
 
-5.  **Run Development Mode**:
-    This starts all services (Web, Strapi, Mobile, AI) in parallel.
-    ```bash
-    npm run dev
-    ```
-
-6.  **Seed Initial Data (Students & Staff)**:
-    Required for the first run. Populates database from Excel/XML files.
-    ```bash
-    cd strapi
-    npm run script scripts/seed_xml.js
-    ```
-    *Note: Ensure `web/public/excel/ogrencilistesi.xml` and `personellistesi.xml` are present. These files are git-ignored for privacy.*
+# 5. Start development
+npm run dev
+```
 
 ---
 
-## 🛠️ Development Workflow
+## 🛠️ NPM Commands
 
-### Useful Commands
-
+### Development
 | Command | Description |
-| :--- | :--- |
-| `npm run dev` | Start the full stack (Web, Strapi, AI, Mobile, Mebbis). |
-| `npm run dev:web` | Start only the Next.js Web App. |
-| `npm run dev:mobile` | Start the Expo Mobile App. |
-| `npm run build` | Build all applications using Turbo. |
-| `npm run lint` | Lint all applications. |
-| `npm run reset` | **DANGER**: Wipes all databases and resets the project to fresh state. |
-| `npm run stop` | Stops all Docker containers and running processes. |
+|---------|-------------|
+| `npm run dev` | Start all services |
+| `npm run dev:strapi` | Strapi only |
+| `npm run dev:web` | Next.js only |
+| `npm run dev:mobile` | Expo only |
+| `npm run dev:ai` | AI Service only |
+| `npm run dev:mebbis` | Mebbis only |
 
-### Mobile Development (Expo)
+### Build & Test
+| Command | Description |
+|---------|-------------|
+| `npm run build` | Production build |
+| `npm run lint` | Lint all packages |
+| `npm run typecheck` | TypeScript check |
+| `npm run test` | Run tests |
 
-*   **Running**: `npm run dev:mobile` starts the Metro Bundler.
-*   **Android/iOS**: Press `a` or `i` in the terminal to open the emulator.
-*   **Troubleshooting**:
-    *   If you see `ReactCurrentDispatcher` or duplicates, run `npm install --legacy-peer-deps` and restart.
-    *   If you see `EACCES` errors, ensure Metro is ignoring the `databases/` folder (fixed in `metro.config.js`).
+### Management
+| Command | Description |
+|---------|-------------|
+| `npm run reset` | **DANGER**: Wipe DB and reseed |
+| `npm run stop` | Stop all services |
+| `npm run setup:env` | Generate .env files |
 
-### AI Development (Python)
+---
 
-*   The AI service runs on port `8000`.
-*   Swagger Docs: `http://localhost:8000/docs`.
-*   Dependency Management: `ai-service/requirements.txt`.
-*   **IEP Generator**: Requires `OPENAI_API_KEY` in `.env`.
+## 🐳 Docker Services
+
+### Core Infrastructure
+```bash
+docker compose up -d  # PostgreSQL, Redis, OnlyOffice
+```
+
+### Optional: SFTPGo
+```bash
+docker compose --profile storage up -d
+```
+
+### Check Status
+```bash
+docker compose ps
+docker compose logs -f <service>
+```
+
+---
+
+## 📱 Mobile Development (Expo)
+
+```bash
+npm run dev:mobile  # Starts on port 8085
+```
+
+- Press `a` for Android emulator
+- Press `i` for iOS simulator
+- Scan QR with Expo Go app
+
+### Troubleshooting
+```bash
+# Clear cache
+cd mobile && npx expo start -c
+
+# Missing babel plugin
+npm install babel-plugin-module-resolver --save-dev
+```
+
+---
+
+## 🤖 AI Service Development
+
+- **Port**: 8000
+- **Docs**: http://localhost:8000/docs
+- **Framework**: FastAPI + Python 3.13
+
+### Setup
+```bash
+cd ai-service
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Required Environment
+```
+OPENAI_API_KEY=...  # For LLM features
+AI_SERVICE_API_KEY=...  # Required for authentication
+```
+
+---
+
+## � Security
+
+### Authentication
+- **Fail-Closed**: Services reject requests if API key is not configured
+- **Rate Limiting**: Login endpoint: 5 attempts/15 minutes
+- **Tenant Isolation**: All data is tenant-scoped via `x-tenant-id`
+
+### API Keys
+| Service | Env Variable |
+|---------|--------------|
+| AI Service | `AI_SERVICE_API_KEY` |
+| Mebbis | `MEBBIS_SERVICE_API_KEY` |
+| Strapi | `STRAPI_API_TOKEN` |
 
 ---
 
 ## 🔧 Troubleshooting
 
-### 1. `ECONNREFUSED` Errors
-*   **Cause**: Docker containers (Postgres/Redis) are not running or healthy.
-*   **Fix**: Run `npm run dev:docker` and wait for "healthy" status. Check `docker ps`.
+### Redis Authentication Errors
+Ensure `REDIS_PASSWORD` matches in:
+- `.env` (Docker)
+- `mebbis-service/.env`
 
-### 2. Metro Bundler "Permission Denied"
-*   **Cause**: Metro trying to watch Docker-locked database folders.
-*   **Fix**: Already configured in `mobile/metro.config.js` to exclude `databases/`.
+### Port Conflicts
+```bash
+ss -tlnp | grep <PORT>  # Find what's using port
+fuser -k <PORT>/tcp     # Kill process
+```
 
-### 3. Strapi "Vite Cache" Errors
-*   **Cause**: React version mismatch or corrupt `.strapi` folder.
-*   **Fix**: Run `npm run stop` then `rm -rf strapi/.strapi strapi/build`.
+### Strapi Build Errors
+```bash
+rm -rf strapi/.tmp strapi/dist strapi/.cache
+npm run build:strapi
+```
+
+### Metro Bundler Issues
+Already configured to exclude `databases/` in `mobile/metro.config.js`.
 
 ---
 
-## 📦 Deployment & Backups
+## 📦 CI/CD
 
-### Automated Backups
-*   **Script**: `scripts/verify_backup.sh`
-*   **Usage**: Run manually or via CI to verify database backup/restore integrity.
-
-### CI/CD
-*   GitHub Actions workflow (`.github/workflows/ci.yml`) runs on push:
-    *   Linting
-    *   Unit Tests (`vitest`)
-    *   E2E Tests (`playwright`)
-    *   Backup Verification
-    *   Build Verification
+GitHub Actions (`.github/workflows/ci.yml`):
+- ✅ Linting
+- ✅ TypeScript check
+- ✅ Unit Tests (Vitest)
+- ✅ E2E Tests (Playwright)
+- ✅ Build Verification
 
 ---
 
 ## 📝 Scripts Reference
 
-*   `scripts/setup_arch.sh`: Setup script for Arch Linux env (User specific).
-*   `scripts/setup_ubuntu_server.sh`: Provisioning script for Ubuntu VPS.
-*   `scripts/generate_envs.sh`: Secure secret generation.
-*   `scripts/verify_backup.sh`: Disaster recovery testing.
+| Script | Description |
+|--------|-------------|
+| `scripts/setup_infisical.sh` | Infisical setup |
+| `scripts/generate_envs.sh` | Generate .env files |
+| `scripts/reset_project.sh` | Full reset with seed |
+| `scripts/verify_backup.sh` | Backup verification |
