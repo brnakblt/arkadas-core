@@ -123,17 +123,17 @@ generate_env_file "${PROJECT_ROOT}/.env.reference" "${PROJECT_ROOT}/.env" "Root 
 generate_env_file "${PROJECT_ROOT}/strapi/.env.reference" "${PROJECT_ROOT}/strapi/.env" "Strapi"
 
 # 3. Web .env
-# Web uses .env.local usually, but let's check reference
-if [ -f "${PROJECT_ROOT}/web/.env.example" ]; then
-    generate_env_file "${PROJECT_ROOT}/web/.env.example" "${PROJECT_ROOT}/web/.env.local" "Web"
+# Web uses .env.local usually
+if [ -f "${PROJECT_ROOT}/web/.env.reference" ]; then
+    generate_env_file "${PROJECT_ROOT}/web/.env.reference" "${PROJECT_ROOT}/web/.env.local" "Web"
 fi
 
 # 4. Service Envs (Mebbis, AI)
-if [ -f "${PROJECT_ROOT}/mebbis-service/.env.example" ]; then
-    generate_env_file "${PROJECT_ROOT}/mebbis-service/.env.example" "${PROJECT_ROOT}/mebbis-service/.env" "Mebbis Service"
+if [ -f "${PROJECT_ROOT}/mebbis-service/.env.reference" ]; then
+    generate_env_file "${PROJECT_ROOT}/mebbis-service/.env.reference" "${PROJECT_ROOT}/mebbis-service/.env" "Mebbis Service"
 fi
-if [ -f "${PROJECT_ROOT}/ai-service/.env.example" ]; then
-    generate_env_file "${PROJECT_ROOT}/ai-service/.env.example" "${PROJECT_ROOT}/ai-service/.env" "AI Service"
+if [ -f "${PROJECT_ROOT}/ai-service/.env.reference" ]; then
+    generate_env_file "${PROJECT_ROOT}/ai-service/.env.reference" "${PROJECT_ROOT}/ai-service/.env" "AI Service"
 fi
 
 
