@@ -52,8 +52,8 @@ bash scripts/generate_envs.sh
 # Check if Infisical is available
 if command -v infisical &> /dev/null && [ -f ".infisical.json" ]; then
     echo -e "${YELLOW}Syncing secrets to Infisical (EU)...${NC}"
-    # Use interactive mode by default to allow initial login
-    bash scripts/setup_infisical.sh 2>/dev/null || echo "Infisical sync skipped"
+    # Remove redirection to allow interactive login prompt to be seen
+    bash scripts/setup_infisical.sh || echo "Infisical sync skipped"
 fi
 
 # Exit on error from here
