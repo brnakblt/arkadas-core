@@ -147,6 +147,20 @@ redis-cli -h localhost -p 6380 -a <REDIS_PASSWORD>
 
 ---
 
+## 🏗️ Architecture & Workflow
+
+We use a dual-environment setup:
+- **Development (Arch Linux):** Where you code and test.
+- **Production (Ubuntu Home Server):** Where the app is served via Docker.
+
+### The "Push-to-Deploy" Workflow
+1. Develop on Arch using `npm run dev`.
+2. Push to `main` branch.
+3. **Coolify** (on Ubuntu) auto-builds and deploys the `docker-compose.prod.yml` stack.
+4. **Cloudflare Tunnel** (on Ubuntu) routes traffic securely without needing port-forwarding.
+
+---
+
 ## 7. Testing
 
 ### All Tests

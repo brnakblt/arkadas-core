@@ -96,6 +96,24 @@ npm run dev
 
 ---
 
+---
+
+## 🏗️ Architecture & Workflow
+
+We use a dual-environment setup to ensure production stability while maintaining high development velocity.
+
+### Environments
+- **Development (Arch Linux Laptop):** Local machine where code is written, linted, and tested.
+- **Production (Ubuntu Laptop - Home Server):** Dedicated hardware serving the app via Docker.
+
+### The "Push-to-Deploy" Workflow
+1. **Develop** locally on your Arch machine using `npm run dev`.
+2. **Commit** and **Push** changes to the `main` branch on GitHub.
+3. **Coolify** (running on your Ubuntu laptop) detects the push, pulls the code, and builds images.
+4. **Cloudflare Tunnel** (running on your Ubuntu laptop) routes `arkadasozelegitim.com` to your local Docker stack.
+
+---
+
 ## 🐳 Docker Services
 
 ### Core Infrastructure
@@ -103,11 +121,20 @@ npm run dev
 docker compose up -d  # PostgreSQL, Redis, OnlyOffice, SFTPGo
 ```
 
-### Check Status
-```bash
-docker compose ps
-docker compose logs -f <service>
-```
+### Production Stack
+For production deployment, we use `docker-compose.prod.yml` which includes all application services. This is managed automatically by Coolify.
+
+---
+
+## 🌐 Network & Access
+
+To avoid conflicts with existing services (like port 80/443 being used by other apps in the office), we use **Cloudflare Tunnels**.
+
+- **Public URL:** `https://arkadasozelegitim.com`
+- **Internal Mapping:** Tunnel points to `http://localhost:3000` (Web container).
+- **Security:** No ports need to be opened on the office router.
+
+---
 
 ---
 
@@ -154,19 +181,12 @@ AI_SERVICE_API_KEY=...  # Required for authentication
 
 ---
 
-## � Security
+## 🔐 Security
 
 ### Authentication
 - **Fail-Closed**: Services reject requests if API key is not configured
 - **Rate Limiting**: Login endpoint: 5 attempts/15 minutes
 - **Tenant Isolation**: All data is tenant-scoped via `x-tenant-id`
-
-### API Keys
-| Service | Env Variable |
-|---------|--------------|
-| AI Service | `AI_SERVICE_API_KEY` |
-| Mebbis | `MEBBIS_SERVICE_API_KEY` |
-| Strapi | `STRAPI_API_TOKEN` |
 
 ---
 
@@ -178,19 +198,25 @@ Ensure `REDIS_PASSWORD` matches in:
 - `mebbis-service/.env`
 
 ### Port Conflicts
+If port `80` or `443` is already taken on your network (e.g., by a Windows PC running another app), **do not use port forwarding**. Use the Cloudflare Tunnel setup described in [DEPLOYMENT.md](./docs/DEPLOYMENT.md).
+
+### Mobile Build Errors
 ```bash
-ss -tlnp | grep <PORT>  # Find what's using port
-fuser -k <PORT>/tcp     # Kill process
+cd mobile
+npm install babel-plugin-module-resolver --save-dev
+npx expo start -c  # Clear cache
 ```
 
-### Strapi Build Errors
-```bash
-rm -rf strapi/.tmp strapi/dist strapi/.cache
-npm run build:strapi
-```
+---
 
-### Metro Bundler Issues
-Already configured to exclude `databases/` in `mobile/metro.config.js`.
+## 📦 CI/CD
+
+GitHub Actions (`.github/workflows/ci.yml`):
+- ✅ Linting
+- ✅ TypeScript check
+- ✅ Unit Tests (Vitest)
+- ✅ E2E Tests (Playwright)
+- ✅ Build Verification
 
 ---
 
