@@ -51,7 +51,8 @@ bash scripts/generate_envs.sh
 
 # Check if Infisical is available
 if command -v infisical &> /dev/null && [ -f ".infisical.json" ]; then
-    echo -e "${YELLOW}Uploading secrets to Infisical...${NC}"
+    echo -e "${YELLOW}Syncing secrets to Infisical (EU)...${NC}"
+    # Use interactive mode by default to allow initial login
     bash scripts/setup_infisical.sh 2>/dev/null || echo "Infisical sync skipped"
 fi
 
@@ -76,15 +77,18 @@ mkdir -p strapi/public/uploads
 chmod 755 strapi/public/uploads
 
 # Build Strapi (with or without Infisical)
-if command -v infisical &> /dev/null && [ -f ".infisical.json" ]; then
+# Only use 'infisical run' if actually authenticated
+if command -v infisical &> /dev/null && [ -f ".infisical.json" ] && infisical secrets list --env dev --path "/" >/dev/null 2>&1; then
+    echo -e "${YELLOW}Building with Infisical secrets...${NC}"
     infisical run --path /strapi -- npm run build --prefix strapi
 else
+    echo -e "${YELLOW}Building with local .env files (Infisical not authenticated or skipped)...${NC}"
     npm run build --prefix strapi
 fi
 
 echo -e "\n${YELLOW}8. Seeding database (default tenant: arkadas)...${NC}"
 cd strapi
-if command -v infisical &> /dev/null && [ -f "../.infisical.json" ]; then
+if command -v infisical &> /dev/null && [ -f "../.infisical.json" ] && infisical secrets list --env dev --path "/" >/dev/null 2>&1; then
     infisical run --path /strapi -- node scripts/seed.js
 else
     node scripts/seed.js

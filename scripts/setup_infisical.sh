@@ -29,20 +29,46 @@ if ! command -v infisical &> /dev/null; then
     fi
 fi
 
-# 2. Login
-echo -e "\n${YELLOW}Step 1: Authentication${NC}"
+# 2. Configuration & Login
+echo -e "\n${YELLOW}Step 1: Configuration${NC}"
+
+# Set Infisical Domain (EU Region as requested)
+# Only set if not already environment defined
+if [ -z "$INFISICAL_API_URL" ]; then
+    export INFISICAL_API_URL="https://eu.infisical.com"
+fi
+echo "Using Infisical Domain: $INFISICAL_API_URL"
+
+# Handle arguments
+NON_INTERACTIVE=false
+for arg in "$@"; do
+  if [ "$arg" == "--non-interactive" ]; then
+    NON_INTERACTIVE=true
+  fi
+done
+
+# Try to check auth. We use 'infisical login --check' if available or just list secrets
 if infisical secrets list --env dev --path "/" >/dev/null 2>&1; then
-    echo "Already authenticated."
+    echo "Authenticated successfully."
 else
-    echo "Authentication required."
-    infisical login
+    if [ "$NON_INTERACTIVE" = "true" ]; then
+        echo -e "${YELLOW}Not authenticated to Infisical (EU). skipping interactive login.${NC}"
+        echo -e "${YELLOW}To fix, run manually: infisical login --domain https://eu.infisical.com${NC}"
+        exit 0
+    fi
+    echo "Authentication required for EU Region ($INFISICAL_API_URL)."
+    infisical login --domain "$INFISICAL_API_URL"
 fi
 
 # 3. Init Project
 echo -e "\n${YELLOW}Step 2: Initialize Project${NC}"
 if [ ! -f .infisical.json ]; then
+    if [ "$NON_INTERACTIVE" = "true" ]; then
+        echo -e "${RED}Infisical project not initialized (.infisical.json missing). skipping sync.${NC}"
+        exit 0
+    fi
     echo "Please select the project you created for Arkadaş ERP."
-    infisical init
+    infisical init --domain "$INFISICAL_API_URL"
 else
     echo "Project already initialized."
 fi
