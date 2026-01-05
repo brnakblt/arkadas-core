@@ -26,12 +26,13 @@ export interface TeamMember {
   link?: string;
 }
 
+// NOTE: Ideally import STRAPI_URL from config/constants
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
+
 const Team: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // const STRAPI_URL = "http://127.0.0.1:1337"; // Moved below or used from env
 
   const fetchTeamMembers = useCallback(async () => {
     const defaultCategories = [
@@ -124,10 +125,7 @@ const Team: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []); // Removed dependency on local var, using env inside fetch or hardcoded for now implies we need to fix the URL source.
-
-  // NOTE: Ideally import STRAPI_URL from config/constants
-  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
+  }, []);
 
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);

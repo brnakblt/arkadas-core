@@ -51,15 +51,44 @@ export async function GET(request: Request) {
 
             if (aiRes.ok) {
                 const aiData = await aiRes.json();
-                enrolledUserIds = (aiData.users || []).map((u: any) => u.user_id);
+                interface AIUser {
+                    user_id: string;
+                }
+
+                enrolledUserIds = (aiData.users || []).map((u: AIUser) => u.user_id);
             }
         } catch (error) {
             console.error('Failed to fetch AI enrollments:', error);
         }
 
+        interface StrapiStudent {
+            id: number;
+            documentId?: string;
+            attributes?: {
+                firstName?: string;
+                ad?: string;
+                lastName?: string;
+                soyad?: string;
+                photo?: {
+                    data?: {
+                        attributes?: { url: string };
+                    };
+                    url?: string;
+                };
+            };
+            // Flattened structure fallback
+            firstName?: string;
+            ad?: string;
+            lastName?: string;
+            soyad?: string;
+            photo?: {
+                url?: string;
+            };
+        }
+
         // Map students with enrollment status
-        const students = strapiStudents.map((s: any) => {
-            const attrs = s.attributes || s;
+        const students = strapiStudents.map((s: StrapiStudent) => {
+            const attrs = (s.attributes || s) as any;
             const studentIdStr = `student_${s.id}`;
             const isEnrolled = enrolledUserIds.includes(studentIdStr);
 

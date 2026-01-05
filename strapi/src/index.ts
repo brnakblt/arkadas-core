@@ -157,5 +157,17 @@ export default {
         console.error('[Admin Seeder] Failed to seed admin user:', error);
       }
     }
+
+    // --- Auto Seeding (Dev) ---
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🚧 Auto Seeding Triggered. NODE_ENV:', process.env.NODE_ENV);
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const seedAll = require('./seed-service');
+        await seedAll(strapi);
+      } catch (e) {
+        console.error('[Auto Seeding] Failed:', e);
+      }
+    }
   },
 };

@@ -140,7 +140,125 @@ async function manualUpload(filePath) {
     return fileEntry;
 }
 
-async function seedStudents(xmlPath, authenticatedRole) {
+class SftpGoService {
+    constructor(baseUrl, adminUser, adminPassword) {
+        this.baseUrl = baseUrl;
+        this.adminUser = adminUser;
+        this.adminPassword = adminPassword;
+        this.token = null;
+    }
+
+    async authenticate() {
+        try {
+            const authString = Buffer.from(`${this.adminUser}:${this.adminPassword}`).toString('base64');
+            const res = await fetch(`${this.baseUrl}/api/v2/token`, {
+                method: 'GET',
+                headers: { 'Authorization': `Basic ${authString}` }
+            });
+
+            if (!res.ok) {
+                console.error(`   SFTPGo Auth Error: ${res.status}`);
+                return false;
+            }
+
+            const data = await res.json();
+            this.token = data.access_token;
+            return true;
+        } catch (e) {
+            console.error(`   SFTPGo Not Reachable: ${e.message}`);
+            return false;
+        }
+    }
+
+    async createGroup(name, description) {
+        if (!this.token) return;
+
+        try {
+            const check = await fetch(`${this.baseUrl}/api/v2/groups/${name}`, {
+                headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+
+            if (check.ok) return; // Group exists
+
+            const groupData = {
+                name,
+                description,
+                permissions: {
+                    "/": ["*"]
+                }
+            };
+
+            const res = await fetch(`${this.baseUrl}/api/v2/groups`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(groupData)
+            });
+
+            if (res.ok) {
+                console.log(`   + SFTPGo Group created: ${name}`);
+            }
+        } catch (e) {
+            console.error(`   SFTPGo Group Failed (${name}):`, e.message);
+        }
+    }
+
+    async createUser(username, password, email, description, group) {
+        if (!this.token) return;
+
+        // Check if user exists
+        try {
+            // Optimistically try create, update if fails? Or check first?
+            // "check first" is safer for logs
+            const check = await fetch(`${this.baseUrl}/api/v2/users/${username}`, {
+                headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+
+            const userData = {
+                username,
+                password,
+                email,
+                status: 1,
+                description,
+                home_dir: `/srv/sftpgo/data/${username}`,
+                permissions: {}, // Inherit from group or default
+                filesystem: {
+                    provider: 0 // Local
+                }
+            };
+
+            if (group) {
+                // SFTPGo v2 uses 'groups' array of structs
+                userData.groups = [{ name: group, type: 1 }]; // 1 = Primary
+            }
+
+            const method = check.ok ? 'PUT' : 'POST';
+            const url = check.ok
+                ? `${this.baseUrl}/api/v2/users/${username}`
+                : `${this.baseUrl}/api/v2/users`;
+
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (!res.ok) {
+                const txt = await res.text();
+                // console.error(`   SFTPGo User Error (${username}): ${txt}`); 
+            }
+        } catch (e) {
+            console.error(`   SFTPGo User Sync Failed (${username}):`, e.message);
+        }
+    }
+}
+
+async function seedStudents(xmlPath, authenticatedRole, sftpGoService) {
     console.log('🚀 Seeding Students from XML...');
     if (!fs.existsSync(xmlPath)) return;
 
@@ -237,17 +355,27 @@ async function seedStudents(xmlPath, authenticatedRole) {
                 await strapi.entityService.create('api::student-profile.student-profile', { data: profileData });
             }
 
+            // Sync to SFTPGo
+            if (sftpGoService) {
+                await sftpGoService.createUser(
+                    targetUsername,
+                    raw.tckn, // Password = TCKN
+                    `${raw.studentNo}@arkadas.com.tr`,
+                    `Student: ${row[4]} ${row[5]}`,
+                    'students'
+                );
+            }
+
         } catch (err) {
             console.error(`Error processing student row ${i}:`, err);
         }
     }
 }
 
-async function seedPersonnel(xmlPath, authenticatedRole) {
+async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, sftpGoService) {
     console.log('🚀 Seeding Personnel from XML...');
     if (!fs.existsSync(xmlPath)) return;
 
-    const teamImagesDir = path.resolve(__dirname, '../../web/public/team-member');
     // Pre-scan images
     const availableImages = fs.existsSync(teamImagesDir) ? fs.readdirSync(teamImagesDir) : [];
 
@@ -289,15 +417,15 @@ async function seedPersonnel(xmlPath, authenticatedRole) {
 
             if (!name || !tckn || tckn.length !== 11) continue;
 
-            const fullName = `${name} ${last}`.trim().toUpperCase();
-            const targetUsername = generateUsername(name, last);
-            const normalizedName = normalizeString(fullName);
-
             // Helper for Turkish Title Case
             const toTitleCase = (str) => {
                 if (!str) return '';
                 return str.toLocaleLowerCase('tr-TR').split(' ').map(word => word.charAt(0).toLocaleUpperCase('tr-TR') + word.slice(1)).join(' ');
             };
+
+            const fullName = toTitleCase(`${name} ${last}`.trim());
+            const targetUsername = generateUsername(name, last);
+            const normalizedName = normalizeString(fullName);
 
             const formattedTitle = toTitleCase(title);
             let formattedCategory = formattedTitle;
@@ -390,6 +518,17 @@ async function seedPersonnel(xmlPath, authenticatedRole) {
                 console.log(`   + TeacherProfile: ${fullName}`);
             }
 
+            // Sync to SFTPGo
+            if (sftpGoService) {
+                await sftpGoService.createUser(
+                    targetUsername,
+                    tckn, // Password = TCKN
+                    `${empNo || tckn}@arkadas.com.tr`,
+                    `Staff: ${fullName}`,
+                    'teachers'
+                );
+            }
+
         } catch (e) {
             console.error(`Error processing staff row ${i}:`, e.message);
         }
@@ -440,7 +579,7 @@ async function seedHero(imagesPath) {
     }
 }
 
-async function seedAdmin() {
+async function seedAdmin(sftpGoService) {
     console.log('🚀 Seeding Super Admin user...');
     try {
         const roleQuery = strapi.db.query('admin::role');
@@ -479,12 +618,23 @@ async function seedAdmin() {
         });
 
         console.log(`   + Admin created: ${email}`);
+
+        // Sync to SFTPGo
+        if (sftpGoService) {
+            await sftpGoService.createUser(
+                'admin',
+                process.env.SFTPGO_ADMIN_PASSWORD || 'Strapi123!',
+                email,
+                'Super Admin User',
+                'admins'
+            );
+        }
     } catch (error) {
         console.error('   ❌ Could not seed admin user:', error.message);
     }
 }
 
-async function seedAppUser(authenticatedRole) {
+async function seedAppUser(authenticatedRole, sftpGoService) {
     console.log('🚀 Seeding App Admin User (Frontend)...');
     try {
         const email = process.env.STRAPI_ADMIN_EMAIL || 'barannakblut@gmail.com';
@@ -504,7 +654,22 @@ async function seedAppUser(authenticatedRole) {
             });
             console.log(`   + App User created: ${email}`);
         } else {
-            console.log(`   ~ App User already exists: ${email}`);
+            // Update password to match Strapi Admin if already exists
+            await strapi.plugin('users-permissions').service('user').edit(user.id, {
+                password
+            });
+            console.log(`   ~ App User sync completed: ${email}`);
+        }
+
+        // Sync to SFTPGo
+        if (sftpGoService) {
+            await sftpGoService.createUser(
+                username,
+                password,
+                email,
+                'App Admin User',
+                'admins'
+            );
         }
     } catch (e) {
         console.error('   ❌ Failed to seed App User:', e.message);
@@ -529,6 +694,28 @@ async function setPublicPermissions(strapi) {
         if (!existing) await strapi.db.query('plugin::users-permissions.permission').create({ data: { action, role: publicRole.id } });
     }
     console.log('   Public permissions set.');
+}
+
+async function setAuthenticatedPermissions(strapi) {
+    console.log('🚀 Setting Authenticated Permissions...');
+    const authRole = await strapi.db.query('plugin::users-permissions.role').findOne({ where: { type: 'authenticated' } });
+    const permissions = [
+        'api::student-profile.student-profile.find', 'api::student-profile.student-profile.findOne',
+        'api::teacher-profile.teacher-profile.find', 'api::teacher-profile.teacher-profile.findOne',
+        'api::appointment.appointment.find', 'api::appointment.appointment.findOne',
+        'api::attendance-log.attendance-log.find', 'api::attendance-log.attendance-log.findOne',
+        'api::attendance-log.attendance-log.create',
+        'api::schedule.schedule.find', 'api::schedule.schedule.findOne',
+        'api::rapor.rapor.find', 'api::rapor.rapor.findOne',
+        'api::fatura.fatura.find', 'api::fatura.fatura.findOne',
+        'api::hero.hero.find', 'api::hero.hero.findOne',
+        'api::team-member.team-member.find', 'api::team-member.team-member.findOne',
+    ];
+    for (const action of permissions) {
+        const existing = await strapi.db.query('plugin::users-permissions.permission').findOne({ where: { action, role: authRole.id } });
+        if (!existing) await strapi.db.query('plugin::users-permissions.permission').create({ data: { action, role: authRole.id } });
+    }
+    console.log('   Authenticated permissions set.');
 }
 
 async function seedContent(strapi) {
@@ -700,12 +887,29 @@ async function main() {
         }
         global.currentTenant = tenant;
 
-        await seedAdmin();
-        await seedAppUser(authenticatedRole);
+        // Initialize SFTPGo Service
+        const sftpGoService = new SftpGoService(
+            'http://localhost:8088',
+            'admin',
+            process.env.SFTPGO_ADMIN_PASSWORD || process.env.STRAPI_ADMIN_PASSWORD || 'Strapi123!'
+        );
+        console.log('\n🔄 Initializing SFTPGo Sync...');
+        if (await sftpGoService.authenticate()) {
+            console.log('   ✓ SFTPGo Connected');
+            await sftpGoService.createGroup('students', 'All Students');
+            await sftpGoService.createGroup('teachers', 'All Staff Members');
+            await sftpGoService.createGroup('admins', 'System Administrators');
+        } else {
+            console.log('   ⚠️ SFTPGo Connection Failed - specific users won\'t be synced.');
+        }
+
+        await seedAdmin(sftpGoService);
+        await seedAppUser(authenticatedRole, sftpGoService);
         await setPublicPermissions(app);
+        await setAuthenticatedPermissions(app);
         await seedContent(app);
-        await seedStudents(studentXml, authenticatedRole);
-        await seedPersonnel(staffXml, authenticatedRole);
+        await seedStudents(studentXml, authenticatedRole, sftpGoService);
+        await seedPersonnel(staffXml, authenticatedRole, teamMemberImages, sftpGoService);
         await seedHero(heroImages);
         await seedGallery(app);
         await seedApiToken(app);

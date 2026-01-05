@@ -2,7 +2,7 @@
  * Schedule Screen - Today's sessions
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -11,71 +11,91 @@ import {
     TouchableOpacity,
     RefreshControl,
 } from 'react-native';
+import { getShadowStyle } from '@/utils/styles';
+import { endpoints, BOP } from '../../src/lib/endpoints';
 
-interface Session {
+interface UISession {
     id: string;
     time: string;
     duration: number;
     title: string;
     student: string;
-    type: 'speech' | 'special' | 'physio' | 'other';
-    status: 'upcoming' | 'ongoing' | 'completed';
+    studentId: number;
+    type: string;
+    status: 'upcoming' | 'completed';
+    raw: any;
 }
 
-const MOCK_SESSIONS: Session[] = [
-    { id: '1', time: '09:00', duration: 40, title: 'Dil ve Konuşma Terapisi', student: 'Ali Yılmaz', type: 'speech', status: 'completed' },
-    { id: '2', time: '10:00', duration: 45, title: 'Özel Eğitim', student: 'Ayşe Demir', type: 'special', status: 'ongoing' },
-    { id: '3', time: '11:00', duration: 30, title: 'Fizyoterapi', student: 'Mehmet Kaya', type: 'physio', status: 'upcoming' },
-    { id: '4', time: '13:00', duration: 40, title: 'Dil ve Konuşma Terapisi', student: 'Zeynep Arslan', type: 'speech', status: 'upcoming' },
-    { id: '5', time: '14:00', duration: 45, title: 'Özel Eğitim', student: 'Can Yıldırım', type: 'special', status: 'upcoming' },
-    { id: '6', time: '15:00', duration: 30, title: 'Fizyoterapi', student: 'Elif Öztürk', type: 'physio', status: 'upcoming' },
-];
-
 export default function ScheduleScreen() {
-    const [sessions] = useState<Session[]>(MOCK_SESSIONS);
+    const [sessions, setSessions] = useState<UISession[]>([]);
     const [refreshing, setRefreshing] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const [consistencyIssues, setConsistencyIssues] = useState<string[]>([]);
+
+    const loadSessions = async () => {
+        const dateStr = selectedDate.toISOString().split('T')[0];
+        const data = await endpoints.getDailyPlans(dateStr);
+
+        // Map backend BOP to UI Session format
+        const mappedSessions: UISession[] = data.map((item: any) => ({
+            id: item.id.toString(),
+            time: '09:00', // Default time as BÖP is daily
+            duration: 40,
+            title: item.plannedModules?.[0]?.skill || 'Bireysel Eğitim',
+            student: item.student?.fullName || item.student?.firstName || 'Öğrenci',
+            studentId: item.student?.id, // Store student ID for consistency check
+            type: 'special',
+            status: item.status === 'completed' ? 'completed' : 'upcoming',
+            raw: item
+        }));
+        setSessions(mappedSessions);
+
+        // Check consistency for all students in the schedule
+        const issues: string[] = [];
+        const studentIds = new Set(mappedSessions.map((s: any) => s.studentId).filter(Boolean));
+
+        for (const studentId of studentIds) {
+            const check = await endpoints.checkConsistency(studentId);
+            if (!check.valid && check.issues?.length > 0) {
+                issues.push(...check.issues.map(i => `${mappedSessions.find((s: any) => s.studentId === studentId)?.student}: ${i}`));
+            }
+        }
+        setConsistencyIssues(issues);
+    };
+
+    useEffect(() => {
+        loadSessions();
+    }, [selectedDate]);
 
     const onRefresh = async () => {
         setRefreshing(true);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await loadSessions();
         setRefreshing(false);
     };
 
-    const getTypeColor = (type: Session['type']) => {
+    const getTypeColor = (type: string) => {
         switch (type) {
-            case 'speech':
-                return '#3b82f6';
-            case 'special':
-                return '#8b5cf6';
-            case 'physio':
-                return '#10b981';
-            default:
-                return '#64748b';
+            case 'speech': return '#3b82f6';
+            case 'special': return '#8b5cf6';
+            case 'physio': return '#10b981';
+            default: return '#64748b';
         }
     };
 
-    const getTypeLabel = (type: Session['type']) => {
+    const getTypeLabel = (type: string) => {
         switch (type) {
-            case 'speech':
-                return 'Konuşma';
-            case 'special':
-                return 'Özel Eğitim';
-            case 'physio':
-                return 'Fizyo';
-            default:
-                return 'Diğer';
+            case 'speech': return 'Konuşma';
+            case 'special': return 'Özel Eğitim';
+            case 'physio': return 'Fizyo';
+            default: return 'Diğer';
         }
     };
 
-    const getStatusStyle = (status: Session['status']) => {
+    const getStatusStyle = (status: string) => {
         switch (status) {
-            case 'completed':
-                return { borderLeftColor: '#22c55e' };
-            case 'ongoing':
-                return { borderLeftColor: '#f59e0b', backgroundColor: '#fffbeb' };
-            default:
-                return { borderLeftColor: '#e2e8f0' };
+            case 'completed': return { borderLeftColor: '#22c55e' };
+            case 'ongoing': return { borderLeftColor: '#f59e0b', backgroundColor: '#fffbeb' };
+            default: return { borderLeftColor: '#e2e8f0' };
         }
     };
 
@@ -140,36 +160,52 @@ export default function ScheduleScreen() {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
             >
-                {sessions.map((session) => (
-                    <TouchableOpacity
-                        key={session.id}
-                        style={[styles.sessionCard, getStatusStyle(session.status)]}
-                        activeOpacity={0.7}
-                    >
-                        <View style={styles.sessionLeft}>
-                            <Text style={styles.sessionTime}>{session.time}</Text>
-                            <Text style={styles.sessionDuration}>{session.duration} dk</Text>
-                        </View>
+                {/* Consistency Alerts */}
+                {consistencyIssues.length > 0 && (
+                    <View style={styles.alertContainer}>
+                        <Text style={styles.alertTitle}>⚠️ Dikkat Gerekenler</Text>
+                        {consistencyIssues.map((issue, index) => (
+                            <Text key={index} style={styles.alertText}>• {issue}</Text>
+                        ))}
+                    </View>
+                )}
 
-                        <View style={styles.sessionCenter}>
-                            <Text style={styles.sessionTitle}>{session.title}</Text>
-                            <Text style={styles.sessionStudent}>{session.student}</Text>
-                        </View>
-
-                        <View
-                            style={[
-                                styles.sessionBadge,
-                                { backgroundColor: `${getTypeColor(session.type)}15` },
-                            ]}
+                {sessions.length === 0 ? (
+                    <View style={{ alignItems: 'center', marginTop: 40 }}>
+                        <Text style={{ color: '#94a3b8' }}>Bugün için plan bulunamadı.</Text>
+                    </View>
+                ) : (
+                    sessions.map((session: any) => (
+                        <TouchableOpacity
+                            key={session.id}
+                            style={[styles.sessionCard, getStatusStyle(session.status)]}
+                            activeOpacity={0.7}
                         >
-                            <Text
-                                style={[styles.sessionBadgeText, { color: getTypeColor(session.type) }]}
+                            <View style={styles.sessionLeft}>
+                                <Text style={styles.sessionTime}>{session.time}</Text>
+                                <Text style={styles.sessionDuration}>{session.duration} dk</Text>
+                            </View>
+
+                            <View style={styles.sessionCenter}>
+                                <Text style={styles.sessionTitle}>{session.title}</Text>
+                                <Text style={styles.sessionStudent}>{session.student}</Text>
+                            </View>
+
+                            <View
+                                style={[
+                                    styles.sessionBadge,
+                                    { backgroundColor: `${getTypeColor(session.type)}15` },
+                                ]}
                             >
-                                {getTypeLabel(session.type)}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                ))}
+                                <Text
+                                    style={[styles.sessionBadgeText, { color: getTypeColor(session.type) }]}
+                                >
+                                    {getTypeLabel(session.type)}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    ))
+                )}
 
                 {/* Summary */}
                 <View style={styles.summary}>
@@ -184,10 +220,10 @@ export default function ScheduleScreen() {
                         <Text style={styles.summaryLabel}>Tamamlandı</Text>
                     </View>
                     <View style={styles.summaryItem}>
-                        <Text style={[styles.summaryValue, { color: '#f59e0b' }]}>
-                            {sessions.filter((s) => s.status === 'ongoing').length}
+                        <Text style={[styles.summaryValue, { color: '#3b82f6' }]}>
+                            {sessions.filter((s) => s.status === 'upcoming').length}
                         </Text>
-                        <Text style={styles.summaryLabel}>Devam Eden</Text>
+                        <Text style={styles.summaryLabel}>Bekleyen</Text>
                     </View>
                 </View>
             </ScrollView>
@@ -271,6 +307,26 @@ const styles = StyleSheet.create({
         padding: 20,
         paddingBottom: 100,
     },
+    alertContainer: {
+        backgroundColor: '#fef2f2',
+        borderLeftWidth: 4,
+        borderLeftColor: '#ef4444',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 16,
+    },
+    alertTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#991b1b',
+        marginBottom: 4,
+    },
+    alertText: {
+        fontSize: 14,
+        color: '#b91c1c',
+        marginLeft: 4,
+        marginBottom: 2,
+    },
     sessionCard: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -279,11 +335,13 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         marginBottom: 10,
         borderLeftWidth: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
-        elevation: 1,
+        ...getShadowStyle({
+            color: '#000',
+            offset: { width: 0, height: 1 },
+            opacity: 0.05,
+            radius: 2,
+            elevation: 1,
+        }),
     },
     sessionLeft: {
         width: 56,

@@ -32,9 +32,12 @@ export default {
         }
 
         try {
-            // Use Strapi's built-in auth
-            const user = await strapi.plugins['users-permissions'].services.user.fetch({
-                $or: [{ email: identifier }, { username: identifier }],
+            // Use Strapi's DB Query for robust filtering
+            const user = await strapi.db.query('plugin::users-permissions.user').findOne({
+                where: {
+                    $or: [{ email: identifier }, { username: identifier }],
+                },
+                populate: ['role'], // Ensure we have the password field (it's available by default on findOne unless excluded)
             });
 
             if (!user || !user.password) {

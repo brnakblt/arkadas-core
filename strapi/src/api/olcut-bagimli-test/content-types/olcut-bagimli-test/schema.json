@@ -1,0 +1,54 @@
+{
+    "kind": "collectionType",
+    "collectionName": "olcut_bagimli_testler",
+    "info": {
+        "singularName": "olcut-bagimli-test",
+        "pluralName": "olcut-bagimli-testler",
+        "displayName": "Ölçüt Bağımlı Test (ÖBT)",
+        "description": "ÖBT - Beceri ölçümü için kriter bazlı test"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "student": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::student-profile.student-profile"
+        },
+        "skillArea": {
+            "type": "enumeration",
+            "enum": [
+                "ozbakım",
+                "gunluk_yasam",
+                "iletisim",
+                "bilişsel",
+                "sosyal",
+                "motor",
+                "okuma_yazma",
+                "matematik"
+            ],
+            "required": true
+        },
+        "testDate": {
+            "type": "date",
+            "required": true
+        },
+        "evaluator": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "plugin::users-permissions.user"
+        },
+        "questions": {
+            "type": "json",
+            "description": "Kriterler ve Başarı Durumu listesi"
+        },
+        "notes": {
+            "type": "richtext"
+        },
+        "totalScore": {
+            "type": "decimal"
+        }
+    }
+}

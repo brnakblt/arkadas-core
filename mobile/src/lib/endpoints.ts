@@ -47,6 +47,16 @@ export interface DaySummary {
     completedSessions: number;
 }
 
+export interface BOP {
+    id: number;
+    baslangicTarihi: string;
+    planType: 'daily' | 'weekly';
+    student: Student;
+    plannedModules: Array<{ skill: string; criteria: string; method: string }>;
+    materials: string[];
+    status: 'draft' | 'active' | 'completed';
+}
+
 // Endpoints
 export const endpoints = {
     /**
@@ -201,6 +211,32 @@ export const endpoints = {
         } catch (error) {
             console.error('[Endpoints] getContacts failed:', error);
             return [];
+        }
+    },
+    /**
+     * Get BÖP (Daily Plan) for a specific date
+     */
+    async getDailyPlans(date: string): Promise<any[]> {
+        try {
+            // Fetch BÖPs for the date
+            const response = await api.fetch<{ data: any[] }>(
+                `/api/bireysel-ogretim-planlari?filters[baslangicTarihi][$eq]=${date}&populate=student`
+            );
+            return response.data;
+        } catch (error) {
+            console.error('[Endpoints] getDailyPlans failed:', error);
+            return [];
+        }
+    },
+    // Consistency Check
+    async checkConsistency(studentId: string): Promise<{ valid: boolean; issues: string[] }> {
+        try {
+            const response = await api.fetch<{ valid: boolean; issues: string[] }>(`/api/consistency-check?studentId=${studentId}`);
+            return response;
+        } catch (error) {
+            console.error('[Endpoints] checkConsistency failed:', error);
+            // Default to valid on error to avoid blocking UI if service is down
+            return { valid: true, issues: [] };
         }
     },
 };

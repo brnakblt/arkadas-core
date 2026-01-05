@@ -55,6 +55,8 @@ services:
       APP_KEYS: ${APP_KEYS}
       API_TOKEN_SALT: ${API_TOKEN_SALT}
       TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      SFTPGO_URL: http://sftpgo:8080
+      WEBDAV_URL: http://sftpgo:8089
     volumes:
       - ./strapi/public/uploads:/opt/app/public/uploads
     depends_on:
@@ -131,8 +133,10 @@ services:
     image: drakkan/sftpgo:latest
     restart: always
     environment:
-      SFTPGO_DEFAULT_ADMIN_USERNAME: ${SFTPGO_ADMIN_USER:-admin}
-      SFTPGO_DEFAULT_ADMIN_PASSWORD: ${SFTPGO_ADMIN_PASSWORD:-changeme}
+      SFTPGO_DEFAULT_ADMIN_CONFIG__USERNAME: ${SFTPGO_ADMIN_USER:-admin}
+      SFTPGO_DEFAULT_ADMIN_CONFIG__PASSWORD: ${SFTPGO_ADMIN_PASSWORD:-changeme}
+      SFTPGO_LOADDATA_FROM: /var/lib/sftpgo/initial_admin.json
+      SFTPGO_LOADDATA_QUOTA_SCAN: 0
       SFTPGO_DATA_PROVIDER__DRIVER: sqlite
       SFTPGO_DATA_PROVIDER__NAME: /var/lib/sftpgo/sftpgo.db
     volumes:

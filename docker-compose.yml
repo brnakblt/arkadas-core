@@ -101,8 +101,10 @@ services:
       SFTPGO_WEBDAVD__BINDINGS__0__PORT: 8089
       SFTPGO_DATA_PROVIDER__DRIVER: sqlite
       SFTPGO_DATA_PROVIDER__NAME: /var/lib/sftpgo/sftpgo.db
-      SFTPGO_DEFAULT_ADMIN_USERNAME: ${SFTPGO_ADMIN_USER:-admin}
-      SFTPGO_DEFAULT_ADMIN_PASSWORD: ${SFTPGO_ADMIN_PASSWORD:-changeme}
+      SFTPGO_DEFAULT_ADMIN_CONFIG__USERNAME: ${SFTPGO_ADMIN_USER:-admin}
+      SFTPGO_DEFAULT_ADMIN_CONFIG__PASSWORD: ${SFTPGO_ADMIN_PASSWORD:-changeme}
+      SFTPGO_LOADDATA_FROM: /var/lib/sftpgo/initial_admin.json
+      SFTPGO_LOADDATA_QUOTA_SCAN: 0
     volumes:
       - ./databases/sftpgo/data:/srv/sftpgo/data
       - ./databases/sftpgo/config:/var/lib/sftpgo

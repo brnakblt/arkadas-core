@@ -13,6 +13,7 @@ services:
     command: sh -c "npm install --ignore-scripts && npm run dev"
     environment:
       - NODE_ENV=development
+      - NEXT_PUBLIC_STRAPI_URL=http://localhost:1337 # Client side still access via localhost
 
   strapi:
     build:
@@ -24,6 +25,12 @@ services:
     command: npm run develop
     environment:
       - NODE_ENV=development
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - SFTPGO_URL=http://sftpgo:8080
+      - WEBDAV_URL=http://sftpgo:8089
 
   ai-service:
     volumes:
@@ -31,6 +38,9 @@ services:
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     environment:
       - DEBUG=true
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/arkadas_erp
+      - STRAPI_URL=http://strapi:1337
+      - REDIS_URL=redis://redis:6379
 
   mebbis-service:
     volumes:
@@ -39,3 +49,5 @@ services:
     command: npm run dev
     environment:
       - NODE_ENV=development
+      - STRAPI_URL=http://strapi:1337
+      - REDIS_URL=redis://redis:6379

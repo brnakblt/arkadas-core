@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -11,12 +11,19 @@ import {
     faImages,
     faCog,
     faSignOutAlt,
-    faBolt
+    faBolt,
+    faShieldAlt
 } from '@fortawesome/free-solid-svg-icons';
+import { tokenStorage, rbac, User } from '@/lib/auth';
 
 const Sidebar = () => {
     const pathname = usePathname();
     const router = useRouter();
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        setUser(tokenStorage.getUser());
+    }, []);
 
     const menuItems = [
         { id: 'dashboard', label: 'Panel', icon: faHome, path: '/dashboard' },
@@ -24,6 +31,10 @@ const Sidebar = () => {
         { id: 'photos', label: 'Fotoğraflar', icon: faImages, path: '/dashboard/photos' },
         { id: 'activity', label: 'Aktivite', icon: faBolt, path: '/dashboard/activity' },
     ];
+
+    if (user && rbac.isAdmin(user)) {
+        menuItems.push({ id: 'admin', label: 'Sistem Yönetimi', icon: faShieldAlt, path: '/dashboard/admin' });
+    }
 
     const handleLogout = () => {
         localStorage.removeItem('jwt');

@@ -40,10 +40,15 @@ export async function GET(request: Request) {
         const scheduleData = schedulesRes.ok ? await schedulesRes.json() : { meta: { pagination: { total: 0 } } };
 
         // Count by role
+        interface StrapiUser {
+            role?: { type: string };
+            blocked?: boolean;
+        }
+
         const userList = Array.isArray(userData) ? userData : [];
-        const teacherCount = userList.filter((u: any) => u.role?.type === 'teacher').length;
-        const parentCount = userList.filter((u: any) => u.role?.type === 'parent').length;
-        const activeUsers = userList.filter((u: any) => !u.blocked).length;
+        const teacherCount = userList.filter((u: StrapiUser) => u.role?.type === 'teacher').length;
+        const parentCount = userList.filter((u: StrapiUser) => u.role?.type === 'parent').length;
+        const activeUsers = userList.filter((u: StrapiUser) => !u.blocked).length;
 
         // Calculate attendance rate
         const totalStudents = studentData.meta?.pagination?.total || 0;

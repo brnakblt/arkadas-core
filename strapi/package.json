@@ -35,7 +35,8 @@
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
     "sharp": "^0.34.5",
-    "styled-components": "^6.0.0"
+    "styled-components": "^6.0.0",
+    "systeminformation": "^5.29.1"
   },
   "devDependencies": {
     "@strapi/cloud-cli": "^0.1.0",

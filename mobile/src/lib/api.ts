@@ -4,6 +4,7 @@
  */
 
 import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:1337';
 
@@ -14,6 +15,37 @@ const KEYS = {
     TENANT_SLUG: 'arkadas_tenant_slug',
     USER: 'arkadas_user',
 } as const;
+
+// Helper to abstract storage across Web (localStorage) and Native (SecureStore)
+const Storage = {
+    getItem: async (key: string): Promise<string | null> => {
+        if (Platform.OS === 'web') {
+            if (typeof localStorage !== 'undefined') {
+                return localStorage.getItem(key);
+            }
+            return null;
+        }
+        return SecureStore.getItemAsync(key);
+    },
+    setItem: async (key: string, value: string): Promise<void> => {
+        if (Platform.OS === 'web') {
+            if (typeof localStorage !== 'undefined') {
+                localStorage.setItem(key, value);
+            }
+            return;
+        }
+        return SecureStore.setItemAsync(key, value);
+    },
+    deleteItem: async (key: string): Promise<void> => {
+        if (Platform.OS === 'web') {
+            if (typeof localStorage !== 'undefined') {
+                localStorage.removeItem(key);
+            }
+            return;
+        }
+        return SecureStore.deleteItemAsync(key);
+    }
+};
 
 export interface User {
     id: number;
@@ -45,11 +77,11 @@ class ApiClient {
         if (this.initialized) return;
 
         try {
-            this.accessToken = await SecureStore.getItemAsync(KEYS.ACCESS_TOKEN);
-            this.refreshToken = await SecureStore.getItemAsync(KEYS.REFRESH_TOKEN);
-            this.tenantSlug = (await SecureStore.getItemAsync(KEYS.TENANT_SLUG)) || 'arkadas';
+            this.accessToken = await Storage.getItem(KEYS.ACCESS_TOKEN);
+            this.refreshToken = await Storage.getItem(KEYS.REFRESH_TOKEN);
+            this.tenantSlug = (await Storage.getItem(KEYS.TENANT_SLUG)) || 'arkadas';
 
-            const userJson = await SecureStore.getItemAsync(KEYS.USER);
+            const userJson = await Storage.getItem(KEYS.USER);
             if (userJson) {
                 this.user = JSON.parse(userJson);
             }
@@ -126,7 +158,7 @@ class ApiClient {
             if (response.ok) {
                 const data = await response.json();
                 this.accessToken = data.accessToken;
-                await SecureStore.setItemAsync(KEYS.ACCESS_TOKEN, data.accessToken);
+                await Storage.setItem(KEYS.ACCESS_TOKEN, data.accessToken);
                 return true;
             }
         } catch (error) {
@@ -144,10 +176,10 @@ class ApiClient {
         this.user = response.user;
         this.tenantSlug = response.user.tenant.slug;
 
-        await SecureStore.setItemAsync(KEYS.ACCESS_TOKEN, response.accessToken);
-        await SecureStore.setItemAsync(KEYS.REFRESH_TOKEN, response.refreshToken);
-        await SecureStore.setItemAsync(KEYS.TENANT_SLUG, response.user.tenant.slug);
-        await SecureStore.setItemAsync(KEYS.USER, JSON.stringify(response.user));
+        await Storage.setItem(KEYS.ACCESS_TOKEN, response.accessToken);
+        await Storage.setItem(KEYS.REFRESH_TOKEN, response.refreshToken);
+        await Storage.setItem(KEYS.TENANT_SLUG, response.user.tenant.slug);
+        await Storage.setItem(KEYS.USER, JSON.stringify(response.user));
     }
 
     async logout(): Promise<void> {
@@ -168,9 +200,9 @@ class ApiClient {
         this.refreshToken = null;
         this.user = null;
 
-        await SecureStore.deleteItemAsync(KEYS.ACCESS_TOKEN);
-        await SecureStore.deleteItemAsync(KEYS.REFRESH_TOKEN);
-        await SecureStore.deleteItemAsync(KEYS.USER);
+        await Storage.deleteItem(KEYS.ACCESS_TOKEN);
+        await Storage.deleteItem(KEYS.REFRESH_TOKEN);
+        await Storage.deleteItem(KEYS.USER);
     }
 
     isAuthenticated(): boolean {

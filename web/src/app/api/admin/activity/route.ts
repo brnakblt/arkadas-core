@@ -46,10 +46,26 @@ export async function GET(request: Request) {
         const data = await response.json();
         const logs = data.data || [];
 
-        const activity = logs.map((log: any) => ({
+        interface AuditLog {
+            id: number;
+            documentId?: string;
+            action?: string;
+            attributes?: {
+                action?: string;
+                entityType?: string;
+                metadata?: { username?: string };
+                timestamp?: string;
+            };
+            entityType?: string;
+            metadata?: { username?: string };
+            timestamp?: string;
+            createdAt?: string;
+        }
+
+        const activity = logs.map((log: AuditLog) => ({
             id: log.id?.toString() || log.documentId,
-            type: mapActionToType(log.action || log.attributes?.action),
-            message: getActivityMessage(log.action || log.attributes?.action, log.entityType || log.attributes?.entityType),
+            type: mapActionToType(log.action || log.attributes?.action || ''),
+            message: getActivityMessage(log.action || log.attributes?.action || '', log.entityType || log.attributes?.entityType || ''),
             user: log.metadata?.username || log.attributes?.metadata?.username,
             timestamp: log.timestamp || log.attributes?.timestamp || log.createdAt,
         }));

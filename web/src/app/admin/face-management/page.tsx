@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 
 // ============================================================
 // Types
@@ -36,10 +37,12 @@ const StudentCard: React.FC<{
             {/* Photo */}
             <div className="relative">
                 {student.photo?.url ? (
-                    <img
+                    <Image
                         src={student.photo.url}
                         alt={student.fullName}
-                        className="w-16 h-16 rounded-full object-cover"
+                        width={64}
+                        height={64}
+                        className="rounded-full object-cover"
                     />
                 ) : (
                     <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-2xl">
@@ -49,8 +52,8 @@ const StudentCard: React.FC<{
                 {/* Enrollment Badge */}
                 <div
                     className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs ${student.hasFaceEncoding
-                            ? 'bg-green-500 text-white'
-                            : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
                         }`}
                 >
                     {student.hasFaceEncoding ? '✓' : '?'}
@@ -188,10 +191,11 @@ const EnrollmentModal: React.FC<{
                     <div className="mb-4">
                         {preview ? (
                             <div className="relative">
-                                <img
+                                <Image
                                     src={preview}
                                     alt="Preview"
-                                    className="w-full h-64 object-cover rounded-lg"
+                                    fill
+                                    className="object-cover rounded-lg"
                                 />
                                 <button
                                     onClick={() => {
@@ -400,8 +404,8 @@ export default function FaceManagementPage() {
                             key={f}
                             onClick={() => setFilter(f)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === f
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                                 }`}
                         >
                             {f === 'all' ? 'Tümü' : f === 'enrolled' ? '✅ Kayıtlı' : '⚠️ Bekleyen'}

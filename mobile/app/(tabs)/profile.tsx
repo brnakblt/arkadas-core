@@ -6,6 +6,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'rea
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useAuthStore } from '@/stores/auth';
+import { getShadowStyle } from '@/utils/styles';
 
 export default function ProfileScreen() {
     const user = useAuthStore((state) => state.user);
@@ -133,11 +134,13 @@ const styles = StyleSheet.create({
         padding: 24,
         alignItems: 'center',
         marginBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 8,
-        elevation: 2,
+        ...getShadowStyle({
+            color: '#000',
+            offset: { width: 0, height: 2 },
+            opacity: 0.05,
+            radius: 8,
+            elevation: 2,
+        }),
     },
     avatar: {
         width: 80,

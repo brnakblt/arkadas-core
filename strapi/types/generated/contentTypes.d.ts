@@ -766,6 +766,44 @@ export interface ApiBireyselEgitimPlaniBireyselEgitimPlani extends Struct.Collec
   };
 }
 
+export interface ApiBireyselOgretimPlaniBireyselOgretimPlani extends Struct.CollectionTypeSchema {
+  collectionName: 'bireysel_ogretim_planlari';
+  info: {
+    description: 'B\u00D6P - G\u00FCnl\u00FCk veya haftal\u0131k \u00F6\u011Fretim plan\u0131';
+    displayName: 'Bireysel \u00D6\u011Fretim Plan\u0131 (B\u00D6P)';
+    pluralName: 'bireysel-ogretim-planlari';
+    singularName: 'bireysel-ogretim-plani';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    baslangicTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
+    bep: Schema.Attribute.Relation<'manyToOne', 'api::bireysel-egitim-plani.bireysel-egitim-plani'>;
+    bitisTarihi: Schema.Attribute.Date;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    degerlendirme: Schema.Attribute.JSON;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::bireysel-ogretim-plani.bireysel-ogretim-plani'
+    > &
+      Schema.Attribute.Private;
+    materials: Schema.Attribute.JSON;
+    plannedModules: Schema.Attribute.JSON & Schema.Attribute.Required;
+    planType: Schema.Attribute.Enumeration<['daily', 'weekly']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'daily'>;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<['draft', 'active', 'completed']> &
+      Schema.Attribute.DefaultTo<'draft'>;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -1321,6 +1359,51 @@ export interface ApiOgrenciGrubuOgrenciGrubu extends Struct.CollectionTypeSchema
   };
 }
 
+export interface ApiOlcutBagimliTestOlcutBagimliTest extends Struct.CollectionTypeSchema {
+  collectionName: 'olcut_bagimli_testler';
+  info: {
+    description: '\u00D6BT - Beceri \u00F6l\u00E7\u00FCm\u00FC i\u00E7in kriter bazl\u0131 test';
+    displayName: '\u00D6l\u00E7\u00FCt Ba\u011F\u0131ml\u0131 Test (\u00D6BT)';
+    pluralName: 'olcut-bagimli-testler';
+    singularName: 'olcut-bagimli-test';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    evaluator: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::olcut-bagimli-test.olcut-bagimli-test'
+    > &
+      Schema.Attribute.Private;
+    notes: Schema.Attribute.RichText;
+    publishedAt: Schema.Attribute.DateTime;
+    questions: Schema.Attribute.JSON;
+    skillArea: Schema.Attribute.Enumeration<
+      [
+        'ozbak\u0131m',
+        'gunluk_yasam',
+        'iletisim',
+        'bili\u015Fsel',
+        'sosyal',
+        'motor',
+        'okuma_yazma',
+        'matematik',
+      ]
+    > &
+      Schema.Attribute.Required;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
+    testDate: Schema.Attribute.Date & Schema.Attribute.Required;
+    totalScore: Schema.Attribute.Decimal;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPerformansKayitPerformansKayit extends Struct.CollectionTypeSchema {
   collectionName: 'performans_kayitlari';
   info: {
@@ -1817,6 +1900,9 @@ export interface ApiStudentProfileStudentProfile extends Struct.CollectionTypeSc
     notes: Schema.Attribute.RichText;
     parentGuardian: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
     publishedAt: Schema.Attribute.DateTime;
+    ramRaporId: Schema.Attribute.String;
+    ramReportDate: Schema.Attribute.Date;
+    ramReportExpiryDate: Schema.Attribute.Date;
     studentNumber: Schema.Attribute.String & Schema.Attribute.Unique;
     tckimlikno: Schema.Attribute.String &
       Schema.Attribute.Unique &
@@ -2495,6 +2581,7 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
     publishedAt: Schema.Attribute.DateTime;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
     role: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.role'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     username: Schema.Attribute.String &
@@ -2525,6 +2612,7 @@ declare module '@strapi/strapi' {
       'api::author.author': ApiAuthorAuthor;
       'api::bep-gelisim-izleme.bep-gelisim-izleme': ApiBepGelisimIzlemeBepGelisimIzleme;
       'api::bireysel-egitim-plani.bireysel-egitim-plani': ApiBireyselEgitimPlaniBireyselEgitimPlani;
+      'api::bireysel-ogretim-plani.bireysel-ogretim-plani': ApiBireyselOgretimPlaniBireyselOgretimPlani;
       'api::category.category': ApiCategoryCategory;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
       'api::device-token.device-token': ApiDeviceTokenDeviceToken;
@@ -2541,6 +2629,7 @@ declare module '@strapi/strapi' {
       'api::kvkk-onam.kvkk-onam': ApiKvkkOnamKvkkOnam;
       'api::location-log.location-log': ApiLocationLogLocationLog;
       'api::ogrenci-grubu.ogrenci-grubu': ApiOgrenciGrubuOgrenciGrubu;
+      'api::olcut-bagimli-test.olcut-bagimli-test': ApiOlcutBagimliTestOlcutBagimliTest;
       'api::performans-kayit.performans-kayit': ApiPerformansKayitPerformansKayit;
       'api::portfolyo-kontrol.portfolyo-kontrol': ApiPortfolyoKontrolPortfolyoKontrol;
       'api::portfolyo-puanlama.portfolyo-puanlama': ApiPortfolyoPuanlamaPortfolyoPuanlama;

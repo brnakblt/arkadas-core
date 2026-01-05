@@ -2,7 +2,7 @@
  * Root Layout - App entry with providers
  */
 
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -11,6 +11,21 @@ import { useAuthStore } from '@/stores/auth';
 
 // Keep splash visible while loading
 SplashScreen.preventAutoHideAsync();
+
+// Suppress specific warnings/errors that are known/unavoidable
+const originalConsoleError = console.error;
+console.error = (...args) => {
+    if (typeof args[0] === 'string' && args[0].includes('useLayoutEffect does nothing on the server')) {
+        return;
+    }
+    originalConsoleError(...args);
+};
+
+// Polyfill useLayoutEffect for SSR to prevent warnings from dependencies
+if (typeof window === 'undefined') {
+    // @ts-ignore
+    React.useLayoutEffect = React.useEffect;
+}
 
 const queryClient = new QueryClient({
     defaultOptions: {

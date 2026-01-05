@@ -9,6 +9,11 @@ interface User {
     username: string;
     email: string;
     userType?: 'parent' | 'teacher';
+    role?: {
+        id: number;
+        name: string;
+        type: string;
+    };
 }
 
 interface DashboardContextType {

@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
+import { getShadowStyle, getTextShadowStyle } from '@/utils/styles';
 
 type CheckInStatus = 'ready' | 'scanning' | 'success' | 'error';
 
@@ -311,9 +312,7 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 18,
         fontWeight: '600',
-        textShadowColor: 'rgba(0,0,0,0.5)',
-        textShadowOffset: { width: 0, height: 1 },
-        textShadowRadius: 4,
+        ...getTextShadowStyle('rgba(0,0,0,0.5)', { width: 0, height: 1 }, 4),
     },
     topBarCount: {
         color: '#fff',
@@ -382,11 +381,13 @@ const styles = StyleSheet.create({
         borderRadius: 40,
         backgroundColor: '#fff',
         padding: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 8,
+        ...getShadowStyle({
+            color: '#000',
+            offset: { width: 0, height: 4 },
+            opacity: 0.3,
+            radius: 8,
+            elevation: 8,
+        }),
     },
     captureButtonDisabled: {
         opacity: 0.7,
@@ -406,9 +407,7 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 14,
         textAlign: 'center',
-        textShadowColor: 'rgba(0,0,0,0.5)',
-        textShadowOffset: { width: 0, height: 1 },
-        textShadowRadius: 4,
+        ...getTextShadowStyle('rgba(0,0,0,0.5)', { width: 0, height: 1 }, 4),
     },
     recentContainer: {
         position: 'absolute',

@@ -104,6 +104,15 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::tenant.tenant"
+    },
+    "ramRaporId": {
+      "type": "string"
+    },
+    "ramReportDate": {
+      "type": "date"
+    },
+    "ramReportExpiryDate": {
+      "type": "date"
     }
   }
 }

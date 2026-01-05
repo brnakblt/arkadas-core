@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useAuthStore } from '@/stores/auth';
+import { getShadowStyle } from '@/utils/styles';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
@@ -40,19 +41,25 @@ export default function LoginScreen() {
     const handleLogin = async () => {
         if (!email.trim() || !password.trim()) {
             Alert.alert('Hata', 'E-posta ve şifre gereklidir');
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            if (Platform.OS !== 'web') {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            }
             return;
         }
 
         setLoading(true);
         try {
             await login(email.trim(), password);
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            if (Platform.OS !== 'web') {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            }
             router.replace('/(tabs)');
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Giriş yapılamadı';
             Alert.alert('Giriş Hatası', message);
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            if (Platform.OS !== 'web') {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            }
         } finally {
             setLoading(false);
         }
@@ -174,11 +181,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 16,
-        shadowColor: '#2563eb',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.3,
-        shadowRadius: 12,
-        elevation: 8,
+        ...getShadowStyle({
+            color: '#2563eb',
+            offset: { width: 0, height: 8 },
+            opacity: 0.3,
+            radius: 12,
+            elevation: 8,
+        }),
     },
     logoEmoji: {
         fontSize: 40,
@@ -221,11 +230,13 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         alignItems: 'center',
         marginTop: 8,
-        shadowColor: '#2563eb',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 4,
+        ...getShadowStyle({
+            color: '#2563eb',
+            offset: { width: 0, height: 4 },
+            opacity: 0.3,
+            radius: 8,
+            elevation: 4,
+        }),
     },
     buttonDisabled: {
         opacity: 0.7,

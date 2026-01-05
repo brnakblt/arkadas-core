@@ -1,0 +1,62 @@
+{
+    "kind": "collectionType",
+    "collectionName": "bireysel_ogretim_planlari",
+    "info": {
+        "singularName": "bireysel-ogretim-plani",
+        "pluralName": "bireysel-ogretim-planlari",
+        "displayName": "Bireysel Öğretim Planı (BÖP)",
+        "description": "BÖP - Günlük veya haftalık öğretim planı"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "student": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::student-profile.student-profile"
+        },
+        "bep": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::bireysel-egitim-plani.bireysel-egitim-plani"
+        },
+        "planType": {
+            "type": "enumeration",
+            "enum": [
+                "daily",
+                "weekly"
+            ],
+            "default": "daily",
+            "required": true
+        },
+        "baslangicTarihi": {
+            "type": "date",
+            "required": true
+        },
+        "bitisTarihi": {
+            "type": "date"
+        },
+        "plannedModules": {
+            "type": "json",
+            "required": true
+        },
+        "materials": {
+            "type": "json"
+        },
+        "degerlendirme": {
+            "type": "json",
+            "description": "Seans sonu değerlendirme notları"
+        },
+        "status": {
+            "type": "enumeration",
+            "enum": [
+                "draft",
+                "active",
+                "completed"
+            ],
+            "default": "draft"
+        }
+    }
+}
