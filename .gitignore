@@ -31,26 +31,11 @@ strapi/build/
 strapi/dist/
 strapi/.cache/
 
-# MEBBIS Service
-mebbis-service/dist/
-mebbis-service/logs/
-
-# AI Service
-ai-service/__pycache__/
-ai-service/*.pyc
-ai-service/venv/
-ai-service/.venv/
-
-# Tauri
-src-tauri/target/
-src-tauri/gen/
-.tauri/
-web/src-tauri/target/
-
-# Mobile
-mobile/.expo/
-mobile/android/
-mobile/ios/
+# API Service
+api/node_modules/
+api/dist/
+api/.env
+api/coverage/
 
 # ============================================================
 # Logs
@@ -107,8 +92,7 @@ gha-creds-*.json
 !.env.reference
 !strapi/.env.example
 !web/.env.example
-!mebbis-service/.env.example
-!ai-service/.env.example
+!web/.env.example
 
 # ============================================================
 # AI/Dev Tool Configs (auto-generated)
@@ -169,10 +153,7 @@ backups/
 .turbo/
 todo.txt
 
-# Sensitive User Data (student/staff lists with personal info)
-data/tenants/*/seed/*.xml
-data/tenants/*/seed/*.xls
-data/tenants/*/credentials/
+
 
 # Docs
 docs/site/

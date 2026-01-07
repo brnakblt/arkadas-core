@@ -8,13 +8,10 @@
 # Redis:          6380
 # Web (Next.js):  3000
 # Strapi CMS:     1337
-# Mebbis Service: 4000
-# AI Service:     8000
 # Docs (MkDocs):  8001
 # OnlyOffice:     8080
 # SFTPGo Admin:   8088
 # SFTPGo WebDAV:  8089
-# Mobile (Expo):  8085
 # ==========================================
 
 services:
@@ -93,41 +90,28 @@ services:
   # Application Services
   # ==========================================
 
-  ai-service:
-    build:
-      context: ./ai-service
-      dockerfile: Dockerfile
-    image: arkadas-ai-service:latest
+  # ==========================================
+  # OnlyOffice - Document Editing
+  # ==========================================
+  onlyoffice:
+    image: onlyoffice/documentserver:latest
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "8080:80"
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
-      - API_KEY=${AI_SERVICE_API_KEY:-s3cr3t}
-    depends_on:
-      - redis
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-
-  mebbis-service:
-    build:
-      context: ./mebbis-service
-      dockerfile: Dockerfile
-    image: arkadas-mebbis-service:latest
-    restart: unless-stopped
-    ports:
-      - "4000:4000"
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
-      - INFISICAL_TOKEN=${INFISICAL_TOKEN}
-    depends_on:
-      - redis
+      JWT_ENABLED: "true"
+      JWT_SECRET: ${JWT_SECRET:-secret}
+      JWT_HEADER: "Authorization"
+      JWT_IN_BODY: "true"
+    volumes:
+      - ./databases/onlyoffice/data:/var/www/onlyoffice/Data
+      - ./databases/onlyoffice/log:/var/log/onlyoffice
+      - ./databases/onlyoffice/cache:/var/lib/onlyoffice/documentserver/App_Data/cache/files
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost/healthcheck" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     deploy:
       resources:
         limits:
@@ -185,8 +169,6 @@ services:
     environment:
       - NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
       - STRAPI_URL=http://strapi:1337
-      - NEXT_PUBLIC_AI_API_URL=http://localhost:8000
-      - AI_API_URL=http://ai-service:8000
     depends_on:
       - strapi
     deploy:
