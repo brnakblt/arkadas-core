@@ -64,13 +64,8 @@ docker compose up -d --wait
 echo "Waiting 5s for database stability..."
 sleep 5
 
-echo -e "\n${YELLOW}6. Installing mobile app dependencies...${NC}"
-if [ -d "mobile" ] && [ -f "mobile/package.json" ]; then
-    cd mobile && npm install && cd ..
-    echo -e "${GREEN}✓ Mobile dependencies installed${NC}"
-else
-    echo "Mobile app not found, skipping"
-fi
+# 6. Installing mobile app dependencies - Removed
+# Mobile App removed as part of project simplification
 
 echo -e "\n${YELLOW}7. Building Strapi...${NC}"
 mkdir -p strapi/public/uploads
@@ -105,13 +100,11 @@ echo ""
 echo -e "Services running:"
 echo -e "  • PostgreSQL: ${BLUE}localhost:5432${NC}"
 echo -e "  • Redis:      ${BLUE}localhost:6380${NC}"
-echo -e "  • OnlyOffice: ${BLUE}localhost:8080${NC}"
 echo -e "  • SFTPGo:     ${BLUE}localhost:8088${NC}"
 echo ""
 echo -e "Next steps:"
 echo -e "  1. Run: ${YELLOW}npm run dev${NC} to start all services"
 echo -e "  2. Open: ${BLUE}http://localhost:1337/admin${NC} (Strapi)"
 echo -e "  3. Open: ${BLUE}http://localhost:3000${NC} (Web)"
-echo -e "  4. Mobile: ${YELLOW}cd mobile && npm run dev${NC}"
 echo ""
 echo -e "Default tenant: ${GREEN}arkadas${NC}"

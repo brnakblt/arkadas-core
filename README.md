@@ -38,12 +38,8 @@ npm run dev
 |--------|------|-----|----------|
 | **Web** | 3000 | http://localhost:3000 | Next.js Frontend |
 | **Strapi** | 1337 | http://localhost:1337/admin | CMS Admin Panel |
-| **AI Service** | 8000 | http://localhost:8000/docs | Yüz Tanıma API |
-| **Mebbis** | 4000 | http://localhost:4000/api | MEBBİS Otomasyon |
 | **PostgreSQL** | 5432 | - | Veritabanı |
 | **Redis** | 6380 | - | Cache & Queue |
-| **OnlyOffice** | 8080 | http://localhost:8080 | Doküman Editörü |
-| **Mobile** | 8085 | expo://localhost:8085 | Expo Dev Server |
 | **SFTPGo** | 8088 | http://localhost:8088 | Dosya Yönetimi |
 
 ---
@@ -56,19 +52,6 @@ npm run dev
 - Redis şifreli bağlantı
 - PII verileri AES-256 şifreleme
 - RBAC yetkilendirme sistemi
-
-### 📱 Mobil Uygulama
-- Yüz tanıma ile yoklama
-- Biyometrik giriş (Face ID / Touch ID)
-- Offline çalışma desteği
-- Push bildirimler
-- Mesajlaşma
-
-### 🤖 MEBBİS Entegrasyonu
-- Öğrenci senkronizasyonu
-- Eğitim bilgi girişi otomasyonu
-- Fatura aktarımı
-- BEP form otomasyonu
 
 ### 📊 Raporlama
 - Ek-4 Devam Takip Raporu
@@ -84,9 +67,6 @@ npm run dev
 arkadasozelegitim/
 ├── web/              # Next.js 16 Frontend
 ├── strapi/           # Strapi v5 Backend CMS
-├── mobile/           # React Native/Expo Mobil Uygulama
-├── ai-service/       # Python/FastAPI Yüz Tanıma
-├── mebbis-service/   # MEBBİS Otomasyon Servisi
 ├── docs/             # MkDocs Dokümantasyon
 ├── scripts/          # Yardımcı Scriptler
 ├── databases/        # Docker Volume Data
@@ -103,9 +83,6 @@ arkadasozelegitim/
 | `npm run dev` | Tüm servisleri başlat |
 | `npm run dev:strapi` | Sadece Strapi |
 | `npm run dev:web` | Sadece Web |
-| `npm run dev:mobile` | Sadece Mobile |
-| `npm run dev:ai` | Sadece AI Service |
-| `npm run dev:mebbis` | Sadece Mebbis |
 
 ### Build & Test
 | Komut | Açıklama |
@@ -165,7 +142,7 @@ npm run setup:env
 docker compose up -d
 ```
 
-**Included Services:** PostgreSQL, Redis, OnlyOffice, SFTPGo
+**Included Services:** PostgreSQL, Redis, SFTPGo
 
 ---
 

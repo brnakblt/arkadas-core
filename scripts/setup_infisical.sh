@@ -109,15 +109,7 @@ import_secrets "strapi/.env" "/strapi"
 create_folder "web"
 import_secrets "web/.env.local" "/web"
 
-# AI
-create_folder "ai-service"
-import_secrets "ai-service/.env" "/ai-service"
-
-# Mebbis
-create_folder "mebbis-service"
-import_secrets "mebbis-service/.env" "/mebbis-service"
-
-# Mobile
+# AI, Mebbis, Mobile - Removed as part of project simplification
 
 echo -e "\n${GREEN}Migration Complete!${NC}"
 echo "You can now verify secrets in the Dashboard."

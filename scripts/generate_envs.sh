@@ -129,12 +129,8 @@ if [ -f "${PROJECT_ROOT}/web/.env.reference" ]; then
 fi
 
 # 4. Service Envs (Mebbis, AI)
-if [ -f "${PROJECT_ROOT}/mebbis-service/.env.reference" ]; then
-    generate_env_file "${PROJECT_ROOT}/mebbis-service/.env.reference" "${PROJECT_ROOT}/mebbis-service/.env" "Mebbis Service"
-fi
-if [ -f "${PROJECT_ROOT}/ai-service/.env.reference" ]; then
-    generate_env_file "${PROJECT_ROOT}/ai-service/.env.reference" "${PROJECT_ROOT}/ai-service/.env" "AI Service"
-fi
+# Removed as part of project simplification
+
 
 
 # 5. Generate SFTPGo Initial Admin Data (for auto-seeding)

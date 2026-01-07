@@ -70,19 +70,8 @@ echo "----------------------------------------"
 # Web Unit Tests
 run_test "Web Unit Tests (Vitest)" "npm run test:unit 2>/dev/null || echo 'No unit tests configured'" "web"
 
-# AI Service Tests
-if [ -d "ai-service" ]; then
-    if [ -f "ai-service/venv/bin/pytest" ]; then
-        run_test "AI Service Tests" "PYTHONPATH=. ./venv/bin/pytest -v || true" "ai-service"
-    else
-        run_test "AI Service Tests" "PYTHONPATH=. pytest -v || true" "ai-service"
-    fi
-fi
-
-# Mebbis Service Tests
-if [ -d "mebbis-service" ]; then
-    run_test "Mebbis Service Tests" "npm test -- --coverage 2>/dev/null || echo 'No tests'" "mebbis-service"
-fi
+# AI Service Tests - Removed
+# Mebbis Service Tests - Removed
 
 # =============================================================================
 # 3. TYPE CHECKS
@@ -158,19 +147,7 @@ if [ "$RUN_TENANT_TESTS" = "true" ] && [ -n "$TEST_USER_EMAIL" ] && [ -n "$TEST_
 fi
 
 # =============================================================================
-# 7. MOBILE APP TESTS
-# =============================================================================
-if [ -d "mobile" ] && [ -f "mobile/package.json" ]; then
-    echo -e "${BLUE}📱 Mobile App Tests${NC}"
-    echo "----------------------------------------"
-    
-    # TypeScript check (if installed)
-    if [ -d "mobile/node_modules" ]; then
-        run_test "Mobile TypeScript" "npx tsc --noEmit 2>/dev/null || echo 'Install deps first'" "mobile"
-    else
-        echo -e "${YELLOW}⚠ Mobile deps not installed, skipping${NC}"
-    fi
-fi
+# Mobile App Tests - Removed
 
 # =============================================================================
 # 8. DOCUMENTATION BUILD

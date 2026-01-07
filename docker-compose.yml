@@ -61,30 +61,6 @@ services:
         limits:
           memory: 256M
 
-  onlyoffice:
-    image: onlyoffice/documentserver:latest
-    restart: unless-stopped
-    ports:
-      - "8080:80"
-    environment:
-      JWT_ENABLED: "true"
-      JWT_SECRET: ${JWT_SECRET:-secret}
-      JWT_HEADER: "Authorization"
-      JWT_IN_BODY: "true"
-    volumes:
-      - ./databases/onlyoffice/data:/var/www/onlyoffice/Data
-      - ./databases/onlyoffice/log:/var/log/onlyoffice
-      - ./databases/onlyoffice/cache:/var/lib/onlyoffice/documentserver/App_Data/cache/files
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost/healthcheck" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-
   # ==========================================
   # SFTPGo - File Storage & WebDAV
   # ==========================================
