@@ -23,7 +23,7 @@ console.error = (...args) => {
 
 // Polyfill useLayoutEffect for SSR to prevent warnings from dependencies
 if (typeof window === 'undefined') {
-    // @ts-ignore
+    // React Native Web SSR support
     React.useLayoutEffect = React.useEffect;
 }
 

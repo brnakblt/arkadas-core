@@ -20,7 +20,7 @@ const redisConnection = new IORedis(process.env.REDIS_URL || 'redis://localhost:
  * Worker for Student Sync operations
  */
 export const studentSyncWorker = new Worker('student-sync', async (job: Job) => {
-    const { tenantId, tcKimlikNo, requestedBy } = job.data;
+    const { tenantId, tcKimlikNo } = job.data;
     const jobName = job.name;
 
     logger.info(`Processing student sync job ${job.id} (${jobName}) for tenant ${tenantId}`);
@@ -78,7 +78,7 @@ export const educationWorker = new Worker('education-entry', async (job: Job) =>
         await mebbis.initialize();
         await mebbis.login();
 
-        const results = await educationService.submitBatch(entries, (current, total, entry) => {
+        const results = await educationService.submitBatch(entries, (current, total) => {
             job.updateProgress(Math.round((current / total) * 100));
         }, stopOnError);
 

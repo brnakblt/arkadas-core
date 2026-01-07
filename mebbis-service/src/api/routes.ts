@@ -9,7 +9,6 @@ import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import {
     createMebbisService,
-    createEducationEntryService,
     createStudentSyncService,
     createInvoiceService,
     createBepService,
@@ -21,11 +20,9 @@ import {
     CreateFaturaRequest,
     BepPerformansKayit,
     BepGelisimIzleme,
-    BepPortfolyoKontrol,
     ApiResponse,
     JobStatus,
     EgitimBilgiGirisSchema,
-    CreateFaturaSchema,
 } from '../types';
 import { logger } from '../utils/logger';
 import { getTenantCredentials } from '../utils/tenant';

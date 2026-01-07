@@ -26,7 +26,7 @@ async function checkService(url: string, timeout = 5000): Promise<HealthStatus> 
         if (response.ok) return 'healthy';
         if (response.status >= 500) return 'down';
         return 'degraded';
-    } catch (_error) {
+    } catch {
         return 'down';
     }
 }

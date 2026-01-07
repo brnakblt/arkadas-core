@@ -6,7 +6,7 @@
  */
 
 import { MebbisAutomationService, MEBBIS_PAGES } from './mebbis-automation';
-import { Ogrenci, OgrenciRapor, OgrenciOkul, ApiResponse } from '../types';
+import { Ogrenci, OgrenciRapor, OgrenciOkul } from '../types';
 import { logger } from '../utils/logger';
 
 /**

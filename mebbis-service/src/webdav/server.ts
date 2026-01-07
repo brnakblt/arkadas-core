@@ -6,7 +6,7 @@ const STRAPI_URL = process.env.STRAPI_URL || 'http://127.0.0.1:1337';
 
 const server = new webdav.WebDAVServer({
     port,
-    // @ts-ignore
+    // @ts-expect-error - Mismatch in authentication types
     httpAuthentication: new webdav.HTTPBasicAuthentication(async (ctx: any, username: string, password: string, callback: any) => {
         try {
             const res = await fetch(`${STRAPI_URL}/api/auth/local`, {
@@ -37,7 +37,7 @@ server.setFileSystem('/', new StrapiFileSystem({}), (success: any) => {
 // For now, let's just start the server skeleton.
 
 export function startWebDAVServer() {
-    server.start((httpServer) => {
+    server.start(() => {
         console.log(`WebDAV server running on port ${port}`);
     });
 }

@@ -1,5 +1,5 @@
 
-import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import MonitoringPage from '@/app/dashboard/monitoring/page';
 import { useRouter } from 'next/navigation';

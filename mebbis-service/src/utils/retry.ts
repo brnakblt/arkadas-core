@@ -4,7 +4,7 @@
  * Provides exponential backoff retry mechanism for browser automation operations.
  */
 
-import { isRetryableError, MebbisError } from './errors';
+import { isRetryableError } from './errors';
 import { logger } from './logger';
 
 /**
@@ -174,7 +174,7 @@ export function createRetry(defaultOptions: RetryOptions): <T>(fn: () => Promise
  */
 export function Retryable(options: RetryOptions = {}): MethodDecorator {
     return function (
-        _target: Object,
+        _target: object,
         propertyKey: string | symbol,
         descriptor: PropertyDescriptor
     ): PropertyDescriptor {

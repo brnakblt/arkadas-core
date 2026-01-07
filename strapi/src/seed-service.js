@@ -148,26 +148,30 @@ class SftpGoService {
         this.token = null;
     }
 
-    async authenticate() {
-        try {
-            const authString = Buffer.from(`${this.adminUser}:${this.adminPassword}`).toString('base64');
-            const res = await fetch(`${this.baseUrl}/api/v2/token`, {
-                method: 'GET',
-                headers: { 'Authorization': `Basic ${authString}` }
-            });
+    async authenticate(retries = 5, delay = 2000) {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const authString = Buffer.from(`${this.adminUser}:${this.adminPassword}`).toString('base64');
+                const res = await fetch(`${this.baseUrl}/api/v2/token`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Basic ${authString}` }
+                });
 
-            if (!res.ok) {
-                console.error(`   SFTPGo Auth Error: ${res.status}`);
-                return false;
+                if (!res.ok) {
+                    console.error(`   SFTPGo Auth Error: ${res.status}`);
+                    // If 401, maybe don't retry? But backing off is fine.
+                } else {
+                    const data = await res.json();
+                    this.token = data.access_token;
+                    return true;
+                }
+            } catch (e) {
+                console.error(`   SFTPGo Not Reachable (Attempt ${i + 1}/${retries}): ${e.message}`);
             }
 
-            const data = await res.json();
-            this.token = data.access_token;
-            return true;
-        } catch (e) {
-            console.error(`   SFTPGo Not Reachable: ${e.message}`);
-            return false;
+            if (i < retries - 1) await new Promise(r => setTimeout(r, delay));
         }
+        return false;
     }
 
     async createGroup(name, description) {
@@ -250,7 +254,9 @@ class SftpGoService {
 
             if (!res.ok) {
                 const txt = await res.text();
-                // console.error(`   SFTPGo User Error (${username}): ${txt}`); 
+                console.error(`   ❌ SFTPGo User Error (${username}): HTTP ${res.status} - ${txt}`);
+            } else {
+                // console.log(`   ✓ SFTPGo User Synced: ${username}`);
             }
         } catch (e) {
             console.error(`   SFTPGo User Sync Failed (${username}):`, e.message);
@@ -931,8 +937,8 @@ module.exports = async function seedAll(strapi) {
 
         // Initialize SFTPGo Service
         const sftpGoService = new SftpGoService(
-            'http://localhost:8088',
-            'admin',
+            process.env.SFTPGO_URL || 'http://localhost:8088',
+            process.env.SFTPGO_ADMIN_USERNAME || 'admin',
             process.env.SFTPGO_ADMIN_PASSWORD || process.env.STRAPI_ADMIN_PASSWORD || 'Strapi123!'
         );
 

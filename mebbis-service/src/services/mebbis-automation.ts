@@ -13,7 +13,6 @@ import {
     MebbisAuthError,
     MebbisSessionError,
     MebbisTimeoutError,
-    MebbisNetworkError,
     MebbisElementError,
     MebbisNavigationError,
     toMebbisError,
@@ -263,7 +262,7 @@ export class MebbisAutomationService {
                 try {
                     await page.goto(pageUrl, { timeout: this.config.timeout });
                     await page.waitForLoadState('networkidle');
-                } catch (error) {
+                } catch {
                     throw new MebbisNavigationError(pageUrl, `Sayfa yüklenemedi: ${pageUrl}`);
                 }
 

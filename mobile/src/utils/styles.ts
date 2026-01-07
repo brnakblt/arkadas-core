@@ -35,7 +35,7 @@ export const getShadowStyle = ({
 
         // Let's treat standard hex colors.
         return {
-            // @ts-ignore - React Native Web supports boxShadow string
+            // React Native Web supports boxShadow string
             boxShadow: `${offset.width}px ${offset.height}px ${radius}px ${color}`,
             elevation,
         };

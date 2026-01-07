@@ -16,8 +16,6 @@ import {
     BepGelisimIzleme,
     BepPortfolyoKontrol,
     BepBolum,
-    BepHedef,
-    BepDeger,
 } from '../types';
 import { logger } from '../utils/logger';
 

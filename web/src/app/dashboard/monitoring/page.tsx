@@ -83,8 +83,8 @@ export default function MonitoringPage() {
             setStats(statsData);
             setHealth(healthData);
             setError('');
-        } catch (err: any) {
-            setError(err.message || 'Error fetching data');
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Error fetching data');
         } finally {
             setLoading(false);
         }

@@ -52,7 +52,7 @@ export const thumbnailWorker = new Worker('thumbnail', async (job: Job) => {
 }, { connection });
 
 export const indexingWorker = new Worker('indexing', async (job: Job) => {
-    const { fileId, content } = job.data;
+    const { fileId } = job.data;
     console.log(`Indexing file ${fileId}`);
     // Implement indexing logic (e.g. ElasticSearch or simple DB text index)
 }, { connection });

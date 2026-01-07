@@ -61,22 +61,24 @@ export async function GET(request: Request) {
             console.error('Failed to fetch AI enrollments:', error);
         }
 
+        interface StudentAttributes {
+            firstName?: string;
+            ad?: string;
+            lastName?: string;
+            soyad?: string;
+            photo?: {
+                data?: {
+                    attributes?: { url: string };
+                };
+                url?: string;
+            };
+        }
+
         interface StrapiStudent {
             id: number;
             documentId?: string;
-            attributes?: {
-                firstName?: string;
-                ad?: string;
-                lastName?: string;
-                soyad?: string;
-                photo?: {
-                    data?: {
-                        attributes?: { url: string };
-                    };
-                    url?: string;
-                };
-            };
-            // Flattened structure fallback
+            attributes?: StudentAttributes;
+            // Flattened fields for fallback
             firstName?: string;
             ad?: string;
             lastName?: string;
@@ -88,7 +90,14 @@ export async function GET(request: Request) {
 
         // Map students with enrollment status
         const students = strapiStudents.map((s: StrapiStudent) => {
-            const attrs = (s.attributes || s) as any;
+            // If attributes exist, use them. Otherwise assume flattened structure (s itself acts as attributes)
+            const rawAttrs = s.attributes || s;
+            // We need a type that encompasses both the structure inside attributes (StudentAttributes) and the flattened fallback keys
+            // Since StudentAttributes handles the complex photo structure and flattened fallback usually is simpler, we can cast to StudentAttributes for the complex access
+            // but we need to cover the flattened photo case too.
+            // Let's create a union or intersection type for 'attrs' usage
+            const attrs = rawAttrs as StudentAttributes & { photo?: { url?: string } };
+
             const studentIdStr = `student_${s.id}`;
             const isEnrolled = enrolledUserIds.includes(studentIdStr);
 

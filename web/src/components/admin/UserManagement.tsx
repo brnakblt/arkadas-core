@@ -26,17 +26,17 @@ export default function UserManagement() {
     const [search, setSearch] = useState('');
     const [roleFilter, setRoleFilter] = useState('all');
     const [statusFilter, setStatusFilter] = useState('all');
-    
+
     const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view' | null>(null);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     // Fetch Roles to map ID <-> Name
     const { data: rolesData } = useSWR('/api/users-permissions/roles', fetcher);
-    const rolesMap = rolesData?.roles?.reduce((acc: any, r: any) => ({ ...acc, [r.type]: r.id }), {}) || {};
+    const rolesMap = rolesData?.roles?.reduce((acc: Record<string, string>, r: { type: string; id: string }) => ({ ...acc, [r.type]: r.id }), {}) || {};
 
     // Fetch Users
-    const { data: usersData, error, isLoading } = useSWR(
-        `/api/users?populate=role&sort=createdAt:desc`, 
+    const { data: usersData, isLoading } = useSWR(
+        `/api/users?populate=role&sort=createdAt:desc`,
         fetcher
     );
 
@@ -53,14 +53,14 @@ export default function UserManagement() {
     })) || [];
 
     const filteredUsers = users.filter(user => {
-        const matchesSearch = 
-            user.fullName.toLowerCase().includes(search.toLowerCase()) || 
+        const matchesSearch =
+            user.fullName.toLowerCase().includes(search.toLowerCase()) ||
             user.email.toLowerCase().includes(search.toLowerCase()) ||
             user.username.toLowerCase().includes(search.toLowerCase());
-            
+
         const matchesRole = roleFilter === 'all' || user.role === roleFilter;
         const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
-        
+
         return matchesSearch && matchesRole && matchesStatus;
     });
 
@@ -82,9 +82,9 @@ export default function UserManagement() {
                 // Determine if we need to send role ID
                 const updatePayload: any = { ...userData };
                 if (userData.role) {
-                     updatePayload.role = rolesMap[userData.role];
+                    updatePayload.role = rolesMap[userData.role];
                 }
-                
+
                 await authFetch(`/api/users/${selectedUser.id}`, {
                     method: 'PUT',
                     body: JSON.stringify(updatePayload),
@@ -112,10 +112,10 @@ export default function UserManagement() {
     const handleToggleStatus = async (userId: string) => {
         const user = users.find(u => u.id === userId);
         if (!user) return;
-        
+
         // Strapi blocked: true = inactive.
         const shouldBlock = user.status === 'active';
-        
+
         try {
             await authFetch(`/api/users/${userId}`, {
                 method: 'PUT',
@@ -139,7 +139,7 @@ export default function UserManagement() {
                 </button>
             </div>
 
-            <UserFilters 
+            <UserFilters
                 searchQuery={search} onSearchChange={setSearch}
                 roleFilter={roleFilter} onRoleChange={setRoleFilter}
                 statusFilter={statusFilter} onStatusChange={setStatusFilter}
@@ -150,7 +150,7 @@ export default function UserManagement() {
                     <span className="animate-spin inline-block mr-2">⏳</span> Yükleniyor...
                 </div>
             ) : (
-                <UserTable 
+                <UserTable
                     users={filteredUsers}
                     onView={(user) => { setSelectedUser(user); setModalMode('view'); }}
                     onEdit={(user) => { setSelectedUser(user); setModalMode('edit'); }}

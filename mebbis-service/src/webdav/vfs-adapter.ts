@@ -1,6 +1,4 @@
 import { v2 as webdav } from 'webdav-server';
-import path from 'path';
-import fs from 'fs';
 import { Readable, Writable } from 'stream';
 
 const STRAPI_URL = process.env.STRAPI_URL || 'http://127.0.0.1:1337';
@@ -9,7 +7,7 @@ export class StrapiFileSystem extends webdav.FileSystem {
     protected user: any;
 
     constructor(user: any) {
-        // @ts-ignore
+        // @ts-expect-error - Mismatch in VFS constructor
         super(null);
         this.user = user;
     }
@@ -24,7 +22,7 @@ export class StrapiFileSystem extends webdav.FileSystem {
     }
 
     protected _create(path: webdav.Path, ctx: webdav.CreateInfo, callback: webdav.SimpleCallback): void {
-        const storagePath = this.getStoragePath(path);
+        // const storagePath = this.getStoragePath(path);
 
         if (ctx.type.isDirectory) {
             // Create folder
@@ -101,7 +99,7 @@ export class StrapiFileSystem extends webdav.FileSystem {
 
     protected _type(path: webdav.Path, ctx: webdav.TypeInfo, callback: webdav.ReturnCallback<webdav.ResourceType>): void {
         // Check if file or folder
-        const storagePath = this.getStoragePath(path);
+        // const storagePath = this.getStoragePath(path);
         // Need an API to get single file/folder info by path
         // For root
         if (path.isRoot()) {

@@ -39,7 +39,9 @@ export default function LoginScreen() {
     }, [biometricAvailable]);
 
     const handleLogin = async () => {
+        console.log('[Login] Attempting login with:', email, 'Password length:', password.length);
         if (!email.trim() || !password.trim()) {
+            console.log('[Login] Validation failed: Empty fields');
             Alert.alert('Hata', 'E-posta ve şifre gereklidir');
             if (Platform.OS !== 'web') {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -55,6 +57,7 @@ export default function LoginScreen() {
             }
             router.replace('/(tabs)');
         } catch (error) {
+            console.error('[Login] Error during login:', error);
             const message = error instanceof Error ? error.message : 'Giriş yapılamadı';
             Alert.alert('Giriş Hatası', message);
             if (Platform.OS !== 'web') {
@@ -101,16 +104,16 @@ export default function LoginScreen() {
             {/* Form */}
             <View style={styles.form}>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.inputLabel}>E-posta</Text>
+                    <Text style={styles.inputLabel}>E-posta veya Kullanıcı Adı</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="ornek@arkadas.com.tr"
+                        placeholder="Kullanıcı adı veya E-posta"
                         placeholderTextColor="#94a3b8"
                         value={email}
                         onChangeText={setEmail}
-                        keyboardType="email-address"
+                        // keyboardType="email-address" // Removed to allow simplified username entry
                         autoCapitalize="none"
-                        autoComplete="email"
+                        autoComplete="username"
                         autoCorrect={false}
                     />
                 </View>
@@ -125,6 +128,8 @@ export default function LoginScreen() {
                         onChangeText={setPassword}
                         secureTextEntry
                         autoComplete="password"
+                        returnKeyType="go"
+                        onSubmitEditing={handleLogin}
                     />
                 </View>
 

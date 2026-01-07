@@ -112,3 +112,108 @@ services:
       resources:
         limits:
           memory: 128M
+
+  # ==========================================
+  # Application Services
+  # ==========================================
+
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    image: arkadas-ai-service:latest
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
+      - API_KEY=${AI_SERVICE_API_KEY:-s3cr3t}
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  mebbis-service:
+    build:
+      context: ./mebbis-service
+      dockerfile: Dockerfile
+    image: arkadas-mebbis-service:latest
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
+      - INFISICAL_TOKEN=${INFISICAL_TOKEN}
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  strapi:
+    build:
+      context: ./strapi
+      dockerfile: Dockerfile
+    image: arkadas-strapi:latest
+    restart: unless-stopped
+    ports:
+      - "1337:1337"
+    environment:
+      - DATABASE_CLIENT=postgres
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=${POSTGRES_DB:-arkadas_erp}
+      - DATABASE_USERNAME=${POSTGRES_USER:-postgres}
+      - DATABASE_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - DATABASE_SSL=false
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
+      - JWT_SECRET=${JWT_SECRET:-changeme}
+      - ADMIN_JWT_SECRET=${ADMIN_JWT_SECRET:-changeme}
+      - APP_KEYS=${APP_KEYS:-changeme,changeme,changeme,changeme}
+      - API_TOKEN_SALT=${API_TOKEN_SALT:-changeme}
+      - TRANSFER_TOKEN_SALT=${TRANSFER_TOKEN_SALT:-changeme}
+      - SFTPGO_URL=http://sftpgo:8080
+      - SFTPGO_ADMIN_USERNAME=${SFTPGO_ADMIN_USER:-admin}
+      - SFTPGO_ADMIN_PASSWORD=${SFTPGO_ADMIN_PASSWORD:-changeme}
+    volumes:
+      - ./strapi/public/uploads:/opt/app/public/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      sftpgo:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    image: arkadas-web:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
+      - STRAPI_URL=http://strapi:1337
+      - NEXT_PUBLIC_AI_API_URL=http://localhost:8000
+      - AI_API_URL=http://ai-service:8000
+    depends_on:
+      - strapi
+    deploy:
+      resources:
+        limits:
+          memory: 512M
