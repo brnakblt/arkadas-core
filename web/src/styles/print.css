@@ -1,0 +1,198 @@
+/**
+ * Print Styles for Reports
+ * Include in pages that need print functionality
+ */
+
+/* Base print styles */
+@media print {
+  /* Hide non-essential elements */
+  header,
+  footer,
+  nav,
+  aside,
+  .no-print,
+  .sidebar,
+  .navigation,
+  .toast,
+  .modal,
+  button:not(.print-visible),
+  [data-no-print] {
+    display: none !important;
+  }
+
+  /* Reset backgrounds and shadows */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt !important;
+    line-height: 1.5 !important;
+  }
+
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Ensure content fills page width */
+  .container,
+  .main-content,
+  main {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Page breaks */
+  .page-break-before {
+    page-break-before: always !important;
+  }
+
+  .page-break-after {
+    page-break-after: always !important;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid !important;
+  }
+
+  /* Tables */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  th,
+  td {
+    border: 1px solid #333 !important;
+    padding: 8px !important;
+    text-align: left !important;
+  }
+
+  th {
+    background-color: #f0f0f0 !important;
+    font-weight: bold !important;
+  }
+
+  /* Links */
+  a {
+    text-decoration: underline !important;
+    color: black !important;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 10pt;
+    color: #666;
+  }
+
+  a[href^="#"]::after,
+  a[href^="javascript"]::after {
+    content: "";
+  }
+
+  /* Images */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Headings */
+  h1,
+  h2,
+  h3 {
+    page-break-after: avoid !important;
+  }
+
+  /* Charts and graphs */
+  .chart-container {
+    page-break-inside: avoid !important;
+  }
+}
+
+/* Report-specific styles */
+@media print {
+  /* Header for printed reports */
+  .print-header {
+    display: block !important;
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid black;
+  }
+
+  .print-header h1 {
+    font-size: 18pt !important;
+    margin: 0 0 5px 0 !important;
+  }
+
+  .print-header .date {
+    font-size: 10pt !important;
+    color: #666 !important;
+  }
+
+  /* Footer for printed reports */
+  .print-footer {
+    display: block !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 9pt;
+    color: #666;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+  }
+
+  /* Stats cards for print */
+  .stats-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  .stats-card {
+    border: 1px solid #333 !important;
+    padding: 10px !important;
+    background: white !important;
+  }
+
+  /* Attendance table */
+  .attendance-table {
+    font-size: 10pt !important;
+  }
+
+  .attendance-table .status-present {
+    background-color: #d4edda !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .attendance-table .status-absent {
+    background-color: #f8d7da !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .attendance-table .status-late {
+    background-color: #fff3cd !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+/* A4 page setup */
+@page {
+  size: A4;
+  margin: 15mm;
+}
+
+/* Landscape for wide tables */
+@page landscape {
+  size: A4 landscape;
+}
+
+.print-landscape {
+  page: landscape;
+}

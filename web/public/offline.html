@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Çevrimdışı - Arkadaş ERP</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#3B82F6">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e3a5f 0%, #0f1f35 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      padding: 20px;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 400px;
+    }
+
+    .icon {
+      font-size: 80px;
+      margin-bottom: 24px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    p {
+      color: #94a3b8;
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .retry-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 500;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .retry-btn:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+    }
+
+    .retry-btn:active {
+      transform: translateY(0);
+    }
+
+    .cached-pages {
+      margin-top: 48px;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .cached-pages h2 {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cached-pages a {
+      display: block;
+      color: #60a5fa;
+      text-decoration: none;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .cached-pages a:last-child {
+      border-bottom: none;
+    }
+
+    .cached-pages a:hover {
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">📡</div>
+    <h1>Çevrimdışısınız</h1>
+    <p>
+      İnternet bağlantınız yok gibi görünüyor. 
+      Bağlantınızı kontrol edin ve tekrar deneyin.
+    </p>
+    <button class="retry-btn" onclick="location.reload()">
+      Tekrar Dene
+    </button>
+
+    <div class="cached-pages">
+      <h2>Önbelleğe alınmış sayfalar</h2>
+      <a href="/">Ana Sayfa</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/yoklama">Yoklama</a>
+      <a href="/program">Program</a>
+    </div>
+  </div>
+
+  <script>
+    // Check connection and auto-reload when back online
+    window.addEventListener('online', () => {
+      location.reload();
+    });
+
+    // Register service worker if not registered
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('SW registered'))
+        .catch(err => console.error('SW registration failed:', err));
+    }
+  </script>
+</body>
+</html>

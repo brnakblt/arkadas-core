@@ -1,0 +1,547 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Core Theme Variables - Light Mode */
+  --background: #FFFFFF;
+  --foreground: #212121;
+  --surface: #F8F9FA;
+  --border: #E0E0E0;
+
+  /* Legacy Colors */
+  --color-primary: #7CB342;
+  --color-secondary: #F4A261;
+  --color-accent: #A5D6A7;
+  --color-neutral-dark: #2A2A2A;
+  --color-neutral-light: #F8F9FA;
+  --color-background: #FFFFFF;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark Mode Overrides */
+.dark {
+  --background: #121212;
+  --foreground: #EDEDED;
+  --surface: #1E1E1E;
+  --border: #333333;
+
+  /* Adjust specific colors for dark mode if needed, or keep them */
+  --color-neutral-light: #1E1E1E; 
+  --color-background: #121212;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Performance optimizations */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Skip to main content link */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--color-primary);
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Custom Tailwind Components */
+@layer components {
+  .hero-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, #689F38 100%);
+  }
+
+  .card-shadow {
+    box-shadow: 0 10px 30px rgba(124, 179, 66, 0.1);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .smooth-scroll {
+    scroll-behavior: smooth;
+  }
+
+  .curve-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-secondary);
+    border-radius: 50% 0 50% 0;
+    opacity: 0.1;
+    z-index: -1;
+  }
+
+  .btn-interactive {
+    @apply transition-transform active:scale-95 hover:brightness-110 active:brightness-90;
+  }
+}
+
+/* Custom Utilities */
+@layer utilities {
+
+
+  .text-primary {
+    color: var(--color-primary);
+  }
+
+  .text-secondary {
+    color: var(--color-secondary);
+  }
+
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .text-neutral-dark {
+    color: var(--color-neutral-dark);
+  }
+
+  .text-neutral-light {
+    color: var(--color-neutral-light);
+  }
+
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+
+  .bg-secondary {
+    background-color: var(--color-secondary);
+  }
+
+  .bg-accent {
+    background-color: var(--color-accent);
+  }
+
+  .bg-neutral-dark {
+    background-color: var(--color-neutral-dark);
+  }
+
+  .bg-neutral-light {
+    background-color: var(--color-neutral-light);
+  }
+
+  .border-primary {
+    border-color: var(--color-primary);
+  }
+
+  .border-secondary {
+    border-color: var(--color-secondary);
+  }
+
+  .hover\:bg-primary:hover {
+    background-color: var(--color-primary);
+  }
+
+  .hover\:text-primary:hover {
+    color: var(--color-primary);
+  }
+
+  .hover\:text-secondary:hover {
+    color: var(--color-secondary);
+  }
+}
+
+/* Accessibility Profiles */
+
+/* Seizure Safe */
+body.acc-seizure * {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Vision Impaired */
+body.acc-vision {
+  /* filter: contrast(125%); Removed because it breaks position:fixed elements */
+  background-color: #FFFFFF !important;
+}
+
+body.acc-vision * {
+  font-weight: 700 !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+body.acc-vision img {
+  filter: contrast(120%) !important;
+}
+
+/* ADHD - Focus Mask (Simple Simulation) */
+body.acc-adhd *:focus {
+  outline: 4px solid #ff0000 !important;
+  outline-offset: 4px !important;
+}
+
+/* Blind Mode - Enhanced Focus for Screen Reader Users (WCAG 2.4.7 AAA) */
+body.acc-blind *:focus {
+  outline: 4px solid #0066CC !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 0 8px rgba(0, 102, 204, 0.3) !important;
+}
+
+body.acc-blind a:focus,
+body.acc-blind button:focus {
+  background-color: #0066CC !important;
+  color: #FFFFFF !important;
+}
+
+/* Dyslexia (Using a sans-serif fallback that is generally readable) */
+body.acc-dyslexia * {
+  font-family: 'Verdana', 'Arial', sans-serif !important;
+  line-height: 1.8 !important;
+  word-spacing: 0.1em !important;
+}
+
+/* Elderly */
+body.acc-elderly {
+  font-size: 110% !important;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.8);
+}
+
+
+/* Prevent horizontal scroll */
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+html {
+  /* scroll-padding-top removed to allow full-screen sections to center perfectly relative to viewport */
+}
+
+body {
+  width: 100%;
+  position: relative;
+}
+
+/* Swiper Pagination Bullets */
+/* Swiper Pagination Bullets - Optimized for Touch Targets (24px min) */
+.swiper-pagination-bullet {
+  width: 12px !important;
+  height: 12px !important;
+  background: #2A2A2A !important;
+  opacity: 0.3 !important;
+  transition: all 0.3s ease !important;
+  /* Add transparent border to increase touch area to 24x24px without affecting visual size */
+  border: 6px solid transparent !important;
+  background-clip: padding-box !important;
+  box-sizing: content-box !important;
+  margin: 0 4px !important;
+}
+
+.swiper-pagination-bullet-active {
+  background: #F4A261 !important;
+  opacity: 1 !important;
+  width: 12px !important;
+  border-radius: 50% !important;
+}
+
+/* 
+ * Decoration Animations 
+ * Adapted from templates/_animated_decorations.css
+ */
+.path-draw {
+  stroke-dasharray: 2000;
+  stroke-dashoffset: 2000;
+  animation: drawLine 4s ease-out forwards;
+}
+
+.path-draw-delay {
+  animation-delay: 0.5s;
+}
+
+@keyframes drawLine {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ============================================
+   Enhanced Dark Mode Utilities
+   ============================================ */
+
+.dark .bg-gray-50 {
+  background-color: #1a1a2e;
+}
+
+.dark .shadow-sm {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.dark .shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+.dark .shadow-lg {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Dark mode input styling */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #1e1e2e;
+  border-color: #3d3d5c;
+  color: #ededed;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #6b7280;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: #3b82f6;
+  outline-color: #3b82f6;
+}
+
+/* Dark mode table styling */
+.dark table {
+  border-color: #2d2d3d;
+}
+
+.dark thead {
+  background-color: #1a1a2e;
+}
+
+.dark tbody tr:hover {
+  background-color: #252538;
+}
+
+/* ============================================
+   Responsive Utilities
+   ============================================ */
+
+/* Mobile-first responsive padding */
+.container-responsive {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+/* Responsive text sizes */
+.text-responsive-sm {
+  @apply text-xs sm:text-sm;
+}
+
+.text-responsive-base {
+  @apply text-sm sm:text-base;
+}
+
+.text-responsive-lg {
+  @apply text-base sm:text-lg lg:text-xl;
+}
+
+.text-responsive-xl {
+  @apply text-lg sm:text-xl lg:text-2xl;
+}
+
+.text-responsive-2xl {
+  @apply text-xl sm:text-2xl lg:text-3xl;
+}
+
+/* Responsive card grid */
+.grid-responsive-cards {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+}
+
+/* Mobile-friendly touch targets */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Responsive table */
+.table-responsive {
+  @apply w-full overflow-x-auto;
+}
+
+.table-responsive table {
+  @apply min-w-full;
+}
+
+/* Hide on mobile, show on desktop */
+.hide-mobile {
+  @apply hidden sm:block;
+}
+
+/* Show on mobile, hide on desktop */
+.show-mobile {
+  @apply block sm:hidden;
+}
+
+/* Mobile bottom navigation spacing */
+.mobile-nav-spacing {
+  @apply pb-16 sm:pb-0;
+}
+
+/* ============================================
+   Animation Utilities
+   ============================================ */
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Slide up animation */
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.4s ease-out;
+}
+
+/* Scale in animation */
+@keyframes scaleIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.2s ease-out;
+}
+
+/* Shake animation for errors */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, 
+    var(--surface) 25%, 
+    var(--border) 50%, 
+    var(--surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ============================================
+   Glass morphism effects
+   ============================================ */
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.dark .glass {
+  background: rgba(30, 30, 46, 0.7);
+}
+
+.glass-card {
+  @apply glass rounded-xl border border-white/20 shadow-lg;
+}
+
+.dark .glass-card {
+  @apply border-gray-700/50;
+}

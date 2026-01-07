@@ -75,15 +75,25 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto">
             {/* Header Section */}
             {/* Header Section */}
-            {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-12">
                 <div className="text-center md:text-left mb-6 md:mb-0">
                     <h1 className="text-3xl font-display font-bold text-neutral-dark leading-normal pb-1">
-                        {user.userType === 'teacher' ? 'Öğretmen Paneli' : (user.userType === 'parent' ? 'Veli Paneli' : 'Öğrenci Paneli')}
+                        {user.userType === 'teacher' ? 'Öğretmen Paneli' : 'Veli Paneli'}
                     </h1>
                     <p className="text-gray-600 mt-2 text-lg">
                         Hoş geldiniz, <span className="font-semibold text-primary">{user.username}</span>
                     </p>
+                </div>
+
+                {/* User Profile Card */}
+                <div className="bg-white/80 backdrop-blur-md px-6 py-3 rounded-2xl shadow-sm border border-white/50 flex items-center space-x-4">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md ${user.userType === 'teacher' ? 'bg-indigo-500' : 'bg-orange-500'}`}>
+                        {user.username.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <p className="text-sm font-bold text-gray-800">{user.username}</p>
+                        <p className="text-xs text-gray-500 capitalize">{user.userType === 'teacher' ? 'Öğretmen' : 'Veli'}</p>
+                    </div>
                 </div>
             </div>
 

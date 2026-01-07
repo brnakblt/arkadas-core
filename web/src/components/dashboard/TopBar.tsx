@@ -42,7 +42,7 @@ const TopBar = () => {
                     </div>
                     <div className="hidden md:block text-left">
                         <p className="text-sm font-semibold text-gray-700 leading-none">{user?.username || 'Kullanıcı'}</p>
-                        <p className="text-xs text-gray-500 mt-0.5 capitalize">{user?.userType === 'teacher' ? 'Öğretmen' : (user?.userType === 'parent' ? 'Veli' : 'Öğrenci')}</p>
+                        <p className="text-xs text-gray-500 mt-0.5 capitalize">{user?.userType === 'teacher' ? 'Öğretmen' : (user?.userType === 'parent' ? 'Veli' : '')}</p>
                     </div>
                 </div>
             </div>

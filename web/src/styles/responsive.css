@@ -1,0 +1,384 @@
+/**
+ * Responsive Utilities
+ * 
+ * CSS utilities and breakpoint helpers for mobile-first responsive design.
+ * Import these utilities across components for consistent responsive behavior.
+ */
+
+/* ============================================================
+   Breakpoint Variables
+   ============================================================ */
+
+:root {
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+/* ============================================================
+   Mobile-First Base Styles
+   ============================================================ */
+
+/* Container with responsive padding */
+.container-responsive {
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-responsive {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-responsive {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* ============================================================
+   Mobile Navigation
+   ============================================================ */
+
+/* Mobile menu overlay */
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  z-index: 40;
+}
+
+.mobile-menu-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Mobile slide-in menu */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 280px;
+  max-width: 80vw;
+  background: var(--bg-primary, white);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-out;
+  z-index: 50;
+  overflow-y: auto;
+}
+
+.mobile-menu.open {
+  transform: translateX(0);
+}
+
+/* Hide on desktop */
+@media (min-width: 1024px) {
+  .mobile-menu-overlay,
+  .mobile-menu,
+  .mobile-menu-toggle {
+    display: none !important;
+  }
+}
+
+/* ============================================================
+   Responsive Grid
+   ============================================================ */
+
+.grid-responsive {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .grid-responsive {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-responsive {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid-responsive {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Dashboard grid - 1 col mobile, 2 col tablet, 3 col desktop */
+.grid-dashboard {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .grid-dashboard {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid-dashboard {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* ============================================================
+   Responsive Tables
+   ============================================================ */
+
+/* Horizontal scroll on mobile */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive table {
+  min-width: 600px;
+}
+
+/* Card-style tables on mobile */
+@media (max-width: 767px) {
+  .table-card-mobile thead {
+    display: none;
+  }
+
+  .table-card-mobile tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 0.5rem;
+    background: var(--bg-primary, white);
+  }
+
+  .table-card-mobile tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border: none;
+  }
+
+  .table-card-mobile tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-secondary, #6b7280);
+  }
+}
+
+/* ============================================================
+   Responsive Typography
+   ============================================================ */
+
+.text-responsive-sm {
+  font-size: 0.75rem;
+}
+
+.text-responsive-base {
+  font-size: 0.875rem;
+}
+
+.text-responsive-lg {
+  font-size: 1rem;
+}
+
+.text-responsive-xl {
+  font-size: 1.125rem;
+}
+
+.text-responsive-2xl {
+  font-size: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .text-responsive-sm {
+    font-size: 0.875rem;
+  }
+
+  .text-responsive-base {
+    font-size: 1rem;
+  }
+
+  .text-responsive-lg {
+    font-size: 1.125rem;
+  }
+
+  .text-responsive-xl {
+    font-size: 1.25rem;
+  }
+
+  .text-responsive-2xl {
+    font-size: 1.5rem;
+  }
+}
+
+/* ============================================================
+   Responsive Spacing
+   ============================================================ */
+
+.section-padding {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+}
+
+/* ============================================================
+   Touch-Friendly Targets
+   ============================================================ */
+
+/* Minimum 44px touch target for mobile accessibility */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Larger buttons on mobile */
+@media (max-width: 767px) {
+  .btn-mobile-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    min-height: 48px;
+  }
+}
+
+/* ============================================================
+   Hide/Show Utilities
+   ============================================================ */
+
+.hide-mobile {
+  display: none;
+}
+
+.show-mobile {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .hide-mobile {
+    display: block;
+  }
+
+  .show-mobile {
+    display: none;
+  }
+}
+
+.hide-desktop {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .hide-desktop {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Safe Area Insets (for notched phones)
+   ============================================================ */
+
+.safe-area-inset-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-inset-left {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-area-inset-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+/* ============================================================
+   Responsive Modal
+   ============================================================ */
+
+.modal-responsive {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-responsive .modal-content {
+  width: 100%;
+  max-height: 90vh;
+  border-radius: 1rem 1rem 0 0;
+  animation: slideUp 0.3s ease-out;
+}
+
+@media (min-width: 640px) {
+  .modal-responsive {
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .modal-responsive .modal-content {
+    max-width: 500px;
+    border-radius: 1rem;
+    animation: fadeIn 0.2s ease-out;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

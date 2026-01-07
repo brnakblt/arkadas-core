@@ -1,0 +1,49 @@
+{
+    "name": "Arkadaş Özel Eğitim",
+    "short_name": "Arkadaş ERP",
+    "description": "Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi ERP Sistemi",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#3B82F6",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "lang": "tr",
+    "icons": [
+        {
+            "src": "/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Yoklama",
+            "url": "/yoklama",
+            "description": "Yoklama sayfasını aç"
+        },
+        {
+            "name": "Program",
+            "url": "/program",
+            "description": "Haftalık programı görüntüle"
+        },
+        {
+            "name": "Servis Takip",
+            "url": "/servis-takip",
+            "description": "Servis konumunu takip et"
+        }
+    ],
+    "categories": [
+        "education",
+        "business",
+        "productivity"
+    ],
+    "prefer_related_applications": false
+}

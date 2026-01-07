@@ -1,0 +1,61 @@
+/* 
+ * ARKA PLAN & DESENLER: Polinom ve Eğriler (SVG Tabanlı)
+ * Renk Paleti: Turuncu (#F97316) ve Yeşil (#22C55E)
+ */
+
+:root {
+  --decor-bg-color: #f8fafc;
+}
+
+/* 
+ * 1. Sınıf: .bg-poly-bezier-waves
+ * Matematiksel Tanım: Kübik Bézier Eğrileri (Cubic Polynomials)
+ * Görünüm: Yatay olarak akan, yumuşak, birbiriyle kesişen "S" formunda dalgalar.
+ * Teknik: CSS içine gömülü SVG (Data URI).
+ */
+.bg-poly-bezier-waves {
+  background-color: var(--decor-bg-color);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='none' stroke='%23F97316' stroke-width='2' stroke-opacity='0.2' d='M0,160L48,176C96,192,192,224,288,224C384,224,480,192,576,165.3C672,139,768,117,864,128C960,139,1056,181,1152,197.3C1248,213,1344,203,1392,197.3L1440,192'/%3E%3Cpath fill='none' stroke='%2322C55E' stroke-width='2' stroke-opacity='0.2' d='M0,224L48,213.3C96,203,192,181,288,160C384,139,480,117,576,133.3C672,149,768,203,864,218.7C960,235,1056,213,1152,192C1248,171,1344,149,1392,138.7L1440,128'/%3E%3Cpath fill='none' stroke='%23F97316' stroke-width='1' stroke-opacity='0.4' d='M0,96L48,112C96,128,192,160,288,154.7C384,149,480,107,576,96C672,85,768,107,864,128C960,149,1056,171,1152,165.3C1248,160,1344,128,1392,112L1440,96'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* 
+ * 2. Sınıf: .bg-poly-exponential
+ * Matematiksel Tanım: Üstel Fonksiyonlar (Exponential Growth) - y = x^2 benzeri
+ * Görünüm: Alttan yukarıya doğru hızla yükselen parabolik çizgiler.
+ * Kullanım: Büyüme, ivme ve yükseliş hissi için.
+ */
+.bg-poly-exponential {
+  background-color: #ffffff;
+  /* İç içe geçmiş paraboller */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600' preserveAspectRatio='none'%3E%3Cpath d='M0 600 Q 400 500 800 0' stroke='%23F97316' stroke-width='1.5' fill='none' stroke-opacity='0.3'/%3E%3Cpath d='M0 600 Q 300 400 800 100' stroke='%2322C55E' stroke-width='1.5' fill='none' stroke-opacity='0.3'/%3E%3Cpath d='M0 600 Q 200 300 800 200' stroke='%23F97316' stroke-width='1' fill='none' stroke-opacity='0.2'/%3E%3Cpath d='M0 600 Q 100 200 800 300' stroke='%2322C55E' stroke-width='1' fill='none' stroke-opacity='0.2'/%3E%3Cpath d='M0 600 Q 50 100 800 400' stroke='%23F97316' stroke-width='0.5' fill='none' stroke-opacity='0.15'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+}
+
+/* 
+ * 3. Sınıf: .bg-poly-contour-map
+ * Matematiksel Tanım: Eşyükselti Eğrileri (Topographic Contours)
+ * Görünüm: Bir harita veya karmaşık bir fonksiyonun (z = f(x,y)) üstten görünümü gibi.
+ * Teknik: Tekrarlayan radyal desenler.
+ */
+.bg-poly-contour-map {
+  background-color: var(--decor-bg-color);
+  background-image: 
+    radial-gradient(ellipse at 20% 50%, transparent 0%, transparent 40%, rgba(249, 115, 22, 0.05) 41%, transparent 42%),
+    radial-gradient(ellipse at 80% 30%, transparent 0%, transparent 30%, rgba(34, 197, 94, 0.05) 31%, transparent 32%),
+    radial-gradient(circle at 50% 100%, transparent 0%, transparent 45%, rgba(249, 115, 22, 0.08) 46%, transparent 47%),
+    radial-gradient(circle at 10% 10%, transparent 0%, transparent 20%, rgba(34, 197, 94, 0.08) 21%, transparent 22%);
+  background-size: 100% 100%;
+}
+
+/* İçerik Kutusu Stili (Okunabilirlik için) */
+.decor-content-box {
+  background: rgba(255, 255, 255, 0.95);
+  border-left: 4px solid var(--decor-orange-primary);
+  padding: 2.5rem;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+  max-width: 600px;
+}
