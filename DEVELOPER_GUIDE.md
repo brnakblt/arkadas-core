@@ -12,6 +12,20 @@ This is a TurboRepo monorepo.
 | `strapi/` | Strapi v5 CMS (Postgres backend) |
 | `docs/` | MkDocs documentation |
 | `scripts/` | Utility scripts |
+| `scripts/` | Utility scripts |
+
+---
+
+## 🗄️ Database Architecture
+
+A common question is: *"Doesn't Strapi have its own database?"*
+
+**No, Strapi is a Headless CMS application, not a database.**
+
+- **Strapi (The Application)**: It manages content types, API endpoints, and the admin interface. It's the logic layer.
+- **PostgreSQL (The Storage)**: This is where the actual data lives. Strapi connects to Postgres to store and retrieve all content, users, and configurations.
+
+Think of it this way: Strapi is the *librarian*, and PostgreSQL is the *library shelves*. Without the shelves (Postgres), the librarian (Strapi) has nowhere to put the books (Data).
 
 ---
 
