@@ -33,12 +33,6 @@
     },
     "estimatedArrivalOffsetMinutes": {
       "type": "integer"
-    },
-    "route": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::service-route.service-route",
-      "inversedBy": "stops"
     }
   }
 }

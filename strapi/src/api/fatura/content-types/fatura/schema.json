@@ -17,11 +17,6 @@
       "required": true,
       "unique": true
     },
-    "student": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::student-profile.student-profile"
-    },
     "donem": {
       "type": "string",
       "required": true

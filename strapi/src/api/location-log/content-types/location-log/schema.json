@@ -46,11 +46,6 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user"
-    },
-    "route": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::service-route.service-route"
     }
   }
 }

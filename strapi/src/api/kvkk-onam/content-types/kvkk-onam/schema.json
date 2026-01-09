@@ -17,11 +17,6 @@
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user"
     },
-    "studentProfile": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::student-profile.student-profile"
-    },
     "personType": {
       "type": "enumeration",
       "enum": [
