@@ -537,23 +537,24 @@ async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, sftpGoSe
 
 async function seedHero(imagesPath) {
     console.log('🚀 Seeding Hero...');
+
+    // Check images
+    let uploadedIds = [];
     const imagesDir = path.resolve(imagesPath);
-    if (!fs.existsSync(imagesDir)) return console.error('❌ Hero images dir not found at ' + imagesDir);
-
-    const files = fs.readdirSync(imagesDir).filter(f => f.endsWith('.webp') || f.endsWith('.jpg') || f.endsWith('.png'));
-    console.log(`   Found ${files.length} images to sync.`);
-
-    const uploadedIds = [];
-    for (const f of files) {
-        try {
-            const up = await manualUpload(path.join(imagesDir, f));
-            if (up) uploadedIds.push(up.id);
-        } catch (e) {
-            console.error(`   Failed to upload ${f}:`, e.message);
+    if (fs.existsSync(imagesDir)) {
+        const files = fs.readdirSync(imagesDir).filter(f => f.endsWith('.webp') || f.endsWith('.jpg') || f.endsWith('.png'));
+        console.log(`   Found ${files.length} images to sync.`);
+        for (const f of files) {
+            try {
+                const up = await manualUpload(path.join(imagesDir, f));
+                if (up) uploadedIds.push(up.id);
+            } catch (e) {
+                console.error(`   Failed to upload ${f}:`, e.message);
+            }
         }
+    } else {
+        console.log('   Note: Hero images directory not found, skipping image upload.');
     }
-
-    if (uploadedIds.length === 0) return console.log('   No images uploaded.');
 
     let hero = await strapi.entityService.findMany('api::hero.hero', { populate: ['images'] });
 
@@ -561,7 +562,7 @@ async function seedHero(imagesPath) {
         title: 'Arkadaş Özel Eğitim',
         subtitle: 'Sevgi ve İlgiyle...',
         description: 'Özel çocuklarımız için özel bir dünya.',
-        images: uploadedIds, // Set images
+        images: uploadedIds.length > 0 ? uploadedIds : (hero?.images?.map(i => i.id) || []), // Keep existing or use new
         stats: [
             { label: 'Öğrenci', value: '500+' },
             { label: 'Uzman', value: '50+' },
@@ -572,7 +573,7 @@ async function seedHero(imagesPath) {
 
     if (hero) {
         await strapi.entityService.update('api::hero.hero', hero.id, { data: heroData });
-        console.log('   ~ Hero updated with gallery.');
+        console.log('   ~ Hero updated.');
     } else {
         await strapi.entityService.create('api::hero.hero', { data: heroData });
         console.log('   + Hero created.');
@@ -845,47 +846,29 @@ async function main() {
     const app = await createStrapi({ distDir: path.resolve(__dirname, '..', 'dist') }).load();
 
     try {
-        // Tenant slug from env or default
-        const tenantSlug = process.env.DEFAULT_TENANT || 'arkadas';
-        const tenantDataPath = path.resolve(__dirname, `../../data/tenants/${tenantSlug}`);
-        const configPath = path.join(tenantDataPath, 'config.json');
+        // Migration: Simplified path, assuming data was moved or sticking to default
+        // Checking paths relative to script location: strapi/scripts/../.. -> root
+        const rootDataPath = path.resolve(__dirname, '../../data');
 
-        // Load tenant config
-        if (!fs.existsSync(configPath)) {
-            throw new Error(`Tenant config not found: ${configPath}`);
+        // Use 'tenants/arkadas' as legacy data source if it exists, otherwise root
+        // For now, let's assume the folder structure remained but we ignore the "tenant" model concept.
+        let dataPath = path.join(rootDataPath, 'tenants/arkadas');
+        if (!fs.existsSync(dataPath)) {
+            dataPath = rootDataPath; // Fallback to root data if flattened
         }
-        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
-        console.log(`\n🏢 Seeding for tenant: ${config.displayName || tenantSlug}`);
-        console.log(`   📁 Data path: ${tenantDataPath}`);
+        console.log(`\n🏢 Seeding data from: ${dataPath}`);
 
-        // Resolve paths from config
-        const studentXml = path.join(tenantDataPath, config.seed?.students || 'seed/ogrencilistesi.xml');
-        const staffXml = path.join(tenantDataPath, config.seed?.personnelXml || config.seed?.personnel || 'seed/personellistesi.xml');
-        const heroImages = path.join(tenantDataPath, config.seed?.heroImages || 'assets/hero/');
-        const teamMemberImages = path.join(tenantDataPath, config.seed?.teamPhotos || 'assets/team/');
+        // Default paths
+        const studentXml = path.join(dataPath, 'seed/ogrencilistesi.xml');
+        const staffXml = path.join(dataPath, 'seed/personellistesi.xml');
+        const heroImages = path.join(dataPath, 'assets/hero/');
+        const teamMemberImages = path.join(dataPath, 'assets/team/');
 
         console.log(`   📋 Students: ${fs.existsSync(studentXml) ? '✓' : '✗'} ${studentXml}`);
         console.log(`   👥 Personnel: ${fs.existsSync(staffXml) ? '✓' : '✗'} ${staffXml}`);
 
         const authenticatedRole = await strapi.db.query('plugin::users-permissions.role').findOne({ where: { type: 'authenticated' } });
-
-        // Ensure tenant exists with full config
-        let tenant = await strapi.db.query('api::tenant.tenant').findOne({ where: { slug: tenantSlug } });
-        if (!tenant) {
-            tenant = await strapi.db.query('api::tenant.tenant').create({
-                data: {
-                    slug: config.slug || tenantSlug,
-                    name: config.name || tenantSlug,
-                    displayName: config.displayName || tenantSlug,
-                    subdomain: config.subdomain || tenantSlug,
-                    isActive: true,
-                    settings: config.settings || {},
-                }
-            });
-            console.log(`   ✓ Created tenant: ${config.displayName || tenantSlug}`);
-        }
-        global.currentTenant = tenant;
 
         // Initialize SFTPGo Service
         const sftpGoService = new SftpGoService(
@@ -914,7 +897,7 @@ async function main() {
         await seedGallery(app);
         await seedApiToken(app);
 
-        console.log(`\n✅ Seeding complete for: ${config.displayName || tenantSlug}`);
+        console.log(`\n✅ Seeding complete.`);
 
     } catch (err) {
         console.error("Seeding Error:", err);
