@@ -40,7 +40,7 @@ COPY --from=deps /opt/app/node_modules ./node_modules
 COPY package.json ./
 
 # Install ALL dependencies for build
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy source code
 COPY . .
