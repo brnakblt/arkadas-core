@@ -20,7 +20,8 @@ RUN apt-get update && apt-get install -y \
 # Copy package files (Lockfile might be missing in monorepo dev)
 COPY package.json ./
 # Run install (will generate lockfile)
-RUN npm install --omit=dev
+# Run install (will generate lockfile)
+RUN npm install --omit=dev --legacy-peer-deps
 
 # Stage 2: Builder
 FROM node:20-slim AS builder
