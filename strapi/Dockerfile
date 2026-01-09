@@ -57,6 +57,7 @@ WORKDIR /opt/app
 # tini for signal handling
 RUN apt-get update && apt-get install -y \
     tini \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user with home directory

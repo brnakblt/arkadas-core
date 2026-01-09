@@ -45,7 +45,7 @@ const startTime = Date.now();
  * Check Strapi database connectivity
  */
 async function checkDatabase(): Promise<ServiceStatus> {
-    const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+    const strapiUrl = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
     const start = Date.now();
 
     try {
