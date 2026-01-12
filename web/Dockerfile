@@ -38,6 +38,7 @@ RUN apk add --no-cache tini && rm -rf /var/cache/apk/*
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
@@ -61,7 +62,7 @@ ENTRYPOINT ["/sbin/tini", "--"]
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
 
 # Start Next.js
 CMD ["node", "server.js"]
