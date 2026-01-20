@@ -44,8 +44,58 @@ tags:
     description: Servis güzergahları ve GPS takibi
   - name: Documents
     description: Nextcloud dosya yönetimi
+  - name: AI
+    description: Yapay zeka servisleri (BEP üretimi, asistan)
 
 paths:
+  # ============================================================
+  # AI
+  # ============================================================
+  /ai/generate-bep:
+    post:
+      tags: [AI]
+      summary: BEP taslağı üret
+      description: Öğrenci bilgilerini ve gözlemleri kullanarak Google Gemini API üzerinden BEP üretir.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, age, diagnosis, observations]
+              properties:
+                name:
+                  type: string
+                  example: Ali Yılmaz
+                age:
+                  type: integer
+                  example: 9
+                diagnosis:
+                  type: string
+                  example: Otizm Spektrum Bozukluğu
+                observations:
+                  type: string
+                  description: Öğretmen gözlemleri ve notlar
+                strengths:
+                  type: array
+                  items:
+                    type: string
+                needs:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Başarılı BEP üretimi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BEPData'
+        '400':
+          description: Eksik parametre
+        '500':
+          description: AI servis hatası
+
   # ============================================================
   # AUTH
   # ============================================================
@@ -794,3 +844,37 @@ components:
               type: integer
             total:
               type: integer
+
+    BEPData:
+      type: object
+      properties:
+        studentName:
+          type: string
+        bepDate:
+          type: string
+        performanceLevel:
+          type: string
+        longTermGoals:
+          type: array
+          items:
+            type: string
+        shortTermGoals:
+          type: array
+          items:
+            type: string
+        teachingMethods:
+          type: array
+          items:
+            type: string
+        materials:
+          type: array
+          items:
+            type: string
+        evaluationMethods:
+          type: array
+          items:
+            type: string
+        recommendations:
+          type: array
+          items:
+            type: string
