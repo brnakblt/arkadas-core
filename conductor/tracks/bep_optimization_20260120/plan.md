@@ -11,7 +11,7 @@
     - [x] Sub-task: Implement robust error handling (retries, timeouts) for the Gemini API call.
 - [x] Task: Conductor - User Manual Verification 'Prompt Engineering & Backend Logic' (Protocol in workflow.md)
 
-## Phase 2: Frontend UX Enhancements
+## Phase 2: Frontend UX Enhancements [checkpoint: 5eee24b]
 - [x] Task: Enhanced Input Form 76f6d06
     - [x] Sub-task: Update the BEP generation component to accept additional user inputs (focus areas, constraints).
     - [x] Sub-task: Implement form validation for these new inputs.
