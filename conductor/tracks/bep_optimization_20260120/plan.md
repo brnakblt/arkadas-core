@@ -9,7 +9,7 @@
     - [x] Sub-task: Write unit tests for the prompt construction function.
     - [x] Sub-task: Refactor the API route/controller to use the new prompt structure.
     - [x] Sub-task: Implement robust error handling (retries, timeouts) for the Gemini API call.
-- [ ] Task: Conductor - User Manual Verification 'Prompt Engineering & Backend Logic' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Prompt Engineering & Backend Logic' (Protocol in workflow.md)
 
 ## Phase 2: Frontend UX Enhancements
 - [ ] Task: Enhanced Input Form

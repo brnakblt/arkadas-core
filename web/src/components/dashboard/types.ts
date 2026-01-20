@@ -35,6 +35,7 @@ export interface Student {
     parentName: string;
     parentPhone: string;
     avatarUrl: string;
+    age?: number;
 }
 
 export interface Staff {

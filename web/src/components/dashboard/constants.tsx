@@ -12,7 +12,8 @@ export const MOCK_STUDENTS: Student[] = [
         ramReportEndDate: '2024-12-30',
         parentName: 'Ayşe Yılmaz',
         parentPhone: '05551112233',
-        avatarUrl: 'https://picsum.photos/200/200?random=1'
+        avatarUrl: 'https://picsum.photos/200/200?random=1',
+        age: 9
     },
     {
         id: '2',
@@ -24,7 +25,8 @@ export const MOCK_STUDENTS: Student[] = [
         ramReportEndDate: '2025-06-15',
         parentName: 'Mehmet Kaya',
         parentPhone: '05554445566',
-        avatarUrl: 'https://picsum.photos/200/200?random=2'
+        avatarUrl: 'https://picsum.photos/200/200?random=2',
+        age: 8
     }
 ];
 

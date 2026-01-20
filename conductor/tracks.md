@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Optimization of AI-Powered BEP Generation Flow**
+- [~] **Track: Optimization of AI-Powered BEP Generation Flow**
   *Link: [./tracks/bep_optimization_20260120/](./tracks/bep_optimization_20260120/)*
