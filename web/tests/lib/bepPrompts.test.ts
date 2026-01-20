@@ -1,5 +1,6 @@
 
 import { constructBEPPrompt, BEP_SYSTEM_INSTRUCTION } from '@/lib/bepPrompts';
+import { describe, it, expect } from 'vitest';
 
 describe('BEP Prompt Construction', () => {
     it('should contain the correct system instruction keywords', () => {

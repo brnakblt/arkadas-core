@@ -1,7 +1,7 @@
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import BEPGenerator from '@/components/dashboard/BEPGenerator';
-import { vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 describe('BEPGenerator Component', () => {
     it('should render the basic form fields', () => {

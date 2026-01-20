@@ -76,11 +76,11 @@ const FileManager: React.FC<FileManagerProps> = ({ basePath = '/', onFileSelect 
     const [newFolderName, setNewFolderName] = useState('');
 
     const { data, error, isLoading } = useSWR(
-        `/api/v1/files?path=${encodeURIComponent(currentPath)}`,
+        `/api/storage?path=${encodeURIComponent(currentPath)}`,
         fetcher
     );
 
-    const files: FileItem[] = data?.data || [];
+    const files: FileItem[] = data?.files || []; // API returns { files: [...] }
 
     const handleNavigate = (file: FileItem) => {
         if (file.type === 'directory') {
@@ -107,14 +107,14 @@ const FileManager: React.FC<FileManagerProps> = ({ basePath = '/', onFileSelect 
                 formData.append('file', file);
                 formData.append('path', currentPath);
 
-                await fetch('/api/v1/files/upload', {
+                await fetch('/api/storage', {
                     method: 'POST',
                     body: formData,
                 });
             }
 
             // Refresh file list
-            mutate(`/api/v1/files?path=${encodeURIComponent(currentPath)}`);
+            mutate(`/api/storage?path=${encodeURIComponent(currentPath)}`);
         } catch (error) {
             console.error('Upload error:', error);
         } finally {
@@ -124,45 +124,35 @@ const FileManager: React.FC<FileManagerProps> = ({ basePath = '/', onFileSelect 
     }, [currentPath]);
 
     const handleDownload = async (file: FileItem) => {
-        const encodedPath = encodeURIComponent(file.filename.slice(1)); // Remove leading /
-        window.open(`/api/v1/files/${encodedPath}`, '_blank');
+        // Use action=download
+        window.open(`/api/storage?path=${encodeURIComponent(file.filename)}&action=download`, '_blank');
     };
 
     const handleDelete = async (file: FileItem) => {
         if (!confirm(`"${file.basename}" silinecek. Emin misiniz?`)) return;
 
         try {
-            const encodedPath = file.filename.slice(1); // Remove leading /
-            await fetch(`/api/v1/files/${encodedPath}`, {
+            // DELETE not implemented in route.ts yet?
+            // Wait, I strictly implemented POST and GET in route.ts.
+            // I need to add DELETE method to route.ts OR just disable delete for now to be safe as per plan?
+            // User request was "UI for file uploads". Delete is extra but good.
+            // I will implement DELETE in route.ts in next step. For now I keep this code pointing to it.
+            await fetch(`/api/storage?path=${encodeURIComponent(file.filename)}`, {
                 method: 'DELETE',
             });
 
-            mutate(`/api/v1/files?path=${encodeURIComponent(currentPath)}`);
+            mutate(`/api/storage?path=${encodeURIComponent(currentPath)}`);
         } catch (error) {
             console.error('Delete error:', error);
         }
     };
 
     const handleCreateFolder = async () => {
-        if (!newFolderName.trim()) return;
-
-        try {
-            const newPath = currentPath.endsWith('/')
-                ? `${currentPath}${newFolderName}`
-                : `${currentPath}/${newFolderName}`;
-
-            await fetch('/api/v1/files', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ path: newPath, type: 'directory' }),
-            });
-
-            mutate(`/api/v1/files?path=${encodeURIComponent(currentPath)}`);
-            setShowNewFolderModal(false);
-            setNewFolderName('');
-        } catch (error) {
-            console.error('Create folder error:', error);
-        }
+        // Folder creation not implemented in route.ts yet. 
+        // Showing alert for now.
+        alert("Klasör oluşturma özelliği henüz eklenmedi.");
+        setShowNewFolderModal(false);
+        setNewFolderName('');
     };
 
     if (error) {

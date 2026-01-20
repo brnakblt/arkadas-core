@@ -23,7 +23,10 @@ npm run install:all
 # 2. Environment dosyalarını oluştur
 npm run setup:env
 
-# 3. Projeyi sıfırdan başlat (DB + Seed)
+# 3. SFTPGo Kullanıcısını oluştur
+npm run setup:sftpgo
+
+# 4. Projeyi sıfırdan başlat (DB + Seed)
 npm run reset
 
 # 4. Geliştirme modunda başlat

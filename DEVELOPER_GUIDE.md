@@ -10,6 +10,7 @@ This is a TurboRepo monorepo.
 |-----------|-------------|
 
 | `web/` | Next.js 16 Frontend (Teacher/Parent Dashboard) |
+| `mobile/` | React Native (Expo) Mobile App |
 | `strapi/` | Strapi v5 CMS (Postgres backend) |
 | `api/` | Microservices (OpenCV, SFTPGo, OnlyOffice) |
 | `docs/` | MkDocs documentation |
@@ -82,6 +83,7 @@ npm run dev
 | `npm run dev` | Start all services |
 | `npm run dev:strapi` | Strapi only |
 | `npm run dev:web` | Next.js only |
+| `npm run dev:mobile` | Expo Mobile App |
 
 ### Build & Test
 | Command | Description |
@@ -137,6 +139,12 @@ To avoid conflicts with existing services (like port 80/443 being used by other 
 - **Public URL:** `https://arkadasozelegitim.com`
 - **Internal Mapping:** Tunnel points to `http://localhost:3000` (Web container).
 - **Security:** No ports need to be opened on the office router.
+
+### Storage Service (SFTPGo)
+We use SFTPGo for file storage, accessed via WebDAV.
+- **Setup**: Run `npm run setup:sftpgo` to create the required `app-user`.
+- **API**: Access via `storage.ts` or secure API routes.
+- **Verify**: Run `npm run test:storage` to check connectivity.
 
 ---
 

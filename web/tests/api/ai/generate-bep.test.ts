@@ -1,6 +1,7 @@
 
 import { POST } from '@/app/api/ai/generate-bep/route';
 import { NextRequest } from 'next/server';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 // Mock GoogleGenAI
 vi.mock('@google/genai', () => {
@@ -28,15 +29,15 @@ vi.mock('@google/genai', () => {
 });
 
 
-    const originalEnv = process.env;
+const originalEnv = process.env;
 
-    beforeEach(() => {
-        process.env = { ...originalEnv, GEMINI_API_KEY: 'test-key' };
-    });
+beforeEach(() => {
+    process.env = { ...originalEnv, GEMINI_API_KEY: 'test-key' };
+});
 
-    afterEach(() => {
-        process.env = originalEnv;
-    });
+afterEach(() => {
+    process.env = originalEnv;
+});
 
 describe('POST /api/ai/generate-bep', () => {
     it('should return generated BEP data', async () => {

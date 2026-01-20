@@ -6,7 +6,8 @@
   "packageManager": "npm@10.9.0",
   "workspaces": [
     "web",
-    "strapi"
+    "strapi",
+    "mobile"
   ],
   "devDependencies": {
     "concurrently": "^9.2.1",
@@ -24,6 +25,7 @@
     "dev:docker": "docker compose up -d postgres redis sftpgo --wait",
     "dev:strapi": "npm run develop --prefix strapi",
     "dev:web": "npm run dev --prefix web",
+    "dev:mobile": "npm run start --prefix mobile",
     "dev:docs": "cd docs && mkdocs serve -a localhost:8001",
     "------- BUILD -------": "",
     "build": "npm run lint && npm run typecheck && turbo run build",
@@ -45,6 +47,7 @@
     "install:docs": "pipx install mkdocs-material || pip install --user mkdocs-material --break-system-packages",
     "------- UTILS -------": "",
     "setup:env": "bash scripts/generate_envs.sh",
+    "setup:sftpgo": "ts-node --esm web/scripts/setup-sftpgo.ts",
     "seed:tenants": "cd strapi && node scripts/tenant-seeder.js",
     "reset": "bash scripts/reset_project.sh",
     "clean": "turbo run clean",
@@ -57,19 +60,22 @@
     "test:all": "RUN_INTEGRATION=true bash scripts/run-tests.sh",
     "test:web": "npm run test:unit --prefix web",
     "test:strapi": "cd strapi && npm run build",
+    "test:storage": "ts-node --esm web/scripts/test-storage.ts",
     "test:e2e": "npm run test:e2e --prefix web",
     "test:coverage": "npm run test:coverage --prefix web",
     "test:tenant": "RUN_TENANT_TESTS=true bash scripts/run-tests.sh"
   },
   "engines": {
-    "node": ">=18.0.0 <23.0.0"
+    "node": ">=18.0.0 <=24.x.x"
   },
   "keywords": [
     "erp",
     "education",
     "special-education",
     "strapi",
-    "nextjs"
+    "nextjs",
+    "react-native",
+    "expo"
   ],
   "author": "Arkadaş Özel Eğitim",
   "license": "UNLICENSED"

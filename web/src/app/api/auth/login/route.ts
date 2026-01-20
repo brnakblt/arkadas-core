@@ -6,6 +6,19 @@ export async function POST(req: NextRequest) {
     try {
         const { identifier, password } = await req.json();
 
+        // Rate Limiting (5 attempts per 60s)
+        // We need to dynamically import to avoid build issues if redis is not present during static analysis
+        const { rateLimit } = await import('@/lib/rate-limit');
+        const ip = req.headers.get("x-forwarded-for") || "unknown";
+        const { success } = await rateLimit(ip, 5, 60);
+
+        if (!success) {
+            return NextResponse.json(
+                { error: "Çok fazla başarısız giriş denemesi. Lütfen 1 dakika sonra tekrar deneyiniz." },
+                { status: 429 }
+            );
+        }
+
         const response = await fetch(`${STRAPI_URL}/api/auth/local`, {
             method: "POST",
             headers: {

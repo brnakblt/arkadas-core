@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import {
-    Briefcase, Calendar, CheckCircle, XCircle, Clock, Award, Star,
+    Briefcase, Calendar, CheckCircle, XCircle, Clock, Star,
     BookOpen, User, Users, MoreVertical, Plus, ClipboardList, CheckSquare,
-    AlertCircle, TrendingUp, ChevronRight
+    TrendingUp, ChevronRight
 } from 'lucide-react';
 import { MOCK_STAFF, MOCK_LEAVE_REQUESTS, MOCK_TRAININGS, MOCK_LESSON_PLANS, MOCK_TASKS } from './constants';
-import { Staff } from './types';
+// import { Staff } from './types';
 
 const PersonnelManagement: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'planning' | 'tasks_leaves' | 'performance'>('planning');
@@ -238,7 +238,7 @@ const PersonnelManagement: React.FC = () => {
                                         </div>
                                         <span className="text-xs bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600">{req.type}</span>
                                     </div>
-                                    <p className="text-sm text-slate-600 mb-3 italic">"{req.description}"</p>
+                                    <p className="text-sm text-slate-600 mb-3 italic">&quot;{req.description}&quot;</p>
                                     <div className="flex justify-between items-center border-t border-slate-200/50 pt-2">
                                         <span className="text-xs font-mono text-slate-500">{req.startDate}</span>
                                         <div className="flex gap-2">
@@ -366,9 +366,9 @@ const PersonnelManagement: React.FC = () => {
                         <span className="text-[10px] bg-lila-100 text-lila-700 px-2 py-0.5 rounded-full">Gemini Analysis</span>
                     </h4>
                     <p className="text-sm text-slate-600 leading-relaxed">
-                        Kurum genelinde <strong>"Duyu Bütünleme"</strong> konusunda eğitim talebi artışı gözlemleniyor.
-                        Elif Öğretmen'in BEP raporlama hızı geçen aya göre <strong>%15 arttı</strong>, personel motivasyonu için "Ayın Personeli" ödülüne aday gösterilmesi önerilir.
-                        Burak Hoca'nın materyal eksiklik bildirimleri bu hafta yoğunlaştı, envanter kontrolü yapılmalı.
+                        Kurum genelinde <strong>&quot;Duyu Bütünleme&quot;</strong> konusunda eğitim talebi artışı gözlemleniyor.
+                        Elif Öğretmen&apos;in BEP raporlama hızı geçen aya göre <strong>%15 arttı</strong>, personel motivasyonu için &quot;Ayın Personeli&quot; ödülüne aday gösterilmesi önerilir.
+                        Burak Hoca&apos;nın materyal eksiklik bildirimleri bu hafta yoğunlaştı, envanter kontrolü yapılmalı.
                     </p>
                 </div>
             </div>

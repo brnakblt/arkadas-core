@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
     Users, BrainCircuit, Fingerprint, Activity, MessageSquare, X, AlertTriangle
@@ -93,7 +92,7 @@ const Overview: React.FC = () => {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
                 <div className="bg-blue-600 p-6 rounded-2xl text-white shadow-lg">
                     <p className="text-blue-100 text-sm">Aktif Öğrenci</p>
                     <h4 className="text-4xl font-bold">128</h4>
@@ -105,6 +104,47 @@ const Overview: React.FC = () => {
                 <div className="bg-indigo-600 p-6 rounded-2xl text-white shadow-lg">
                     <p className="text-indigo-100 text-sm">BSDK Başarı Oranı</p>
                     <h4 className="text-4xl font-bold">%98</h4>
+                </div>
+                <StorageStatsCard />
+            </div>
+        </div>
+    );
+};
+
+const StorageStatsCard = () => {
+    const [stats, setStats] = useState<{ used: number; count: number } | null>(null);
+
+    React.useEffect(() => {
+        fetch('/api/storage?action=stats')
+            .then(res => res.json())
+            .then(data => setStats(data))
+            .catch(err => console.error(err));
+    }, []);
+
+    if (!stats) return (
+        <div className="bg-slate-600 p-6 rounded-2xl text-white shadow-lg animate-pulse">
+            <p className="text-slate-100 text-sm">Depolama</p>
+            <h4 className="text-4xl font-bold mt-2">-</h4>
+        </div>
+    );
+
+    const formatSize = (bytes: number) => {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + ['B', 'KB', 'MB', 'GB'][i];
+    };
+
+    return (
+        <div className="bg-slate-600 p-6 rounded-2xl text-white shadow-lg">
+            <div className="flex justify-between items-start">
+                <div>
+                    <p className="text-slate-100 text-sm">Depolama</p>
+                    <h4 className="text-4xl font-bold mt-1">{formatSize(stats.used)}</h4>
+                </div>
+                <div className="text-right">
+                    <p className="text-slate-300 text-xs">Dosya Sayısı</p>
+                    <p className="font-semibold text-xl">{stats.count}</p>
                 </div>
             </div>
         </div>

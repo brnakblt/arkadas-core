@@ -92,6 +92,30 @@ export async function POST(request: NextRequest) {
             });
         }
 
+
+        // Queue optimization: If sending to many users (>5), offload to queue
+        if (targetUsers.length > 5) {
+            // We need to dynamically import to avoid build issues if redis is not present during static analysis
+            const { addNotificationJob } = await import('@/lib/queue');
+
+            await addNotificationJob({
+                type,
+                title: title || getDefaultTitle(type),
+                message,
+                data,
+                userIds: targetUsers.map(u => u.id),
+                tenantId,
+                userCount: targetUsers.length
+            });
+
+            return NextResponse.json({
+                success: true,
+                message: `Bulk notification queued for ${targetUsers.length} users`,
+                queued: true,
+                tenantName: currentUser.tenant?.name,
+            });
+        }
+
         // Create notification records in Strapi (if notifications content type exists)
         const notificationPromises = targetUsers.map(async (user) => {
             try {

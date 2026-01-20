@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, MessageSquare, Bot, User, Loader2 } from 'lucide-react';
+import { Send, Bot, User, Loader2 } from 'lucide-react';
 import { sendChatMessage } from '@/services/geminiService';
 
 interface Message {

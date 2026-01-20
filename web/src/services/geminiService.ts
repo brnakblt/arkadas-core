@@ -1,5 +1,5 @@
 
-import { GoogleGenAI, Modality } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
 // Client-side usage requires NEXT_PUBLIC_ prefix or API route proxy
@@ -8,37 +8,30 @@ const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
 
 const getClient = () => new GoogleGenAI({ apiKey });
 
-import { MEB_RULES } from '@/lib/mebRules';
-
 export const sendChatMessage = async (history: any[], message: string) => {
-    const ai = getClient();
+    try {
+        const response = await fetch('/api/ai/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                history,
+                message,
+            }),
+        });
 
-    // Create a knowledge base string from MEB_RULES
-    const rulesContext = JSON.stringify(MEB_RULES, null, 2);
-
-    const systemInstruction = `
-    Sen 'Arkadaş' Özel Eğitim ERP asistanısın. 
-    Aşağıdaki MEB (Milli Eğitim Bakanlığı) Özel Eğitim Kuralları ve Mevzuat bilgi bankasına sahipsin:
-    
-    ${rulesContext}
-    
-    Kurallar:
-    1. Kullanıcının sorularını bu bilgi bankasındaki kurallara göre net ve kesin yanıtla.
-    2. Eğer soru MEB mevzuatı ile ilgiliyse, mutlaka ilgili kuralı veya süreyi belirt.
-    3. Bilmediğin veya emin olmadığın konularda mevzuata bakman gerektiğini söyle, uydurma yanıt verme.
-    4. Samimi, yardımsever ve profesyonel bir dil kullan.
-    `;
-
-    const chat = ai.chats.create({
-        model: 'gemini-2.0-flash-exp',
-        history: history,
-        config: {
-            systemInstruction: systemInstruction,
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to send message');
         }
-    });
 
-    const result = await chat.sendMessage({ message });
-    return result.text;
+        const data = await response.json();
+        return data.text;
+    } catch (error) {
+        console.error("Chat Service Error:", error);
+        return "Üzgünüm, şu anda yanıt veremiyorum. Lütfen daha sonra tekrar deneyin.";
+    }
 };
 
 export interface BEPData {
@@ -119,19 +112,45 @@ export const generateBEPReport = async (
     }
 };
 
+
+export const generateMaterial = async (type: 'story' | 'worksheet', topic: string, level: string, studentInfo?: string) => {
+    try {
+        const response = await fetch('/api/ai/generate-material', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ type, topic, level, studentInfo }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to generate material');
+        }
+
+        const data = await response.json();
+        return data.content;
+    } catch (error) {
+        console.error("Material Service Error:", error);
+        throw error;
+    }
+};
+
 export const generateEducationalImage = async (prompt: string, size: '1K' | '2K' | '4K' = '1K') => {
     // Placeholder for Image Generation as it requires specific models/APIs
     // Returning a mock URL or real implementation if available
+    // eslint-disable-next-line no-console
     console.log("Image generation requested:", prompt, size);
     return null;
 };
 
 export const speakText = async (text: string) => {
     // Placeholder for TTS
+    // eslint-disable-next-line no-console
     console.log("TTS requested:", text);
     return null;
 };
 
+// eslint-disable-next-line no-undef
 export const playAudioBuffer = (buffer: AudioBuffer) => {
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     const source = audioContext.createBufferSource();
@@ -139,3 +158,4 @@ export const playAudioBuffer = (buffer: AudioBuffer) => {
     source.connect(audioContext.destination);
     source.start();
 };
+

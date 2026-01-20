@@ -78,6 +78,10 @@ export async function GET(request: Request) {
                 today: scheduleData.meta?.pagination?.total || 0,
                 completed: 0, // Would need to fetch with filter
             },
+        }, {
+            headers: {
+                'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=30',
+            }
         });
     } catch (error) {
         console.error('Admin stats error:', error);

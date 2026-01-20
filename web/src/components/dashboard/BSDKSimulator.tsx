@@ -1,12 +1,16 @@
+/* eslint-disable no-undef */
 "use client";
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Camera, RefreshCw, CheckCircle, XCircle, UserCheck } from 'lucide-react';
+import { Camera, RefreshCw, CheckCircle, UserCheck } from 'lucide-react';
 import { MOCK_STUDENTS } from './constants';
 
 const BSDKSimulator: React.FC = () => {
+    // eslint-disable-next-line no-undef
     const videoRef = useRef<HTMLVideoElement>(null);
+    // eslint-disable-next-line no-undef
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    // eslint-disable-next-line no-undef
     const [stream, setStream] = useState<MediaStream | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const [status, setStatus] = useState<'idle' | 'scanning' | 'verified' | 'failed'>('idle');
