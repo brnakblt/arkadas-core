@@ -22,9 +22,9 @@
 - [x] Task: Conductor - User Manual Verification 'Frontend UX Enhancements' (Protocol in workflow.md)
 
 ## Phase 3: Integration & Testing
-- [ ] Task: End-to-End Testing
-    - [ ] Sub-task: Write an integration test covering the flow from form submission to BEP generation and saving.
-    - [ ] Sub-task: Perform manual acceptance testing with realistic data.
-- [ ] Task: Documentation
-    - [ ] Sub-task: Update the technical documentation with the new prompt structure and API changes.
+- [x] Task: End-to-End Testing d92b224
+    - [x] Sub-task: Write an integration test covering the flow from form submission to BEP generation and saving.
+    - [x] Sub-task: Perform manual acceptance testing with realistic data.
+- [x] Task: Documentation d92b224
+    - [x] Sub-task: Update the technical documentation with the new prompt structure and API changes.
 - [ ] Task: Conductor - User Manual Verification 'Integration & Testing' (Protocol in workflow.md)
