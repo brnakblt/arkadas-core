@@ -390,17 +390,17 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
 export interface ApiAboutAbout extends Struct.SingleTypeSchema {
   collectionName: 'abouts';
   info: {
-    description: 'Write about yourself and the content you create';
+    description: '';
     displayName: 'About';
     pluralName: 'abouts';
     singularName: 'about';
   };
   options: {
-    draftAndPublish: false;
+    draftAndPublish: true;
   };
   attributes: {
     blocks: Schema.Attribute.DynamicZone<
-      ['shared.media', 'shared.quote', 'shared.rich-text', 'shared.slider']
+      ['shared.rich-text', 'shared.quote', 'shared.media', 'shared.slider']
     >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
@@ -409,45 +409,6 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiAppointmentAppointment extends Struct.CollectionTypeSchema {
-  collectionName: 'appointments';
-  info: {
-    description: 'Online appointment booking for parent-teacher meetings';
-    displayName: 'Appointment';
-    pluralName: 'appointments';
-    singularName: 'appointment';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    date: Schema.Attribute.Date & Schema.Attribute.Required;
-    description: Schema.Attribute.Text;
-    endTime: Schema.Attribute.Time & Schema.Attribute.Required;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::appointment.appointment'> &
-      Schema.Attribute.Private;
-    meetingLink: Schema.Attribute.String;
-    notes: Schema.Attribute.Text;
-    publishedAt: Schema.Attribute.DateTime;
-    reminderSent: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    requestedBy: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-    startTime: Schema.Attribute.Time & Schema.Attribute.Required;
-    status: Schema.Attribute.Enumeration<['pending', 'confirmed', 'cancelled', 'completed']> &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'pending'>;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    teacher: Schema.Attribute.Relation<'manyToOne', 'api::teacher-profile.teacher-profile'>;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
-    type: Schema.Attribute.Enumeration<['in-person', 'online', 'phone']> &
-      Schema.Attribute.DefaultTo<'in-person'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -485,42 +446,6 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiAttendanceLogAttendanceLog extends Struct.CollectionTypeSchema {
-  collectionName: 'attendance_logs';
-  info: {
-    description: 'Yoklama kay\u0131tlar\u0131 (y\u00FCz tan\u0131ma dahil)';
-    displayName: 'Attendance Log';
-    pluralName: 'attendance-logs';
-    singularName: 'attendance-log';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    confidenceScore: Schema.Attribute.Decimal;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    deviceId: Schema.Attribute.String;
-    eventType: Schema.Attribute.Enumeration<['check_in', 'check_out']> & Schema.Attribute.Required;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::attendance-log.attendance-log'> &
-      Schema.Attribute.Private;
-    location: Schema.Attribute.String;
-    method: Schema.Attribute.Enumeration<['face_recognition', 'manual', 'qr_code', 'card']> &
-      Schema.Attribute.Required;
-    notes: Schema.Attribute.Text;
-    photo: Schema.Attribute.Media<'images'>;
-    photoUrl: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    recordedAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-    verifiedBy: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
   };
 }
 
@@ -607,203 +532,6 @@ export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiBepGelisimIzlemeBepGelisimIzleme extends Struct.CollectionTypeSchema {
-  collectionName: 'bep_gelisim_izlemeleri';
-  info: {
-    description: 'BEP Geli\u015Fimi \u0130zleme \u00D6zet Formu - d\u00F6nemlik de\u011Ferlendirme';
-    displayName: 'BEP Geli\u015Fim \u0130zleme (Ek-5 G\u00D6F)';
-    pluralName: 'bep-gelisim-izlemeleri';
-    singularName: 'bep-gelisim-izleme';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    academicYear: Schema.Attribute.String & Schema.Attribute.Required;
-    achievedGoals: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
-    akademikProgress: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 100;
-          min: 0;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<0>;
-    approvalStatus: Schema.Attribute.Enumeration<
-      ['taslak', 'ogretmen_onay', 'veli_onay', 'tamamlandi']
-    > &
-      Schema.Attribute.DefaultTo<'taslak'>;
-    bep: Schema.Attribute.Relation<'manyToOne', 'api::bireysel-egitim-plani.bireysel-egitim-plani'>;
-    bepUpdateRequired: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    bilisselProgress: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 100;
-          min: 0;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<0>;
-    challenges: Schema.Attribute.Text;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    dilIletisimProgress: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 100;
-          min: 0;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<0>;
-    evaluationDate: Schema.Attribute.Date & Schema.Attribute.Required;
-    evaluationPeriod: Schema.Attribute.Enumeration<
-      ['donem_basi', 'ara_degerlendirme', 'donem_sonu']
-    > &
-      Schema.Attribute.Required;
-    evaluator: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-    inProgressGoals: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::bep-gelisim-izleme.bep-gelisim-izleme'
-    > &
-      Schema.Attribute.Private;
-    motorProgress: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 100;
-          min: 0;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<0>;
-    nextSteps: Schema.Attribute.Text;
-    notAchievedGoals: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
-    overallProgress: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 100;
-          min: 0;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<0>;
-    ozbakimProgress: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 100;
-          min: 0;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<0>;
-    parentFeedback: Schema.Attribute.Text;
-    parentSignatureDate: Schema.Attribute.Date;
-    publishedAt: Schema.Attribute.DateTime;
-    recommendedChanges: Schema.Attribute.Text;
-    semester: Schema.Attribute.Enumeration<['guz', 'bahar']> & Schema.Attribute.Required;
-    skillAreaProgress: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
-    sosyalProgress: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 100;
-          min: 0;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<0>;
-    strengths: Schema.Attribute.Text;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiBireyselEgitimPlaniBireyselEgitimPlani extends Struct.CollectionTypeSchema {
-  collectionName: 'bireysel_egitim_planlari';
-  info: {
-    description: 'Bireysel E\u011Fitim Plan\u0131 - Kaba de\u011Ferlendirmeden otomatik olu\u015Fur';
-    displayName: 'Bireysel E\u011Fitim Plan\u0131 (BEP)';
-    pluralName: 'bireysel-egitim-planlari';
-    singularName: 'bireysel-egitim-plani';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    altBasamaklar: Schema.Attribute.JSON & Schema.Attribute.Required;
-    approvedAt: Schema.Attribute.DateTime;
-    approvedBy: Schema.Attribute.Relation<'oneToOne', 'plugin::users-permissions.user'>;
-    baslangicTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
-    bitisTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    degerlendirmeYontemleri: Schema.Attribute.JSON;
-    donem: Schema.Attribute.String & Schema.Attribute.Required;
-    egitimOrtami: Schema.Attribute.String;
-    kabaDegerlendirme: Schema.Attribute.Relation<
-      'oneToOne',
-      'api::kaba-degerlendirme.kaba-degerlendirme'
-    >;
-    kisaVadeliAmaclar: Schema.Attribute.JSON;
-    kullanilanMateryaller: Schema.Attribute.JSON;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::bireysel-egitim-plani.bireysel-egitim-plani'
-    > &
-      Schema.Attribute.Private;
-    notes: Schema.Attribute.RichText;
-    publishedAt: Schema.Attribute.DateTime;
-    status: Schema.Attribute.Enumeration<['draft', 'active', 'completed', 'archived']> &
-      Schema.Attribute.DefaultTo<'draft'>;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    uzunVadeliAmaclar: Schema.Attribute.JSON;
-  };
-}
-
-export interface ApiBireyselOgretimPlaniBireyselOgretimPlani extends Struct.CollectionTypeSchema {
-  collectionName: 'bireysel_ogretim_planlari';
-  info: {
-    description: 'B\u00D6P - G\u00FCnl\u00FCk veya haftal\u0131k \u00F6\u011Fretim plan\u0131';
-    displayName: 'Bireysel \u00D6\u011Fretim Plan\u0131 (B\u00D6P)';
-    pluralName: 'bireysel-ogretim-planlari';
-    singularName: 'bireysel-ogretim-plani';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    baslangicTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
-    bep: Schema.Attribute.Relation<'manyToOne', 'api::bireysel-egitim-plani.bireysel-egitim-plani'>;
-    bitisTarihi: Schema.Attribute.Date;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    degerlendirme: Schema.Attribute.JSON;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::bireysel-ogretim-plani.bireysel-ogretim-plani'
-    > &
-      Schema.Attribute.Private;
-    materials: Schema.Attribute.JSON;
-    plannedModules: Schema.Attribute.JSON & Schema.Attribute.Required;
-    planType: Schema.Attribute.Enumeration<['daily', 'weekly']> &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'daily'>;
-    publishedAt: Schema.Attribute.DateTime;
-    status: Schema.Attribute.Enumeration<['draft', 'active', 'completed']> &
-      Schema.Attribute.DefaultTo<'draft'>;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -881,53 +609,10 @@ export interface ApiDeviceTokenDeviceToken extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     platform: Schema.Attribute.Enumeration<['ios', 'android', 'web']> & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     token: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-  };
-}
-
-export interface ApiDonemSonuDegerlendirmeDonemSonuDegerlendirme
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'donem_sonu_degerlendirmeleri';
-  info: {
-    description: "D\u00F6nem Sonu De\u011Ferlendirme Formu - PKT'den otomatik olu\u015Fur";
-    displayName: 'D\u00F6nem Sonu De\u011Ferlendirme';
-    pluralName: 'donem-sonu-degerlendirmeleri';
-    singularName: 'donem-sonu-degerlendirme';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    degerlendirmeTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
-    donem: Schema.Attribute.String & Schema.Attribute.Required;
-    egitimciGorusleri: Schema.Attribute.RichText;
-    gelecekDonemOneriler: Schema.Attribute.RichText;
-    genelDegerlendirme: Schema.Attribute.RichText;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::donem-sonu-degerlendirme.donem-sonu-degerlendirme'
-    > &
-      Schema.Attribute.Private;
-    mebbisRefId: Schema.Attribute.String;
-    pkt: Schema.Attribute.Relation<'oneToOne', 'api::performans-kayit.performans-kayit'>;
-    publishedAt: Schema.Attribute.DateTime;
-    sonuclar: Schema.Attribute.JSON;
-    status: Schema.Attribute.Enumeration<['draft', 'completed', 'approved']> &
-      Schema.Attribute.DefaultTo<'draft'>;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    syncedToMebbis: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    ulasilamayanAmaclar: Schema.Attribute.JSON;
-    ulasilanAmaclar: Schema.Attribute.JSON;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    veliGorusleri: Schema.Attribute.RichText;
   };
 }
 
@@ -973,14 +658,14 @@ export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    answer: Schema.Attribute.Text & Schema.Attribute.Required;
+    answer: Schema.Attribute.Text;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::faq.faq'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    question: Schema.Attribute.String & Schema.Attribute.Required;
+    question: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1027,7 +712,6 @@ export interface ApiFaturaFatura extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     status: Schema.Attribute.Enumeration<['draft', 'pending', 'approved', 'paid', 'cancelled']> &
       Schema.Attribute.DefaultTo<'draft'>;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
     syncedToMebbis: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     toplamSaat: Schema.Attribute.Decimal;
     toplamTutar: Schema.Attribute.Decimal & Schema.Attribute.Required;
@@ -1084,18 +768,15 @@ export interface ApiGalleryGallery extends Struct.CollectionTypeSchema {
   };
   attributes: {
     alt: Schema.Attribute.String;
-    category: Schema.Attribute.Enumeration<
-      ['E\u011Fitim', 'Sosyal Aktivite', 'Dan\u0131\u015Fmanl\u0131k']
-    > &
-      Schema.Attribute.Required;
+    category: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    image: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    image: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::gallery.gallery'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1143,97 +824,14 @@ export interface ApiHeroHero extends Struct.SingleTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     description: Schema.Attribute.Text;
-    images: Schema.Attribute.Media<'images', true>;
+    images: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios', true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::hero.hero'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     stats: Schema.Attribute.Component<'shared.stat', true>;
     subtitle: Schema.Attribute.String;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiKabaDegerlendirmeKabaDegerlendirme extends Struct.CollectionTypeSchema {
-  collectionName: 'kaba_degerlendirmeler';
-  info: {
-    description: "Kaba De\u011Ferlendirme Formu - MEBBIS'ten performans ve ihtiya\u00E7lar\u0131 \u00E7eker";
-    displayName: 'Kaba De\u011Ferlendirme';
-    pluralName: 'kaba-degerlendirmeler';
-    singularName: 'kaba-degerlendirme';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    createdFromMebbis: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    degerlendirmeTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
-    donem: Schema.Attribute.String & Schema.Attribute.Required;
-    gelisimAlanlari: Schema.Attribute.JSON;
-    ihtiyaclar: Schema.Attribute.JSON & Schema.Attribute.Required;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::kaba-degerlendirme.kaba-degerlendirme'
-    > &
-      Schema.Attribute.Private;
-    mebbisRefId: Schema.Attribute.String;
-    notes: Schema.Attribute.RichText;
-    performanslar: Schema.Attribute.JSON & Schema.Attribute.Required;
-    publishedAt: Schema.Attribute.DateTime;
-    status: Schema.Attribute.Enumeration<['draft', 'completed', 'approved']> &
-      Schema.Attribute.DefaultTo<'draft'>;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiKontrolListesiKontrolListesi extends Struct.CollectionTypeSchema {
-  collectionName: 'kontrol_listeleri';
-  info: {
-    description: '\u00D6\u00C7\u00C7/MEB Kontrol Listesi formu - Beceri de\u011Ferlendirme';
-    displayName: 'Kontrol Listesi (Ek-2)';
-    pluralName: 'kontrol-listeleri';
-    singularName: 'kontrol-listesi';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    attachments: Schema.Attribute.Media<'images' | 'files' | 'videos', true>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    evaluationCriteria: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
-    evaluationDate: Schema.Attribute.Date & Schema.Attribute.Required;
-    evaluator: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::kontrol-listesi.kontrol-listesi'> &
-      Schema.Attribute.Private;
-    notes: Schema.Attribute.Text;
-    performanceLevel: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 100;
-          min: 0;
-        },
-        number
-      >;
-    publishedAt: Schema.Attribute.DateTime;
-    result: Schema.Attribute.Enumeration<
-      ['basarili', 'gelisiyor', 'basarisiz', 'degerlendirilemedi']
-    >;
-    skillArea: Schema.Attribute.Enumeration<
-      ['ozbak\u0131m', 'gunluk_yasam', 'akademik', 'sosyal', 'motor', 'dil_iletisim', 'bilissel']
-    > &
-      Schema.Attribute.Required;
-    skillName: Schema.Attribute.String & Schema.Attribute.Required;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    targetBehavior: Schema.Attribute.Text & Schema.Attribute.Required;
+    title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1276,7 +874,6 @@ export interface ApiKvkkOnamKvkkOnam extends Struct.CollectionTypeSchema {
     personType: Schema.Attribute.Enumeration<['ogrenci', 'personel', 'veli']> &
       Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    studentProfile: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     userAgent: Schema.Attribute.Text;
@@ -1306,302 +903,12 @@ export interface ApiLocationLogLocationLog extends Struct.CollectionTypeSchema {
     longitude: Schema.Attribute.Decimal & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     recordedAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
-    route: Schema.Attribute.Relation<'manyToOne', 'api::service-route.service-route'>;
     source: Schema.Attribute.Enumeration<['gps', 'network', 'manual']> &
       Schema.Attribute.DefaultTo<'gps'>;
     speedKmh: Schema.Attribute.Decimal;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-  };
-}
-
-export interface ApiOgrenciGrubuOgrenciGrubu extends Struct.CollectionTypeSchema {
-  collectionName: 'ogrenci_gruplari';
-  info: {
-    description: 'Otomatik veya manuel olu\u015Fturulan \u00F6\u011Frenci gruplar\u0131';
-    displayName: '\u00D6\u011Frenci Grubu';
-    pluralName: 'ogrenci-gruplari';
-    singularName: 'ogrenci-grubu';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    assistantTeachers: Schema.Attribute.Relation<'manyToMany', 'plugin::users-permissions.user'>;
-    autoGenerated: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    currentCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    focusArea: Schema.Attribute.Enumeration<
-      ['ozbak\u0131m', 'akademik', 'sosyal', 'motor', 'dil_iletisim', 'bilissel', 'karma']
-    >;
-    groupType: Schema.Attribute.Enumeration<
-      ['yas_grubu', 'seviye_grubu', 'beceri_alan\u0131', 'ogretmen_grubu', 'ozel_grup']
-    > &
-      Schema.Attribute.Required;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::ogrenci-grubu.ogrenci-grubu'> &
-      Schema.Attribute.Private;
-    maxAge: Schema.Attribute.Integer;
-    maxCapacity: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<8>;
-    minAge: Schema.Attribute.Integer;
-    name: Schema.Attribute.String & Schema.Attribute.Required;
-    notes: Schema.Attribute.Text;
-    primaryTeacher: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-    publishedAt: Schema.Attribute.DateTime;
-    schedule: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
-    skillLevel: Schema.Attribute.Enumeration<['baslangic', 'orta', 'ileri']>;
-    students: Schema.Attribute.Relation<'manyToMany', 'api::student-profile.student-profile'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiOlcutBagimliTestOlcutBagimliTest extends Struct.CollectionTypeSchema {
-  collectionName: 'olcut_bagimli_testler';
-  info: {
-    description: '\u00D6BT - Beceri \u00F6l\u00E7\u00FCm\u00FC i\u00E7in kriter bazl\u0131 test';
-    displayName: '\u00D6l\u00E7\u00FCt Ba\u011F\u0131ml\u0131 Test (\u00D6BT)';
-    pluralName: 'olcut-bagimli-testler';
-    singularName: 'olcut-bagimli-test';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    evaluator: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::olcut-bagimli-test.olcut-bagimli-test'
-    > &
-      Schema.Attribute.Private;
-    notes: Schema.Attribute.RichText;
-    publishedAt: Schema.Attribute.DateTime;
-    questions: Schema.Attribute.JSON;
-    skillArea: Schema.Attribute.Enumeration<
-      [
-        'ozbak\u0131m',
-        'gunluk_yasam',
-        'iletisim',
-        'bili\u015Fsel',
-        'sosyal',
-        'motor',
-        'okuma_yazma',
-        'matematik',
-      ]
-    > &
-      Schema.Attribute.Required;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    testDate: Schema.Attribute.Date & Schema.Attribute.Required;
-    totalScore: Schema.Attribute.Decimal;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiPerformansKayitPerformansKayit extends Struct.CollectionTypeSchema {
-  collectionName: 'performans_kayitlari';
-  info: {
-    description: 'Performans Kay\u0131t Tablosu - Planlama ekran\u0131ndan saat ve mod\u00FCller otomatik gelir';
-    displayName: 'Performans Kay\u0131t Tablosu (PKT)';
-    pluralName: 'performans-kayitlari';
-    singularName: 'performans-kayit';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    baslangicTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
-    bep: Schema.Attribute.Relation<'manyToOne', 'api::bireysel-egitim-plani.bireysel-egitim-plani'>;
-    bitisTarihi: Schema.Attribute.Date & Schema.Attribute.Required;
-    calismaModulleri: Schema.Attribute.JSON;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    degerlendirmeler: Schema.Attribute.JSON;
-    donem: Schema.Attribute.String & Schema.Attribute.Required;
-    egitimciDegerlendirmeleri: Schema.Attribute.JSON;
-    genelDegerlendirme: Schema.Attribute.Enumeration<
-      ['basarisiz', 'gelisiyor', 'basarili', 'cok_iyi']
-    > &
-      Schema.Attribute.DefaultTo<'gelisiyor'>;
-    haftalikSaatler: Schema.Attribute.JSON;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::performans-kayit.performans-kayit'
-    > &
-      Schema.Attribute.Private;
-    mebbisRefId: Schema.Attribute.String;
-    notes: Schema.Attribute.RichText;
-    publishedAt: Schema.Attribute.DateTime;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    syncedToMebbis: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiPortfolyoKontrolPortfolyoKontrol extends Struct.CollectionTypeSchema {
-  collectionName: 'portfolyo_kontrol_listeleri';
-  info: {
-    description: '\u00D6\u011Frenci portfolyosu de\u011Ferlendirme kontrol listesi';
-    displayName: 'Portfolyo Kontrol Listesi (Ek-6)';
-    pluralName: 'portfolyo-kontrol-listeleri';
-    singularName: 'portfolyo-kontrol';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    academicYear: Schema.Attribute.String & Schema.Attribute.Required;
-    assessmentFormsExist: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    attachments: Schema.Attribute.Media<'images' | 'files' | 'videos', true>;
-    bepCopyExists: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    evaluationDate: Schema.Attribute.Date & Schema.Attribute.Required;
-    evaluator: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::portfolyo-kontrol.portfolyo-kontrol'
-    > &
-      Schema.Attribute.Private;
-    notes: Schema.Attribute.Text;
-    overallCompleteness: Schema.Attribute.Enumeration<['eksik', 'kismen_tam', 'tam', 'mukemmel']>;
-    parentFeedbackExists: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    photoCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    portfolyoItems: Schema.Attribute.JSON &
-      Schema.Attribute.DefaultTo<{
-        bepKopyasi: false;
-        calismaOrnekleri: false;
-        digerMateryaller: false;
-        fotograflar: false;
-        kabaDegerlendirme: false;
-        kontrolListesi: false;
-        ogrenciOzdegerlendirme: false;
-        performansKayitlari: false;
-        veliGorusleri: false;
-        videolar: false;
-      }>;
-    publishedAt: Schema.Attribute.DateTime;
-    selfEvaluationExists: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    semester: Schema.Attribute.Enumeration<['guz', 'bahar']> & Schema.Attribute.Required;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    videoCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    workSamplesCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-  };
-}
-
-export interface ApiPortfolyoPuanlamaPortfolyoPuanlama extends Struct.CollectionTypeSchema {
-  collectionName: 'portfolyo_puanlamalari';
-  info: {
-    description: 'Portfolyo dereceli puanlama anahtar\u0131 - rubrik de\u011Ferlendirme';
-    displayName: 'Portfolyo Dereceli Puanlama (Ek-7)';
-    pluralName: 'portfolyo-puanlamalari';
-    singularName: 'portfolyo-puanlama';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    academicYear: Schema.Attribute.String & Schema.Attribute.Required;
-    areasForImprovement: Schema.Attribute.Text;
-    contentQualityNotes: Schema.Attribute.Text;
-    contentQualityScore: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 4;
-          min: 1;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<1>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    evaluationDate: Schema.Attribute.Date & Schema.Attribute.Required;
-    evaluator: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::portfolyo-puanlama.portfolyo-puanlama'
-    > &
-      Schema.Attribute.Private;
-    organizationNotes: Schema.Attribute.Text;
-    organizationScore: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 4;
-          min: 1;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<1>;
-    overallGrade: Schema.Attribute.Enumeration<
-      ['yetersiz', 'gelisiyor', 'yeterli', 'iyi', 'cok_iyi']
-    >;
-    presentationNotes: Schema.Attribute.Text;
-    presentationScore: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 4;
-          min: 1;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<1>;
-    progressEvidenceNotes: Schema.Attribute.Text;
-    progressEvidenceScore: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 4;
-          min: 1;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<1>;
-    publishedAt: Schema.Attribute.DateTime;
-    recommendations: Schema.Attribute.Text;
-    selfReflectionNotes: Schema.Attribute.Text;
-    selfReflectionScore: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 4;
-          min: 1;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<1>;
-    semester: Schema.Attribute.Enumeration<['guz', 'bahar']> & Schema.Attribute.Required;
-    strengths: Schema.Attribute.Text;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    totalScore: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 24;
-          min: 6;
-        },
-        number
-      >;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    varietyNotes: Schema.Attribute.Text;
-    varietyScore: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 4;
-          min: 1;
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<1>;
   };
 }
 
@@ -1619,66 +926,16 @@ export interface ApiProcessProcess extends Struct.CollectionTypeSchema {
   attributes: {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    description: Schema.Attribute.Text & Schema.Attribute.Required;
-    icon: Schema.Attribute.String & Schema.Attribute.Required;
+    description: Schema.Attribute.Text;
+    icon: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::process.process'> &
       Schema.Attribute.Private;
-    number: Schema.Attribute.String & Schema.Attribute.Required;
+    number: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiRaporRapor extends Struct.CollectionTypeSchema {
-  collectionName: 'raporlar';
-  info: {
-    description: 'Otomatik olu\u015Fturulan raporlar - Ek-4, D\u00F6nem Sonu, Kurum Performans vb.';
-    displayName: 'Rapor';
-    pluralName: 'raporlar';
-    singularName: 'rapor';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    ay: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 12;
-          min: 1;
-        },
-        number
-      >;
-    baslangicTarihi: Schema.Attribute.Date;
-    baslik: Schema.Attribute.String & Schema.Attribute.Required;
-    bitisTarihi: Schema.Attribute.Date;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    donem: Schema.Attribute.String;
-    excelUrl: Schema.Attribute.String;
-    icerik: Schema.Attribute.JSON;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::rapor.rapor'> &
-      Schema.Attribute.Private;
-    mebbisExported: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    olusturmaTarihi: Schema.Attribute.DateTime & Schema.Attribute.Required;
-    ozet: Schema.Attribute.RichText;
-    pdfUrl: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    raporTipi: Schema.Attribute.Enumeration<
-      ['ek4', 'donem_sonu', 'ogrenci_gelisim', 'kurum_performans', 'devamsizlik', 'fatura_ozet']
-    > &
-      Schema.Attribute.Required;
-    status: Schema.Attribute.Enumeration<['generating', 'ready', 'error']> &
-      Schema.Attribute.DefaultTo<'generating'>;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    teacher: Schema.Attribute.Relation<'manyToOne', 'api::teacher-profile.teacher-profile'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    yil: Schema.Attribute.Integer;
   };
 }
 
@@ -1705,85 +962,9 @@ export interface ApiRouteStopRouteStop extends Struct.CollectionTypeSchema {
     longitude: Schema.Attribute.Decimal & Schema.Attribute.Required;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    route: Schema.Attribute.Relation<'manyToOne', 'api::service-route.service-route'>;
     stopOrder: Schema.Attribute.Integer & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiScheduleSchedule extends Struct.CollectionTypeSchema {
-  collectionName: 'schedules';
-  info: {
-    description: 'Ders, terapi, toplant\u0131 programlar\u0131';
-    displayName: 'Schedule';
-    pluralName: 'schedules';
-    singularName: 'schedule';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    attendees: Schema.Attribute.Relation<'manyToMany', 'plugin::users-permissions.user'>;
-    color: Schema.Attribute.String;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    description: Schema.Attribute.RichText;
-    endTime: Schema.Attribute.DateTime & Schema.Attribute.Required;
-    isAllDay: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::schedule.schedule'> &
-      Schema.Attribute.Private;
-    location: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    recurrenceRule: Schema.Attribute.String;
-    scheduleType: Schema.Attribute.Enumeration<['class', 'therapy', 'meeting', 'event']> &
-      Schema.Attribute.Required;
-    startTime: Schema.Attribute.DateTime & Schema.Attribute.Required;
-    status: Schema.Attribute.Enumeration<['scheduled', 'cancelled', 'completed']> &
-      Schema.Attribute.DefaultTo<'scheduled'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiServiceRouteServiceRoute extends Struct.CollectionTypeSchema {
-  collectionName: 'service_routes';
-  info: {
-    description: 'Servis g\u00FCzergahlar\u0131';
-    displayName: 'Service Route';
-    pluralName: 'service-routes';
-    singularName: 'service-route';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    afternoonDepartureTime: Schema.Attribute.Time;
-    assignedStudents: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::student-profile.student-profile'
-    >;
-    assistant: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-    capacity: Schema.Attribute.Integer;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    description: Schema.Attribute.Text;
-    driver: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-    estimatedDurationMinutes: Schema.Attribute.Integer;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::service-route.service-route'> &
-      Schema.Attribute.Private;
-    morningDepartureTime: Schema.Attribute.Time;
-    name: Schema.Attribute.String & Schema.Attribute.Required;
-    publishedAt: Schema.Attribute.DateTime;
-    stops: Schema.Attribute.Relation<'oneToMany', 'api::route-stop.route-stop'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    vehiclePlate: Schema.Attribute.String;
   };
 }
 
@@ -1801,15 +982,15 @@ export interface ApiServiceService extends Struct.CollectionTypeSchema {
   attributes: {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    description: Schema.Attribute.Text;
     features: Schema.Attribute.Component<'shared.feature', true>;
-    icon: Schema.Attribute.String & Schema.Attribute.Required;
+    icon: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::service.service'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'title'>;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1856,254 +1037,6 @@ export interface ApiStorageFileStorageFile extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiStudentProfileStudentProfile extends Struct.CollectionTypeSchema {
-  collectionName: 'student_profiles';
-  info: {
-    description: '\u00D6\u011Frenci profil bilgileri';
-    displayName: 'Student Profile';
-    pluralName: 'student-profiles';
-    singularName: 'student-profile';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    bloodType: Schema.Attribute.Enumeration<
-      [
-        'A_positive',
-        'A_negative',
-        'B_positive',
-        'B_negative',
-        'AB_positive',
-        'AB_negative',
-        'O_positive',
-        'O_negative',
-      ]
-    >;
-    classroom: Schema.Attribute.String;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    dateOfBirth: Schema.Attribute.Date;
-    disabilityLevel: Schema.Attribute.Enumeration<['mild', 'moderate', 'severe', 'profound']>;
-    disabilityType: Schema.Attribute.String;
-    emergencyContactName: Schema.Attribute.String;
-    emergencyContactPhone: Schema.Attribute.String;
-    enrollmentDate: Schema.Attribute.Date;
-    faceEncodingUpdatedAt: Schema.Attribute.DateTime;
-    facePhoto: Schema.Attribute.Media<'images'>;
-    facePhotoUrl: Schema.Attribute.String;
-    gender: Schema.Attribute.Enumeration<['male', 'female', 'other']>;
-    graduationDate: Schema.Attribute.Date;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::student-profile.student-profile'> &
-      Schema.Attribute.Private;
-    notes: Schema.Attribute.RichText;
-    parentGuardian: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-    publishedAt: Schema.Attribute.DateTime;
-    ramRaporId: Schema.Attribute.String;
-    ramReportDate: Schema.Attribute.Date;
-    ramReportExpiryDate: Schema.Attribute.Date;
-    studentNumber: Schema.Attribute.String & Schema.Attribute.Unique;
-    tckimlikno: Schema.Attribute.String &
-      Schema.Attribute.Unique &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 11;
-        minLength: 11;
-      }>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<'oneToOne', 'plugin::users-permissions.user'>;
-  };
-}
-
-export interface ApiTeacherProfileTeacherProfile extends Struct.CollectionTypeSchema {
-  collectionName: 'teacher_profiles';
-  info: {
-    description: '\u00D6\u011Fretmen profil bilgileri';
-    displayName: 'Teacher Profile';
-    pluralName: 'teacher-profiles';
-    singularName: 'teacher-profile';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    bio: Schema.Attribute.RichText;
-    certifications: Schema.Attribute.JSON;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    department: Schema.Attribute.String;
-    employeeNumber: Schema.Attribute.String & Schema.Attribute.Unique;
-    hireDate: Schema.Attribute.Date;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::teacher-profile.teacher-profile'> &
-      Schema.Attribute.Private;
-    officeLocation: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    specialization: Schema.Attribute.String;
-    tckimlikno: Schema.Attribute.String &
-      Schema.Attribute.Unique &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 11;
-        minLength: 11;
-      }>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<'oneToOne', 'plugin::users-permissions.user'>;
-  };
-}
-
-export interface ApiTeamMemberTeamMember extends Struct.CollectionTypeSchema {
-  collectionName: 'team_members';
-  info: {
-    description: '';
-    displayName: 'Team Member';
-    pluralName: 'team-members';
-    singularName: 'team-member';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    category: Schema.Attribute.String;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    link: Schema.Attribute.String;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::team-member.team-member'> &
-      Schema.Attribute.Private;
-    name: Schema.Attribute.String;
-    objectPosition: Schema.Attribute.String;
-    order: Schema.Attribute.Integer;
-    publishedAt: Schema.Attribute.DateTime;
-    title: Schema.Attribute.String;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiTelafiEgitimiTelafiEgitimi extends Struct.CollectionTypeSchema {
-  collectionName: 'telafi_egitimleri';
-  info: {
-    description: 'Yap\u0131lamayan derslerin telafi takibi - MEB mevzuat\u0131na uygun';
-    displayName: 'Telafi E\u011Fitimi';
-    pluralName: 'telafi-egitimleri';
-    singularName: 'telafi-egitimi';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    compensationDate: Schema.Attribute.Date;
-    compensationEndTime: Schema.Attribute.Time;
-    compensationSchedule: Schema.Attribute.Relation<'manyToOne', 'api::schedule.schedule'>;
-    compensationStartTime: Schema.Attribute.Time;
-    completedDate: Schema.Attribute.DateTime;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    deadlineDate: Schema.Attribute.Date & Schema.Attribute.Required;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::telafi-egitimi.telafi-egitimi'> &
-      Schema.Attribute.Private;
-    missedDate: Schema.Attribute.Date & Schema.Attribute.Required;
-    missedDuration: Schema.Attribute.Integer & Schema.Attribute.Required;
-    missedEndTime: Schema.Attribute.Time;
-    missedStartTime: Schema.Attribute.Time;
-    notes: Schema.Attribute.Text;
-    originalSchedule: Schema.Attribute.Relation<'manyToOne', 'api::schedule.schedule'>;
-    publishedAt: Schema.Attribute.DateTime;
-    reason: Schema.Attribute.Enumeration<
-      [
-        'ogrenci_hastalik',
-        'ogrenci_izin',
-        'ogretmen_hastalik',
-        'ogretmen_izin',
-        'kurum_tatil',
-        'mucbir_sebep',
-        'diger',
-      ]
-    > &
-      Schema.Attribute.Required;
-    reasonDetails: Schema.Attribute.Text;
-    status: Schema.Attribute.Enumeration<
-      ['beklemede', 'planlanmis', 'tamamlanmis', 'suresi_dolmus', 'iptal']
-    > &
-      Schema.Attribute.DefaultTo<'beklemede'>;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    teacher: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiTenantTenant extends Struct.CollectionTypeSchema {
-  collectionName: 'tenants';
-  info: {
-    description: 'Multi-tenant organization';
-    displayName: 'Tenant';
-    pluralName: 'tenants';
-    singularName: 'tenant';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    displayName: Schema.Attribute.String;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::tenant.tenant'> &
-      Schema.Attribute.Private;
-    logo: Schema.Attribute.Media<'images'>;
-    name: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
-    publishedAt: Schema.Attribute.DateTime;
-    settings: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<{}>;
-    slug: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
-    subdomain: Schema.Attribute.String & Schema.Attribute.Unique;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    users: Schema.Attribute.Relation<'oneToMany', 'plugin::users-permissions.user'>;
-  };
-}
-
-export interface ApiTerapiCetveliTerapiCetveli extends Struct.CollectionTypeSchema {
-  collectionName: 'terapi_cetvelleri';
-  info: {
-    description: "Ayl\u0131k terapi cetveli - MEBB\u0130S'ten \u00E7ekilir";
-    displayName: 'Terapi Cetveli (Ek-4)';
-    pluralName: 'terapi-cetvelleri';
-    singularName: 'terapi-cetveli';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    importedFromMebbis: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::terapi-cetveli.terapi-cetveli'> &
-      Schema.Attribute.Private;
-    mebbisImportDate: Schema.Attribute.DateTime;
-    month: Schema.Attribute.String & Schema.Attribute.Required;
-    notes: Schema.Attribute.Text;
-    publishedAt: Schema.Attribute.DateTime;
-    sessions: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
-    status: Schema.Attribute.Enumeration<['taslak', 'onaylandi', 'mebbise_aktarildi']> &
-      Schema.Attribute.DefaultTo<'taslak'>;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student-profile.student-profile'>;
-    totalBireysel: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    totalGrup: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    totalHours: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    year: Schema.Attribute.Integer & Schema.Attribute.Required;
-  };
-}
-
 export interface ApiTwoFactorAuthTwoFactorAuth extends Struct.CollectionTypeSchema {
   collectionName: 'two_factor_auths';
   info: {
@@ -2134,44 +1067,6 @@ export interface ApiTwoFactorAuthTwoFactorAuth extends Struct.CollectionTypeSche
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'oneToOne', 'plugin::users-permissions.user'> &
       Schema.Attribute.Unique;
-  };
-}
-
-export interface ApiUcretHesaplamaUcretHesaplama extends Struct.CollectionTypeSchema {
-  collectionName: 'ucret_hesaplamalari';
-  info: {
-    description: 'MEB \u00FCcret art\u0131\u015F form\u00FCl\u00FC hesaplama - \u00DCFE+T\u00DCFE tabanl\u0131';
-    displayName: '\u00DCcret Hesaplama';
-    pluralName: 'ucret-hesaplamalari';
-    singularName: 'ucret-hesaplama';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    academicYear: Schema.Attribute.String & Schema.Attribute.Required;
-    allowedIncreaseRate: Schema.Attribute.Decimal;
-    averageInflation: Schema.Attribute.Decimal;
-    basePriceBireysel: Schema.Attribute.Decimal & Schema.Attribute.Required;
-    basePriceGrup: Schema.Attribute.Decimal & Schema.Attribute.Required;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
-    effectiveDate: Schema.Attribute.Date & Schema.Attribute.Required;
-    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::ucret-hesaplama.ucret-hesaplama'> &
-      Schema.Attribute.Private;
-    mebApprovalDate: Schema.Attribute.Date;
-    mebApprovalNumber: Schema.Attribute.String;
-    multiplier: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<1.05>;
-    newPriceBireysel: Schema.Attribute.Decimal;
-    newPriceGrup: Schema.Attribute.Decimal;
-    notes: Schema.Attribute.Text;
-    previousYearDecemberTufe: Schema.Attribute.Decimal & Schema.Attribute.Required;
-    previousYearDecemberUfe: Schema.Attribute.Decimal & Schema.Attribute.Required;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
 }
 
@@ -2581,7 +1476,6 @@ export interface PluginUsersPermissionsUser extends Struct.CollectionTypeSchema 
     publishedAt: Schema.Attribute.DateTime;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
     role: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.role'>;
-    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     username: Schema.Attribute.String &
@@ -2605,18 +1499,12 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::about.about': ApiAboutAbout;
-      'api::appointment.appointment': ApiAppointmentAppointment;
       'api::article.article': ApiArticleArticle;
-      'api::attendance-log.attendance-log': ApiAttendanceLogAttendanceLog;
       'api::audit-log.audit-log': ApiAuditLogAuditLog;
       'api::author.author': ApiAuthorAuthor;
-      'api::bep-gelisim-izleme.bep-gelisim-izleme': ApiBepGelisimIzlemeBepGelisimIzleme;
-      'api::bireysel-egitim-plani.bireysel-egitim-plani': ApiBireyselEgitimPlaniBireyselEgitimPlani;
-      'api::bireysel-ogretim-plani.bireysel-ogretim-plani': ApiBireyselOgretimPlaniBireyselOgretimPlani;
       'api::category.category': ApiCategoryCategory;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
       'api::device-token.device-token': ApiDeviceTokenDeviceToken;
-      'api::donem-sonu-degerlendirme.donem-sonu-degerlendirme': ApiDonemSonuDegerlendirmeDonemSonuDegerlendirme;
       'api::erp-role.erp-role': ApiErpRoleErpRole;
       'api::faq.faq': ApiFaqFaq;
       'api::fatura.fatura': ApiFaturaFatura;
@@ -2624,30 +1512,13 @@ declare module '@strapi/strapi' {
       'api::gallery.gallery': ApiGalleryGallery;
       'api::global.global': ApiGlobalGlobal;
       'api::hero.hero': ApiHeroHero;
-      'api::kaba-degerlendirme.kaba-degerlendirme': ApiKabaDegerlendirmeKabaDegerlendirme;
-      'api::kontrol-listesi.kontrol-listesi': ApiKontrolListesiKontrolListesi;
       'api::kvkk-onam.kvkk-onam': ApiKvkkOnamKvkkOnam;
       'api::location-log.location-log': ApiLocationLogLocationLog;
-      'api::ogrenci-grubu.ogrenci-grubu': ApiOgrenciGrubuOgrenciGrubu;
-      'api::olcut-bagimli-test.olcut-bagimli-test': ApiOlcutBagimliTestOlcutBagimliTest;
-      'api::performans-kayit.performans-kayit': ApiPerformansKayitPerformansKayit;
-      'api::portfolyo-kontrol.portfolyo-kontrol': ApiPortfolyoKontrolPortfolyoKontrol;
-      'api::portfolyo-puanlama.portfolyo-puanlama': ApiPortfolyoPuanlamaPortfolyoPuanlama;
       'api::process.process': ApiProcessProcess;
-      'api::rapor.rapor': ApiRaporRapor;
       'api::route-stop.route-stop': ApiRouteStopRouteStop;
-      'api::schedule.schedule': ApiScheduleSchedule;
-      'api::service-route.service-route': ApiServiceRouteServiceRoute;
       'api::service.service': ApiServiceService;
       'api::storage-file.storage-file': ApiStorageFileStorageFile;
-      'api::student-profile.student-profile': ApiStudentProfileStudentProfile;
-      'api::teacher-profile.teacher-profile': ApiTeacherProfileTeacherProfile;
-      'api::team-member.team-member': ApiTeamMemberTeamMember;
-      'api::telafi-egitimi.telafi-egitimi': ApiTelafiEgitimiTelafiEgitimi;
-      'api::tenant.tenant': ApiTenantTenant;
-      'api::terapi-cetveli.terapi-cetveli': ApiTerapiCetveliTerapiCetveli;
       'api::two-factor-auth.two-factor-auth': ApiTwoFactorAuthTwoFactorAuth;
-      'api::ucret-hesaplama.ucret-hesaplama': ApiUcretHesaplamaUcretHesaplama;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

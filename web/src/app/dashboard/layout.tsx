@@ -1,23 +1,29 @@
-"use client";
-
 import React from 'react';
-import Sidebar from '@/components/dashboard/Sidebar';
-import TopBar from '@/components/dashboard/TopBar';
-import { DashboardProvider } from '@/context/DashboardContext';
+import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
+import { Menu } from 'lucide-react';
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+    children,
+}: {
+    children: React.ReactNode
+}) {
     return (
-        <DashboardProvider>
-            <div className="flex min-h-screen bg-[#f5f5f5]">
-                <Sidebar />
-                <div className="flex-1 flex flex-col ml-64 transition-all duration-300">
-                    <TopBar />
-                    <main id="main-content" className="flex-1 p-6 overflow-y-auto">
-                        {children}
-                    </main>
-                </div>
+        <div className="min-h-screen bg-slate-50 relative flex font-sans">
+            {/* Desktop Sidebar */}
+            <DashboardSidebar />
+
+            {/* Mobile Header */}
+            <div className="md:hidden fixed top-0 left-0 w-full bg-white border-b p-4 z-20 flex justify-between items-center shadow-sm">
+                <h1 className="font-bold text-primary-600">Arkadaş ERP</h1>
+                {/* Mobile menu trigger would go here - handled in client component usually or via sheet */}
+                <button className="p-2 text-slate-600"><Menu size={24} /></button>
             </div>
-        </DashboardProvider>
+
+            <div className="flex-1 md:ml-64 flex flex-col min-h-screen">
+                <main className="flex-1 p-4 md:p-8 pt-20 md:pt-8 animate-fade-in overflow-y-auto">
+                    {children}
+                </main>
+            </div>
+        </div>
     );
 }
-

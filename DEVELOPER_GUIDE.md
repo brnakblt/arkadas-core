@@ -8,10 +8,11 @@ This is a TurboRepo monorepo.
 
 | Directory | Description |
 |-----------|-------------|
+
 | `web/` | Next.js 16 Frontend (Teacher/Parent Dashboard) |
 | `strapi/` | Strapi v5 CMS (Postgres backend) |
+| `api/` | Microservices (OpenCV, SFTPGo, OnlyOffice) |
 | `docs/` | MkDocs documentation |
-| `scripts/` | Utility scripts |
 | `scripts/` | Utility scripts |
 
 ---
