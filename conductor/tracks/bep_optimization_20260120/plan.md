@@ -12,13 +12,13 @@
 - [x] Task: Conductor - User Manual Verification 'Prompt Engineering & Backend Logic' (Protocol in workflow.md)
 
 ## Phase 2: Frontend UX Enhancements
-- [ ] Task: Enhanced Input Form
-    - [ ] Sub-task: Update the BEP generation component to accept additional user inputs (focus areas, constraints).
-    - [ ] Sub-task: Implement form validation for these new inputs.
-- [ ] Task: Editable Result Display
-    - [ ] Sub-task: Replace the static display with an editable text area or rich text editor.
-    - [ ] Sub-task: Add "Save" and "Regenerate" actions to the UI.
-    - [ ] Sub-task: Implement loading states and error toasts.
+- [x] Task: Enhanced Input Form 76f6d06
+    - [x] Sub-task: Update the BEP generation component to accept additional user inputs (focus areas, constraints).
+    - [x] Sub-task: Implement form validation for these new inputs.
+- [x] Task: Editable Result Display 76f6d06
+    - [x] Sub-task: Replace the static display with an editable text area or rich text editor.
+    - [x] Sub-task: Add "Save" and "Regenerate" actions to the UI.
+    - [x] Sub-task: Implement loading states and error toasts.
 - [ ] Task: Conductor - User Manual Verification 'Frontend UX Enhancements' (Protocol in workflow.md)
 
 ## Phase 3: Integration & Testing
