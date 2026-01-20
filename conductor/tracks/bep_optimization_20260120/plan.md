@@ -19,7 +19,7 @@
     - [x] Sub-task: Replace the static display with an editable text area or rich text editor.
     - [x] Sub-task: Add "Save" and "Regenerate" actions to the UI.
     - [x] Sub-task: Implement loading states and error toasts.
-- [ ] Task: Conductor - User Manual Verification 'Frontend UX Enhancements' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Frontend UX Enhancements' (Protocol in workflow.md)
 
 ## Phase 3: Integration & Testing
 - [ ] Task: End-to-End Testing
