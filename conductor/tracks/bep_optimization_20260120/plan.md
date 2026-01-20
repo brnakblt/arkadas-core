@@ -27,4 +27,4 @@
     - [x] Sub-task: Perform manual acceptance testing with realistic data.
 - [x] Task: Documentation d92b224
     - [x] Sub-task: Update the technical documentation with the new prompt structure and API changes.
-- [ ] Task: Conductor - User Manual Verification 'Integration & Testing' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Integration & Testing' (Protocol in workflow.md)
