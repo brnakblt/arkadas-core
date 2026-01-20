@@ -21,7 +21,7 @@
     - [x] Sub-task: Implement loading states and error toasts.
 - [x] Task: Conductor - User Manual Verification 'Frontend UX Enhancements' (Protocol in workflow.md)
 
-## Phase 3: Integration & Testing
+## Phase 3: Integration & Testing [checkpoint: 2d212bc]
 - [x] Task: End-to-End Testing d92b224
     - [x] Sub-task: Write an integration test covering the flow from form submission to BEP generation and saving.
     - [x] Sub-task: Perform manual acceptance testing with realistic data.
