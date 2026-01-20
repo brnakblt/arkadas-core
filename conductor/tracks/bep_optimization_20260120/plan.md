@@ -5,10 +5,10 @@
     - [x] Sub-task: Analyze current prompt performance and identify weaknesses.
     - [x] Sub-task: Draft new, structured system prompts with few-shot examples.
     - [x] Sub-task: Create a test script to evaluate the new prompts against sample student data.
-- [ ] Task: Update Backend Service
-    - [ ] Sub-task: Write unit tests for the prompt construction function.
-    - [ ] Sub-task: Refactor the API route/controller to use the new prompt structure.
-    - [ ] Sub-task: Implement robust error handling (retries, timeouts) for the Gemini API call.
+- [x] Task: Update Backend Service 1dcd017
+    - [x] Sub-task: Write unit tests for the prompt construction function.
+    - [x] Sub-task: Refactor the API route/controller to use the new prompt structure.
+    - [x] Sub-task: Implement robust error handling (retries, timeouts) for the Gemini API call.
 - [ ] Task: Conductor - User Manual Verification 'Prompt Engineering & Backend Logic' (Protocol in workflow.md)
 
 ## Phase 2: Frontend UX Enhancements
