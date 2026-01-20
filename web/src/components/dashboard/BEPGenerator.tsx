@@ -1,36 +1,70 @@
 "use client";
 
 import React, { useState } from 'react';
-import { generateBEPReport, speakText, playAudioBuffer, BEPData } from '@/services/geminiService';
-import { Sparkles, FileText, Volume2, Loader2, Download, Target, BookOpen, PenTool, CheckCircle } from 'lucide-react';
+import { speakText, playAudioBuffer, BEPData } from '@/services/geminiService';
+import { Sparkles, FileText, Volume2, Loader2, Download, Target, BookOpen, PenTool, CheckCircle, Save, RefreshCw } from 'lucide-react';
 import { MOCK_STUDENTS } from './constants';
 
 const BEPGenerator: React.FC = () => {
     const [selectedStudentId, setSelectedStudentId] = useState(MOCK_STUDENTS[0].id);
     const [observations, setObservations] = useState('');
+    const [strengths, setStrengths] = useState('');
+    const [needs, setNeeds] = useState('');
     const [reportData, setReportData] = useState<BEPData | null>(null);
     const [isGenerating, setIsGenerating] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const selectedStudent = MOCK_STUDENTS.find(s => s.id === selectedStudentId);
 
     const handleGenerate = async () => {
-        if (!selectedStudent || !observations.trim()) return;
+        if (!selectedStudent) return;
+        
+        if (observations.trim().length < 10) {
+            alert("Lütfen daha detaylı gözlem giriniz (en az 10 karakter).");
+            return;
+        }
 
         setIsGenerating(true);
         setReportData(null);
         try {
-            const result = await generateBEPReport(selectedStudent.fullName, selectedStudent.diagnosis, observations, selectedStudent.age);
-            if (result) {
-                setReportData(result);
-            } else {
-                alert("Rapor oluşturulamadı. Lütfen tekrar deneyin.");
-            }
+            const response = await fetch('/api/ai/generate-bep', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: selectedStudent.fullName,
+                    age: selectedStudent.age,
+                    diagnosis: selectedStudent.diagnosis,
+                    observations,
+                    strengths: strengths.split('\n').filter(s => s.trim()),
+                    needs: needs.split('\n').filter(n => n.trim()),
+                }),
+            });
+
+            if (!response.ok) throw new Error('Generation failed');
+            
+            const result = await response.json();
+            setReportData(result);
         } catch (error) {
             console.error(error);
-            alert("Bir hata oluştu.");
+            alert("Rapor oluşturulamadı. Lütfen tekrar deneyin.");
         } finally {
             setIsGenerating(false);
+        }
+    };
+
+    const handleSave = async () => {
+        if (!reportData) return;
+        setIsSaving(true);
+        try {
+            // Mock save functionality
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            alert("BEP başarıyla kaydedildi!");
+        } catch (error) {
+            console.error(error);
+            alert("Kaydetme sırasında bir hata oluştu.");
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -38,7 +72,6 @@ const BEPGenerator: React.FC = () => {
         if (!reportData?.performanceLevel) return;
         setIsSpeaking(true);
         try {
-            // Speak the performance summary
             const textToSpeak = reportData.performanceLevel.slice(0, 300) + "...";
             const audioBuffer = await speakText(textToSpeak);
             if (audioBuffer) {
@@ -49,6 +82,19 @@ const BEPGenerator: React.FC = () => {
         } finally {
             setIsSpeaking(false);
         }
+    };
+
+    // Helper to update specific report fields (making it editable)
+    const updateReportField = (field: keyof BEPData, value: any) => {
+        if (!reportData) return;
+        setReportData({ ...reportData, [field]: value });
+    };
+
+    const updateListField = (field: keyof BEPData, index: number, value: string) => {
+        if (!reportData) return;
+        const newList = [...(reportData[field] as string[])];
+        newList[index] = value;
+        setReportData({ ...reportData, [field]: newList });
     };
 
     return (
@@ -63,9 +109,10 @@ const BEPGenerator: React.FC = () => {
 
                     <div className="space-y-6 flex-1">
                         <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-2">Öğrenci Seçimi</label>
+                            <label htmlFor="student-select" className="block text-sm font-bold text-slate-700 mb-2">Öğrenci Seçimi</label>
                             <div className="relative">
                                 <select
+                                    id="student-select"
                                     value={selectedStudentId}
                                     onChange={(e) => setSelectedStudentId(e.target.value)}
                                     className="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-lila-500 focus:border-lila-500 outline-none appearance-none font-medium text-slate-700"
@@ -78,14 +125,37 @@ const BEPGenerator: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="flex-1 flex flex-col">
-                            <label className="block text-sm font-bold text-slate-700 mb-2">Gözlem ve Notlar</label>
-                            <p className="text-xs text-slate-500 mb-2">Öğrencinin mevcut durumu, yapabildikleri ve zorlandığı alanlar hakkında bilgi verin.</p>
+                        <div>
+                            <label htmlFor="strengths-input" className="block text-sm font-bold text-slate-700 mb-2">Güçlü Yönler</label>
                             <textarea
+                                id="strengths-input"
+                                value={strengths}
+                                onChange={(e) => setStrengths(e.target.value)}
+                                placeholder="Her satıra bir özellik yazın..."
+                                className="w-full h-24 p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-lila-500 outline-none resize-none bg-slate-50 text-slate-700 text-sm"
+                            />
+                        </div>
+
+                        <div>
+                            <label htmlFor="needs-input" className="block text-sm font-bold text-slate-700 mb-2">Gelişimsel İhtiyaçlar</label>
+                            <textarea
+                                id="needs-input"
+                                value={needs}
+                                onChange={(e) => setNeeds(e.target.value)}
+                                placeholder="Her satıra bir ihtiyaç yazın..."
+                                className="w-full h-24 p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-lila-500 outline-none resize-none bg-slate-50 text-slate-700 text-sm"
+                            />
+                        </div>
+
+                        <div className="flex-1 flex flex-col">
+                            <label htmlFor="observations-input" className="block text-sm font-bold text-slate-700 mb-2">Gözlem ve Notlar</label>
+                            <p className="text-xs text-slate-500 mb-2">Öğrencinin mevcut durumu hakkında detaylı bilgi verin.</p>
+                            <textarea
+                                id="observations-input"
                                 value={observations}
                                 onChange={(e) => setObservations(e.target.value)}
-                                placeholder="Örn: Ali görsel eşlemede çok iyi ancak sözel yönergeleri almakta zorlanıyor. İnce motor becerilerinde (kalem tutma) desteğe ihtiyacı var. Göz teması süresi arttı."
-                                className="w-full flex-1 min-h-[250px] p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-lila-500 outline-none resize-none bg-slate-50 text-slate-700 leading-relaxed"
+                                placeholder="Örn: Ali görsel eşlemede çok iyi ancak sözel yönergeleri almakta zorlanıyor..."
+                                className="w-full flex-1 min-h-[150px] p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-lila-500 outline-none resize-none bg-slate-50 text-slate-700 leading-relaxed"
                             />
                         </div>
                     </div>
@@ -120,6 +190,16 @@ const BEPGenerator: React.FC = () => {
                         >
                             {isSpeaking ? <Loader2 className="animate-spin" size={20} /> : <Volume2 size={20} />}
                         </button>
+                        {reportData && (
+                            <button
+                                onClick={handleSave}
+                                disabled={isSaving}
+                                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+                            >
+                                {isSaving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+                                Kaydet
+                            </button>
+                        )}
                         <button disabled={!reportData} className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 shadow-sm">
                             <Download size={16} />
                             PDF İndir
@@ -132,20 +212,30 @@ const BEPGenerator: React.FC = () => {
                         <div className="space-y-8 max-w-4xl mx-auto">
                             {/* Header Info */}
                             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                                <div className="flex flex-wrap gap-6 text-sm text-slate-600">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                                     <div className="flex flex-col">
                                         <span className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-1">Öğrenci</span>
-                                        <span className="font-semibold text-slate-900 text-lg">{reportData.studentName}</span>
+                                        <input 
+                                            value={reportData.studentName}
+                                            onChange={(e) => updateReportField('studentName', e.target.value)}
+                                            className="font-semibold text-slate-900 text-lg bg-transparent border-b border-transparent hover:border-slate-200 focus:border-lila-500 outline-none"
+                                        />
                                     </div>
                                     <div className="flex flex-col">
                                         <span className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-1">Tarih</span>
-                                        <span className="font-medium text-slate-900">{reportData.bepDate}</span>
+                                        <input 
+                                            value={reportData.bepDate}
+                                            onChange={(e) => updateReportField('bepDate', e.target.value)}
+                                            className="font-medium text-slate-900 bg-transparent border-b border-transparent hover:border-slate-200 focus:border-lila-500 outline-none"
+                                        />
                                     </div>
-                                    <div className="flex flex-col flex-1">
+                                    <div className="flex flex-col md:col-span-2">
                                         <span className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-1">Eğitsel Performans</span>
-                                        <p className="font-medium text-slate-800 leading-relaxed bg-amber-50 p-3 rounded-lg border border-amber-100 text-amber-900">
-                                            {reportData.performanceLevel}
-                                        </p>
+                                        <textarea 
+                                            value={reportData.performanceLevel}
+                                            onChange={(e) => updateReportField('performanceLevel', e.target.value)}
+                                            className="w-full font-medium text-slate-800 leading-relaxed bg-amber-50 p-3 rounded-lg border border-amber-100 text-amber-900 outline-none focus:ring-1 focus:ring-amber-300 resize-none h-32"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -159,14 +249,19 @@ const BEPGenerator: React.FC = () => {
                                         <Target className="text-indigo-500" size={20} />
                                         Uzun Dönemli Amaçlar
                                     </h4>
-                                    <ul className="space-y-3">
+                                    <div className="space-y-3">
                                         {reportData.longTermGoals.map((goal, idx) => (
-                                            <li key={idx} className="flex gap-3 text-slate-700 bg-indigo-50/50 p-3 rounded-lg">
+                                            <div key={idx} className="flex gap-3 text-slate-700 bg-indigo-50/50 p-3 rounded-lg">
                                                 <span className="font-bold text-indigo-400">{idx + 1}.</span>
-                                                {goal}
-                                            </li>
+                                                <textarea 
+                                                    value={goal}
+                                                    onChange={(e) => updateListField('longTermGoals', idx, e.target.value)}
+                                                    className="w-full bg-transparent border-none outline-none resize-none text-sm leading-relaxed"
+                                                    rows={2}
+                                                />
+                                            </div>
                                         ))}
-                                    </ul>
+                                    </div>
                                 </div>
 
                                 {/* Short Term Goals */}
@@ -176,14 +271,19 @@ const BEPGenerator: React.FC = () => {
                                         <CheckCircle className="text-pink-500" size={20} />
                                         Kısa Dönemli Hedefler
                                     </h4>
-                                    <ul className="space-y-3">
+                                    <div className="space-y-3">
                                         {reportData.shortTermGoals.map((goal, idx) => (
-                                            <li key={idx} className="flex gap-3 text-slate-700 bg-pink-50/50 p-3 rounded-lg">
+                                            <div key={idx} className="flex gap-3 text-slate-700 bg-pink-50/50 p-3 rounded-lg">
                                                 <span className="font-bold text-pink-400">•</span>
-                                                {goal}
-                                            </li>
+                                                <textarea 
+                                                    value={goal}
+                                                    onChange={(e) => updateListField('shortTermGoals', idx, e.target.value)}
+                                                    className="w-full bg-transparent border-none outline-none resize-none text-sm leading-relaxed"
+                                                    rows={2}
+                                                />
+                                            </div>
                                         ))}
-                                    </ul>
+                                    </div>
                                 </div>
                             </div>
 
@@ -196,9 +296,12 @@ const BEPGenerator: React.FC = () => {
                                     </h4>
                                     <div className="flex flex-wrap gap-2">
                                         {reportData.teachingMethods.map((m, idx) => (
-                                            <span key={idx} className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-md text-sm font-medium border border-slate-200">
-                                                {m}
-                                            </span>
+                                            <input 
+                                                key={idx}
+                                                value={m}
+                                                onChange={(e) => updateListField('teachingMethods', idx, e.target.value)}
+                                                className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-md text-sm font-medium border border-slate-200 outline-none focus:ring-1 focus:ring-lila-300"
+                                            />
                                         ))}
                                     </div>
                                 </div>
@@ -209,9 +312,12 @@ const BEPGenerator: React.FC = () => {
                                     </h4>
                                     <div className="flex flex-wrap gap-2">
                                         {reportData.materials.map((m, idx) => (
-                                            <span key={idx} className="px-3 py-1.5 bg-orange-50 text-orange-700 rounded-md text-sm font-medium border border-orange-100">
-                                                {m}
-                                            </span>
+                                            <input 
+                                                key={idx}
+                                                value={m}
+                                                onChange={(e) => updateListField('materials', idx, e.target.value)}
+                                                className="px-3 py-1.5 bg-orange-50 text-orange-700 rounded-md text-sm font-medium border border-orange-100 outline-none focus:ring-1 focus:ring-orange-300"
+                                            />
                                         ))}
                                     </div>
                                 </div>
@@ -223,14 +329,29 @@ const BEPGenerator: React.FC = () => {
                                     <Sparkles size={20} />
                                     Uzman Tavsiyeleri
                                 </h4>
-                                <ul className="space-y-3">
+                                <div className="space-y-3">
                                     {reportData.recommendations.map((rec, idx) => (
-                                        <li key={idx} className="flex gap-3 text-indigo-50/90 text-sm leading-relaxed">
+                                        <div key={idx} className="flex gap-3 text-indigo-50/90 text-sm leading-relaxed bg-white/5 p-3 rounded-lg border border-white/10">
                                             <span className="text-indigo-400 mt-1">•</span>
-                                            {rec}
-                                        </li>
+                                            <textarea 
+                                                value={rec}
+                                                onChange={(e) => updateListField('recommendations', idx, e.target.value)}
+                                                className="w-full bg-transparent border-none outline-none resize-none text-sm"
+                                                rows={2}
+                                            />
+                                        </div>
                                     ))}
-                                </ul>
+                                </div>
+                            </div>
+                            
+                            <div className="flex justify-center pb-8">
+                                <button 
+                                    onClick={handleGenerate}
+                                    className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-600 rounded-full text-sm font-bold hover:bg-slate-50 transition-all shadow-sm group"
+                                >
+                                    <RefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-500" />
+                                    Yeniden Oluştur
+                                </button>
                             </div>
                         </div>
                     ) : (
