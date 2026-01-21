@@ -37,9 +37,10 @@ echo -e "\n${YELLOW}1. Stopping Docker containers...${NC}"
 docker compose down --volumes --remove-orphans
 
 echo -e "\n${YELLOW}2. Cleaning database files...${NC}"
-docker run --rm -v "$(pwd):/app" -w /app alpine rm -rf databases
-mkdir -p databases/postgres databases/redis databases/onlyoffice/data databases/onlyoffice/log databases/onlyoffice/cache
-mkdir -p databases/sftpgo/data databases/sftpgo/config
+# Use privileged alpine container to remove postgres data (owned by uid 70)
+docker run --rm -v "$(pwd):/app" -w /app alpine rm -rf /app/infra_data/postgres /app/infra_data/redis /app/infra_data/onlyoffice /app/infra_data/sftpgo
+mkdir -p infra_data/postgres infra_data/redis infra_data/onlyoffice/data infra_data/onlyoffice/log infra_data/onlyoffice/cache
+mkdir -p infra_data/sftpgo/data infra_data/sftpgo/config
 
 echo -e "\n${YELLOW}3. Cleaning Strapi cache...${NC}"
 rm -rf strapi/.tmp strapi/dist strapi/build strapi/.cache
@@ -64,7 +65,34 @@ docker compose up -d --wait
 echo "Waiting 5s for database stability..."
 sleep 5
 
-# 6. Installing mobile app dependencies - Removed
+echo -e "\n${YELLOW}6. Syncing SFTPGo admin credentials...${NC}"
+# SFTPGo only loads initial_admin.json on first startup. If db exists, we need to sync via API.
+SFTPGO_PASSWORD=$(grep SFTPGO_ADMIN_PASSWORD strapi/.env 2>/dev/null | cut -d= -f2)
+if [ -n "$SFTPGO_PASSWORD" ]; then
+    # Try to authenticate with new password first (already synced)
+    TOKEN=$(curl -s -u "admin:${SFTPGO_PASSWORD}" http://localhost:8088/api/v2/token 2>/dev/null | jq -r '.access_token // empty')
+    
+    if [ -n "$TOKEN" ]; then
+        echo "   ✓ SFTPGo credentials already synced"
+    else
+        # Try with default password (first startup, need to change)
+        TOKEN=$(curl -s -u "admin:admin" http://localhost:8088/api/v2/token 2>/dev/null | jq -r '.access_token // empty')
+        if [ -n "$TOKEN" ]; then
+            # Update password via API
+            curl -s -X PUT "http://localhost:8088/api/v2/admin/admin" \
+                -H "Authorization: Bearer $TOKEN" \
+                -H "Content-Type: application/json" \
+                -d "{\"password\": \"${SFTPGO_PASSWORD}\"}" > /dev/null 2>&1
+            echo "   ✓ SFTPGo admin password updated"
+        else
+            echo "   ⚠️ Could not sync SFTPGo credentials (may need manual update)"
+        fi
+    fi
+else
+    echo "   ⚠️ SFTPGO_ADMIN_PASSWORD not found in strapi/.env"
+fi
+
+# 7. Installing mobile app dependencies - Removed
 # Mobile App removed as part of project simplification
 
 echo -e "\n${YELLOW}7. Building Strapi...${NC}"

@@ -904,8 +904,8 @@ async function main() {
 
         // Initialize SFTPGo Service
         const sftpGoService = new SftpGoService(
-            'http://localhost:8088',
-            'admin',
+            process.env.SFTPGO_URL || 'http://localhost:8088',
+            process.env.SFTPGO_ADMIN_USER || 'admin',
             process.env.SFTPGO_ADMIN_PASSWORD || process.env.STRAPI_ADMIN_PASSWORD || 'Strapi123!'
         );
         console.log('\n🔄 Initializing SFTPGo Sync...');

@@ -1,0 +1,72 @@
+groups:
+  - name: arkadas-erp-alerts
+    rules:
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: (sum(rate(container_cpu_usage_seconds_total{name!=""}[3m])) BY (name) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "Container {{ $labels.name }} CPU usage is above 80% (current: {{ $value }}%)"
+
+      # High Memory usage
+      - alert: HighMemoryUsage
+        expr: (sum(container_memory_working_set_bytes{name!=""}) BY (name) / sum(container_spec_memory_limit_bytes{name!=""}) BY (name) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: "Container {{ $labels.name }} memory usage is above 80%"
+
+      # Container Down
+      - alert: ContainerDown
+        expr: absent(container_last_seen{name=~"arkadasozelegitim.*"})
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Container is down"
+          description: "Container {{ $labels.name }} is not running"
+
+      # PostgreSQL Down
+      - alert: PostgresDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL database is not responding"
+
+      # Redis Down
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis is down"
+          description: "Redis cache is not responding"
+
+      # High Disk Usage
+      - alert: HighDiskUsage
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} * 100) < 20
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low disk space"
+          description: "Disk space is below 20% available"
+
+      # Strapi Response Time
+      - alert: StrapiHighLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="strapi"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Strapi high latency"
+          description: "Strapi 95th percentile response time is above 2 seconds"

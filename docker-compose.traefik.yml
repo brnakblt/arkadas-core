@@ -1,0 +1,20 @@
+services:
+  traefik:
+    image: traefik:v2.10
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      # - "8080:8080" # Dashboard (insecure)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./docker/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./docker/traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - ./infra_data/traefik/acme.json:/acme.json
+    networks:
+      - default
+
+networks:
+  default:
+    name: arkadasozelegitim_default
+    external: true

@@ -88,6 +88,7 @@ generate_env_file() {
         # SFTPGo Admin (Global Consistency)
         sed -i "s|SFTPGO_ADMIN_PASSWORD=.*|SFTPGO_ADMIN_PASSWORD=${SFTPGO_ADMIN_PASSWORD}|" "$target_file" || true
         sed -i "s|SFTPGO_ADMIN_USER=.*|SFTPGO_ADMIN_USER=admin|" "$target_file" || true
+        sed -i "s|SFTPGO_URL=.*|SFTPGO_URL=http://localhost:8088|" "$target_file" || true
 
         # Specialized Replacements
         
@@ -135,8 +136,8 @@ fi
 
 # 5. Generate SFTPGo Initial Admin Data (for auto-seeding)
 echo -e "Generating SFTPGo initial admin data..."
-mkdir -p "${PROJECT_ROOT}/databases/sftpgo/config"
-cat <<EOF > "${PROJECT_ROOT}/databases/sftpgo/config/initial_admin.json"
+mkdir -p "${PROJECT_ROOT}/infra_data/sftpgo/config"
+cat <<EOF > "${PROJECT_ROOT}/infra_data/sftpgo/config/initial_admin.json"
 {
   "admins": [
     {

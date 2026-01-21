@@ -1,0 +1,179 @@
+# Monitoring Stack for Arkadas ERP
+# Usage: docker compose -f docker-compose.monitoring.yml up -d
+
+services:
+  # ==========================================
+  # Prometheus - Metrics Collection
+  # ==========================================
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./docker/monitoring/prometheus/rules:/etc/prometheus/rules:ro
+      - ./infra_data/prometheus:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=15d'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    healthcheck:
+      test: [ "CMD", "wget", "-q", "--spider", "http://localhost:9090/-/healthy" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # ==========================================
+  # Grafana - Dashboards & Visualization
+  # ==========================================
+  grafana:
+    image: grafana/grafana:10.2.0
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=http://localhost:3001
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-piechart-panel
+    volumes:
+      - ./docker/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra_data/grafana:/var/lib/grafana
+    depends_on:
+      - prometheus
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:3000/api/health || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  # ==========================================
+  # Alertmanager - Alert Routing
+  # ==========================================
+  alertmanager:
+    image: prom/alertmanager:v0.26.0
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./docker/monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./infra_data/alertmanager:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    environment:
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+
+  # ==========================================
+  # cAdvisor - Container Metrics
+  # ==========================================
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
+    restart: unless-stopped
+    ports:
+      - "8085:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  # ==========================================
+  # PostgreSQL Exporter
+  # ==========================================
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    restart: unless-stopped
+    ports:
+      - "9187:9187"
+    environment:
+      - DATA_SOURCE_NAME=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-arkadas_erp}?sslmode=disable
+    depends_on:
+      - prometheus
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+
+  # ==========================================
+  # Redis Exporter
+  # ==========================================
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.55.0
+    restart: unless-stopped
+    ports:
+      - "9121:9121"
+    environment:
+      - REDIS_ADDR=redis:6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    depends_on:
+      - prometheus
+    deploy:
+      resources:
+        limits:
+          memory: 32M
+
+  # ==========================================
+  # Loki - Log Aggregation
+  # ==========================================
+  loki:
+    image: grafana/loki:2.9.2
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./infra_data/loki:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  # ==========================================
+  # Promtail - Log Shipper
+  # ==========================================
+  promtail:
+    image: grafana/promtail:2.9.2
+    restart: unless-stopped
+    volumes:
+      - /var/log:/var/log:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./docker/monitoring/promtail:/etc/promtail:ro
+    command: -config.file=/etc/promtail/promtail.yml
+    depends_on:
+      - loki
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+
+# Use same network as main docker-compose
+networks:
+  default:
+    name: arkadasozelegitim_default
+    external: true

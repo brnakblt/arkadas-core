@@ -63,7 +63,15 @@
     "test:storage": "ts-node --esm web/scripts/test-storage.ts",
     "test:e2e": "npm run test:e2e --prefix web",
     "test:coverage": "npm run test:coverage --prefix web",
-    "test:tenant": "RUN_TENANT_TESTS=true bash scripts/run-tests.sh"
+    "test:tenant": "RUN_TENANT_TESTS=true bash scripts/run-tests.sh",
+    "------- SECURITY -------": "",
+    "scan": "bash scripts/docker_scout_scan.sh",
+    "scan:cves": "bash scripts/docker_scout_scan.sh --mode cves --critical",
+    "scan:recommendations": "bash scripts/docker_scout_scan.sh --mode recommendations",
+    "------- MONITORING -------": "",
+    "monitoring:up": "docker compose -f docker-compose.monitoring.yml up -d",
+    "monitoring:down": "docker compose -f docker-compose.monitoring.yml down",
+    "monitoring:logs": "docker compose -f docker-compose.monitoring.yml logs -f"
   },
   "engines": {
     "node": ">=18.0.0 <=24.x.x"

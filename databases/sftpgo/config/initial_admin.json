@@ -1,0 +1,11 @@
+{
+  "admins": [
+    {
+      "username": "admin",
+      "password": "MsCop0JmldvB7gO6aN5jrTgE4VGs7eSV",
+      "status": 1,
+      "permissions": ["*"],
+      "description": "Default Admin created by seeding script"
+    }
+  ]
+}

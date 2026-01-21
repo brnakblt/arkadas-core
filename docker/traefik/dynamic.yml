@@ -1,0 +1,27 @@
+http:
+  routers:
+    # Dashboard (Secured with Basic Auth in production)
+    dashboard:
+      rule: "Host(`traefik.localhost`)"
+      service: "api@internal"
+      entryPoints:
+        - "web"
+
+  middlewares:
+    # Security Headers
+    security-headers:
+      headers:
+        frameDeny: true
+        sslRedirect: true
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 31536000
+
+    # Rate Limiting
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 50

@@ -1,0 +1,81 @@
+#!/bin/bash
+# Pre-push hook for Docker Scout security scanning
+# Scans local images before pushing to remote
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+# Check if scout scan should be skipped
+if [[ "$*" == *"--no-scout"* ]] || [[ "$SKIP_SCOUT" == "1" ]]; then
+    echo -e "${YELLOW}⏭️  Docker Scout scan skipped${NC}"
+    exit 0
+fi
+
+# Check if docker scout is available
+if ! docker scout version &> /dev/null; then
+    echo -e "${YELLOW}⚠️  Docker Scout not available, skipping security scan${NC}"
+    echo -e "   Install with: docker scout --help (requires Docker Desktop or Hub login)"
+    exit 0
+fi
+
+# Check if there are any local images to scan
+STRAPI_IMAGE=$(docker images -q arkadasozelegitim-strapi 2>/dev/null | head -1)
+WEB_IMAGE=$(docker images -q arkadasozelegitim-web 2>/dev/null | head -1)
+
+if [ -z "$STRAPI_IMAGE" ] && [ -z "$WEB_IMAGE" ]; then
+    echo -e "${YELLOW}⏭️  No local images found, skipping Docker Scout scan${NC}"
+    exit 0
+fi
+
+echo -e "\n${GREEN}🔍 Docker Scout Security Scan${NC}"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+CRITICAL_FOUND=0
+
+# Scan Strapi image
+if [ -n "$STRAPI_IMAGE" ]; then
+    echo -e "\n${YELLOW}Scanning: arkadasozelegitim-strapi${NC}"
+    RESULT=$(docker scout quickview arkadasozelegitim-strapi 2>&1)
+    echo "$RESULT"
+    
+    # Check for critical vulnerabilities
+    if echo "$RESULT" | grep -qE "[0-9]+C"; then
+        CRITICAL_COUNT=$(echo "$RESULT" | grep -oE "[0-9]+C" | head -1 | tr -d 'C')
+        if [ "$CRITICAL_COUNT" -gt 0 ]; then
+            echo -e "${RED}⚠️  Found $CRITICAL_COUNT critical vulnerabilities in Strapi!${NC}"
+            CRITICAL_FOUND=1
+        fi
+    fi
+fi
+
+# Scan Web image
+if [ -n "$WEB_IMAGE" ]; then
+    echo -e "\n${YELLOW}Scanning: arkadasozelegitim-web${NC}"
+    RESULT=$(docker scout quickview arkadasozelegitim-web 2>&1)
+    echo "$RESULT"
+    
+    # Check for critical vulnerabilities
+    if echo "$RESULT" | grep -qE "[0-9]+C"; then
+        CRITICAL_COUNT=$(echo "$RESULT" | grep -oE "[0-9]+C" | head -1 | tr -d 'C')
+        if [ "$CRITICAL_COUNT" -gt 0 ]; then
+            echo -e "${RED}⚠️  Found $CRITICAL_COUNT critical vulnerabilities in Web!${NC}"
+            CRITICAL_FOUND=1
+        fi
+    fi
+fi
+
+echo -e "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if [ "$CRITICAL_FOUND" -eq 1 ]; then
+    echo -e "${YELLOW}⚠️  Critical vulnerabilities detected.${NC}"
+    echo -e "   Run 'docker scout recommendations <image>' for fix suggestions."
+    echo -e "   To push anyway, use: SKIP_SCOUT=1 git push"
+    # Uncomment below to block push on critical vulnerabilities:
+    # exit 1
+fi
+
+echo -e "${GREEN}✓ Docker Scout scan complete${NC}\n"
+exit 0
