@@ -188,18 +188,11 @@ const Header: React.FC = () => {
               aria-label="Giriş Yap"
             >
               <div className="relative h-6 w-6">
-                <div
-                  className="absolute inset-0 bg-yellow-500 dark:bg-blue-400 transition-colors duration-300"
-                  style={{
-                    maskImage: "url(/images/favicon.svg)",
-                    maskSize: "contain",
-                    maskRepeat: "no-repeat",
-                    maskPosition: "center",
-                    WebkitMaskImage: "url(/images/favicon.svg)",
-                    WebkitMaskSize: "contain",
-                    WebkitMaskRepeat: "no-repeat",
-                    WebkitMaskPosition: "center",
-                  }}
+                <Image
+                  src="/images/favicon.svg"
+                  alt="Giriş Yap"
+                  fill
+                  className="object-contain"
                 />
               </div>
             </button>

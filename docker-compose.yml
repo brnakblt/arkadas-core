@@ -26,7 +26,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - ./databases/postgres:/var/lib/postgresql/data
+      - ./infra_data/postgres:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
@@ -45,7 +45,7 @@ services:
     command: >
       redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes --appendfsync everysec --maxmemory 256mb --maxmemory-policy noeviction --loglevel warning
     volumes:
-      - ./databases/redis:/data
+      - ./infra_data/redis:/data
     ports:
       - "6380:6379"
     healthcheck:
@@ -79,8 +79,8 @@ services:
       SFTPGO_LOADDATA_FROM: /var/lib/sftpgo/initial_admin.json
       SFTPGO_LOADDATA_QUOTA_SCAN: 0
     volumes:
-      - ./databases/sftpgo/data:/srv/sftpgo/data
-      - ./databases/sftpgo/config:/var/lib/sftpgo
+      - ./infra_data/sftpgo/data:/srv/sftpgo/data
+      - ./infra_data/sftpgo/config:/var/lib/sftpgo
     deploy:
       resources:
         limits:
@@ -104,9 +104,9 @@ services:
       JWT_HEADER: "Authorization"
       JWT_IN_BODY: "true"
     volumes:
-      - ./databases/onlyoffice/data:/var/www/onlyoffice/Data
-      - ./databases/onlyoffice/log:/var/log/onlyoffice
-      - ./databases/onlyoffice/cache:/var/lib/onlyoffice/documentserver/App_Data/cache/files
+      - ./infra_data/onlyoffice/data:/var/www/onlyoffice/Data
+      - ./infra_data/onlyoffice/log:/var/log/onlyoffice
+      - ./infra_data/onlyoffice/cache:/var/lib/onlyoffice/documentserver/App_Data/cache/files
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost/healthcheck" ]
       interval: 30s

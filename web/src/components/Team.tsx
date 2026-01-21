@@ -14,16 +14,13 @@ export interface TeamMember {
   id: number;
   name: string;
   title: string;
-  category: string[]; // JSON field returns array directly
+  category: string[];
   image: {
     url: string;
     alternativeText?: string;
   } | null;
-  specialization: string;
-  description: string;
-  objectPosition?: string;
-  order: number;
   link?: string;
+  objectPosition?: string;
 }
 
 const Team: React.FC = () => {
@@ -31,103 +28,61 @@ const Team: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // const STRAPI_URL = "http://127.0.0.1:1337"; // Moved below or used from env
+  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
 
   const fetchTeamMembers = useCallback(async () => {
-    const defaultCategories = [
-      "Yönetim",
-      "Eğitim Danışmanı",
-      "Psikolog",
-      "Dil ve Konuşma Terapisti",
-      "Öğretmen",
-      "Fizyoterapist",
-    ];
     try {
       setLoading(true);
+      // Removed populate=image since avatarUrl is a simple string field in Personnel
       const response = await fetch(
-        `${STRAPI_URL}/api/team-members?populate=image&sort[0]=order:asc`
+        `${STRAPI_URL}/api/personnels?sort[0]=title:asc`
       );
       if (!response.ok) {
-        const errorBody = await response.text();
-        console.error("HTTP error! status:", response.status, "body:", errorBody);
+        // If 404/500, we'll just show empty state or error
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
 
-      // Strapi v5 returns flattened data in data.data
-      const formattedMembers: TeamMember[] = data.data.map((member: { category: string | string[] | { role?: string; name?: string }[] | { role?: string; name?: string };[key: string]: unknown }) => {
-        // category is a JSON field. We need to normalize it to string[].
-        let category: string[] = [];
-        const rawCat = member.category;
+      // Map Personnel (Article 7) to TeamMember UI
+      const formattedMembers: TeamMember[] = data.data.map((p: any) => {
 
-        if (Array.isArray(rawCat)) {
-          category = rawCat.map((c: string | { role?: string; name?: string }) => {
-            if (typeof c === 'string') return c.replace(/^["']|["']$/g, '').trim();
-            if (c?.role) return c.role.replace(/^["']|["']$/g, '').trim();
-            if (c?.name) return c.name.replace(/^["']|["']$/g, '').trim();
-            return '';
-          }).filter(Boolean);
-        } else if (typeof rawCat === 'string') {
-          // Handle JSON string that might contain array
-          try {
-            const parsed = JSON.parse(rawCat);
-            if (Array.isArray(parsed)) {
-              category = parsed.map((c: string | { role?: string; name?: string }) => typeof c === 'string' ? c : c?.role || c?.name || '').filter(Boolean);
-            } else {
-              category = [rawCat.replace(/^["']|["']$/g, '').trim()];
-            }
-          } catch {
-            category = [rawCat.replace(/^["']|["']$/g, '').trim()];
-          }
-        } else if (typeof rawCat === 'object' && rawCat !== null) {
-          if (rawCat.role) category = [rawCat.role];
-          else if (rawCat.name) category = [rawCat.name];
-          else category = [];
-        }
+        // Map Enum Title to UI Category
+        let category = "Diğer";
+        const t = p.title || "";
+        if (t.includes("MUDUR")) category = "Yönetim";
+        else if (t.includes("PSIKOLOG")) category = "Psikolog";
+        else if (t.includes("FIZYOTERAPIST")) category = "Fizyoterapist";
+        else if (t.includes("ODYOLOG") || t.includes("IL")) category = "Terapist"; // Dil/Odyo
+        else if (t.includes("OGRETMEN")) category = "Öğretmen";
+        else if (t.includes("SOSYAL")) category = "Sosyal Hizmet";
 
         return {
-          ...member,
-          category: category,
+          id: p.id,
+          name: p.fullName || "İsimsiz",
+          title: p.specialty || p.title || "Personel", // Show Specialty (e.g. 'Uzman Öğretici') or fallback to Title enum
+          category: [category],
+          image: p.avatarUrl ? { url: p.avatarUrl, alternativeText: p.fullName } : null,
+          link: null
         };
-      }).sort((a: TeamMember, b: TeamMember) => (a.order || 0) - (b.order || 0));
-
-
-      setTeamMembers(formattedMembers);
+      });
 
       setTeamMembers(formattedMembers);
 
-      // Helper to title case
-      const toTitleCase = (str: string) => {
-        return str.toLocaleLowerCase('tr-TR').split(' ').map(word => word.charAt(0).toLocaleUpperCase('tr-TR') + word.slice(1)).join(' ');
-      };
+      // Extract unique categories from loaded data
+      const uniqueCats = Array.from(new Set(formattedMembers.flatMap(m => m.category)));
+      // Ensure 'Yönetim' is first if exists
+      if (uniqueCats.includes("Yönetim")) {
+        uniqueCats.sort((a, b) => a === "Yönetim" ? -1 : b === "Yönetim" ? 1 : 0);
+      }
+      setCategories(uniqueCats);
 
-      const uniqueCategories = [
-        ...new Set(
-          formattedMembers.flatMap((member) => member.category.map(c => toTitleCase(c)))
-        ),
-      ];
-      // Remove "Tümü" and ensure categories are unique and valid, excluding English roles and quoted duplicates
-      const excludedCategories = ["Specialist", "Coordinator", "Psychologist"];
-      setCategories(
-        [...defaultCategories, ...uniqueCategories].filter(
-          (value, index, self) => {
-            // Skip if empty, excluded, or contains quotes
-            if (!value || excludedCategories.includes(value) || value.includes('"')) return false;
-            // Check for duplicates (case-insensitive)
-            return self.findIndex(v => v.toLocaleLowerCase('tr-TR') === value.toLocaleLowerCase('tr-TR')) === index;
-          }
-        )
-      );
     } catch (err) {
       console.error("Failed to fetch team members:", err);
       setError("Ekip üyeleri yüklenirken bir hata oluştu.");
     } finally {
       setLoading(false);
     }
-  }, []); // Removed dependency on local var, using env inside fetch or hardcoded for now implies we need to fix the URL source.
-
-  // NOTE: Ideally import STRAPI_URL from config/constants
-  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
+  }, [STRAPI_URL]);
 
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
@@ -138,20 +93,10 @@ const Team: React.FC = () => {
 
   const filteredMembers = useMemo(() => {
     if (!activeCategory) {
-      return teamMembers.slice(0, 8); // return teamMembers; if we want all
+      // Default: Show all or maybe limit? Let's show all for now.
+      return teamMembers;
     }
-    // Robust comparison: normalize both sides
-    // Also handle Turkish "i" problem if possible via localeCompare but toLowerCase is usually enough for english keys
-    // The seed data has uppercase categories like "PSİKOLOG". The default categories are Title Case "Psikolog".
-    // We should normalize everything to lower case for comparison.
-    // Turkish-aware lowercasing:
-    const activeLower = activeCategory.toLocaleLowerCase('tr-TR');
-
-    return teamMembers.filter(
-      (member) =>
-        member.category &&
-        member.category.some(cat => cat.toLocaleLowerCase('tr-TR') === activeLower)
-    );
+    return teamMembers.filter((m) => m.category.includes(activeCategory));
   }, [activeCategory, teamMembers]);
 
   if (loading) {
@@ -181,17 +126,14 @@ const Team: React.FC = () => {
               src={
                 member.image?.url
                   ? `${STRAPI_URL}${member.image.url}`
-                  : "/images/placeholder.webp"
+                  : "/images/decor_hands.webp" // Fallback to decor if placeholder missing
               }
-              alt={
-                member.image?.alternativeText || member.name
-              }
+              alt={member.name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover rounded-2xl"
               style={{
-                objectPosition:
-                  member.objectPosition || "center",
+                objectPosition: member.objectPosition || "center",
               }}
             />
           </div>
@@ -202,27 +144,22 @@ const Team: React.FC = () => {
             </h3>
 
             <p className="text-primary dark:text-primary-light font-body font-medium text-sm mb-3 capitalize">
-              {member.title?.toLocaleLowerCase('tr-TR')}
+              {member.title}
             </p>
           </div>
         </div>
 
-        {/* Gradient Hover Effect - Starts from the card bottom */}
+        {/* Gradient Hover Effect */}
         <div className="absolute inset-x-0 bottom-0 h-1/6 bg-gradient-to-t from-secondary/60 via-secondary/20 to-secondary/0 transform translate-y-full transition-transform duration-500 ease-in-out group-hover:translate-y-0 z-10 pointer-events-none"></div>
       </>
     );
 
     return member.link ? (
-      <Link
-        href={member.link}
-        className={`${cardClasses} cursor-pointer`}
-      >
+      <Link href={member.link} className={`${cardClasses} cursor-pointer`}>
         {CardContent}
       </Link>
     ) : (
-      <div
-        className={cardClasses}
-      >
+      <div className={cardClasses}>
         {CardContent}
       </div>
     );
@@ -234,21 +171,26 @@ const Team: React.FC = () => {
         <BezierBackground className="h-full w-full opacity-40" />
       </div>
       <div className="w-full max-w-full lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-dark dark:text-neutral-100 mt-4 mb-6 leading-normal pb-2">
             <span className="text-gradient inline-block leading-tight pb-2 mr-2">Uzman</span>
             <span className="inline-block leading-tight pb-2">Kadromuz</span>
           </h2>
           <p className="font-body text-lg text-neutral-dark/80 dark:text-neutral-300 max-w-3xl mx-auto leading-relaxed">
-            Alanında uzman ve deneyimli ekibimizle öğrencilerimize en iyi
-            eğitimi sunuyoruz.
+            Alanında uzman ve deneyimli ekibimizle öğrencilerimize en iyi eğitimi sunuyoruz.
           </p>
         </div>
 
-        {/* Category Filter */}
-        {/* Desktop: Flex wrap centered */}
         <div className="mb-12 hidden md:flex flex-wrap justify-center gap-4">
+          <button
+            onClick={() => setActiveCategory(null)}
+            className={`px-6 py-3 rounded-full font-body font-medium transition-all duration-300 whitespace-nowrap ${activeCategory === null
+              ? "bg-primary text-white shadow-lg scale-105"
+              : "bg-gray-100 text-neutral-dark hover:bg-gray-200 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
+              }`}
+          >
+            Tümü
+          </button>
           {categories.map((category) => (
             <button
               key={category}
@@ -263,7 +205,6 @@ const Team: React.FC = () => {
           ))}
         </div>
 
-        {/* Mobile: Swiper horizontal scroll type */}
         <div className="mb-12 md:hidden overflow-visible">
           <TeamCategorySwiper
             categories={categories}
@@ -272,12 +213,10 @@ const Team: React.FC = () => {
           />
         </div>
 
-        {/* Mobile View - Swiper */}
         <div className="block md:hidden">
           <TeamMobile members={filteredMembers} TeamMemberCard={TeamMemberCard} />
         </div>
 
-        {/* Desktop View - Grid/Flex */}
         <div className="hidden md:flex md:flex-wrap md:justify-center gap-6">
           {filteredMembers.map((member) => (
             <div key={member.id} className="w-full md:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] max-w-sm">

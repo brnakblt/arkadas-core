@@ -304,8 +304,8 @@ async function seedStudents(xmlPath, authenticatedRole, sftpGoService) {
                 gender: row[headerRow.findIndex(c => c === 'CİNSİYETİ')] || '',
                 disabilityType: row[headerRow.findIndex(c => c === 'TANI')] || '',
                 bloodType: row[headerRow.findIndex(c => c === 'KAN GRUBU')] || '',
-                dob: row[headerRow.findIndex(c => c.includes('DOĞUM'))] || '',
-                phone: row[headerRow.findIndex(c => c.includes('VELİ TEL'))] || '',
+                dob: row[headerRow.findIndex(c => c && c.includes('DOĞUM'))] || '',
+                phone: row[headerRow.findIndex(c => c && c.includes('VELİ TEL'))] || '',
                 address: row[headerRow.findIndex(c => c === 'ADRES')] || '',
             };
 
@@ -346,31 +346,15 @@ async function seedStudents(xmlPath, authenticatedRole, sftpGoService) {
                 });
             }
 
-            // 2. Profile
+            // 2. Profile - Removed (Deprecated)
+            // Was: api::student-profile.student-profile
+
             const parseDate = (d) => {
                 if (!d) return null;
                 const parts = d.split('.');
                 if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
                 return null;
             };
-
-            const profileData = {
-                studentNumber: raw.studentNo,
-                tckimlikno: raw.tckn,
-                dateOfBirth: parseDate(raw.dob),
-                gender: GENDER_MAP[raw.gender] || 'other',
-                bloodType: BLOOD_TYPE_MAP[raw.bloodType] || null,
-                disabilityType: raw.disabilityType,
-                user: user.id,
-            };
-
-            const existingProfile = await strapi.db.query('api::student-profile.student-profile').findOne({ where: { tckimlikno: raw.tckn } });
-
-            if (existingProfile) {
-                await strapi.entityService.update('api::student-profile.student-profile', existingProfile.id, { data: profileData });
-            } else {
-                await strapi.entityService.create('api::student-profile.student-profile', { data: profileData });
-            }
 
             // Sync to SFTPGo
             if (sftpGoService) {
@@ -384,11 +368,23 @@ async function seedStudents(xmlPath, authenticatedRole, sftpGoService) {
             }
 
             // Sync to V2 Student Model
+            const mapDiagnosis = (d) => {
+                if (!d) return 'INTELLECTUAL_DISABILITY'; // Default
+                const lower = d.toLowerCase();
+                if (lower.includes('otizm')) return 'AUTISM';
+                if (lower.includes('down') || lower.includes('zihinsel')) return 'INTELLECTUAL_DISABILITY';
+                if (lower.includes('dikkat') || lower.includes('hiperaktivite')) return 'ADHD';
+                if (lower.includes('işitme')) return 'HEARING_IMPAIRMENT';
+                if (lower.includes('bedensel') || lower.includes('fiziksel')) return 'PHYSICAL_DISABILITY';
+                if (lower.includes('disleksi') || lower.includes('öğrenme')) return 'DYSLEXIA';
+                return 'INTELLECTUAL_DISABILITY';
+            };
+
             const v2Data = {
                 fullName: `${raw.firstName} ${raw.lastName}`,
                 tcIdentity: raw.tckn,
                 birthDate: parseDate(raw.dob),
-                diagnosis: raw.disabilityType,
+                diagnosis: mapDiagnosis(raw.disabilityType),
                 status: 'ACTIVE',
                 studentNumber: raw.studentNo,
             };
@@ -510,7 +506,7 @@ async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, sftpGoSe
             // Was: api::team-member.team-member
 
 
-            // 3. Create User + TeacherProfile (Internal)
+            // 3. Create User (Internal)
             let user = await strapi.query('plugin::users-permissions.user').findOne({ where: { username: targetUsername } });
 
             if (!user) {
@@ -529,20 +525,9 @@ async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, sftpGoSe
                 }
             }
 
-            // Check TeacherProfile
-            const existingProfile = await strapi.db.query('api::teacher-profile.teacher-profile').findOne({ where: { tckimlikno: tckn } });
+            // Removed TeacherProfile (Deprecated)
+            // Was: api::teacher-profile.teacher-profile
 
-            if (!existingProfile) {
-                await strapi.entityService.create('api::teacher-profile.teacher-profile', {
-                    data: {
-                        employeeNumber: empNo || tckn,
-                        tckimlikno: tckn,
-                        specialization: formattedTitle,
-                        user: user.id,
-                    }
-                });
-                console.log(`   + TeacherProfile: ${fullName}`);
-            }
 
             // Sync to SFTPGo
             if (sftpGoService) {
@@ -733,7 +718,8 @@ async function setPublicPermissions(strapi) {
         'api::faq.faq.find', 'api::faq.faq.findOne',
         'api::gallery.gallery.find', 'api::gallery.gallery.findOne',
         'api::about.about.find', 'api::about.about.findOne',
-        'api::team-member.team-member.find', 'api::team-member.team-member.findOne',
+        'api::team-member.team-member.find', 'api::team-member.team-member.findOne', // Legacy but keep for safe deletion
+        'api::personnel.personnel.find', 'api::personnel.personnel.findOne',
     ];
     for (const action of permissions) {
         const existing = await strapi.db.query('plugin::users-permissions.permission').findOne({ where: { action, role: publicRole.id } });
@@ -891,27 +877,28 @@ async function main() {
     const app = await createStrapi({ distDir: path.resolve(__dirname, '..', 'dist') }).load();
 
     try {
-        // Migration: Simplified path, assuming data was moved or sticking to default
-        // Checking paths relative to script location: strapi/scripts/../.. -> root
+        // Local referencing
         const rootDataPath = path.resolve(__dirname, '../../data');
+        console.log(`\n🏢 Seeding data from: ${rootDataPath}`);
 
-        // Use 'tenants/arkadas' as legacy data source if it exists, otherwise root
-        // For now, let's assume the folder structure remained but we ignore the "tenant" model concept.
-        let dataPath = path.join(rootDataPath, 'tenants/arkadas');
+        const tenantId = process.env.TENANT_ID || 'arkadas';
+        const tenantPath = path.join(rootDataPath, 'tenants', tenantId);
+
+        // Fallback logic
+        let dataPath = tenantPath;
         if (!fs.existsSync(dataPath)) {
-            dataPath = rootDataPath; // Fallback to root data if flattened
+            console.log(`   Tenant ${tenantId} not found, checking flat root...`);
+            dataPath = rootDataPath;
         }
 
-        console.log(`\n🏢 Seeding data from: ${dataPath}`);
-
-        // Default paths
         const studentXml = path.join(dataPath, 'seed/ogrencilistesi.xml');
         const staffXml = path.join(dataPath, 'seed/personellistesi.xml');
-        const heroImages = path.join(dataPath, 'assets/hero/');
+        const heroImages = path.resolve(__dirname, '../../web/public/media');
         const teamMemberImages = path.join(dataPath, 'assets/team/');
 
         console.log(`   📋 Students: ${fs.existsSync(studentXml) ? '✓' : '✗'} ${studentXml}`);
         console.log(`   👥 Personnel: ${fs.existsSync(staffXml) ? '✓' : '✗'} ${staffXml}`);
+        console.log(`   🖼️ Hero Images: ${fs.existsSync(heroImages) ? '✓' : '✗'} ${heroImages}`);
 
         const authenticatedRole = await strapi.db.query('plugin::users-permissions.role').findOne({ where: { type: 'authenticated' } });
 
