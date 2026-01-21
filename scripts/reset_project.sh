@@ -93,6 +93,9 @@ cd ..
 echo -e "\n${YELLOW}9. Running quick tests...${NC}"
 npm run lint 2>/dev/null || echo "Lint check skipped"
 
+echo -e "\n${YELLOW}10. Stopping active application containers (for local dev)...${NC}"
+docker stop arkadasozelegitim-strapi-1 arkadasozelegitim-web-1 2>/dev/null || true
+
 echo -e "\n${GREEN}========================================${NC}"
 echo -e "${GREEN}  RESET & SEED COMPLETE ✅${NC}"
 echo -e "${GREEN}========================================${NC}"

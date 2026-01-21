@@ -14,7 +14,7 @@
     "husky": "^9.0.11",
     "kill-port": "^2.0.1",
     "rimraf": "^6.1.2",
-    "turbo": "^2.7.2",
+    "turbo": "^2.7.5",
     "wait-on": "^7.2.0"
   },
   "overrides": {},

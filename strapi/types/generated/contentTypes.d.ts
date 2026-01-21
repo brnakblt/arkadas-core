@@ -912,6 +912,63 @@ export interface ApiLocationLogLocationLog extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiPersonnelPersonnel extends Struct.CollectionTypeSchema {
+  collectionName: 'personnel';
+  info: {
+    description: 'Staff and Teacher records';
+    displayName: 'Personnel';
+    pluralName: 'personnels';
+    singularName: 'personnel';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    avatarUrl: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    email: Schema.Attribute.Email & Schema.Attribute.Unique;
+    fullName: Schema.Attribute.String & Schema.Attribute.Required;
+    joinDate: Schema.Attribute.Date;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::personnel.personnel'> &
+      Schema.Attribute.Private;
+    maxWeeklyHours: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<40>;
+    performanceScore: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      >;
+    phone: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    specialty: Schema.Attribute.String;
+    status: Schema.Attribute.Enumeration<['ACTIVE', 'INACTIVE', 'ON_LEAVE']> &
+      Schema.Attribute.DefaultTo<'ACTIVE'>;
+    title: Schema.Attribute.Enumeration<
+      [
+        'KURUM_MUDURU',
+        'MUDUR_YARDIMCISI',
+        'OZEL_EGITIM_OGRETMENI',
+        'REHBER_OGRETMEN',
+        'PSIKOLOG',
+        'FIZYOTERAPIST',
+        'ODYOLOG',
+        'SOSYAL_HIZMET_UZMANI',
+        'ERGO_TERAPIST',
+        'COCUK_GELISIM_UZMANI',
+        'DIGER_PERSONEL',
+      ]
+    > &
+      Schema.Attribute.DefaultTo<'DIGER_PERSONEL'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    weeklyHours: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+  };
+}
+
 export interface ApiProcessProcess extends Struct.CollectionTypeSchema {
   collectionName: 'processes';
   info: {
@@ -1032,6 +1089,53 @@ export interface ApiStorageFileStorageFile extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<'local'>;
     storagePath: Schema.Attribute.String;
     thumbnailUrl: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiStudentStudent extends Struct.CollectionTypeSchema {
+  collectionName: 'students';
+  info: {
+    description: 'Student records';
+    displayName: 'Student';
+    pluralName: 'students';
+    singularName: 'student';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    avatarUrl: Schema.Attribute.String;
+    birthDate: Schema.Attribute.Date;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    diagnosis: Schema.Attribute.Enumeration<
+      [
+        'AUTISM',
+        'DYSLEXIA',
+        'ADHD',
+        'INTELLECTUAL_DISABILITY',
+        'HEARING_IMPAIRMENT',
+        'PHYSICAL_DISABILITY',
+      ]
+    >;
+    fullName: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::student.student'> &
+      Schema.Attribute.Private;
+    parentName: Schema.Attribute.String;
+    parentPhone: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    ramReportEndDate: Schema.Attribute.Date;
+    status: Schema.Attribute.Enumeration<['ACTIVE', 'INACTIVE', 'GRADUATED', 'SUSPENDED']> &
+      Schema.Attribute.DefaultTo<'ACTIVE'>;
+    tcIdentity: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 11;
+      }>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1514,10 +1618,12 @@ declare module '@strapi/strapi' {
       'api::hero.hero': ApiHeroHero;
       'api::kvkk-onam.kvkk-onam': ApiKvkkOnamKvkkOnam;
       'api::location-log.location-log': ApiLocationLogLocationLog;
+      'api::personnel.personnel': ApiPersonnelPersonnel;
       'api::process.process': ApiProcessProcess;
       'api::route-stop.route-stop': ApiRouteStopRouteStop;
       'api::service.service': ApiServiceService;
       'api::storage-file.storage-file': ApiStorageFileStorageFile;
+      'api::student.student': ApiStudentStudent;
       'api::two-factor-auth.two-factor-auth': ApiTwoFactorAuthTwoFactorAuth;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

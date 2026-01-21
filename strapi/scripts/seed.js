@@ -265,35 +265,52 @@ async function seedStudents(xmlPath, authenticatedRole, sftpGoService) {
     const rows = await parseXmlFile(xmlPath);
     let dataStartIndex = 0;
 
-    // Header detection
+    // Dynamic Header detection
+    let headerRow = [];
     for (let i = 0; i < Math.min(10, rows.length); i++) {
         const rowData = getRowData(rows[i]);
-        if (rowData[3] && rowData[3].includes('ÖĞRENCİ NO') && rowData[6] && rowData[6].includes('KİMLİK')) {
+        if (rowData.some(c => c && c.toString().includes('ÖĞRENCİ NO')) && rowData.some(c => c && c.toString().includes('KİMLİK'))) {
             dataStartIndex = i + 1;
+            headerRow = rowData;
             break;
         }
     }
     if (dataStartIndex === 0) return console.error('❌ Student Header not found');
+
+    const idxStudentNo = headerRow.findIndex(c => c && c.includes('ÖĞRENCİ NO'));
+    const idxFirstName = headerRow.findIndex(c => c && c === 'ADI');
+    const idxLastName = headerRow.findIndex(c => c && c === 'SOYADI'); // Exact match due to "AD SOYAD" usually being together or separate. My XML has "ADI" and "SOYADI".
+    // Wait, my XML has "AD SOYAD" in one col? No, checked XML: "ADI", "SOYADI" are separate.
+    // XML: SIRA, NO, AD SOYAD, ÖĞRENCİ NO, ADI, SOYADI, T.C. KİMLİK NO...
+
+    // Safety check just in case
+    const idxTCKN = headerRow.findIndex(c => c && c.includes('KİMLİK'));
+
+    if (idxStudentNo === -1 || idxTCKN === -1) return console.error('❌ Critical student columns missing');
 
     const userService = strapi.plugin('users-permissions').service('user');
 
     for (let i = dataStartIndex; i < rows.length; i++) {
         try {
             const row = getRowData(rows[i]);
-            if (!row[6]) continue;
+            const tckn = row[idxTCKN];
+            if (!tckn) continue;
 
             const raw = {
-                studentNo: row[3],
-                firstName: row[4],
-                lastName: row[5],
-                tckn: row[6],
-                gender: row[7],
-                disabilityType: row[8],
-                bloodType: row[9],
-                dob: row[10],
-                phone: row[14],
-                address: row[15],
+                studentNo: row[idxStudentNo],
+                firstName: idxFirstName !== -1 ? row[idxFirstName] : '',
+                lastName: idxLastName !== -1 ? row[idxLastName] : '',
+                tckn: tckn,
+                gender: row[headerRow.findIndex(c => c === 'CİNSİYETİ')] || '',
+                disabilityType: row[headerRow.findIndex(c => c === 'TANI')] || '',
+                bloodType: row[headerRow.findIndex(c => c === 'KAN GRUBU')] || '',
+                dob: row[headerRow.findIndex(c => c.includes('DOĞUM'))] || '',
+                phone: row[headerRow.findIndex(c => c.includes('VELİ TEL'))] || '',
+                address: row[headerRow.findIndex(c => c === 'ADRES')] || '',
             };
+
+            // Fallback for names if split cols missing but "AD SOYAD" exists?
+            // My XML has ADI and SOYADI.
 
             if (!raw.tckn || raw.tckn.length !== 11) continue;
 
@@ -419,9 +436,9 @@ async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, sftpGoSe
     if (idxName === -1 || idxTCKN === -1) return console.error("❌ Critical personnel columns missing");
 
     const userService = strapi.plugin('users-permissions').service('user');
-    const allStaff = await strapi.db.query('api::team-member.team-member').findMany();
+    const allStaff = await strapi.db.query('api::personnel.personnel').findMany();
     const staffMap = {};
-    allStaff.forEach(s => { if (s.name) staffMap[normalizeString(s.name)] = s; });
+    allStaff.forEach(s => { if (s.fullName) staffMap[normalizeString(s.fullName)] = s; });
 
     for (let i = dataStartIndex; i < rows.length; i++) {
         try {
@@ -489,32 +506,9 @@ async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, sftpGoSe
                 } catch (e) { console.error(`   Failed img ${imageFile}: ${e.message}`); }
             }
 
-            // 2. Create/Update TeamMember (Public)
-            if (!staffMap[normalizedName]) {
-                await strapi.entityService.create('api::team-member.team-member', {
-                    data: {
-                        name: fullName,
-                        title: formattedTitle,
-                        category: formattedCategory,
-                        image: imageId,
-                        publishedAt: new Date(),
-                        order: i
-                    }
-                });
-                console.log(`   + Staff TeamMember: ${fullName} (${formattedTitle})`);
-            } else {
-                // Force update category/title and image if present
-                const dataToUpdate = {
-                    title: formattedTitle,
-                    category: formattedCategory,
-                };
-                if (imageId) dataToUpdate.image = imageId;
+            // 2. Removed TeamMember (Deprecated)
+            // Was: api::team-member.team-member
 
-                await strapi.entityService.update('api::team-member.team-member', staffMap[normalizedName].id, {
-                    data: dataToUpdate
-                });
-                console.log(`   ~ Staff Updated: ${fullName} (${formattedTitle})`);
-            }
 
             // 3. Create User + TeacherProfile (Internal)
             let user = await strapi.query('plugin::users-permissions.user').findOne({ where: { username: targetUsername } });
