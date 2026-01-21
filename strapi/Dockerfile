@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copy package files
 # Copy package files (Lockfile might be missing in monorepo dev)
-COPY package.json ./
+COPY package.json package-lock.json ./
 # Run install (will generate lockfile)
 # Run install (will generate lockfile)
 RUN npm install --omit=dev --legacy-peer-deps
@@ -37,7 +37,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copy dependencies from deps stage
 COPY --from=deps /opt/app/node_modules ./node_modules
-COPY package.json ./
+COPY package.json package-lock.json ./
 
 # Install ALL dependencies for build
 RUN npm install --legacy-peer-deps

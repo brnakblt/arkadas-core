@@ -447,6 +447,24 @@ async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, sftpGoSe
             const formattedTitle = toTitleCase(title);
             let formattedCategory = formattedTitle;
 
+            // Map XML Title to Article 7 Enum
+            const mapToArticle7Enum = (t) => {
+                const lower = t.toLowerCase();
+                if (lower.includes('kurum müdürü')) return 'KURUM_MUDURU';
+                if (lower.includes('müdür yardımcısı')) return 'MUDUR_YARDIMCISI';
+                if (lower.includes('rehber öğretmen') || lower.includes('psikolojik danışman')) return 'REHBER_OGRETMEN';
+                if (lower.includes('psikolog')) return 'PSIKOLOG';
+                if (lower.includes('fizyoterapist')) return 'FIZYOTERAPIST';
+                if (lower.includes('odyolog') || lower.includes('işitme')) return 'ODYOLOG';
+                if (lower.includes('sosyal hizmet')) return 'SOSYAL_HIZMET_UZMANI';
+                if (lower.includes('ergo')) return 'ERGO_TERAPIST';
+                if (lower.includes('çocuk gelişim')) return 'COCUK_GELISIM_UZMANI';
+                if (lower.includes('öğretmen')) return 'OZEL_EGITIM_OGRETMENI';
+                return 'DIGER_PERSONEL';
+            };
+
+            const personnelTitle = mapToArticle7Enum(title);
+
             // Smart Category Mapping
             if (formattedTitle.toLowerCase().includes('müdür') || formattedTitle.toLowerCase().includes('kurucu')) {
                 formattedCategory = 'Yönetim';
@@ -457,9 +475,6 @@ async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, sftpGoSe
             } else if (formattedTitle.toLowerCase().includes('dil ve konuşma')) {
                 formattedCategory = 'Dil ve Konuşma Terapisti';
             } else if (formattedTitle.toLowerCase().includes('öğretmen')) {
-                // Keep specific teacher types if needed, or group? 
-                // User didn't ask to group all teachers, but "Özel Eğitim Alanı Öğretmeni" is fine as is.
-                // But let's keep default behavior for others.
                 formattedCategory = formattedTitle;
             }
 
@@ -550,6 +565,7 @@ async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, sftpGoSe
             const v2StaffData = {
                 fullName: fullName,
                 specialty: formattedTitle,
+                title: personnelTitle,
                 status: 'ACTIVE',
                 email: `${empNo || tckn}@arkadas.com.tr`,
                 phone: null, // Not in XML usually, or parse if available

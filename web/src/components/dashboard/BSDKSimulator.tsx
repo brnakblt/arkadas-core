@@ -5,6 +5,7 @@ import { Camera, RefreshCw, CheckCircle, UserCheck } from 'lucide-react';
 import Image from 'next/image';
 import { studentService } from '@/services/studentService';
 import { opencvService } from '@/services/opencvService';
+import logger from '@/lib/logger';
 
 const BSDKSimulator: React.FC = () => {
     // eslint-disable-next-line no-undef
@@ -18,6 +19,7 @@ const BSDKSimulator: React.FC = () => {
     const [students, setStudents] = useState<any[]>([]);
     const [selectedStudentId, setSelectedStudentId] = useState<string>('');
     const [scanResult, setScanResult] = useState<any>(null);
+    const [kvkkConsent, setKvkkConsent] = useState(false);
 
     // Start Camera & Load Students
     useEffect(() => {
@@ -51,6 +53,11 @@ const BSDKSimulator: React.FC = () => {
     const handleScan = async () => {
         if (!selectedStudentId) {
             alert("Lütfen doğrulanacak öğrenciyi seçin (Simülasyon hedefi)");
+            return;
+        }
+
+        if (!kvkkConsent) {
+            alert("KVKK Gereği: Biyometrik işlem için açık rıza onayı zorunludur.");
             return;
         }
 
@@ -92,8 +99,8 @@ const BSDKSimulator: React.FC = () => {
                     }, 'image/jpeg');
                 }
             }
-        } catch (e) {
-            console.error(e);
+        } catch (e: any) {
+            logger.error("BSDK Scan Exception", e.message || e);
             setIsScanning(false);
             setStatus('failed');
         }
@@ -146,22 +153,38 @@ const BSDKSimulator: React.FC = () => {
                         ))}
                     </select>
 
+                    <div className="mb-4 flex items-center gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <input
+                            type="checkbox"
+                            id="kvkkConsent"
+                            className="w-5 h-5 text-primary-600 rounded focus:ring-primary-500"
+                            checked={kvkkConsent}
+                            onChange={(e) => setKvkkConsent(e.target.checked)}
+                            aria-label="KVKK Açık Rıza Onayı"
+                        />
+                        <label htmlFor="kvkkConsent" className="text-sm text-yellow-800 font-medium cursor-pointer">
+                            Öğrenci Velisi tarafından Biyometrik Veri İşleme Açık Rıza Beyanı imzalanmıştır.
+                        </label>
+                    </div>
+
                     <div className="flex justify-center gap-4">
                         {status === 'idle' || status === 'failed' ? (
                             <button
                                 onClick={handleScan}
                                 disabled={!selectedStudentId}
                                 className={`px-6 py-3 rounded-full font-semibold flex items-center gap-2 shadow-lg transition-all ${!selectedStudentId ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-primary-600 hover:bg-primary-700 hover:shadow-xl text-white'}`}
+                                aria-label="Yüz Tanıma ile Yoklama Al"
                             >
-                                <UserCheck size={20} />
+                                <UserCheck size={20} aria-hidden="true" />
                                 Yoklama Al (Yüz Tarama)
                             </button>
                         ) : status === 'verified' ? (
                             <button
                                 onClick={reset}
                                 className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-full font-semibold flex items-center gap-2"
+                                aria-label="Yeni Tarama Başlat"
                             >
-                                <RefreshCw size={20} />
+                                <RefreshCw size={20} aria-hidden="true" />
                                 Yeni Tarama
                             </button>
                         ) : null}

@@ -18,7 +18,7 @@ export interface Personnel {
 
 export const personnelService = {
     async getPersonnel(): Promise<Personnel[]> {
-        const response = await fetch(`${STRAPI_URL}/api/personnel`, {
+        const response = await fetch(`${STRAPI_URL}/api/personnels`, {
             headers: {
                 // "Authorization": `Bearer ${token}`
             }
@@ -33,7 +33,7 @@ export const personnelService = {
     },
 
     async updateStatus(id: string, status: string) {
-        const response = await fetch(`${STRAPI_URL}/api/personnel/${id}`, {
+        const response = await fetch(`${STRAPI_URL}/api/personnels/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

@@ -11,7 +11,7 @@ WORKDIR /app
 RUN apk add --no-cache libc6-compat
 
 # Copy package files
-COPY package.json ./
+COPY package.json package-lock.json ./
 RUN npm install && npm cache clean --force
 
 # Stage 2: Builder

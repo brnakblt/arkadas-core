@@ -3,7 +3,7 @@
     "collectionName": "personnel",
     "info": {
         "singularName": "personnel",
-        "pluralName": "personnel",
+        "pluralName": "personnels",
         "displayName": "Personnel",
         "description": "Staff and Teacher records"
     },
@@ -53,6 +53,23 @@
         },
         "avatarUrl": {
             "type": "string"
+        },
+        "title": {
+            "type": "enumeration",
+            "enum": [
+                "KURUM_MUDURU",
+                "MUDUR_YARDIMCISI",
+                "OZEL_EGITIM_OGRETMENI",
+                "REHBER_OGRETMEN",
+                "PSIKOLOG",
+                "FIZYOTERAPIST",
+                "ODYOLOG",
+                "SOSYAL_HIZMET_UZMANI",
+                "ERGO_TERAPIST",
+                "COCUK_GELISIM_UZMANI",
+                "DIGER_PERSONEL"
+            ],
+            "default": "DIGER_PERSONEL"
         }
     }
 }
