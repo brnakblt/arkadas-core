@@ -1,35 +1,47 @@
-import { createClient, AuthType } from "webdav";
-import { Readable } from 'stream';
+/**
+ * Storage Client - Routes through Strapi API
+ * Strapi handles authentication and proxies to SFTPGo
+ */
 
-// Environment variables for WebDAV connection
-const SFTPGO_URL = process.env.SFTPGO_WEBDAV_URL || "http://localhost:8089";
-const SFTPGO_USERNAME = process.env.SFTPGO_USER || "app-user";
-const SFTPGO_PASSWORD = process.env.SFTPGO_PASSWORD || "arkadas-app-pass";
-
-// Create WebDAV client
-const client = createClient(SFTPGO_URL, {
-    authType: AuthType.Password,
-    username: SFTPGO_USERNAME,
-    password: SFTPGO_PASSWORD
-});
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 
 export interface FileInfo {
     filename: string;
     basename: string;
-    lastmod: string;
+    lastmod?: string;
     size: number;
     type: "directory" | "file";
     mime?: string;
 }
 
+async function getAuthHeaders(): Promise<HeadersInit> {
+    // Get JWT from localStorage or session (client-side)
+    if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('strapi_jwt');
+        if (token) {
+            return { 'Authorization': `Bearer ${token}` };
+        }
+    }
+    return {};
+}
+
 export const storage = {
     /**
-     * List files in a directory
+     * List files in a directory via Strapi
      */
     async listFiles(path: string = "/"): Promise<FileInfo[]> {
         try {
-            const result = await client.getDirectoryContents(path);
-            return result as FileInfo[];
+            const headers = await getAuthHeaders();
+            const response = await fetch(`${STRAPI_URL}/api/storage-files/list?path=${encodeURIComponent(path)}`, {
+                headers,
+            });
+
+            if (!response.ok) {
+                throw new Error(`List failed: ${response.status}`);
+            }
+
+            const result = await response.json();
+            return result.data || [];
         } catch (_error) {
             console.error("[Storage] List files error:", _error);
             throw _error;
@@ -37,11 +49,25 @@ export const storage = {
     },
 
     /**
-     * Upload a file
+     * Upload a file via Strapi
      */
-    async uploadFile(path: string, data: string | Buffer | Readable): Promise<boolean> {
+    async uploadFile(path: string, file: File): Promise<boolean> {
         try {
-            await client.putFileContents(path, data, { overwrite: true });
+            const headers = await getAuthHeaders();
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('path', path);
+
+            const response = await fetch(`${STRAPI_URL}/api/storage-files/upload`, {
+                method: 'POST',
+                headers,
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error(`Upload failed: ${response.status}`);
+            }
+
             return true;
         } catch (_error) {
             console.error("[Storage] Upload error:", _error);
@@ -50,12 +76,20 @@ export const storage = {
     },
 
     /**
-     * Get file contents
+     * Get file contents via Strapi
      */
-    async getFile(path: string): Promise<Buffer> {
+    async getFile(fileId: number | string): Promise<Blob> {
         try {
-            const content = await client.getFileContents(path, { format: "binary" });
-            return content as Buffer;
+            const headers = await getAuthHeaders();
+            const response = await fetch(`${STRAPI_URL}/api/storage-files/${fileId}/download`, {
+                headers,
+            });
+
+            if (!response.ok) {
+                throw new Error(`Download failed: ${response.status}`);
+            }
+
+            return await response.blob();
         } catch (_error) {
             console.error("[Storage] Get file error:", _error);
             throw _error;
@@ -63,42 +97,53 @@ export const storage = {
     },
 
     /**
-     * Delete a file
+     * Get user's files from database
      */
-    async deleteFile(path: string): Promise<boolean> {
+    async getMyFiles(): Promise<FileInfo[]> {
         try {
-            await client.deleteFile(path);
-            return true;
+            const headers = await getAuthHeaders();
+            const response = await fetch(`${STRAPI_URL}/api/storage-files/mine`, {
+                headers,
+            });
+
+            if (!response.ok) {
+                throw new Error(`Fetch failed: ${response.status}`);
+            }
+
+            const result = await response.json();
+            return result.data || [];
         } catch (_error) {
-            console.error("[Storage] Delete error:", _error);
+            console.error("[Storage] Get my files error:", _error);
             throw _error;
         }
     },
 
     /**
-     * Create a directory
+     * Create a directory via Strapi
      */
-    async createDirectory(path: string): Promise<boolean> {
+    async createDirectory(name: string, parentId?: number): Promise<boolean> {
         try {
-            await client.createDirectory(path);
+            const headers = await getAuthHeaders();
+            const response = await fetch(`${STRAPI_URL}/api/storage-files/folder`, {
+                method: 'POST',
+                headers: {
+                    ...headers,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, parentId }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Create directory failed: ${response.status}`);
+            }
+
             return true;
         } catch (_error) {
-            // Ignore if already exists (WebDAV might throw)
             console.error("[Storage] Create directory error:", _error);
             return false;
         }
     },
-
-    /**
-     * Check if file/directory exists
-     */
-    async exists(path: string): Promise<boolean> {
-        try {
-            return await client.exists(path);
-        } catch {
-            return false;
-        }
-    }
 };
 
 export default storage;
+

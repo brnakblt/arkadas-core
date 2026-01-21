@@ -34,5 +34,29 @@ module.exports = {
                 policies: [],
             },
         },
+        {
+            method: 'POST',
+            path: '/storage-files/upload',
+            handler: 'storage-file.upload',
+            config: {
+                policies: [],
+            },
+        },
+        {
+            method: 'GET',
+            path: '/storage-files/:id/download',
+            handler: 'storage-file.download',
+            config: {
+                policies: [],
+            },
+        },
+        {
+            method: 'GET',
+            path: '/storage-files/list',
+            handler: 'storage-file.listDirectory',
+            config: {
+                policies: [],
+            },
+        },
     ],
 };

@@ -101,4 +101,136 @@ module.exports = createCoreController('api::storage-file.storage-file', ({ strap
 
         return { success: true, data: updated };
     },
+
+    // Upload file to storage
+    async upload(ctx) {
+        const userId = ctx.state.user?.id;
+        if (!userId) {
+            return ctx.unauthorized('Giriş yapmanız gerekiyor');
+        }
+
+        const { files } = ctx.request;
+        const { path: targetPath = '/', parentId } = ctx.request.body;
+
+        if (!files || !files.file) {
+            return ctx.badRequest('Dosya gerekli');
+        }
+
+        const file = files.file;
+        const vfs = strapi.service('api::storage-file.vfs');
+
+        // Read file content
+        const fs = require('fs');
+        const content = fs.readFileSync(file.path);
+
+        // Store using WebDAV backend (SFTPGo)
+        const storagePath = await vfs.write({
+            name: file.name,
+            mimeType: file.type,
+        }, content, 'webdav');
+
+        // Create database entry
+        const storageFile = await strapi.entityService.create('api::storage-file.storage-file', {
+            data: {
+                name: file.name,
+                path: targetPath,
+                size: file.size,
+                mimeType: file.type,
+                storageBackend: 'webdav',
+                storagePath,
+                owner: userId,
+                parent: parentId || null,
+                isDirectory: false,
+            },
+        });
+
+        return { success: true, data: storageFile };
+    },
+
+    // Download file from storage
+    async download(ctx) {
+        const userId = ctx.state.user?.id;
+        if (!userId) {
+            return ctx.unauthorized('Giriş yapmanız gerekiyor');
+        }
+
+        const { id } = ctx.params;
+        const file = await strapi.entityService.findOne('api::storage-file.storage-file', id);
+
+        if (!file) {
+            return ctx.notFound('Dosya bulunamadı');
+        }
+
+        // Check ownership or shared access
+        if (file.owner !== userId) {
+            return ctx.forbidden('Bu dosyaya erişim izniniz yok');
+        }
+
+        const vfs = strapi.service('api::storage-file.vfs');
+        const content = await vfs.read(file);
+
+        ctx.set('Content-Type', file.mimeType || 'application/octet-stream');
+        ctx.set('Content-Disposition', `attachment; filename="${file.name}"`);
+        ctx.body = content;
+    },
+
+    // List files in directory (SFTPGo WebDAV)
+    async listDirectory(ctx) {
+        const userId = ctx.state.user?.id;
+        if (!userId) {
+            return ctx.unauthorized('Giriş yapmanız gerekiyor');
+        }
+
+        const { path: dirPath = '/' } = ctx.query;
+        const webdavUrl = process.env.SFTPGO_WEBDAV_URL || 'http://localhost:8089';
+        const webdavUser = process.env.SFTPGO_USER || 'app-user';
+        const webdavPass = process.env.SFTPGO_PASSWORD || 'arkadas-app-pass';
+
+        try {
+            // PROPFIND request for WebDAV directory listing
+            const response = await fetch(`${webdavUrl}${dirPath}`, {
+                method: 'PROPFIND',
+                headers: {
+                    'Authorization': 'Basic ' + Buffer.from(`${webdavUser}:${webdavPass}`).toString('base64'),
+                    'Depth': '1',
+                },
+            });
+
+            if (!response.ok) {
+                return ctx.badRequest('Dizin listelenemedi');
+            }
+
+            const xml = await response.text();
+            // Parse WebDAV XML response (simplified)
+            const files = this.parseWebDAVResponse(xml, dirPath);
+            return { success: true, data: files };
+        } catch (error) {
+            strapi.log.error('WebDAV list error:', error);
+            return ctx.internalServerError('Depolama hatası');
+        }
+    },
+
+    // Helper to parse WebDAV XML response
+    parseWebDAVResponse(xml, basePath) {
+        const files = [];
+        const hrefMatches = xml.matchAll(/<d:href>([^<]+)<\/d:href>/g);
+        const contentLengthMatches = xml.matchAll(/<d:getcontentlength>(\d+)<\/d:getcontentlength>/g);
+        const isCollectionMatches = xml.matchAll(/<d:collection\s*\/>/g);
+
+        const hrefs = [...hrefMatches].map(m => decodeURIComponent(m[1]));
+        const sizes = [...contentLengthMatches].map(m => parseInt(m[1]));
+
+        hrefs.forEach((href, index) => {
+            if (href === basePath) return; // Skip self
+            const name = href.split('/').filter(Boolean).pop();
+            files.push({
+                filename: href,
+                basename: name,
+                size: sizes[index] || 0,
+                type: href.endsWith('/') ? 'directory' : 'file',
+            });
+        });
+
+        return files;
+    },
 }));
