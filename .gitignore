@@ -126,8 +126,19 @@ $RECYCLE.BIN/
 # ============================================================
 # Databases (Docker Volumes)
 # ============================================================
+# Infra Data (Docker Volumes)
 infra_data/
-!databases/.gitkeep
+
+# Tenant Databases (SQLite)
+*.db
+*.db-journal
+*.sqlite
+database/**/*.db
+database/**/*.db-journal
+
+# Keep database structure
+!database/.gitkeep
+!database/**/.gitkeep
 
 # Docs
 docs/site/
