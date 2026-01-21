@@ -121,7 +121,6 @@ services:
     build:
       context: ./strapi
       dockerfile: Dockerfile
-    image: arkadas-strapi:latest
     restart: unless-stopped
     ports:
       - "1337:1337"
@@ -164,7 +163,6 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile
-    image: arkadas-web:latest
     restart: unless-stopped
     ports:
       - "3000:3000"
