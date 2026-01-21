@@ -129,6 +129,9 @@ $RECYCLE.BIN/
 # Infra Data (Docker Volumes)
 infra_data/
 
+# Tenant Data (Sensitive/Real Data)
+data/tenants/
+
 # Tenant Databases (SQLite)
 *.db
 *.db-journal
