@@ -126,9 +126,11 @@ $RECYCLE.BIN/
 # ============================================================
 # Databases (Docker Volumes)
 # ============================================================
-databases/
-database/
+infra_data/
 !databases/.gitkeep
+
+# Docs
+docs/site/
 
 # ============================================================
 # Improved Glob Patterns
