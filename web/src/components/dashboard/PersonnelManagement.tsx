@@ -7,10 +7,26 @@ import {
     TrendingUp, ChevronRight
 } from 'lucide-react';
 import { MOCK_STAFF, MOCK_LEAVE_REQUESTS, MOCK_TRAININGS, MOCK_LESSON_PLANS, MOCK_TASKS } from './constants';
-// import { Staff } from './types';
+import { personnelService, Personnel } from '@/services/personnelService';
 
 const PersonnelManagement: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'planning' | 'tasks_leaves' | 'performance'>('planning');
+    const [staffList, setStaffList] = useState<Personnel[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    React.useEffect(() => {
+        const fetchPersonnel = async () => {
+            try {
+                const data = await personnelService.getPersonnel();
+                setStaffList(data);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchPersonnel();
+    }, []);
 
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -57,7 +73,9 @@ const PersonnelManagement: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {MOCK_STAFF.map((staff) => {
+                            {loading ? (
+                                <tr><td colSpan={6} className="text-center py-4">Yükleniyor...</td></tr>
+                            ) : staffList.map((staff) => {
                                 const maxHours = staff.maxWeeklyHours || 40;
                                 const usagePercent = Math.min((staff.weeklyHours / maxHours) * 100, 100);
                                 const isOverload = staff.weeklyHours > maxHours;

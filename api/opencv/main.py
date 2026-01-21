@@ -11,33 +11,64 @@ def read_root():
     return {"status": "online", "service": "opencv-face-recognition"}
 
 @app.post("/verify")
-async def verify_face(file: UploadFile = File(...)):
+async def verify_face(
+    image: UploadFile = File(...),
+    reference_image: UploadFile = File(None)
+):
     """
     Receives an image file and attempts to detect a face.
-    In a real scenario, this would compare against a known encoding.
-    For this demo, it returns the number of faces found and their locations.
+    If 'reference_image' is provided, it verifies the identity.
     """
     try:
-        contents = await file.read()
+        # 1. Process Probe Image
+        contents = await image.read()
         nparr = np.fromstring(contents, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
         if img is None:
             raise HTTPException(status_code=400, detail="Invalid image file")
 
-        # Convert to RGB (face_recognition uses RGB)
         rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        
-        # Detect face locations
         face_locations = face_recognition.face_locations(rgb_img)
         face_encodings = face_recognition.face_encodings(rgb_img, face_locations)
+
+        if len(face_encodings) == 0:
+            return {
+                "status": "success",
+                "faces_detected": 0,
+                "verified": False,
+                "message": "No face detected in probe image"
+            }
+
+        probe_encoding = face_encodings[0]
+        match_result = False
+        distance = None
+
+        # 2. Process Reference Image (if provided)
+        if reference_image:
+            ref_contents = await reference_image.read()
+            ref_nparr = np.fromstring(ref_contents, np.uint8)
+            ref_img = cv2.imdecode(ref_nparr, cv2.IMREAD_COLOR)
+            
+            if ref_img is not None:
+                ref_rgb = cv2.cvtColor(ref_img, cv2.COLOR_BGR2RGB)
+                ref_encodings = face_recognition.face_encodings(ref_rgb)
+                
+                if len(ref_encodings) > 0:
+                    ref_encoding = ref_encodings[0]
+                    # Compare
+                    matches = face_recognition.compare_faces([ref_encoding], probe_encoding)
+                    face_distances = face_recognition.face_distance([ref_encoding], probe_encoding)
+                    
+                    match_result = bool(matches[0])
+                    distance = float(face_distances[0])
 
         return {
             "status": "success",
             "faces_detected": len(face_locations),
-            "locations": face_locations,
-            # In production, you would return a match result, not the encoding itself usually
-            "encoding_generated": len(face_encodings) > 0
+            "verified": match_result,
+            "distance": distance,
+            "message": "Verification successful" if match_result else "Verification failed"
         }
     except Exception as e:
         return {"status": "error", "message": str(e)}

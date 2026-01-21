@@ -366,6 +366,23 @@ async function seedStudents(xmlPath, authenticatedRole, sftpGoService) {
                 );
             }
 
+            // Sync to V2 Student Model
+            const v2Data = {
+                fullName: `${raw.firstName} ${raw.lastName}`,
+                tcIdentity: raw.tckn,
+                birthDate: parseDate(raw.dob),
+                diagnosis: raw.disabilityType,
+                status: 'ACTIVE',
+                studentNumber: raw.studentNo,
+            };
+
+            const existingV2 = await strapi.db.query('api::student.student').findOne({ where: { tcIdentity: raw.tckn } });
+            if (existingV2) {
+                await strapi.entityService.update('api::student.student', existingV2.id, { data: v2Data });
+            } else {
+                await strapi.entityService.create('api::student.student', { data: { ...v2Data, publishedAt: new Date() } });
+            }
+
         } catch (err) {
             console.error(`Error processing student row ${i}:`, err);
         }
@@ -527,6 +544,24 @@ async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, sftpGoSe
                     `Staff: ${fullName}`,
                     'teachers'
                 );
+            }
+
+            // Sync to V2 Personnel Model
+            const v2StaffData = {
+                fullName: fullName,
+                specialty: formattedTitle,
+                status: 'ACTIVE',
+                email: `${empNo || tckn}@arkadas.com.tr`,
+                phone: null, // Not in XML usually, or parse if available
+                performanceScore: 100,
+            };
+            if (imageId) v2StaffData.avatarUrl = `/uploads/${availableImages.find(f => f.startsWith(targetUsername))}`; // Simplistic URL assumption or fetch properly
+
+            const existingV2Staff = await strapi.db.query('api::personnel.personnel').findOne({ where: { email: v2StaffData.email } });
+            if (existingV2Staff) {
+                await strapi.entityService.update('api::personnel.personnel', existingV2Staff.id, { data: v2StaffData });
+            } else {
+                await strapi.entityService.create('api::personnel.personnel', { data: { ...v2StaffData, publishedAt: new Date() } });
             }
 
         } catch (e) {

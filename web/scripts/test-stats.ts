@@ -1,4 +1,4 @@
-
+/* eslint-disable no-console */
 import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 import { storage } from '../src/lib/storage';

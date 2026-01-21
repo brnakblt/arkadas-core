@@ -2,13 +2,21 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { studentService } from '@/services/studentService';
 import {
     Users, BrainCircuit, Fingerprint, Activity, MessageSquare, X, AlertTriangle
 } from 'lucide-react';
 
 const Overview: React.FC = () => {
     const [openModal, setOpenModal] = useState<string | null>(null);
+    const [activeStudentCount, setActiveStudentCount] = useState<number | null>(null);
     const router = useRouter();
+
+    React.useEffect(() => {
+        studentService.getStudentStats()
+            .then(stats => setActiveStudentCount(stats.active))
+            .catch(console.error);
+    }, []);
 
     const handleNavigation = (href: string) => {
         router.push(href);
@@ -95,7 +103,7 @@ const Overview: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
                 <div className="bg-blue-600 p-6 rounded-2xl text-white shadow-lg">
                     <p className="text-blue-100 text-sm">Aktif Öğrenci</p>
-                    <h4 className="text-4xl font-bold">128</h4>
+                    <h4 className="text-4xl font-bold">{activeStudentCount !== null ? activeStudentCount : '-'}</h4>
                 </div>
                 <div className="bg-emerald-500 p-6 rounded-2xl text-white shadow-lg">
                     <p className="text-emerald-100 text-sm">Tamamlanan Seans</p>
@@ -121,12 +129,14 @@ const StorageStatsCard = () => {
             .catch(err => console.error(err));
     }, []);
 
-    if (!stats) return (
-        <div className="bg-slate-600 p-6 rounded-2xl text-white shadow-lg animate-pulse">
-            <p className="text-slate-100 text-sm">Depolama</p>
-            <h4 className="text-4xl font-bold mt-2">-</h4>
-        </div>
-    );
+    if (!stats) {
+        return (
+            <div className="bg-slate-600 p-6 rounded-2xl text-white shadow-lg animate-pulse">
+                <p className="text-slate-100 text-sm">Depolama</p>
+                <h4 className="text-4xl font-bold mt-2">-</h4>
+            </div>
+        );
+    }
 
     const formatSize = (bytes: number) => {
         if (bytes === 0) return '0 B';

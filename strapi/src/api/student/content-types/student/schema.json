@@ -1,0 +1,62 @@
+{
+    "kind": "collectionType",
+    "collectionName": "students",
+    "info": {
+        "singularName": "student",
+        "pluralName": "students",
+        "displayName": "Student",
+        "description": "Student records"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "fullName": {
+            "type": "string",
+            "required": true
+        },
+        "tcIdentity": {
+            "type": "string",
+            "required": true,
+            "unique": true,
+            "maxLength": 11
+        },
+        "birthDate": {
+            "type": "date"
+        },
+        "diagnosis": {
+            "type": "enumeration",
+            "enum": [
+                "AUTISM",
+                "DYSLEXIA",
+                "ADHD",
+                "INTELLECTUAL_DISABILITY",
+                "HEARING_IMPAIRMENT",
+                "PHYSICAL_DISABILITY"
+            ]
+        },
+        "status": {
+            "type": "enumeration",
+            "enum": [
+                "ACTIVE",
+                "INACTIVE",
+                "GRADUATED",
+                "SUSPENDED"
+            ],
+            "default": "ACTIVE"
+        },
+        "ramReportEndDate": {
+            "type": "date"
+        },
+        "parentName": {
+            "type": "string"
+        },
+        "parentPhone": {
+            "type": "string"
+        },
+        "avatarUrl": {
+            "type": "string"
+        }
+    }
+}

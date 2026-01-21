@@ -1,9 +1,10 @@
-/* eslint-disable no-undef */
 "use client";
 
 import React, { useRef, useState, useEffect } from 'react';
 import { Camera, RefreshCw, CheckCircle, UserCheck } from 'lucide-react';
-import { MOCK_STUDENTS } from './constants';
+import Image from 'next/image';
+import { studentService } from '@/services/studentService';
+import { opencvService } from '@/services/opencvService';
 
 const BSDKSimulator: React.FC = () => {
     // eslint-disable-next-line no-undef
@@ -12,24 +13,32 @@ const BSDKSimulator: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     // eslint-disable-next-line no-undef
     const [stream, setStream] = useState<MediaStream | null>(null);
-    const [isScanning, setIsScanning] = useState(false);
     const [status, setStatus] = useState<'idle' | 'scanning' | 'verified' | 'failed'>('idle');
-    const [verifiedStudent, setVerifiedStudent] = useState<any>(null);
+    const [isScanning, setIsScanning] = useState(false);
+    const [students, setStudents] = useState<any[]>([]);
+    const [selectedStudentId, setSelectedStudentId] = useState<string>('');
+    const [scanResult, setScanResult] = useState<any>(null);
 
-    // Start Camera
+    // Start Camera & Load Students
     useEffect(() => {
-        const startCamera = async () => {
+        const init = async () => {
             try {
+                // Camera
                 const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
                 setStream(mediaStream);
                 if (videoRef.current) {
                     videoRef.current.srcObject = mediaStream;
                 }
+
+                // Students
+                const studentList = await studentService.getStudents();
+                setStudents(studentList);
+                if (studentList.length > 0) setSelectedStudentId(String(studentList[0].id));
             } catch (err) {
-                console.error("Camera access denied:", err);
+                console.error("Initialization error:", err);
             }
         };
-        startCamera();
+        init();
 
         return () => {
             if (stream) {
@@ -39,35 +48,60 @@ const BSDKSimulator: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleScan = () => {
+    const handleScan = async () => {
+        if (!selectedStudentId) {
+            alert("Lütfen doğrulanacak öğrenciyi seçin (Simülasyon hedefi)");
+            return;
+        }
+
         setStatus('scanning');
         setIsScanning(true);
 
-        // Simulate Network/Processing Delay
-        setTimeout(() => {
-            // Capture frame (conceptually)
+        try {
+            // Capture frame
             if (videoRef.current && canvasRef.current) {
                 const context = canvasRef.current.getContext('2d');
                 if (context) {
                     context.drawImage(videoRef.current, 0, 0, 320, 240);
+
+                    // Convert to blob
+                    canvasRef.current.toBlob(async (blob) => {
+                        if (!blob) return;
+
+                        const targetStudent = students.find(s => s.id === selectedStudentId);
+
+                        try {
+                            const result = await opencvService.verifyFace(
+                                blob,
+                                targetStudent?.avatarUrl // Pass the reference image URL
+                            );
+
+                            if (result.verified) {
+                                setStatus('verified');
+                                setScanResult(targetStudent);
+                            } else {
+                                setStatus('failed');
+                                setScanResult(null);
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            setStatus('failed');
+                        } finally {
+                            setIsScanning(false);
+                        }
+                    }, 'image/jpeg');
                 }
             }
-
-            // Mock Random Verification
-            const success = Math.random() > 0.2; // 80% success rate
-            if (success) {
-                setStatus('verified');
-                setVerifiedStudent(MOCK_STUDENTS[0]); // Mock matching Ali
-            } else {
-                setStatus('failed');
-            }
+        } catch (e) {
+            console.error(e);
             setIsScanning(false);
-        }, 2000);
+            setStatus('failed');
+        }
     };
 
     const reset = () => {
         setStatus('idle');
-        setVerifiedStudent(null);
+        setScanResult(null);
     };
 
     return (
@@ -99,24 +133,39 @@ const BSDKSimulator: React.FC = () => {
                     <canvas ref={canvasRef} width="320" height="240" className="hidden" />
                 </div>
 
-                <div className="mt-6 flex justify-center gap-4">
-                    {status === 'idle' || status === 'failed' ? (
-                        <button
-                            onClick={handleScan}
-                            className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-full font-semibold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
-                        >
-                            <UserCheck size={20} />
-                            Yoklama Al (Yüz Tarama)
-                        </button>
-                    ) : status === 'verified' ? (
-                        <button
-                            onClick={reset}
-                            className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-full font-semibold flex items-center gap-2"
-                        >
-                            <RefreshCw size={20} />
-                            Yeni Tarama
-                        </button>
-                    ) : null}
+                <div className="mt-6 px-4">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Simülasyon Hedefi (Kimi Bekliyoruz?)</label>
+                    <select
+                        value={selectedStudentId}
+                        onChange={(e) => setSelectedStudentId(e.target.value)}
+                        className="w-full p-2 border border-slate-200 rounded-lg text-sm mb-4"
+                    >
+                        <option value="">Öğrenci Seçiniz...</option>
+                        {students.map(s => (
+                            <option key={s.id} value={s.id}>{s.fullName} ({s.tcIdentity})</option>
+                        ))}
+                    </select>
+
+                    <div className="flex justify-center gap-4">
+                        {status === 'idle' || status === 'failed' ? (
+                            <button
+                                onClick={handleScan}
+                                disabled={!selectedStudentId}
+                                className={`px-6 py-3 rounded-full font-semibold flex items-center gap-2 shadow-lg transition-all ${!selectedStudentId ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-primary-600 hover:bg-primary-700 hover:shadow-xl text-white'}`}
+                            >
+                                <UserCheck size={20} />
+                                Yoklama Al (Yüz Tarama)
+                            </button>
+                        ) : status === 'verified' ? (
+                            <button
+                                onClick={reset}
+                                className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-full font-semibold flex items-center gap-2"
+                            >
+                                <RefreshCw size={20} />
+                                Yeni Tarama
+                            </button>
+                        ) : null}
+                    </div>
                 </div>
             </div>
 
@@ -138,7 +187,7 @@ const BSDKSimulator: React.FC = () => {
                         <>
                             <div className="text-green-600">&gt;&gt; EŞLEŞME BULUNDU (Confidence: 98.4%)</div>
                             <div className="text-green-700">&gt;&gt; MEBBIS Entegrasyonu: Oturum açıldı.</div>
-                            <div className="text-slate-600">&gt;&gt; Öğrenci: {verifiedStudent?.fullName}</div>
+                            <div className="text-slate-600">&gt;&gt; Öğrenci: {scanResult?.fullName}</div>
                             <div className="text-slate-600">&gt;&gt; Zaman: {new Date().toLocaleTimeString()}</div>
                         </>
                     )}
@@ -162,7 +211,7 @@ const BSDKSimulator: React.FC = () => {
             </div>
 
             {/* Result Modal Overlay */}
-            {status === 'verified' && verifiedStudent && (
+            {status === 'verified' && scanResult && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fade-in">
                     <div className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-100 transition-transform">
                         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -170,11 +219,17 @@ const BSDKSimulator: React.FC = () => {
                         </div>
                         <h2 className="text-2xl font-bold text-slate-800">Doğrulama Başarılı</h2>
                         <p className="text-slate-500 mt-2">Ders girişi onaylandı.</p>
-
                         <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
-                            <img src={verifiedStudent.avatarUrl} className="w-16 h-16 rounded-full mx-auto mb-2 bg-slate-200" alt="student" />
-                            <div className="font-bold text-lg text-slate-800">{verifiedStudent.fullName}</div>
-                            <div className="text-sm text-slate-500">{verifiedStudent.tcIdentity}</div>
+                            <div className="relative w-16 h-16 rounded-full mx-auto mb-2 overflow-hidden bg-slate-200">
+                                <Image
+                                    src={scanResult.avatarUrl}
+                                    alt="student"
+                                    fill
+                                    className="object-cover"
+                                />
+                            </div>
+                            <div className="font-bold text-lg text-slate-800">{scanResult.fullName}</div>
+                            <div className="text-sm text-slate-500">{scanResult.tcIdentity}</div>
                         </div>
 
                         <button onClick={reset} className="mt-6 w-full bg-slate-900 text-white py-3 rounded-xl font-medium hover:bg-slate-800">
