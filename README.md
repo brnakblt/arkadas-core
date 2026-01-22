@@ -16,21 +16,20 @@
 
 ## 🚀 Hızlı Başlangıç
 
-```bash
-# 1. Bağımlılıkları kur
-npm run install:all
+Bu proje **Makefile** ile yönetilmektedir.
 
-# 2. Environment dosyalarını oluştur
+```bash
+# 1. Environment dosyalarını oluştur
 npm run setup:env
 
-# 3. SFTPGo Kullanıcısını oluştur
-npm run setup:sftpgo
+# 2. Projeyi sıfırdan başlat
+make reset
 
-# 4. Projeyi sıfırdan başlat (DB + Seed)
-npm run reset
+# 3. İzleme servislerini başlat (Opsiyonel)
+make monitoring
 
 # 4. Geliştirme modunda başlat
-npm run dev
+make dev
 ```
 
 ---
@@ -41,26 +40,31 @@ npm run dev
 |--------|------|-----|----------|
 | **Web** | 3000 | http://localhost:3000 | Next.js Frontend |
 | **Strapi** | 1337 | http://localhost:1337/admin | CMS Admin Panel |
-| **PostgreSQL** | 5432 | - | Veritabanı |
-| **Redis** | 6380 | - | Cache & Queue |
 | **SFTPGo** | 8088 | http://localhost:8088 | Dosya Yönetimi |
+| **Grafana** | 3001 | http://localhost:3001 | Metrikler & Dashboard |
+| **Prometheus**| 9090 | http://localhost:9090 | Veri Toplama |
+| **Alertmanager**| 9093 | http://localhost:9093 | Alarm Yönetimi |
 
 ---
 
 ## ✨ Özellikler
 
 ### 🔐 Güvenlik
-- **Fail-Closed** kimlik doğrulama (API key yoksa erişim yok)
-- Login rate limiting (5 deneme/15 dakika)
-- Redis şifreli bağlantı
-- PII verileri AES-256 şifreleme
-- RBAC yetkilendirme sistemi
+- **Fail-Closed** kimlik doğrulama
+- **Custom JWT Auth** (HTTP-Only Cookie)
+- Login rate limiting ve IP bloklama
+- Docker Scout ile otomatik güvenlik taraması (`make scan`)
+
+### 🛠️ Altyapı
+- **Otomatik Yedekleme:** DB ve Dosyalar (`make backup`)
+- **Dosya Senkronizasyonu:** Strapi <-> SFTPGo entegrasyonu
+- **İzleme:** Prometheus, Grafana, Alertmanager stack
+- **CI/CD:** GitHub Actions entegrasyonu
 
 ### 📊 Raporlama
 - Ek-4 Devam Takip Raporu
 - Dönem sonu raporları
 - PDF/Excel export
-- Kurum performans raporu
 
 ---
 
@@ -70,82 +74,60 @@ npm run dev
 arkadasozelegitim/
 ├── web/              # Next.js 16 Frontend
 ├── strapi/           # Strapi v5 Backend CMS
+├── scripts/          # Otomasyon Scriptleri
+├── monitoring/       # Prometheus/Grafana Konfigürasyonu
 ├── docs/             # MkDocs Dokümantasyon
-├── scripts/          # Yardımcı Scriptler
-├── databases/        # Docker Volume Data
-└── docker-compose.yml
+└── Makefile          # Proje Yönetim Komutları
 ```
 
 ---
 
-## 🛠️ NPM Komutları
+## 🛠️ Make Komutları
 
-### Geliştirme
+Geliştirme ve bakım için `make` komutlarını kullanın:
+
 | Komut | Açıklama |
 |-------|----------|
-| `npm run dev` | Tüm servisleri başlat |
-| `npm run dev:strapi` | Sadece Strapi |
-| `npm run dev:web` | Sadece Web |
-
-### Build & Test
-| Komut | Açıklama |
-|-------|----------|
-| `npm run build` | Production build |
-| `npm run lint` | Lint kontrolü |
-| `npm run typecheck` | TypeScript kontrolü |
-| `npm run test` | Testleri çalıştır |
-
-### Yönetim
-| Komut | Açıklama |
-|-------|----------|
-| `npm run reset` | DB sıfırla ve seed |
-| `npm run stop` | Tüm servisleri durdur |
-| `npm run setup:env` | Environment dosyaları oluştur |
+| `make dev` | Geliştirme ortamını başlat |
+| `make reset` | **DİKKAT:** Veritabanını siler ve yeniden kurar |
+| `make backup` | Sistem yedeği alır (DB + Dosyalar) |
+| `make restore` | Yedekten geri döner |
+| `make monitoring` | İzleme servislerini başlatır |
+| `make scan` | Güvenlik taraması yapar |
+| `make lint` | Kod kalitesi kontrolü |
 
 ---
 
 ## 📦 Gereksinimler
 
-| Yazılım | Minimum | Önerilen |
-|---------|---------|----------|
-| Node.js | 18.x | 22.x |
-| Python | 3.10 | 3.13 |
-| Docker | 20.x | 24.x |
-| RAM | 8 GB | 16 GB |
+| Yazılım | Önerilen |
+|---------|----------|
+| Node.js | 20.x+ |
+| Docker | 24.x+ |
+| Make | 4.x+ |
 
 ---
 
 ## 🔐 Environment & Secrets
 
-### Infisical (Önerilen)
+### Kurulum sırasında
+Script otomatik olarak güvenli şifreler oluşturur:
 ```bash
-# Infisical kurulumu
-bash scripts/setup_infisical.sh
+bash scripts/generate_envs.sh
 ```
 
-### Manuel Kurulum
-```bash
-# Environment dosyalarını oluştur
-npm run setup:env
-
-# Her servis için .env dosyaları oluşturulur:
-# - .env (root - Docker)
-# - strapi/.env
-# - web/.env.local
-# - ai-service/.env
-# - mebbis-service/.env
-```
+### SFTPGo & Strapi Senkronizasyonu
+Strapi üzerindeki "Personel" ve "Öğrenci" işlemleri otomatik olarak SFTPGo kullanıcılarını ve gruplarını günceller.
 
 ---
 
 ## 🐳 Docker Servisleri
 
+Temel altyapıyı başlatmak için:
 ```bash
-# Start all core services
-docker compose up -d
+make docker-up
 ```
 
-**Included Services:** PostgreSQL, Redis, SFTPGo
 
 ---
 

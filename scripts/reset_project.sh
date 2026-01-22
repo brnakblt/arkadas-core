@@ -68,25 +68,35 @@ sleep 5
 echo -e "\n${YELLOW}6. Syncing SFTPGo admin credentials...${NC}"
 # SFTPGo only loads initial_admin.json on first startup. If db exists, we need to sync via API.
 SFTPGO_PASSWORD=$(grep SFTPGO_ADMIN_PASSWORD strapi/.env 2>/dev/null | cut -d= -f2)
+
 if [ -n "$SFTPGO_PASSWORD" ]; then
-    # Try to authenticate with new password first (already synced)
-    TOKEN=$(curl -s -u "admin:${SFTPGO_PASSWORD}" http://localhost:8088/api/v2/token 2>/dev/null | jq -r '.access_token // empty')
+    echo "   Verifying SFTPGo access (Waiting for service)..."
     
-    if [ -n "$TOKEN" ]; then
-        echo "   ✓ SFTPGo credentials already synced"
-    else
-        # Try with default password (first startup, need to change)
-        TOKEN=$(curl -s -u "admin:admin" http://localhost:8088/api/v2/token 2>/dev/null | jq -r '.access_token // empty')
-        if [ -n "$TOKEN" ]; then
-            # Update password via API
-            curl -s -X PUT "http://localhost:8088/api/v2/admin/admin" \
-                -H "Authorization: Bearer $TOKEN" \
-                -H "Content-Type: application/json" \
-                -d "{\"password\": \"${SFTPGO_PASSWORD}\"}" > /dev/null 2>&1
-            echo "   ✓ SFTPGo admin password updated"
+    MAX_RETRIES=10
+    COUNT=0
+    
+    while [ $COUNT -lt $MAX_RETRIES ]; do
+        # Check HTTP status code (-w %{http_code})
+        HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -u "admin:${SFTPGO_PASSWORD}" http://localhost:8088/api/v2/token)
+        
+        if [ "$HTTP_STATUS" == "200" ]; then
+            echo "   ✓ SFTPGo admin authenticated successfully"
+            break
+        elif [ "$HTTP_STATUS" == "401" ]; then
+             # Service is up but auth failed - likely password mismatch or admin not created yet
+             echo "   ⚠️ SFTPGo Auth 401. Retrying..."
         else
-            echo "   ⚠️ Could not sync SFTPGo credentials (may need manual update)"
+             # Service likely down or 503
+             echo "   ...Waiting for SFTPGo (Status: $HTTP_STATUS) [$COUNT/$MAX_RETRIES]..."
         fi
+        
+        sleep 3
+        COUNT=$((COUNT+1))
+    done
+
+    if [ $COUNT -eq $MAX_RETRIES ]; then
+         echo "   ❌ SFTPGo sync failed after 30s. Manual check required."
+         echo "   Could not authenticate with user 'admin'."
     fi
 else
     echo "   ⚠️ SFTPGO_ADMIN_PASSWORD not found in strapi/.env"

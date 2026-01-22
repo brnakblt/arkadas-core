@@ -5,6 +5,7 @@ const path = require('path');
 const xml2js = require('xml2js');
 const crypto = require('crypto');
 const mime = require('mime-types');
+const sftpGoService = require('../src/utils/sftpgo');
 
 // Map "Kan Grubu" from Turkish to Enum
 const BLOOD_TYPE_MAP = {
@@ -140,123 +141,7 @@ async function manualUpload(filePath) {
     return fileEntry;
 }
 
-class SftpGoService {
-    constructor(baseUrl, adminUser, adminPassword) {
-        this.baseUrl = baseUrl;
-        this.adminUser = adminUser;
-        this.adminPassword = adminPassword;
-        this.token = null;
-    }
-
-    async authenticate() {
-        try {
-            const authString = Buffer.from(`${this.adminUser}:${this.adminPassword}`).toString('base64');
-            const res = await fetch(`${this.baseUrl}/api/v2/token`, {
-                method: 'GET',
-                headers: { 'Authorization': `Basic ${authString}` }
-            });
-
-            if (!res.ok) {
-                console.error(`   SFTPGo Auth Error: ${res.status}`);
-                return false;
-            }
-
-            const data = await res.json();
-            this.token = data.access_token;
-            return true;
-        } catch (e) {
-            console.error(`   SFTPGo Not Reachable: ${e.message}`);
-            return false;
-        }
-    }
-
-    async createGroup(name, description) {
-        if (!this.token) return;
-
-        try {
-            const check = await fetch(`${this.baseUrl}/api/v2/groups/${name}`, {
-                headers: { 'Authorization': `Bearer ${this.token}` }
-            });
-
-            if (check.ok) return; // Group exists
-
-            const groupData = {
-                name,
-                description,
-                permissions: {
-                    "/": ["*"]
-                }
-            };
-
-            const res = await fetch(`${this.baseUrl}/api/v2/groups`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${this.token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(groupData)
-            });
-
-            if (res.ok) {
-                console.log(`   + SFTPGo Group created: ${name}`);
-            }
-        } catch (e) {
-            console.error(`   SFTPGo Group Failed (${name}):`, e.message);
-        }
-    }
-
-    async createUser(username, password, email, description, group) {
-        if (!this.token) return;
-
-        // Check if user exists
-        try {
-            // Optimistically try create, update if fails? Or check first?
-            // "check first" is safer for logs
-            const check = await fetch(`${this.baseUrl}/api/v2/users/${username}`, {
-                headers: { 'Authorization': `Bearer ${this.token}` }
-            });
-
-            const userData = {
-                username,
-                password,
-                email,
-                status: 1,
-                description,
-                home_dir: `/srv/sftpgo/data/${username}`,
-                permissions: {}, // Inherit from group or default
-                filesystem: {
-                    provider: 0 // Local
-                }
-            };
-
-            if (group) {
-                // SFTPGo v2 uses 'groups' array of structs
-                userData.groups = [{ name: group, type: 1 }]; // 1 = Primary
-            }
-
-            const method = check.ok ? 'PUT' : 'POST';
-            const url = check.ok
-                ? `${this.baseUrl}/api/v2/users/${username}`
-                : `${this.baseUrl}/api/v2/users`;
-
-            const res = await fetch(url, {
-                method,
-                headers: {
-                    'Authorization': `Bearer ${this.token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(userData)
-            });
-
-            if (!res.ok) {
-                const txt = await res.text();
-                // console.error(`   SFTPGo User Error (${username}): ${txt}`); 
-            }
-        } catch (e) {
-            console.error(`   SFTPGo User Sync Failed (${username}):`, e.message);
-        }
-    }
-}
+// SFTPGo Service class removed - imported from utils/sftpgo
 
 async function seedStudents(xmlPath, authenticatedRole, sftpGoService) {
     console.log('🚀 Seeding Students from XML...');
@@ -358,13 +243,14 @@ async function seedStudents(xmlPath, authenticatedRole, sftpGoService) {
 
             // Sync to SFTPGo
             if (sftpGoService) {
-                await sftpGoService.createUser(
-                    targetUsername,
-                    raw.tckn, // Password = TCKN
-                    `${raw.studentNo}@arkadas.com.tr`,
-                    `Student: ${row[4]} ${row[5]}`,
-                    'students'
-                );
+                await sftpGoService.ensureGroup('students', 'Students Group');
+                await sftpGoService.syncUser({
+                    username: targetUsername,
+                    password: raw.tckn,
+                    email: `${raw.studentNo}@arkadas.com.tr`,
+                    description: `Student: ${row[4]} ${row[5]}`,
+                    group: 'students'
+                });
             }
 
             // Sync to V2 Student Model
@@ -531,13 +417,14 @@ async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, sftpGoSe
 
             // Sync to SFTPGo
             if (sftpGoService) {
-                await sftpGoService.createUser(
-                    targetUsername,
-                    tckn, // Password = TCKN
-                    `${empNo || tckn}@arkadas.com.tr`,
-                    `Staff: ${fullName}`,
-                    'teachers'
-                );
+                await sftpGoService.ensureGroup('teachers', 'Teachers Group');
+                await sftpGoService.syncUser({
+                    username: targetUsername,
+                    password: tckn,
+                    email: `${empNo || tckn}@arkadas.com.tr`,
+                    description: `Staff: ${fullName}`,
+                    group: 'teachers'
+                });
             }
 
             // Sync to V2 Personnel Model
@@ -857,17 +744,17 @@ async function seedApiToken(strapi) {
 
     // Sync to Infisical
     if (accessToken) {
-        try {
-            const { execSync } = require('child_process');
+        // Update Infisical if available
+        if (process.env.INFISICAL_API_URL) {
             console.log('   Syncing token to Infisical...');
-
-            const paths = ['/', '/ai-service', '/mebbis-service'];
-            for (const p of paths) {
-                execSync(`infisical secrets set --env dev --path "${p}" STRAPI_API_TOKEN="${accessToken}"`, { stdio: 'ignore' });
+            try {
+                // Use proper path for Strapi tokens
+                const { execSync } = require('child_process');
+                execSync(`infisical secrets set --env dev --path "/strapi" STRAPI_API_TOKEN="${accessToken}"`, { stdio: 'inherit' });
+                console.log('   ✓ Token synced to Infisical');
+            } catch (e) {
+                console.error(`   ❌ Failed to sync token to Infisical: ${e.message}`);
             }
-            console.log('   ✅ Token synced to Infisical (Root, AI, Mebbis).');
-        } catch (e) {
-            console.error('   ❌ Failed to sync token to Infisical:', e.message);
         }
     }
 }

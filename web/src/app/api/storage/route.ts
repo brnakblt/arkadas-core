@@ -1,10 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
-import { storage } from "@/lib/storage";
+import storage, { FileInfo } from "@/services/storageService";
 import { requireAuth } from "@/lib/cookieAuth";
+
+// Initialize storage with env vars (should be already done or we ensure it here)
+// Better to have a singleton in service that self-initializes or lazily initializes.
+// Looking at storageService.ts, it needs init().
+// We should probably ensure it's initialized.
+const SFTPGO_URL = process.env.SFTPGO_URL || "http://localhost:8088";
+const SFTPGO_USER = process.env.SFTPGO_ADMIN_USER || "admin";
+const SFTPGO_PASS = process.env.SFTPGO_ADMIN_PASSWORD || "password";
+
+// Lazy init wrapper
+const getStorage = () => {
+    try {
+        storage.getWebDAVUrl();
+    } catch {
+        storage.init({
+            baseUrl: `${SFTPGO_URL}/webdav`,
+            username: SFTPGO_USER,
+            password: SFTPGO_PASS
+        });
+    }
+    return storage;
+};
 
 export async function POST(req: NextRequest) {
     try {
-        // 1. Auth Check
         const { authorized } = requireAuth(req);
         if (!authorized) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -18,12 +39,12 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "No file provided" }, { status: 400 });
         }
 
-        // 2. Buffer conversion
         const buffer = Buffer.from(await file.arrayBuffer());
-        const filePath = `${path}${path.endsWith('/') ? '' : '/'}${file.name}`;
+        // Fix path concatenation
+        const safePath = path.endsWith('/') ? path : `${path}/`;
+        const filePath = `${safePath}${file.name}`;
 
-        // 3. Upload to SFTPGo
-        await storage.uploadFile(filePath, buffer);
+        await getStorage().uploadFile(filePath, buffer);
 
         return NextResponse.json({ success: true, path: filePath });
     } catch (error) {
@@ -34,7 +55,6 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     try {
-        // 1. Auth Check
         const { authorized } = requireAuth(req);
         if (!authorized) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -42,12 +62,13 @@ export async function GET(req: NextRequest) {
 
         const { searchParams } = new URL(req.url);
         const path = searchParams.get("path") || "/";
-        const action = searchParams.get("action"); // 'list' or 'download'
+        const action = searchParams.get("action");
+
+        const store = getStorage();
 
         if (action === 'download') {
-            const fileBuffer = await storage.getFile(path);
+            const fileBuffer = await store.downloadFile(path);
 
-            // Return file stream
             return new NextResponse(fileBuffer as any, {
                 headers: {
                     "Content-Disposition": `attachment; filename="${path.split('/').pop()}"`,
@@ -57,19 +78,21 @@ export async function GET(req: NextRequest) {
         }
 
         if (action === 'stats') {
-            const files = await storage.listFiles("/");
-            const totalSize = files.reduce((acc, file) => acc + (file.size || 0), 0);
-            const fileCount = files.filter(f => f.type === 'file').length;
+            // Expensive recursive calc not supported by basic WebDAV typically without recurse
+            // For now just list root
+            const files = await store.listDirectory("/");
+            // This stat logic was simplistic in previous code, mostly broken.
+            // Let's just return what we can.
+            const totalSize = files.reduce((acc: number, file: FileInfo) => acc + (file.size || 0), 0);
 
             return NextResponse.json({
                 used: totalSize,
-                count: fileCount,
-                limit: 10 * 1024 * 1024 * 1024 // 10 GB limit for UI
+                count: files.length,
+                limit: 10 * 1024 * 1024 * 1024
             });
         }
 
-        // ... list logic
-        const files = await storage.listFiles(path);
+        const files = await store.listDirectory(path);
 
         return NextResponse.json({ files });
     } catch (error) {
@@ -92,7 +115,7 @@ export async function DELETE(req: NextRequest) {
             return NextResponse.json({ error: "Path required" }, { status: 400 });
         }
 
-        await storage.deleteFile(path);
+        await getStorage().delete(path);
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error("Storage delete error:", error);

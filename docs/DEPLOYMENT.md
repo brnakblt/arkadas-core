@@ -1,42 +1,29 @@
-## 🌐 Deployment to a Home Server (Laptop)
+# Production Deployment Guide
 
-If you are using a laptop (Ubuntu) as your production server and want to avoid port conflicts with existing services (like `lila.arkadasozelegitim.com` on Windows), follow this path.
+This guide covers deployment for both Home Servers (Laptop/Tower) and Cloud VPS.
 
-### 1. Install Docker & Coolify
-Follow the standard Docker installation for Ubuntu. Then install Coolify to manage your deployments via GitHub.
+## 🚀 Quick Start (Makefile)
+
+The easiest way to deploy is using the included Makefile.
+
 ```bash
-curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+# 1. Setup Environment
+npm run setup:env
+
+# 2. Start Core Infrastructure (DB, Redis, SFTPGo)
+make docker-up
+
+# 3. Start Monitoring Stack (Optional)
+make monitoring
 ```
 
-### 2. Bypass Port Forwarding (Cloudflare Tunnels)
-Since Port 80/443 might be in use by other office systems, use a tunnel.
-
-1. **Install cloudflared:**
-   ```bash
-   curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o cloudflared.deb
-   sudo dpkg -i cloudflared.deb
-   ```
-
-2. **Setup Tunnel:**
-   ```bash
-   cloudflared tunnel login
-   cloudflared tunnel create arkadas-prod
-   cloudflared tunnel route dns arkadas-prod arkadasozelegitim.com
-   ```
-
-3. **Configure the Tunnel to point to your Web container:**
-   Edit the config or run:
-   ```bash
-   cloudflared tunnel run --url http://localhost:3000 arkadas-prod
-   ```
-
-### 3. Coolify Workflow
-1. Connect your GitHub.
-2. Point the project to `main` branch.
-3. Use `docker-compose.prod.yml` (located in root).
-4. Coolify will build and restart services on every `git push`.
-
 ---
+
+## 🌐 Deployment Architectures
+
+### Option 1: Home Server (Laptop/PC) with Tunnels
+Ideal for offices with dynamic IPs or blocked ports.
+
 
 ## 📊 Kaynak Gereksinimleri
 

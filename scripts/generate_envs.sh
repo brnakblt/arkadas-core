@@ -86,9 +86,14 @@ generate_env_file() {
         sed -i "s|NEXTAUTH_SECRET=.*|NEXTAUTH_SECRET=${NEXTAUTH_SECRET}|" "$target_file" || true
         
         # SFTPGo Admin (Global Consistency)
-        sed -i "s|SFTPGO_ADMIN_PASSWORD=.*|SFTPGO_ADMIN_PASSWORD=${SFTPGO_ADMIN_PASSWORD}|" "$target_file" || true
         sed -i "s|SFTPGO_ADMIN_USER=.*|SFTPGO_ADMIN_USER=admin|" "$target_file" || true
+        sed -i "s|SFTPGO_ADMIN_PASSWORD=.*|SFTPGO_ADMIN_PASSWORD=${SFTPGO_ADMIN_PASSWORD}|" "$target_file" || true
         sed -i "s|SFTPGO_URL=.*|SFTPGO_URL=http://localhost:8088|" "$target_file" || true
+
+        # Monitoring & Notifications
+        sed -i "s|GRAFANA_ADMIN_PASSWORD=.*|GRAFANA_ADMIN_PASSWORD=${APP_PWD}|" "$target_file" || true
+        # Use a placeholder if empty to avoid Infisical "" error
+        sed -i "s|SLACK_WEBHOOK_URL=.*|SLACK_WEBHOOK_URL=https://hooks.slack.com/services/placeholder|" "$target_file" || true
 
         # Specialized Replacements
         

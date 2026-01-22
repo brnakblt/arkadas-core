@@ -19,6 +19,12 @@
         "specialty": {
             "type": "string"
         },
+        "tcIdentity": {
+            "type": "string",
+            "required": false,
+            "unique": true,
+            "maxLength": 11
+        },
         "email": {
             "type": "email",
             "unique": true

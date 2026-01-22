@@ -27,14 +27,14 @@ git clone <repository-url>
 cd arkadasozelegitim
 npm run install:all
 
-# 2. Generate environment files
+# 2. Setup Environment
 npm run setup:env
 
-# 3. Reset and seed database
-npm run reset
+# 3. Reset & Seed (WARNING: Wipes DB)
+make reset
 
-# 4. Start development
-npm run dev
+# 4. Start Development Stack
+make dev
 ```
 
 ---

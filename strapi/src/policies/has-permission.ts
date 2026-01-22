@@ -94,7 +94,7 @@ async function getMergedPermissions(
     }
 
     // Start with default permissions
-    const basePermissions = { ...DEFAULT_PERMISSIONS[roleName] } || {};
+    const basePermissions = { ...DEFAULT_PERMISSIONS[roleName] };
 
     try {
         // Fetch dynamic role from erp-role content type

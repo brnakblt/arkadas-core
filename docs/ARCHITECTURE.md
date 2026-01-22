@@ -17,10 +17,23 @@ graph TD
         
         Strapi -->|SQL| Postgres[(PostgreSQL)]
         Strapi -->|Cache| Redis[(Redis)]
-        Strapi -->|Files| SFTPGo[SFTPGo Storage]
+    subgraph "Infrastructure"
+        Web -->|REST/GraphQL| Strapi[Strapi CMS]
+        Mobile -->|REST/GraphQL| Strapi
+        
+        Strapi -->|SQL| Postgres[(PostgreSQL)]
+        Strapi -->|Cache| Redis[(Redis)]
+        Strapi -->|Files/Sync| SFTPGo[SFTPGo Storage]
         
         Web -->|WebDAV/Docs| OnlyOffice[OnlyOffice Docs]
         SFTPGo -->|Storage| Disk[Local/S3 Storage]
+    end
+
+    subgraph "Monitoring & Security"
+        Prometheus -->|Scrape| Strapi
+        Prometheus -->|Scrape| Postgres
+        Grafana -->|Query| Prometheus
+        Alertmanager -->|Alerts| Prometheus
     end
 
     subgraph "External Services"
@@ -35,7 +48,7 @@ graph TD
 - **Framework:** Next.js (React)
 - **Styling:** Tailwind CSS + Custom CSS
 - **State Management:** React Query / Context API
-- **Authentication:** NextAuth.js (JWT)
+- **Authentication:** Custom JWT Implementation (HTTP-Only Cookie)
 
 ### 2. Backend (Strapi)
 - **Framework:** Strapi (Node.js)
@@ -45,6 +58,12 @@ graph TD
   - Students, Personnel, Parents
   - Reports, Training Plans
   - Calendar Events
+
+### 3. Monitoring & Observability
+- **Metrics:** Prometheus
+- **Visualization:** Grafana
+- **Alerting:** Alertmanager
+- **Security:** Docker Scout
 
 ### 3. File Storage (SFTPGo)
 - **Protocol:** SFTP / WebDAV

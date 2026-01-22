@@ -71,7 +71,7 @@ nav:
   - API Referansı:
     - API Dokümantasyonu: api/index.md
   - Deployment:
-    - Kurulum Rehberi: deployment/index.md
+    - Kurulum Rehberi: DEPLOYMENT.md
   - Destek:
     - SSS: support/faq.md
 
