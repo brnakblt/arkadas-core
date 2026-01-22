@@ -3,18 +3,8 @@ name: Docker Scout Security Scan
 on:
   push:
     branches: [main]
-    paths:
-      - 'strapi/**'
-      - 'web/**'
-      - 'docker-compose.yml'
-      - '**/Dockerfile'
   pull_request:
     branches: [main]
-    paths:
-      - 'strapi/**'
-      - 'web/**'
-      - 'docker-compose.yml'
-      - '**/Dockerfile'
 
 env:
   REGISTRY: ghcr.io
