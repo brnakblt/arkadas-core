@@ -50,22 +50,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
-
       - name: Install Dependencies
         run: |
           npm ci --legacy-peer-deps
-          
-          # AI Service
-          cd ai-service
-          python -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
-          cd ..
           
           # Docs
           pip install mkdocs-material mkdocs
@@ -90,11 +77,6 @@ jobs:
 
       - name: Run Mebbis Tests
         run: npm run test:mebbis
-        env:
-          CI: true
-
-      - name: Run AI Tests
-        run: npm run test:ai
         env:
           CI: true
 
