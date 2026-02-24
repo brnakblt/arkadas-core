@@ -947,6 +947,12 @@ export interface ApiPersonnelPersonnel extends Struct.CollectionTypeSchema {
     specialty: Schema.Attribute.String;
     status: Schema.Attribute.Enumeration<['ACTIVE', 'INACTIVE', 'ON_LEAVE']> &
       Schema.Attribute.DefaultTo<'ACTIVE'>;
+    tcIdentity: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 11;
+      }>;
     title: Schema.Attribute.Enumeration<
       [
         'KURUM_MUDURU',
@@ -1396,6 +1402,7 @@ export interface PluginUploadFile extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     ext: Schema.Attribute.String;
+    focalPoint: Schema.Attribute.JSON;
     folder: Schema.Attribute.Relation<'manyToOne', 'plugin::upload.folder'> &
       Schema.Attribute.Private;
     folderPath: Schema.Attribute.String &

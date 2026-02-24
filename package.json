@@ -22,7 +22,7 @@
     "------- DEV -------": "",
     "dev": "npm run lint && npm run dev:docker && npm run dev:all",
     "dev:all": "concurrently -n strapi,web -c blue,green \"npm run dev:strapi\" \"npm run dev:web\"",
-    "dev:docker": "docker compose up -d postgres redis sftpgo --wait",
+    "dev:docker": "docker compose up -d postgres redis sftpgo onlyoffice --wait",
     "dev:strapi": "npm run develop --prefix strapi",
     "dev:web": "npm run dev --prefix web",
     "dev:mobile": "npm run start --prefix mobile",
