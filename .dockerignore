@@ -13,3 +13,11 @@ nanobanana-output
 venv
 __pycache__
 *.pyc
+
+infra_data
+backups
+strapi/public/uploads
+
+web/node_modules
+strapi/node_modules
+mobile/node_modules

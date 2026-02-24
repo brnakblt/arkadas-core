@@ -5,7 +5,7 @@ const path = require('path');
 const xml2js = require('xml2js');
 const crypto = require('crypto');
 const mime = require('mime-types');
-const sftpGoService = require('../src/utils/sftpgo');
+const SftpGoService = require('../src/utils/sftpgo');
 
 // Map "Kan Grubu" from Turkish to Enum
 const BLOOD_TYPE_MAP = {
@@ -241,17 +241,7 @@ async function seedStudents(xmlPath, authenticatedRole, sftpGoService) {
                 return null;
             };
 
-            // Sync to SFTPGo
-            if (sftpGoService) {
-                await sftpGoService.ensureGroup('students', 'Students Group');
-                await sftpGoService.syncUser({
-                    username: targetUsername,
-                    password: raw.tckn,
-                    email: `${raw.studentNo}@arkadas.com.tr`,
-                    description: `Student: ${row[4]} ${row[5]}`,
-                    group: 'students'
-                });
-            }
+
 
             // Sync to V2 Student Model
             const mapDiagnosis = (d) => {
@@ -415,21 +405,12 @@ async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, sftpGoSe
             // Was: api::teacher-profile.teacher-profile
 
 
-            // Sync to SFTPGo
-            if (sftpGoService) {
-                await sftpGoService.ensureGroup('teachers', 'Teachers Group');
-                await sftpGoService.syncUser({
-                    username: targetUsername,
-                    password: tckn,
-                    email: `${empNo || tckn}@arkadas.com.tr`,
-                    description: `Staff: ${fullName}`,
-                    group: 'teachers'
-                });
-            }
+
 
             // Sync to V2 Personnel Model
             const v2StaffData = {
                 fullName: fullName,
+                tcIdentity: tckn,
                 specialty: formattedTitle,
                 title: personnelTitle,
                 status: 'ACTIVE',
@@ -539,13 +520,13 @@ async function seedAdmin(sftpGoService) {
 
         // Sync to SFTPGo
         if (sftpGoService) {
-            await sftpGoService.createUser(
-                'admin',
-                process.env.SFTPGO_ADMIN_PASSWORD || 'Strapi123!',
+            await sftpGoService.syncUser({
+                username: 'admin',
+                password: process.env.SFTPGO_ADMIN_PASSWORD || 'Strapi123!',
                 email,
-                'Super Admin User',
-                'admins'
-            );
+                description: 'Super Admin User',
+                group: 'admins'
+            });
         }
     } catch (error) {
         console.error('   ❌ Could not seed admin user:', error.message);
@@ -581,13 +562,13 @@ async function seedAppUser(authenticatedRole, sftpGoService) {
 
         // Sync to SFTPGo
         if (sftpGoService) {
-            await sftpGoService.createUser(
+            await sftpGoService.syncUser({
                 username,
                 password,
                 email,
-                'App Admin User',
-                'admins'
-            );
+                description: 'App Admin User',
+                group: 'admins'
+            });
         }
     } catch (e) {
         console.error('   ❌ Failed to seed App User:', e.message);
@@ -798,9 +779,9 @@ async function main() {
         console.log('\n🔄 Initializing SFTPGo Sync...');
         if (await sftpGoService.authenticate()) {
             console.log('   ✓ SFTPGo Connected');
-            await sftpGoService.createGroup('students', 'All Students');
-            await sftpGoService.createGroup('teachers', 'All Staff Members');
-            await sftpGoService.createGroup('admins', 'System Administrators');
+            await sftpGoService.ensureGroup('students', 'All Students');
+            await sftpGoService.ensureGroup('teachers', 'All Staff Members');
+            await sftpGoService.ensureGroup('admins', 'System Administrators');
         } else {
             console.log('   ⚠️ SFTPGo Connection Failed - specific users won\'t be synced.');
         }

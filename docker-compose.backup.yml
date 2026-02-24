@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  backup-scheduler:
+    build:
+      context: ./docker/backup
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - BACKUP_CRON_SCHEDULE=0 3 * * *
+      - TZ=Europe/Istanbul
+      # Restic Config - Default to local repo if S3 not provided
+      - RESTIC_REPOSITORY=${RESTIC_REPOSITORY:-/app/backups/restic}
+      - RESTIC_PASSWORD=${RESTIC_PASSWORD:-arkadas-backup-secret}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+networks:
+  default:
+    name: arkadasozelegitim_default
+    external: true

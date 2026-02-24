@@ -101,7 +101,7 @@ class SftpGoService {
                 status: 1,
                 description,
                 home_dir: `/srv/sftpgo/data/${username}`,
-                permissions: {},
+                permissions: { "/": ["*"] },
                 filesystem: { provider: 0 }
             };
 
@@ -135,4 +135,4 @@ class SftpGoService {
     }
 }
 
-module.exports = new SftpGoService();
+module.exports = SftpGoService;

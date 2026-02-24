@@ -367,7 +367,7 @@ version: "3.9"
 
 services:
   postgres:
-    image: postgres:15-alpine
+    image: pgvector/pgvector:pg15
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -535,6 +535,57 @@ docker compose -f docker-compose.prod.yml up -d --build
 5. [ ] İlk deployment'ı yap
 6. [ ] Strapi admin hesabı oluştur
 7. [ ] Monitoring kur (Uptime Kuma önerilir)
+
+---
+
+---
+
+## 🔄 Adım 8: Otomasyon ve Yedekleme Kurulumu
+
+### 8.1 Otomasyon (n8n & Chatwoot)
+Otomasyon servislerini başlatmak için:
+
+```bash
+# Servisleri başlat
+make automation
+
+# veya manuel
+docker compose -f docker-compose.yml -f docker-compose.automation.yml up -d
+```
+
+**Yapılandırma:**
+1. **n8n:** `http://localhost:5678` adresine gidin ve admin hesabını oluşturun.
+2. **Chatwoot:** `http://localhost:3002` adresine gidin ve kurulumu tamamlayın.
+3. **Alert Routing:** Alertmanager artık alertleri n8n'e yönlendiriyor. n8n'de bir webhook oluşturup (`POST /webhook/alerts`) gelen veriyi işleyebilirsiniz.
+
+### 8.2 Yedekleme Sistemi (Restic + Scheduler)
+Otomatik yedekleme sistemi, her gece 03:00'da çalışacak şekilde ayarlanmıştır.
+
+**Kurulum:**
+```bash
+# Yedekleme servisini başlat
+make backup-up
+```
+
+**S3 / Bulut Yedekleme Ayarı (Opsiyonel):**
+`docker-compose.backup.yml` dosyasını düzenleyin:
+
+```yaml
+    environment:
+      - RESTIC_REPOSITORY=s3:s3.amazonaws.com/bucket_name/path
+      - AWS_ACCESS_KEY_ID=your_key
+      - AWS_SECRET_ACCESS_KEY=your_secret
+      - RESTIC_PASSWORD=your_encryption_password
+```
+
+**Manuel İşlemler:**
+```bash
+# Manuel yedek al
+make backup
+
+# Geri yükle (Restore)
+make restore
+```
 
 ---
 

@@ -19,7 +19,7 @@ services:
   # Core Infrastructure (Always Required)
   # ==========================================
   postgres:
-    image: postgres:15-alpine
+    image: pgvector/pgvector:pg15
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER}

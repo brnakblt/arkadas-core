@@ -21,7 +21,7 @@
         },
         "tcIdentity": {
             "type": "string",
-            "required": false,
+            "required": true,
             "unique": true,
             "maxLength": 11
         },

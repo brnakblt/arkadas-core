@@ -28,6 +28,16 @@ help:
 	@echo "  make monitoring   Start monitoring stack"
 	@echo "  make monitoring-stop  Stop monitoring stack"
 	@echo ""
+	@echo "Automation & Messaging:"
+	@echo "  make automation   Start n8n & Chatwoot"
+	@echo "  make automation-stop Stop automation stack"
+	@echo ""
+	@echo "Backup System:"
+	@echo "  make backup       Create manual backup (host)"
+	@echo "  make backup-up    Start backup scheduler (cron + restic)"
+	@echo "  make backup-down  Stop backup scheduler"
+	@echo "  make restore      Restore from backup"
+	@echo ""
 	@echo "Maintenance:"
 	@echo "  make clean        Clean build artifacts"
 	@echo "  make logs         View logs"
@@ -51,6 +61,12 @@ reset:
 
 backup:
 	bash scripts/backup.sh
+
+backup-up:
+	docker compose -f docker-compose.backup.yml up -d --build
+
+backup-down:
+	docker compose -f docker-compose.backup.yml down
 
 restore:
 	@read -p "Enter timestamp (e.g., 20260121_120000): " ts; \
@@ -87,6 +103,13 @@ monitoring:
 
 monitoring-stop:
 	npm run monitoring:down
+
+# Automation
+automation:
+	docker compose -f docker-compose.yml -f docker-compose.automation.yml up -d
+
+automation-stop:
+	docker compose -f docker-compose.yml -f docker-compose.automation.yml down
 
 # Logs
 logs:

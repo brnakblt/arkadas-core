@@ -10,13 +10,8 @@ Arkadaş ERP is a comprehensive solution for Special Education and Rehabilitatio
 graph TD
     User[User / Client] -->|HTTPS| Web[Next.js Web App]
     User -->|HTTPS| Mobile[Mobile App]
+    User -->|HTTPS| Chatwoot[Chatwoot Support]
     
-    subgraph "Infrastructure"
-        Web -->|REST/GraphQL| Strapi[Strapi CMS]
-        Mobile -->|REST/GraphQL| Strapi
-        
-        Strapi -->|SQL| Postgres[(PostgreSQL)]
-        Strapi -->|Cache| Redis[(Redis)]
     subgraph "Infrastructure"
         Web -->|REST/GraphQL| Strapi[Strapi CMS]
         Mobile -->|REST/GraphQL| Strapi
@@ -27,6 +22,16 @@ graph TD
         
         Web -->|WebDAV/Docs| OnlyOffice[OnlyOffice Docs]
         SFTPGo -->|Storage| Disk[Local/S3 Storage]
+
+        Chatwoot -->|State| Redis
+        Chatwoot -->|Data| Postgres
+    end
+
+    subgraph "Automation & Logic"
+        n8n[n8n Workflow Engine]
+        n8n -->|Webhook| Chatwoot
+        n8n -->|API| Strapi
+        Alertmanager -->|Webhook| n8n
     end
 
     subgraph "Monitoring & Security"
@@ -34,6 +39,12 @@ graph TD
         Prometheus -->|Scrape| Postgres
         Grafana -->|Query| Prometheus
         Alertmanager -->|Alerts| Prometheus
+    end
+
+    subgraph "Backup System"
+        Scheduler[Backup Scheduler] -->|Cron| PG_Dump[pg_dump]
+        Scheduler -->|Cron| Restic[Restic Snapshots]
+        Restic -->|Push| S3_Backup[Remote S3 Backup]
     end
 
     subgraph "External Services"
@@ -59,12 +70,6 @@ graph TD
   - Reports, Training Plans
   - Calendar Events
 
-### 3. Monitoring & Observability
-- **Metrics:** Prometheus
-- **Visualization:** Grafana
-- **Alerting:** Alertmanager
-- **Security:** Docker Scout
-
 ### 3. File Storage (SFTPGo)
 - **Protocol:** SFTP / WebDAV
 - **Integration:** Custom Strapi Provider
@@ -76,6 +81,22 @@ graph TD
 ### 4. Document Editing (OnlyOffice)
 - **Integration:** Embedded in Web App
 - **Features:** Real-time collaboration, Office format support
+
+### 5. Automation & Messaging (Phase 6)
+- **n8n:** Low-code workflow automation tool. Acts as the central nervous system, routing alerts and synchronizing data between services.
+- **Chatwoot:** Open-source customer engagement suite. Handles internal communication and support tickets, replacing Slack.
+
+### 6. Monitoring & Observability
+- **Metrics:** Prometheus
+- **Visualization:** Grafana
+- **Alerting:** Alertmanager (Routes to n8n)
+- **Logs:** Loki & Promtail
+- **Security:** Docker Scout
+
+### 7. Backup & Recovery
+- **Scheduler:** Dockerized Cron service running daily backups.
+- **Strategy:** Full dumps of Database, Redis, and File uploads.
+- **Offsite:** Restic integration for encrypted, deduplicated backups to S3/Cloud storage.
 
 ## Data Flow
 
