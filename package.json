@@ -17,7 +17,9 @@
     "turbo": "^2.8.10",
     "wait-on": "^7.2.0"
   },
-  "overrides": {},
+  "overrides": {
+    "ioredis": "5.9.1"
+  },
   "scripts": {
     "------- DEV -------": "",
     "dev": "npm run lint && npm run dev:docker && npm run dev:all",
