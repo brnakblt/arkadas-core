@@ -30,7 +30,7 @@ const worker = new Worker('notifications', async job => {
     console.log(`✅ [Job ${job.id}] Sent "${title}" to ${userCount} users.`);
 
     return { sent: userCount };
-}, { connection });
+}, { connection: connection as any });
 
 worker.on('completed', job => {
     console.log(`[Job ${job.id}] Completed!`);

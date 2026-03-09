@@ -9,7 +9,7 @@ const connection = new IORedis({
     maxRetriesPerRequest: null,
 });
 
-export const notificationQueue = new Queue('notifications', { connection });
+export const notificationQueue = new Queue('notifications', { connection: connection as any });
 
 export const addNotificationJob = async (data: any) => {
     return notificationQueue.add('send-notification', data, {
