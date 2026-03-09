@@ -46,8 +46,8 @@ export async function POST(req: NextRequest) {
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict" as const,
             path: "/",
-            // Set to 7 days or whatever Strapi's default is
-            maxAge: 7 * 24 * 60 * 60,
+            // 8-hour session limit for KVKK compliance (was 7 days)
+            maxAge: 8 * 60 * 60,
         };
 
         const nextResponse = NextResponse.json({ user });

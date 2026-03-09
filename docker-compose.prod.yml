@@ -5,7 +5,7 @@ services:
   # DATABASE LAYER
   # ==========================================
   postgres:
-    image: postgres:15-alpine
+    image: pgvector/pgvector:pg15
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}

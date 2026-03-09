@@ -631,37 +631,47 @@ async function seedContent(strapi) {
     });
 
     // Services
-    await strapi.db.query('api::service.service').deleteMany({ where: {} });
-    const services = [
-        { title: 'Dil ve Konuşma Terapisi', description: 'Dil ve konuşma bozuklukları olan çocuklar için bireysel terapi.', icon: '💬', features: [{ text: 'Artikülasyon Terapisi' }, { text: 'Dil Gelişimi' }] },
-        { title: 'Özel Eğitim', description: 'Bireysel eğitim planları ve akademik destek.', icon: '🧩', features: [{ text: 'Bireysel Eğitim Planı' }] },
-        { title: 'Rehabilitasyon', description: 'Fiziksel ve bilişsel rehabilitasyon.', icon: '🤸', features: [{ text: 'Fizyoterapi' }] }
-    ];
-    for (const s of services) await strapi.entityService.create('api::service.service', { data: { ...s, publishedAt: new Date() } });
+    const existingServices = await strapi.db.query('api::service.service').count();
+    if (existingServices === 0) {
+        const services = [
+            { title: 'Dil ve Konuşma Terapisi', description: 'Dil ve konuşma bozuklukları olan çocuklar için bireysel terapi.', icon: '💬', features: [{ text: 'Artikülasyon Terapisi' }, { text: 'Dil Gelişimi' }] },
+            { title: 'Özel Eğitim', description: 'Bireysel eğitim planları ve akademik destek.', icon: '🧩', features: [{ text: 'Bireysel Eğitim Planı' }] },
+            { title: 'Rehabilitasyon', description: 'Fiziksel ve bilişsel rehabilitasyon.', icon: '🤸', features: [{ text: 'Fizyoterapi' }] }
+        ];
+        for (const s of services) await strapi.entityService.create('api::service.service', { data: { ...s, publishedAt: new Date() } });
+    }
 
     // Processes
-    await strapi.db.query('api::process.process').deleteMany({ where: {} });
-    const processes = [
-        { number: '01', title: 'İlk Görüşme', description: 'Tanışma ve değerlendirme.', icon: '👥' },
-        { number: '02', title: 'Planlama', description: 'Bireysel eğitim planı hazırlığı.', icon: '📋' },
-        { number: '03', title: 'Eğitim', description: 'Eğitim sürecinin başlaması.', icon: '🚀' },
-    ];
-    for (const p of processes) await strapi.entityService.create('api::process.process', { data: { ...p, publishedAt: new Date() } });
+    const existingProcesses = await strapi.db.query('api::process.process').count();
+    if (existingProcesses === 0) {
+        const processes = [
+            { number: '01', title: 'İlk Görüşme', description: 'Tanışma ve değerlendirme.', icon: '👥' },
+            { number: '02', title: 'Planlama', description: 'Bireysel eğitim planı hazırlığı.', icon: '📋' },
+            { number: '03', title: 'Eğitim', description: 'Eğitim sürecinin başlaması.', icon: '🚀' },
+        ];
+        for (const p of processes) await strapi.entityService.create('api::process.process', { data: { ...p, publishedAt: new Date() } });
+    }
 
     // FAQ
-    await strapi.db.query('api::faq.faq').deleteMany({ where: {} });
-    const faqs = [
-        { question: 'Hangi yaş gruplarına hizmet veriyorsunuz?', answer: '0-18 yaş arası tüm çocuklara.' },
-        { question: 'Nasıl kayıt olabilirim?', answer: 'İletişim sayfamızdan veya telefonla randevu alabilirsiniz.' }
-    ];
-    for (const f of faqs) await strapi.entityService.create('api::faq.faq', { data: { ...f, publishedAt: new Date() } });
+    const existingFaqs = await strapi.db.query('api::faq.faq').count();
+    if (existingFaqs === 0) {
+        const faqs = [
+            { question: 'Hangi yaş gruplarına hizmet veriyorsunuz?', answer: '0-18 yaş arası tüm çocuklara.' },
+            { question: 'Nasıl kayıt olabilirim?', answer: 'İletişim sayfamızdan veya telefonla randevu alabilirsiniz.' }
+        ];
+        for (const f of faqs) await strapi.entityService.create('api::faq.faq', { data: { ...f, publishedAt: new Date() } });
+    }
 
     console.log('   Static content seeded.');
 }
 
 async function seedGallery(strapi) {
     console.log('🚀 Seeding Gallery...');
-    await strapi.db.query('api::gallery.gallery').deleteMany({ where: {} });
+    const existingGallery = await strapi.db.query('api::gallery.gallery').count();
+    if (existingGallery > 0) {
+        console.log('   ~ Gallery already exists, skipping seed.');
+        return;
+    }
 
     try {
         const galleryItems = [

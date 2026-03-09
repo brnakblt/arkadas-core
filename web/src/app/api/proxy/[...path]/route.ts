@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isPathAllowed } from "@/lib/proxy-security";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
 
 async function proxyRequest(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
     const { path: pathArray } = await params;
     const path = pathArray.join("/");
+
+    // Enforce path restrictions
+    if (!isPathAllowed(path)) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const jwt = req.cookies.get("jwt")?.value;
 
     const headers: HeadersInit = {

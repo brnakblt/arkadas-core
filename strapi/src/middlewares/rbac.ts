@@ -1,9 +1,16 @@
 /**
  * RBAC Middleware
- * Adds user role info to context and filters data based on ownership
+ * Adds user role info to context and injects tenant filter at the query level.
+ *
+ * Data isolation strategy:
+ *   - Tenant scoping: injected into ctx.query.filters BEFORE Strapi processes the request
+ *   - Row-level filtering (parent→student, driver→route): handled by dedicated policies
+ *     (parent-owns-student.ts, is-driver.ts)
  */
 
 import type { Core } from '@strapi/strapi';
+
+const TENANT_ID_PATTERN = /^[a-z0-9_-]+$/;
 
 export default (config: any, { strapi }: { strapi: Core.Strapi }) => {
     return async (ctx: any, next: () => Promise<void>) => {
@@ -18,6 +25,27 @@ export default (config: any, { strapi }: { strapi: Core.Strapi }) => {
             ctx.state.isParent = ['super_admin', 'admin', 'parent', 'veli'].includes(ctx.state.userRole);
             ctx.state.isDriver = ['super_admin', 'admin', 'driver', 'şoför'].includes(ctx.state.userRole);
 
+            // --- Tenant Isolation (DB-Level) ---
+            const tenantId = ctx.request?.header?.['x-tenant-id'];
+
+            if (tenantId && TENANT_ID_PATTERN.test(tenantId)) {
+                ctx.state.tenantId = tenantId;
+
+                // Inject tenant filter into Strapi query engine (pre-fetch, not post-fetch)
+                if (!ctx.query) {
+                    ctx.query = {};
+                }
+                if (ctx.query.filters && typeof ctx.query.filters === 'object') {
+                    ctx.query.filters = { ...ctx.query.filters, tenant: tenantId };
+                } else {
+                    ctx.query.filters = { tenant: tenantId };
+                }
+
+                strapi.log.debug(
+                    `[RBAC] Tenant filter injected: ${tenantId} for user ${user.id} (${ctx.state.userRole})`
+                );
+            }
+
             // Log access for auditing
             strapi.log.debug(
                 `[RBAC] User ${user.id} (${ctx.state.userRole}) accessing ${ctx.request.method} ${ctx.request.url}`
@@ -25,31 +53,6 @@ export default (config: any, { strapi }: { strapi: Core.Strapi }) => {
         }
 
         await next();
-
-        // Post-processing: Filter data for non-admin users
-        if (user && !ctx.state.isAdmin && ctx.response.body?.data) {
-            // For parents: filter to only show their children's data
-            if (ctx.state.isParent && ctx.request.url.includes('student-profile')) {
-                const data = ctx.response.body.data;
-                if (Array.isArray(data)) {
-                    ctx.response.body.data = data.filter((item: any) => {
-                        const parentId = item.attributes?.parentGuardian?.data?.id || item.parentGuardian?.id;
-                        return parentId === user.id;
-                    });
-                }
-            }
-
-            // For drivers: filter to only show assigned routes
-            if (ctx.state.isDriver && ctx.request.url.includes('service-route')) {
-                const data = ctx.response.body.data;
-                if (Array.isArray(data)) {
-                    ctx.response.body.data = data.filter((item: any) => {
-                        const driverId = item.attributes?.driver?.data?.id || item.driver?.id;
-                        const assistantId = item.attributes?.assistant?.data?.id || item.assistant?.id;
-                        return driverId === user.id || assistantId === user.id;
-                    });
-                }
-            }
-        }
     };
 };
+

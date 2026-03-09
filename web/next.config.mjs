@@ -3,10 +3,6 @@
 const nextConfig = {
   // Use static export for desktop builds (Tauri), otherwise standalone (Docker) or default (SSR)
   output: process.env.APP_ENV === 'desktop' ? 'export' : 'standalone',
-  typescript: {
-    // React 19 + Next.js 16 type compatibility
-    ignoreBuildErrors: true,
-  },
   async headers() {
     return [
       {

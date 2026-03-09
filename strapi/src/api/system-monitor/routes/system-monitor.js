@@ -18,5 +18,14 @@ module.exports = {
                 middlewares: [],
             },
         },
+        {
+            method: 'GET',
+            path: '/system-monitor/metrics',
+            handler: 'metrics.getMetrics',
+            config: {
+                policies: [],
+                middlewares: [],
+            },
+        },
     ],
 };

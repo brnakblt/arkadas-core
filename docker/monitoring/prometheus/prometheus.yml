@@ -43,12 +43,11 @@ scrape_configs:
     static_configs:
       - targets: ['redis-exporter:9121']
 
-  # Strapi (via custom metrics endpoint if available)
+  # Strapi (custom prom-client metrics endpoint)
   - job_name: 'strapi'
-    metrics_path: '/metrics'
+    metrics_path: '/api/system-monitor/metrics'
     static_configs:
       - targets: ['strapi:1337']
-    # If Strapi doesn't expose /metrics, this will fail gracefully
 
   # Docker daemon
   - job_name: 'docker'
