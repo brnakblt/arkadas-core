@@ -4,21 +4,22 @@ import { MEB_RULES } from '@/lib/mebRules';
 
 // Initialize Gemini Client
 // Server-side: prefer GEMINI_API_KEY, fallback to NEXT_PUBLIC_ if that's where it is
-const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
-
 export async function POST(req: Request) {
     try {
+        const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+
+        if (!apiKey) {
+            console.error("API Key missing");
+            return NextResponse.json({ error: 'System configuration error: API Key missing' }, { status: 500 });
+        }
+
+        const ai = new GoogleGenAI({ apiKey });
+
         const body = await req.json();
         const { name, age, diagnosis, observations, strengths, needs } = body;
 
         if (!name || !diagnosis) {
             return NextResponse.json({ error: 'Name and Diagnosis are required' }, { status: 400 });
-        }
-
-        if (!apiKey) {
-            console.error("API Key missing");
-            return NextResponse.json({ error: 'System configuration error: API Key missing' }, { status: 500 });
         }
 
         // Create a context string from MEB_RULES
