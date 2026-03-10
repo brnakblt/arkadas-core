@@ -25,7 +25,7 @@ test.describe('BEP Generation Flow', () => {
 
     test('should allow user to generate and edit a BEP', async ({ page }) => {
         // Wait for page to load
-        await expect(page.getByText('BEP Asistanı')).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'BEP Asistanı' })).toBeVisible();
 
         // 1. Fill Observations
         await page.fill('textarea[id="observations-input"]', 'Ali harfleri tanıyor ama hecelemede zorlanıyor.');
