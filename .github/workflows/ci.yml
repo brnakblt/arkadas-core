@@ -78,6 +78,7 @@ jobs:
       - name: Build Docs
         run: |
           export PATH="$HOME/.local/bin:$PATH"
+          export NO_MKDOCS_2_WARNING=1
           cd docs && mkdocs build --strict
 
   e2e:
