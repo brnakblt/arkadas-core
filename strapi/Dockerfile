@@ -4,7 +4,7 @@
 # ============================================================
 
 # Stage 1: Dependencies
-FROM node:24.14.0-slim AS deps
+FROM node:24.14.1-slim AS deps
 WORKDIR /opt/app
 
 # Install build dependencies for native modules

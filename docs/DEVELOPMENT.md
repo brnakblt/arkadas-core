@@ -41,18 +41,20 @@ make dev
 
 ## 2. Port Map
 
-| Service | Port | URL |
-|---------|------|-----|
-| Web (Next.js) | 3000 | http://localhost:3000 |
-| Strapi CMS | 1337 | http://localhost:1337/admin |
-| AI Service | 8000 | http://localhost:8000/docs |
-| Mebbis Service | 4000 | http://localhost:4000 |
-| PostgreSQL | 5432 | - |
-| Redis | 6380 | - |
-| OnlyOffice | 8080 | http://localhost:8080 |
-| PBX (FreePBX) | 81 | http://localhost:81 |
-| Mobile (Expo) | 8085 | expo://localhost:8085 |
-| SFTPGo | 8088 | http://localhost:8088 (optional) |
+| Service | Port | URL | Description |
+|---------|------|-----|-------------|
+| Web (Next.js) | 3000 | http://localhost:3000 | Frontend |
+| Strapi CMS | 1337 | http://localhost:1337/admin | Backend CMS |
+| AI Service | 8000 | http://localhost:8000/docs | FastAPI / OpenCV |
+| Mebbis Service | 4000 | http://localhost:4000 | MEBBİS Automation |
+| Mobile (Expo) | 8082 | - | Parent/Teacher App |
+| SFTPGo Admin | 8088 | http://localhost:8088 | Storage Admin |
+| SFTPGo WebDAV | 8089 | http://localhost:8089 | Storage Access |
+| Collabora Online | 9980 | http://localhost:9980 | Document Editing |
+| PostgreSQL | 5432 | - | Database |
+| Redis | 6380 | - | Caching (Mapped from 6379) |
+| PBX (FreePBX) | 81 | http://localhost:81 | Communication |
+| Docs (MkDocs) | 8001 | http://localhost:8001 | Documentation |
 
 ---
 
@@ -65,11 +67,11 @@ npm run dev
 
 ### Individual Services
 ```bash
-npm run dev:strapi    # Strapi CMS
-npm run dev:web       # Next.js Frontend
-npm run dev:ai        # AI Face Recognition
+npm run dev:strapi    # Strapi CMS (v5)
+npm run dev:web       # Next.js Frontend (v16)
+npm run dev:ai        # AI Service (Python 3.13)
 npm run dev:mebbis    # MEBBIS Automation
-npm run dev:mobile    # Expo Mobile
+npm run dev:mobile    # Expo Mobile (React Native)
 npm run dev:docs      # MkDocs (port 8001)
 ```
 
@@ -77,9 +79,15 @@ npm run dev:docs      # MkDocs (port 8001)
 
 ## 4. Docker Services
 
-### Core Infrastructure (always running)
+### Core Infrastructure
 ```bash
 docker compose up -d
+```
+
+### Optional: Monitoring Stack
+```bash
+make monitoring
+# Access Grafana: http://localhost:3001
 ```
 
 ### Optional: SFTPGo File Storage

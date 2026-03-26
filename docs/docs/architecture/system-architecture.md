@@ -5,32 +5,34 @@ Bu belge, Arkadaş Özel Eğitim ERP sisteminin teknik mimarisini açıklar.
 ## 🏗️ Genel Bakış
 
 ```mermaid
-graph TB
-    subgraph Client["İstemciler"]
-        Web["Web App<br/>(Next.js)"]
-        PWA["PWA"]
-    end
-
-    subgraph Backend["Backend Servisleri"]
-        Strapi["Strapi CMS<br/>:1337"]
-        AI["AI Servisi<br/>(Python Flask)"]
-        NC["SFTPGo<br/>+ OnlyOffice"]
-    end
-
-    subgraph Database["Veritabanı"]
-        PG["PostgreSQL<br/>+ PostGIS"]
-        Redis["Redis Cache"]
-    end
-
-    Web --> Strapi
-    PWA --> Strapi
+graph TD
+    User[User / Client] -->|HTTPS| Web[Next.js Web App]
+    User -->|HTTPS| Mobile[Mobile App]
+    User -->|SIP/WebRTC| PBX[FreePBX/Asterisk]
     
-    Strapi --> PG
-    Strapi --> Redis
-    Strapi --> AI
-    Strapi --> NC
-    
-    AI --> PG
+    subgraph "Infrastructure"
+        Web -->|REST/GraphQL| Strapi[Strapi CMS]
+        Mobile -->|REST/GraphQL| Strapi
+        
+        Strapi -->|SQL| Postgres[(PostgreSQL)]
+        Strapi -->|Cache| Redis[(Redis)]
+        Strapi -->|Files/Sync| SFTPGo[SFTPGo Storage]
+        Strapi -->|Sync CDR| PBX
+        Strapi -->|AI Requests| AI[AI Service - Python]
+        Strapi -->|Mebbis Sync| Mebbis[Mebbis Service - Node]
+        
+        Web -->|WebRTC| PBX
+        Mobile -->|SIP| PBX
+        Web -->|WebDAV/Docs| Collabora[Collabora Online]
+        SFTPGo -->|Storage| Disk[Local Storage]
+    end
+
+    subgraph "Monitoring & Security"
+        Prometheus -->|Scrape| Strapi
+        Prometheus -->|Scrape| Postgres
+        Grafana -->|Query| Prometheus
+        Alertmanager -->|Alerts| Prometheus
+    end
 ```
 
 ## 📦 Bileşenler
@@ -39,17 +41,18 @@ graph TB
 
 | Bileşen | Teknoloji | Port | Açıklama |
 |---------|-----------|------|----------|
-| Web | Next.js 15 | 3000 | Admin panel ve veli portalı |
-| PWA | Next.js | 3000 | Progressive Web App |
+| Web | Next.js 16 | 3000 | Admin panel ve veli portalı |
+| Mobile | React Native (Expo) | 8082 | Veli ve öğretmen uygulaması |
 
 ### Backend
 
 | Bileşen | Teknoloji | Port | Açıklama |
 |---------|-----------|------|----------|
-| API | Strapi 4 | 1337 | REST/GraphQL API |
-| AI | Flask | 5000 | Yüz tanıma servisi |
-| Docs | OnlyOffice | 80 | Döküman editörü |
-| Files | SFTPGo | 443 | Dosya yönetimi |
+| API | Strapi v5 | 1337 | REST/GraphQL API |
+| AI | FastAPI (Python 3.13) | 8000 | Yüz tanıma ve döküman analizi |
+| Mebbis | Node.js (TS) | 4000 | MEBBİS otomasyon servisi |
+| Docs | Collabora Online | 9980 | Döküman editörü |
+| Files | SFTPGo | 8088/8089 | Dosya yönetimi ve WebDAV |
 
 ## 🔄 Veri Akışı
 

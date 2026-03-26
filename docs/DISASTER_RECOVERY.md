@@ -5,21 +5,32 @@ This guide outlines the procedures for recovering the Arkadaş Özel Eğitim ERP
 ## 1. Backups
 
 ### Automatic Backups
-- **Database**: The script `scripts/backup_db.sh` runs nightly (via cron) to dump the PostgreSQL database.
+- **Database & Files**: The script `scripts/backup.sh` (triggered via `make backup`) runs full system backups including PostgreSQL and SFTPGo volumes.
 - **Location**:
-  - Local: `./backups/` directory on the server.
-  - Remote: S3 Bucket (if configured).
+  - Local: `./backups/restic/` directory.
+  - Remote: S3 Bucket (via Restic).
 
 ### Manual Backups
-To trigger a manual backup:
+To trigger a manual full system backup:
 ```bash
-./scripts/backup_db.sh
+make backup
 ```
 
 ## 2. Restore Procedures
 
-### Scenario A: Restoring from Local Backup
-If the server is healthy but data is corrupted:
+### Automated Restore (Recommended)
+The primary way to restore the system is using the `make restore` command which uses the `scripts/restore.sh` script:
+
+```bash
+# 1. Start the restore process
+make restore
+
+# 2. Select the snapshot to restore from the list
+# 3. The script will automatically stop services, restore data, and restart.
+```
+
+### Manual Restore (Database Only)
+If you only need to restore a SQL dump:
 
 1.  **Stop Services**:
     ```bash

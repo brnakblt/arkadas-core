@@ -29,7 +29,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # Stage 3: Production Runner (Minimal Alpine)
-FROM node:24.14.0-alpine AS runner
+FROM node:24.14.1-alpine AS runner
 WORKDIR /app
 
 # Install tini for graceful shutdown

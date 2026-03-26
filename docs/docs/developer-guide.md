@@ -8,11 +8,10 @@ This is a TurboRepo monorepo.
 
 | Directory | Description |
 |-----------|-------------|
-
 | `web/` | Next.js 16 Frontend (Teacher/Parent Dashboard) |
 | `mobile/` | React Native (Expo) Mobile App |
 | `strapi/` | Strapi v5 CMS (Postgres backend) |
-| `api/` | Microservices (OpenCV, SFTPGo, OnlyOffice) |
+| `api/opencv/` | AI Microservice (Python 3.13 / FastAPI) |
 | `docs/` | MkDocs documentation |
 | `scripts/` | Utility scripts |
 
@@ -37,9 +36,14 @@ Think of it this way: Strapi is the *librarian*, and PostgreSQL is the *library 
 |---------|------|-----|
 | Web (Next.js) | 3000 | http://localhost:3000 |
 | Strapi CMS | 1337 | http://localhost:1337/admin |
+| Mobile (Expo) | 8082 | - |
+| AI Service | 8000 | http://localhost:8000/docs |
+| Mebbis Service | 4000 | http://localhost:4000 |
+| SFTPGo Admin | 8088 | http://localhost:8088 |
+| SFTPGo WebDAV | 8089 | http://localhost:8089 |
+| Collabora | 9980 | http://localhost:9980 |
 | PostgreSQL | 5432 | - |
 | Redis | 6380 | - |
-| SFTPGo | 8088 | http://localhost:8088 |
 
 ---
 

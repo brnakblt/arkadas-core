@@ -10,7 +10,6 @@ Arkadaş ERP is a comprehensive solution for Special Education and Rehabilitatio
 graph TD
     User[User / Client] -->|HTTPS| Web[Next.js Web App]
     User -->|HTTPS| Mobile[Mobile App]
-    User -->|HTTPS| Chatwoot[Chatwoot Support]
     User -->|SIP/WebRTC| PBX[FreePBX/Asterisk]
     
     subgraph "Infrastructure"
@@ -21,21 +20,13 @@ graph TD
         Strapi -->|Cache| Redis[(Redis)]
         Strapi -->|Files/Sync| SFTPGo[SFTPGo Storage]
         Strapi -->|Sync CDR| PBX
+        Strapi -->|AI Requests| AI[AI Service - Python]
+        Strapi -->|Mebbis Sync| Mebbis[Mebbis Service - Node]
         
         Web -->|WebRTC| PBX
         Mobile -->|SIP| PBX
-        Web -->|WebDAV/Docs| OnlyOffice[OnlyOffice Docs]
-        SFTPGo -->|Storage| Disk[Local/S3 Storage]
-
-        Chatwoot -->|State| Redis
-        Chatwoot -->|Data| Postgres
-    end
-
-    subgraph "Automation & Logic"
-        n8n[n8n Workflow Engine]
-        n8n -->|Webhook| Chatwoot
-        n8n -->|API| Strapi
-        Alertmanager -->|Webhook| n8n
+        Web -->|WebDAV/Docs| Collabora[Collabora Online]
+        SFTPGo -->|Storage| Disk[Local Storage]
     end
 
     subgraph "Monitoring & Security"
@@ -48,65 +39,58 @@ graph TD
     subgraph "Backup System"
         Scheduler[Backup Scheduler] -->|Cron| PG_Dump[pg_dump]
         Scheduler -->|Cron| Restic[Restic Snapshots]
-        Restic -->|Push| S3_Backup[Remote S3 Backup]
-    end
-
-    subgraph "External Services"
-        Strapi -->|Email| SMTP[SMTP Server]
-        Mobile -->|Push| FCM[Firebase Cloud Messaging]
+        Restic -->|Push| S3_Backup[Remote Backup]
     end
 ```
 
 ## Core Components
 
 ### 1. Frontend (Web)
-- **Framework:** Next.js (React)
-- **Styling:** Tailwind CSS + Custom CSS
+- **Framework:** Next.js 16 (React 19)
+- **Styling:** Tailwind CSS + Lucide React
 - **State Management:** React Query / Context API
 - **Authentication:** Custom JWT Implementation (HTTP-Only Cookie)
 
 ### 2. Backend (Strapi)
-- **Framework:** Strapi (Node.js)
-- **Database:** PostgreSQL
-- **Caching:** Redis
-- **Content Types:**
-  - Students, Personnel, Parents
-  - Reports, Training Plans
-  - Calendar Events
+- **Framework:** Strapi v5 (Node.js)
+- **Database:** PostgreSQL 15 + pgvector
+- **Caching:** Redis 7
+- **Integration:** Central hub for all external services (AI, Mebbis, SFTPGo).
 
-### 3. File Storage (SFTPGo)
-- **Protocol:** SFTP / WebDAV
-- **Integration:** Custom Strapi Provider
-- **Features:**
-  - Secure file upload/download
-  - User-based quota management
-  - WebDAV support for OnlyOffice
+### 3. AI & Computer Vision (api/opencv)
+- **Stack:** Python 3.13, OpenCV, FastAPI.
+- **Features:** 
+  - Face recognition for attendance tracking.
+  - Document processing and OCR.
+  - AI-driven BEP (Bireyselleştirilmiş Eğitim Programı) generation.
 
-### 4. Document Editing (OnlyOffice)
-- **Integration:** Embedded in Web App
-- **Features:** Real-time collaboration, Office format support
+### 4. Mebbis Integration
+- **Stack:** Node.js (TypeScript)
+- **Purpose:** Automation for MEBBİS (Ministry of National Education Information System) data entry and synchronization.
 
-### 5. Communication (PBX)
+### 5. Mobile (mobile/)
+- **Framework:** React Native (Expo)
+- **Features:** Parent/Teacher portals, notification center, and mobile attendance.
+
+### 6. File Storage & Document Editing
+- **SFTPGo:** Secure storage backend with WebDAV support.
+- **Collabora Online:** Office suite integration for real-time document editing (BEP plans, reports).
+
+### 7. Communication (PBX)
 - **Engine:** FreePBX / Asterisk
 - **Protocol:** SIP, WebRTC
 - **Features:** Voice calls, IVR, Call recordings
 - **Integration:** WebRTC dialer in Frontend, CDR sync to Strapi
 
-### 6. Automation & Messaging (Phase 6)
-- **n8n:** Low-code workflow automation tool. Acts as the central nervous system, routing alerts and synchronizing data between services.
-- **Chatwoot:** Open-source customer engagement suite. Handles internal communication and support tickets, replacing Slack.
-
-### 6. Monitoring & Observability
+### 8. Monitoring & Observability
 - **Metrics:** Prometheus
 - **Visualization:** Grafana
-- **Alerting:** Alertmanager (Routes to n8n)
-- **Logs:** Loki & Promtail
+- **Alerting:** Alertmanager
 - **Security:** Docker Scout
 
-### 7. Backup & Recovery
+### 9. Backup & Recovery
 - **Scheduler:** Dockerized Cron service running daily backups.
-- **Strategy:** Full dumps of Database, Redis, and File uploads.
-- **Offsite:** Restic integration for encrypted, deduplicated backups to S3/Cloud storage.
+- **Strategy:** Full dumps of Database, Redis, and File uploads using Restic.
 
 ## Data Flow
 

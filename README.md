@@ -40,11 +40,15 @@ make dev
 |--------|------|-----|----------|
 | **Web** | 3000 | http://localhost:3000 | Next.js Frontend |
 | **Strapi** | 1337 | http://localhost:1337/admin | CMS Admin Panel |
-| **SFTPGo** | 8088 | http://localhost:8088 | Dosya Yönetimi |
+| **Mobile** | 8082 | - | React Native (Expo) |
+| **AI Service** | 8000 | http://localhost:8000/docs | FastAPI / OpenCV |
+| **Mebbis** | 4000 | http://localhost:4000 | Mebbis Entegrasyon |
+| **SFTPGo** | 8088 | http://localhost:8088 | Dosya Yönetimi (Admin) |
+| **WebDAV** | 8089 | http://localhost:8089 | Dosya Erişimi (OnlyOffice) |
+| **Collabora** | 9980 | http://localhost:9980 | Online Belge Düzenleme |
 | **PBX (FreePBX)** | 81 | http://localhost:81 | Santral Yönetimi |
 | **Grafana** | 3001 | http://localhost:3001 | Metrikler & Dashboard |
 | **Prometheus**| 9090 | http://localhost:9090 | Veri Toplama |
-| **Alertmanager**| 9093 | http://localhost:9093 | Alarm Yönetimi |
 
 ---
 
@@ -71,6 +75,7 @@ make dev
 ### 📊 Raporlama
 - Ek-4 Devam Takip Raporu
 - Dönem sonu raporları
+- AI Destekli BEP (Bireyselleştirilmiş Eğitim Programı) Oluşturma
 - PDF/Excel export
 
 ---
@@ -81,6 +86,8 @@ make dev
 arkadasozelegitim/
 ├── web/              # Next.js 16 Frontend
 ├── strapi/           # Strapi v5 Backend CMS
+├── mobile/           # React Native (Expo) Mobil Uygulama
+├── api/opencv/       # Python 3.13 AI Service (FastAPI)
 ├── scripts/          # Otomasyon Scriptleri
 ├── monitoring/       # Prometheus/Grafana Konfigürasyonu
 ├── docs/             # MkDocs Dokümantasyon
