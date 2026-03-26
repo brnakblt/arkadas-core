@@ -73,9 +73,9 @@
     "scan:cves": "bash scripts/docker_scout_scan.sh --mode cves --critical",
     "scan:recommendations": "bash scripts/docker_scout_scan.sh --mode recommendations",
     "------- MONITORING -------": "",
-    "monitoring:up": "docker compose -f docker-compose.monitoring.yml up -d",
-    "monitoring:down": "docker compose -f docker-compose.monitoring.yml down",
-    "monitoring:logs": "docker compose -f docker-compose.monitoring.yml logs -f"
+    "monitoring:up": "docker compose -f docker/docker-compose.monitoring.yml up -d",
+    "monitoring:down": "docker compose -f docker/docker-compose.monitoring.yml down",
+    "monitoring:logs": "docker compose -f docker/docker-compose.monitoring.yml logs -f"
   },
   "engines": {
     "node": ">=20.0.0",

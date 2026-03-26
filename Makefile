@@ -71,10 +71,10 @@ backup:
 	bash scripts/backup.sh
 
 backup-up:
-	docker compose -f docker-compose.backup.yml up -d --build
+	docker compose -f docker/docker-compose.backup.yml up -d --build
 
 backup-down:
-	docker compose -f docker-compose.backup.yml down
+	docker compose -f docker/docker-compose.backup.yml down
 
 restore:
 	@read -p "Enter timestamp (e.g., 20260121_120000): " ts; \
@@ -114,22 +114,22 @@ monitoring-stop:
 
 # Automation
 automation:
-	docker compose -f docker-compose.yml -f docker-compose.automation.yml up -d
+	docker compose -f docker-compose.yml -f docker/docker-compose.automation.yml up -d
 
 automation-stop:
-	docker compose -f docker-compose.yml -f docker-compose.automation.yml down
+	docker compose -f docker-compose.yml -f docker/docker-compose.automation.yml down
 
 # PBX
 pbx-up:
-	docker compose -f docker-compose.pbx.yml up -d
+	docker compose -f docker/docker-compose.pbx.yml up -d
 	@echo ""
 	@echo "PBX Admin: http://localhost:81"
 
 pbx-down:
-	docker compose -f docker-compose.pbx.yml down
+	docker compose -f docker/docker-compose.pbx.yml down
 
 pbx-logs:
-	docker compose -f docker-compose.pbx.yml logs -f
+	docker compose -f docker/docker-compose.pbx.yml logs -f
 
 # Storage Management
 storage-maintenance:
@@ -147,13 +147,13 @@ logs-web:
 
 # Traefik
 traefik-up:
-	docker compose -f docker-compose.traefik.yml up -d
+	docker compose -f docker/docker-compose.traefik.yml up -d
 
 traefik-down:
-	docker compose -f docker-compose.traefik.yml down
+	docker compose -f docker/docker-compose.traefik.yml down
 
 traefik-logs:
-	docker compose -f docker-compose.traefik.yml logs -f
+	docker compose -f docker/docker-compose.traefik.yml logs -f
 
 # Docker
 docker-build:
@@ -178,3 +178,19 @@ clean:
 clean-all: clean
 	docker compose down -v
 	sudo rm -rf infra_data/postgres infra_data/redis
+
+setup-profile:
+	@echo "" >> ~/.bashrc
+	@echo "# Gemini Dev Automation alias" >> ~/.bashrc
+	@echo "alias dev-chrome='google-chrome --remote-debugging-port=9222 --user-data-dir=\$$HOME/.chrome-dev-profile'" >> ~/.bashrc
+	@echo "" >> ~/.bashrc
+	@echo "# Ensure NVM defaults to Node 24" >> ~/.bashrc
+	@echo "nvm use 24 > /dev/null 2>&1" >> ~/.bashrc
+	@echo "✅ Profile updated. Please run 'source ~/.bashrc' to apply changes."
+
+setup-tools:
+	@mkdir -p ~/.gemini
+	@touch ~/.gemini/tools.yaml
+	@ln -sf ~/.gemini/tools.yaml ./tools.yaml
+	@echo "✅ Local tools.yaml linked to ~/.gemini/tools.yaml"
+

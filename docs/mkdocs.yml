@@ -72,6 +72,9 @@ nav:
     - API Dokümantasyonu: api/index.md
   - Deployment:
     - Kurulum Rehberi: deployment/index.md
+  - Geliştirici Kılavuzu:
+    - Geliştirici Rehberi: developer-guide.md
+    - Değişiklikler (Changelog): changelog.md
   - Destek:
     - SSS: support/faq.md
 
