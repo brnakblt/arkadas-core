@@ -49,7 +49,7 @@ npm install --legacy-peer-deps
 # 4. Trigger docker composition updates
 echo "[4/4] Updating Docker Infrastructure..."
 
-# Pull new versions of base/infrastructure images (sftpgo, onlyoffice, postgres, redis, ai-service)
+# Pull new versions of base/infrastructure images (sftpgo, collabora, postgres, redis, ai-service)
 docker compose pull
 
 # Rebuild only custom internal images without cache to ensure latest code is bundled

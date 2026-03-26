@@ -38,8 +38,8 @@ docker compose down --volumes --remove-orphans
 
 echo -e "\n${YELLOW}2. Cleaning database files...${NC}"
 # Use privileged alpine container to remove postgres data (owned by uid 70)
-docker run --rm -v "$(pwd):/app" -w /app alpine rm -rf /app/infra_data/postgres /app/infra_data/redis /app/infra_data/onlyoffice /app/infra_data/sftpgo
-mkdir -p infra_data/postgres infra_data/redis infra_data/onlyoffice/data infra_data/onlyoffice/log infra_data/onlyoffice/cache
+docker run --rm -v "$(pwd):/app" -w /app alpine rm -rf /app/infra_data/postgres /app/infra_data/redis /app/infra_data/sftpgo
+mkdir -p infra_data/postgres infra_data/redis
 mkdir -p infra_data/sftpgo/data infra_data/sftpgo/config
 
 echo -e "\n${YELLOW}3. Cleaning Strapi cache...${NC}"
