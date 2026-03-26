@@ -100,6 +100,7 @@ gha-creds-*.json
 .github/commands/
 .gemini/
 *.gemini.toml
+.bkit/
 
 # Tauri generated files
 web/src-tauri/gen/
@@ -175,3 +176,15 @@ todo.txt
 
 # Docker Scout Results
 *.sarif
+
+# ============================================================
+# Credentials & Security
+# ============================================================
+.secrets/
+mcp-oauth-tokens.json
+oauth-tokens.json
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
