@@ -3,9 +3,9 @@
  * Checks if user has admin or super_admin role
  */
 
-import type { Strapi } from '@strapi/strapi';
+import type { Core } from '@strapi/strapi';
 
-export default (policyContext: any, config: any, { strapi }: { strapi: Strapi }) => {
+export default (policyContext: any, config: any, { strapi }: { strapi: Core.Strapi }) => {
     const user = policyContext.state?.user;
 
     if (!user) {

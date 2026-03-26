@@ -23,6 +23,14 @@ export interface TeamMember {
   objectPosition?: string;
 }
 
+interface PersonnelData {
+  id: number;
+  title?: string;
+  fullName?: string;
+  specialty?: string;
+  avatarUrl?: string | null;
+}
+
 const Team: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +52,7 @@ const Team: React.FC = () => {
       const data = await response.json();
 
       // Map Personnel (Article 7) to TeamMember UI
-      const formattedMembers: TeamMember[] = data.data.map((p: any) => {
+      const formattedMembers: TeamMember[] = data.data.map((p: PersonnelData) => {
 
         // Map Enum Title to UI Category
         let category = "Diğer";

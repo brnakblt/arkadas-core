@@ -124,7 +124,7 @@ const EnrollmentModal: React.FC<{
 
     useEffect(() => {
         import('@/services/authService').then(({ authService }) => {
-            authService.getMe().then((res: any) => {
+            authService.getMe().then((res: { user?: { tenant?: { domain?: string } } }) => {
                 if (res?.user?.tenant?.domain) setTenantId(res.user.tenant.domain);
             }).catch(() => {});
         });

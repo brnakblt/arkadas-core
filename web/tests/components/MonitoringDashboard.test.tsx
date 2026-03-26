@@ -20,7 +20,7 @@ vi.mock('@/context/DashboardContext', () => ({
 
 // Mock Card Component
 vi.mock('@/components/ui/Card', () => ({
-    default: ({ children, className }: any) => <div data-testid="card" className={className}>{children}</div>
+    default: ({ children, className }: { children: React.ReactNode; className?: string }) => <div data-testid="card" className={className}>{children}</div>
 }));
 
 const mockStats = {
@@ -92,7 +92,7 @@ describe.skip('MonitoringPage', () => {
         });
 
         // Mock fetch to return a promise that doesn't resolve immediately
-        (global.fetch as any).mockImplementation(() => new Promise(() => { }));
+        (global.fetch as Mock).mockImplementation(() => new Promise(() => { }));
 
         render(<MonitoringPage />);
         expect(screen.getByText(/Loading monitoring data/i)).toBeInTheDocument();
@@ -104,7 +104,7 @@ describe.skip('MonitoringPage', () => {
             loading: false
         });
 
-        (global.fetch as any)
+        (global.fetch as Mock)
             .mockResolvedValueOnce({
                 ok: true,
                 json: async () => mockStats,
@@ -138,7 +138,7 @@ describe.skip('MonitoringPage', () => {
             loading: false
         });
 
-        (global.fetch as any).mockResolvedValueOnce({
+        (global.fetch as Mock).mockResolvedValueOnce({
             ok: false,
             status: 500,
         });

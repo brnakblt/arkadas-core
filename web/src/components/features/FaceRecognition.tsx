@@ -14,7 +14,7 @@ interface FaceRecognitionProps {
 
 const FaceRecognition: React.FC<FaceRecognitionProps> = ({ onFaceDetected, mode = 'verify', knownDescriptors = [] }) => {
     const webcamRef = useRef<Webcam>(null);
-    // eslint-disable-next-line no-undef
+     
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [modelsLoaded, setModelsLoaded] = useState(false);
     const [isScanning, setIsScanning] = useState(true);

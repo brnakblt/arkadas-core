@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Video, Wifi, WifiOff, AlertCircle } from 'lucide-react';
+import { Video, WifiOff, AlertCircle } from 'lucide-react';
 
 interface Camera {
     id: string;

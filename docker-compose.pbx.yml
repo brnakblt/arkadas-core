@@ -14,7 +14,7 @@ services:
       - ENABLE_FAIL2BAN=TRUE
       - ADMIN_USER=${PBX_ADMIN_USER:-admin}
       - ADMIN_PASS=${PBX_ADMIN_PASSWORD}
-      - WEBSERVER_PORT=81 # Map admin UI to port 81 to avoid conflict with OnlyOffice (8080)
+      - WEBSERVER_PORT=81 # Map admin UI to port 81 to avoid port conflicts
     volumes:
       - ./infra_data/pbx/data:/data
       - ./infra_data/pbx/logs:/var/log/asterisk

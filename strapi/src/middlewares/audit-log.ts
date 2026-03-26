@@ -3,9 +3,9 @@
  * Logs all data modifications for compliance and debugging
  */
 
-import type { Strapi } from '@strapi/strapi';
+import type { Core } from '@strapi/strapi';
 
-export default (config: any, { strapi }: { strapi: Strapi }) => {
+export default (config: any, { strapi }: { strapi: Core.Strapi }) => {
     return async (ctx: any, next: () => Promise<void>) => {
         const startTime = Date.now();
         const { method, url } = ctx.request;

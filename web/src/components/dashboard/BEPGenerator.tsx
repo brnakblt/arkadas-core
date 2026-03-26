@@ -94,7 +94,7 @@ const BEPGenerator: React.FC = () => {
     };
 
     // Helper to update specific report fields (making it editable)
-    const updateReportField = (field: keyof BEPData, value: any) => {
+    const updateReportField = (field: keyof BEPData, value: BEPData[keyof BEPData]) => {
         if (!reportData) return;
         setReportData({ ...reportData, [field]: value });
     };

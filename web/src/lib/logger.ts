@@ -36,26 +36,24 @@ function redact(message: string): string {
 }
 
 const logger = {
-    info: (message: string, meta?: any) => {
+    info: (message: string, meta?: unknown) => {
         const sanitizedMsg = redact(message);
         // In production, this would go to a file or log service (Elasticsearch/Graylog)
         // eslint-disable-next-line no-console
         console.log(`[INFO] ${new Date().toISOString()}: ${sanitizedMsg}`, meta || '');
     },
 
-    error: (message: string, error?: any) => {
+    error: (message: string, error?: unknown) => {
         const sanitizedMsg = redact(message);
-        // eslint-disable-next-line no-console
         console.error(`[ERROR] ${new Date().toISOString()}: ${sanitizedMsg}`, error || '');
     },
 
-    warn: (message: string, meta?: any) => {
+    warn: (message: string, meta?: unknown) => {
         const sanitizedMsg = redact(message);
-        // eslint-disable-next-line no-console
         console.warn(`[WARN] ${new Date().toISOString()}: ${sanitizedMsg}`, meta || '');
     },
 
-    debug: (message: string, meta?: any) => {
+    debug: (message: string, meta?: unknown) => {
         if (process.env.NODE_ENV === 'development') {
             const sanitizedMsg = redact(message);
             // eslint-disable-next-line no-console

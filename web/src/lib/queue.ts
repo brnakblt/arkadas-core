@@ -9,9 +9,9 @@ const connection = new IORedis({
     maxRetriesPerRequest: null,
 });
 
-export const notificationQueue = new Queue('notifications', { connection: connection as any });
+export const notificationQueue = new Queue('notifications', { connection: connection });
 
-export const addNotificationJob = async (data: any) => {
+export const addNotificationJob = async (data: Record<string, unknown>) => {
     return notificationQueue.add('send-notification', data, {
         attempts: 3,
         backoff: {

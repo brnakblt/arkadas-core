@@ -23,14 +23,14 @@ const worker = new Worker('notifications', async job => {
     console.log(`[Job ${job.id}] Processing ${job.name}...`);
 
     // Simulate heavy processing (e.g., sending emails, WhatsApp messages, etc.)
-    const { title, message, userCount } = job.data;
+    const { title, _message, userCount } = job.data;
 
     await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate delay
 
     console.log(`✅ [Job ${job.id}] Sent "${title}" to ${userCount} users.`);
 
     return { sent: userCount };
-}, { connection: connection as any });
+}, { connection });
 
 worker.on('completed', job => {
     console.log(`[Job ${job.id}] Completed!`);

@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 
-// This secret must match ONLYOFFICE_JWT_SECRET in your docker-compose or .env
+// JWT secret for document editor config signing
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 
 export async function POST(req: Request) {

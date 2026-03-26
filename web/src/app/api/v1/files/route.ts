@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
         const cookieStore = await cookies();
         const token = cookieStore.get('jwt')?.value;
-        const tenant_id = token ? 'authenticated-tenant' : 'arkadas';
+        const _tenant_id = token ? 'authenticated-tenant' : 'arkadas';
 
         const client = createNextcloudClient();
         const files = await listFiles(client, path);

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const ONLYOFFICE_URL = process.env.NEXT_PUBLIC_ONLYOFFICE_URL || '';
+const COLLABORA_URL = process.env.COLLABORA_URL || '';
 
 /** Build the Content-Security-Policy string */
 function buildCsp(): string {
@@ -13,7 +13,7 @@ function buildCsp(): string {
         "font-src 'self' https://fonts.gstatic.com",
         "img-src 'self' data: blob: https: http:",
         `connect-src 'self' https: http: ws: wss:`,
-        `frame-src 'self' ${ONLYOFFICE_URL} https://www.google.com https://translate.google.com https://maps.google.com`,
+        `frame-src 'self' ${COLLABORA_URL} https://www.google.com https://translate.google.com https://maps.google.com`,
         "media-src 'self' blob: data:",
         "object-src 'none'",
         "base-uri 'self'",

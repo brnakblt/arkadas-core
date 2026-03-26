@@ -8,11 +8,11 @@
  *     (parent-owns-student.ts, is-driver.ts)
  */
 
-import type { Strapi } from '@strapi/strapi';
+import type { Core } from '@strapi/strapi';
 
 const TENANT_ID_PATTERN = /^[a-z0-9_-]+$/;
 
-export default (config: any, { strapi }: { strapi: Strapi }) => {
+export default (config: any, { strapi }: { strapi: Core.Strapi }) => {
     return async (ctx: any, next: () => Promise<void>) => {
         const user = ctx.state?.user;
 

@@ -12,7 +12,7 @@
  * }
  */
 
-import type { Strapi } from '@strapi/strapi';
+import type { Core } from '@strapi/strapi';
 
 interface PermissionConfig {
     action: 'create' | 'read' | 'update' | 'delete' | 'manage';
@@ -83,7 +83,7 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
  * Fetch and merge dynamic permissions from erp-role content type
  */
 async function getMergedPermissions(
-    strapi: Strapi,
+    strapi: Core.Strapi,
     roleName: string
 ): Promise<Record<string, string[]>> {
     const cacheKey = `role:${roleName}`;
@@ -129,7 +129,7 @@ async function getMergedPermissions(
  * Log permission check to audit-log
  */
 async function logPermissionCheck(
-    strapi: Strapi,
+    strapi: Core.Strapi,
     userId: number,
     role: string,
     action: string,
@@ -165,7 +165,7 @@ async function logPermissionCheck(
 export default async (
     policyContext: any,
     config: PermissionConfig,
-    { strapi }: { strapi: Strapi }
+    { strapi }: { strapi: Core.Strapi }
 ) => {
     const user = policyContext.state?.user;
     const ctx = policyContext;

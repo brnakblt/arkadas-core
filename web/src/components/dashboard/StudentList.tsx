@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { studentService, Student } from '@/services/studentService';
 import { Search, Filter, MoreVertical, Loader2 } from 'lucide-react';
 // import { StudentStatus } from './types'; // Removed to avoid lint error
@@ -88,7 +89,7 @@ const StudentList: React.FC = () => {
                                     <tr key={student.id} className="hover:bg-slate-50 transition-colors group">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <img src={student.avatarUrl} alt="" className="w-10 h-10 rounded-full bg-slate-200 object-cover" />
+                                                <Image src={student.avatarUrl} alt="" width={40} height={40} className="rounded-full bg-slate-200 object-cover" />
                                                 <div>
                                                     <p className="font-semibold text-slate-800">{student.fullName}</p>
                                                     <p className="text-xs text-slate-500">{student.birthDate} Doğumlu</p>

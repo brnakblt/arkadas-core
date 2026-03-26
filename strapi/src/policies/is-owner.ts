@@ -10,7 +10,7 @@
  * }
  */
 
-import type { Strapi } from '@strapi/strapi';
+import type { Core } from '@strapi/strapi';
 
 interface OwnerConfig {
     ownerField?: string; // Default: 'user'
@@ -20,7 +20,7 @@ interface OwnerConfig {
 export default async (
     policyContext: any,
     config: OwnerConfig,
-    { strapi }: { strapi: Strapi }
+    { strapi }: { strapi: Core.Strapi }
 ) => {
     const user = policyContext.state?.user;
 

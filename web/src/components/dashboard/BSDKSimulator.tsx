@@ -7,6 +7,13 @@ import { studentService } from '@/services/studentService';
 import { opencvService } from '@/services/opencvService';
 import logger from '@/lib/logger';
 
+interface Student {
+    id: string | number;
+    fullName: string;
+    tcIdentity: string;
+    avatarUrl: string;
+}
+
 const BSDKSimulator: React.FC = () => {
     // eslint-disable-next-line no-undef
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -15,10 +22,10 @@ const BSDKSimulator: React.FC = () => {
     // eslint-disable-next-line no-undef
     const [stream, setStream] = useState<MediaStream | null>(null);
     const [status, setStatus] = useState<'idle' | 'scanning' | 'verified' | 'failed'>('idle');
-    const [isScanning, setIsScanning] = useState(false);
-    const [students, setStudents] = useState<any[]>([]);
+    const [_isScanning, setIsScanning] = useState(false);
+    const [students, setStudents] = useState<Student[]>([]);
     const [selectedStudentId, setSelectedStudentId] = useState<string>('');
-    const [scanResult, setScanResult] = useState<any>(null);
+    const [scanResult, setScanResult] = useState<Student | null>(null);
     const [kvkkConsent, setKvkkConsent] = useState(false);
 
     // Start Camera & Load Students
@@ -85,7 +92,7 @@ const BSDKSimulator: React.FC = () => {
 
                             if (result.verified) {
                                 setStatus('verified');
-                                setScanResult(targetStudent);
+                                setScanResult(targetStudent || null);
                             } else {
                                 setStatus('failed');
                                 setScanResult(null);
@@ -99,8 +106,9 @@ const BSDKSimulator: React.FC = () => {
                     }, 'image/jpeg');
                 }
             }
-        } catch (e: any) {
-            logger.error("BSDK Scan Exception", e.message || e);
+        } catch (e) {
+            const error = e as Error;
+            logger.error("BSDK Scan Exception", error.message || String(error));
             setIsScanning(false);
             setStatus('failed');
         }

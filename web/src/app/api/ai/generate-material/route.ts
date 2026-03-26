@@ -20,9 +20,9 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'System configuration error: API Key missing' }, { status: 500 });
         }
 
-        const rulesContext = JSON.stringify(MEB_RULES, null, 2);
+        const _rulesContext = JSON.stringify(MEB_RULES, null, 2);
 
-        let systemPrompt = `
+        const systemPrompt = `
         Sen 'Arkadaş' Özel Eğitim ERP sistemi için eğitim materyali üreten uzman bir eğitimcisin.
         MEB (Milli Eğitim Bakanlığı) müfredatına ve pedagojik ilkelerine uygun içerik üretmelisin.
         

@@ -4,7 +4,7 @@
  * Provides JWT-based authentication with refresh tokens for mobile apps
  */
 
-import type { Strapi } from '@strapi/strapi';
+import type { Core } from '@strapi/strapi';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
@@ -24,7 +24,7 @@ export default {
      * POST /api/auth/mobile/login
      */
     async login(ctx: any) {
-        const strapi: Strapi = ctx.strapi || global.strapi;
+        const strapi: Core.Strapi = ctx.strapi || global.strapi;
         const { identifier, password, deviceToken, platform, deviceName } = ctx.request.body;
 
         if (!identifier || !password) {
@@ -134,7 +134,7 @@ export default {
      * POST /api/auth/mobile/refresh
      */
     async refresh(ctx: any) {
-        const strapi: Strapi = ctx.strapi || global.strapi;
+        const strapi: Core.Strapi = ctx.strapi || global.strapi;
         const { refreshToken } = ctx.request.body;
 
         if (!refreshToken) {
@@ -185,7 +185,7 @@ export default {
      * POST /api/auth/mobile/logout
      */
     async logout(ctx: any) {
-        const strapi: Strapi = ctx.strapi || global.strapi;
+        const strapi: Core.Strapi = ctx.strapi || global.strapi;
         const { refreshToken } = ctx.request.body;
 
         if (!refreshToken) {
@@ -210,7 +210,7 @@ export default {
      * GET /api/auth/mobile/me
      */
     async me(ctx: any) {
-        const strapi: Strapi = ctx.strapi || global.strapi;
+        const strapi: Core.Strapi = ctx.strapi || global.strapi;
         const user = ctx.state.user;
 
         if (!user) {

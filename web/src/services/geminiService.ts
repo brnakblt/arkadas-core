@@ -8,7 +8,7 @@ const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
 
 const getClient = () => new GoogleGenAI({ apiKey });
 
-export const sendChatMessage = async (history: any[], message: string) => {
+export const sendChatMessage = async (history: Record<string, unknown>[], message: string) => {
     try {
         const response = await fetch('/api/ai/chat', {
             method: 'POST',
@@ -152,7 +152,10 @@ export const speakText = async (text: string) => {
 
 // eslint-disable-next-line no-undef
 export const playAudioBuffer = (buffer: AudioBuffer) => {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    if (typeof window === 'undefined') return;
+    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const audioContext = new AudioContextClass();
     const source = audioContext.createBufferSource();
     source.buffer = buffer;
     source.connect(audioContext.destination);

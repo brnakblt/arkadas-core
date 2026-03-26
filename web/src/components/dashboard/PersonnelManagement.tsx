@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import {
-    Briefcase, Calendar, CheckCircle, XCircle, Clock, Star,
+    Calendar, CheckCircle, XCircle, Clock, Star,
     BookOpen, User, Users, MoreVertical, Plus, ClipboardList, CheckSquare,
     TrendingUp, ChevronRight
 } from 'lucide-react';
@@ -85,7 +86,7 @@ const PersonnelManagement: React.FC = () => {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 {staff.avatarUrl ? (
-                                                    <img src={staff.avatarUrl} alt={staff.fullName} className="w-10 h-10 rounded-full object-cover bg-slate-200" />
+                                                    <Image src={staff.avatarUrl} alt={staff.fullName} width={40} height={40} className="rounded-full object-cover bg-slate-200" />
                                                 ) : (
                                                     <div className="w-10 h-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-bold">
                                                         {staff.fullName.charAt(0)}
@@ -154,9 +155,9 @@ const PersonnelManagement: React.FC = () => {
                                 {isApproved && <div className="absolute top-0 right-0 w-16 h-16 bg-green-500/10 rounded-bl-full z-0"></div>}
                                 <div className="flex justify-between items-start mb-2 relative z-10">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 overflow-hidden">
+                                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 overflow-hidden relative">
                                             {staff?.avatarUrl ? (
-                                                <img src={staff.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                                <Image src={staff.avatarUrl} alt="" width={32} height={32} className="object-cover" />
                                             ) : (
                                                 staff?.fullName.charAt(0)
                                             )}
@@ -316,7 +317,7 @@ const PersonnelManagement: React.FC = () => {
                         <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center gap-3">
                                 {staff.avatarUrl ? (
-                                    <img src={staff.avatarUrl} alt={staff.fullName} className="w-12 h-12 rounded-full object-cover shadow-sm bg-slate-200" />
+                                    <Image src={staff.avatarUrl} alt={staff.fullName} width={48} height={48} className="rounded-full object-cover shadow-sm bg-slate-200" />
                                 ) : (
                                     <div className="w-12 h-12 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center text-lg font-bold text-slate-600 shadow-inner">
                                         {staff.fullName.charAt(0)}

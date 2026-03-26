@@ -8,12 +8,12 @@
  * }
  */
 
-import type { Strapi } from '@strapi/strapi';
+import type { Core } from '@strapi/strapi';
 
 export default async (
     policyContext: any,
     _config: unknown,
-    { strapi }: { strapi: Strapi }
+    { strapi }: { strapi: Core.Strapi }
 ) => {
     const user = policyContext.state?.user;
     const ctx = policyContext;

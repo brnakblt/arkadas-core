@@ -20,7 +20,30 @@ interface User {
     avatar?: string;
 }
 
-const fetcher = (url: string) => authFetch<any>(url);
+interface StrapiRole {
+    id: string;
+    type: string;
+    name: string;
+}
+
+interface StrapiUser {
+    id: string;
+    username: string;
+    email: string;
+    fullName?: string;
+    role?: StrapiRole;
+    blocked: boolean;
+    confirmed: boolean;
+    phone?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+interface RolesResponse {
+    roles: StrapiRole[];
+}
+
+const fetcher = <T,>(url: string) => authFetch<T>(url);
 
 export default function UserManagement() {
     const [search, setSearch] = useState('');
@@ -31,21 +54,21 @@ export default function UserManagement() {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     // Fetch Roles to map ID <-> Name
-    const { data: rolesData } = useSWR('/api/users-permissions/roles', fetcher);
-    const rolesMap = rolesData?.roles?.reduce((acc: Record<string, string>, r: { type: string; id: string }) => ({ ...acc, [r.type]: r.id }), {}) || {};
+    const { data: rolesData } = useSWR<RolesResponse>('/api/users-permissions/roles', fetcher);
+    const rolesMap = rolesData?.roles?.reduce((acc: Record<string, string>, r: StrapiRole) => ({ ...acc, [r.type]: r.id }), {}) || {};
 
     // Fetch Users
-    const { data: usersData, isLoading } = useSWR(
+    const { data: usersData, isLoading } = useSWR<StrapiUser[]>(
         `/api/users?populate=role&sort=createdAt:desc`,
         fetcher
     );
 
-    const users: User[] = usersData?.map((u: any) => ({
+    const users: User[] = usersData?.map((u: StrapiUser) => ({
         id: u.id,
         username: u.username,
         email: u.email,
         fullName: u.fullName || u.username,
-        role: u.role?.type || 'student',
+        role: (u.role?.type as User['role']) || 'student',
         status: u.blocked ? 'inactive' : (u.confirmed ? 'active' : 'pending'),
         phone: u.phone,
         createdAt: u.createdAt,
@@ -93,9 +116,10 @@ export default function UserManagement() {
             mutate('/api/users?populate=role&sort=createdAt:desc');
             setModalMode(null);
             setSelectedUser(null);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
-            alert(`İşlem başarısız: ${err.message}`);
+            const message = err instanceof Error ? err.message : 'Bilinmeyen bir hata oluştu';
+            alert(`İşlem başarısız: ${message}`);
         }
     };
 
@@ -104,8 +128,9 @@ export default function UserManagement() {
         try {
             await authFetch(`/api/users/${userId}`, { method: 'DELETE' });
             mutate('/api/users?populate=role&sort=createdAt:desc');
-        } catch (err: any) {
-            alert(`Silme başarısız: ${err.message}`);
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Bilinmeyen bir hata oluştu';
+            alert(`Silme başarısız: ${message}`);
         }
     };
 
@@ -122,8 +147,9 @@ export default function UserManagement() {
                 body: JSON.stringify({ blocked: shouldBlock }),
             });
             mutate('/api/users?populate=role&sort=createdAt:desc');
-        } catch (err: any) {
-            alert(`Durum değiştirme başarısız: ${err.message}`);
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Bilinmeyen bir hata oluştu';
+            alert(`Durum değiştirme başarısız: ${message}`);
         }
     };
 

@@ -3,7 +3,7 @@
  * Optimized endpoints for mobile app consumption
  */
 
-import type { Strapi } from '@strapi/strapi';
+import type { Core } from '@strapi/strapi';
 
 export default {
     /**
@@ -11,7 +11,7 @@ export default {
      * GET /api/mobile/today
      */
     async today(ctx: any) {
-        const strapi: Strapi = ctx.strapi || global.strapi;
+        const strapi: Core.Strapi = ctx.strapi || global.strapi;
         const user = ctx.state.user;
         const tenantId = ctx.state.tenant?.id;
 
@@ -79,7 +79,7 @@ export default {
      * GET /api/mobile/schedule/:date
      */
     async schedule(ctx: any) {
-        const strapi: Strapi = ctx.strapi || global.strapi;
+        const strapi: Core.Strapi = ctx.strapi || global.strapi;
         const user = ctx.state.user;
         const tenantId = ctx.state.tenant?.id;
         const { date } = ctx.params;
@@ -132,7 +132,7 @@ export default {
      * POST /api/mobile/checkin
      */
     async checkin(ctx: any) {
-        const strapi: Strapi = ctx.strapi || global.strapi;
+        const strapi: Core.Strapi = ctx.strapi || global.strapi;
         const user = ctx.state.user;
         const tenantId = ctx.state.tenant?.id;
         const { studentId, confidenceScore, offlineId } = ctx.request.body;
@@ -217,7 +217,7 @@ export default {
      * GET /api/mobile/attendance
      */
     async attendance(ctx: any) {
-        const strapi: Strapi = ctx.strapi || global.strapi;
+        const strapi: Core.Strapi = ctx.strapi || global.strapi;
         const tenantId = ctx.state.tenant?.id;
         const { date, page = 1, pageSize = 50 } = ctx.query;
 
@@ -270,7 +270,7 @@ export default {
      * GET /api/mobile/my-students
      */
     async myStudents(ctx: any) {
-        const strapi: Strapi = ctx.strapi || global.strapi;
+        const strapi: Core.Strapi = ctx.strapi || global.strapi;
         const user = ctx.state.user;
 
         try {

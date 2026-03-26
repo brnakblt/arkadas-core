@@ -2,16 +2,17 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import FaceRecognition from '@/components/features/FaceRecognition';
 import { UserCheck, ShieldCheck, Clock } from 'lucide-react';
 
 const AttendancePage: React.FC = () => {
     const [mode, setMode] = useState<'register' | 'verify'>('verify');
-    const [lastDetection, setLastDetection] = useState<string | null>(null);
+    const [lastDetection, _setLastDetection] = useState<string | null>(null);
 
     const handleFaceDetected = (descriptor: Float32Array) => {
         // In a real app, we would save this to the database
-        console.log("Registered Face Descriptor:", descriptor);
+        console.warn("Registered Face Descriptor:", descriptor);
         alert("Yüz başarıyla kaydedildi! (Konsola bakınız debug için)");
         setMode('verify');
     };
@@ -74,8 +75,8 @@ const AttendancePage: React.FC = () => {
                             {/* Mock Data */}
                             <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden">
-                                        <img src="https://picsum.photos/id/64/100/100" alt="Avatar" />
+                                    <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden relative">
+                                        <Image src="https://picsum.photos/id/64/100/100" alt="Avatar" width={40} height={40} />
                                     </div>
                                     <div>
                                         <p className="font-bold text-slate-800 text-sm">Ali Yılmaz</p>
@@ -87,8 +88,8 @@ const AttendancePage: React.FC = () => {
 
                             <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden">
-                                        <img src="https://picsum.photos/id/65/100/100" alt="Avatar" />
+                                    <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden relative">
+                                        <Image src="https://picsum.photos/id/65/100/100" alt="Avatar" width={40} height={40} />
                                     </div>
                                     <div>
                                         <p className="font-bold text-slate-800 text-sm">Ayşe Demir</p>

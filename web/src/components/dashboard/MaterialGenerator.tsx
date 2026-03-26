@@ -153,7 +153,7 @@ const MaterialGenerator: React.FC = () => {
                                 <label className="block text-sm font-medium text-slate-700 mb-1">Çözünürlük</label>
                                 <select
                                     value={imageSize}
-                                    onChange={(e) => setImageSize(e.target.value as any)}
+                                    onChange={(e) => setImageSize(e.target.value as '1K' | '2K' | '4K')}
                                     className="w-full p-2.5 border border-slate-200 rounded-lg bg-slate-50 outline-none"
                                 >
                                     <option value="1K">1K (Hızlı - Taslak)</option>

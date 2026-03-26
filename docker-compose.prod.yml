@@ -119,15 +119,17 @@ services:
   # ==========================================
   # UTILITY LAYER
   # ==========================================
-  onlyoffice:
-    image: onlyoffice/documentserver:latest
+  collabora:
+    image: collabora/code:latest
     restart: always
     environment:
-      JWT_ENABLED: "true"
-      JWT_SECRET: ${JWT_SECRET}
-    volumes:
-      - onlyoffice_data:/var/www/onlyoffice/Data
-      - onlyoffice_log:/var/log/onlyoffice
+      aliasgroup1: "http://web:3000,http://strapi:1337"
+      username: admin
+      password: ${COLLABORA_ADMIN_PASSWORD:-collabora}
+      extra_params: "--o:ssl.enable=false --o:ssl.termination=false"
+      dictionaries: "tr en"
+    cap_add:
+      - MKNOD
 
   sftpgo:
     image: drakkan/sftpgo:latest
@@ -146,5 +148,4 @@ services:
 volumes:
   postgres_data:
   redis_data:
-  onlyoffice_data:
-  onlyoffice_log:
+
