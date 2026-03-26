@@ -11,6 +11,7 @@ graph TD
     User[User / Client] -->|HTTPS| Web[Next.js Web App]
     User -->|HTTPS| Mobile[Mobile App]
     User -->|HTTPS| Chatwoot[Chatwoot Support]
+    User -->|SIP/WebRTC| PBX[FreePBX/Asterisk]
     
     subgraph "Infrastructure"
         Web -->|REST/GraphQL| Strapi[Strapi CMS]
@@ -19,7 +20,10 @@ graph TD
         Strapi -->|SQL| Postgres[(PostgreSQL)]
         Strapi -->|Cache| Redis[(Redis)]
         Strapi -->|Files/Sync| SFTPGo[SFTPGo Storage]
+        Strapi -->|Sync CDR| PBX
         
+        Web -->|WebRTC| PBX
+        Mobile -->|SIP| PBX
         Web -->|WebDAV/Docs| OnlyOffice[OnlyOffice Docs]
         SFTPGo -->|Storage| Disk[Local/S3 Storage]
 
@@ -82,7 +86,13 @@ graph TD
 - **Integration:** Embedded in Web App
 - **Features:** Real-time collaboration, Office format support
 
-### 5. Automation & Messaging (Phase 6)
+### 5. Communication (PBX)
+- **Engine:** FreePBX / Asterisk
+- **Protocol:** SIP, WebRTC
+- **Features:** Voice calls, IVR, Call recordings
+- **Integration:** WebRTC dialer in Frontend, CDR sync to Strapi
+
+### 6. Automation & Messaging (Phase 6)
 - **n8n:** Low-code workflow automation tool. Acts as the central nervous system, routing alerts and synchronizing data between services.
 - **Chatwoot:** Open-source customer engagement suite. Handles internal communication and support tickets, replacing Slack.
 

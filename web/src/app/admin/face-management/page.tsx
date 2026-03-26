@@ -120,6 +120,15 @@ const EnrollmentModal: React.FC<{
     const [error, setError] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
+    const [tenantId, setTenantId] = useState('arkadas');
+
+    useEffect(() => {
+        import('@/services/authService').then(({ authService }) => {
+            authService.getMe().then((res: any) => {
+                if (res?.user?.tenant?.domain) setTenantId(res.user.tenant.domain);
+            }).catch(() => {});
+        });
+    }, []);
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -140,7 +149,7 @@ const EnrollmentModal: React.FC<{
             const formData = new FormData();
             formData.append('file', selectedFile);
             formData.append('user_id', `student_${student.id}`);
-            formData.append('tenant_id', 'arkadas'); // TODO: Get from context
+            formData.append('tenant_id', tenantId);
 
             const aiServiceUrl = process.env.NEXT_PUBLIC_AI_SERVICE_URL || 'http://localhost:8000';
             const response = await fetch(`${aiServiceUrl}/api/encode-file`, {

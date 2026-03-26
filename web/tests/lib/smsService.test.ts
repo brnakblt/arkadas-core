@@ -178,11 +178,6 @@ describe('SmsService', () => {
             const netgsmService = new SmsService({ provider: 'netgsm' });
             expect(netgsmService.isConfigured()).toBe(false);
         });
-
-        it('should report twilio as not configured without credentials', () => {
-            const twilioService = new SmsService({ provider: 'twilio' });
-            expect(twilioService.isConfigured()).toBe(false);
-        });
     });
 
     // ============================================================
@@ -269,64 +264,6 @@ describe('Provider Implementations', () => {
         });
     });
 
-    describe('Twilio', () => {
-        let twilioService: SmsService;
-
-        beforeEach(() => {
-            twilioService = new SmsService({
-                provider: 'twilio',
-                credentials: {
-                    twilioAccountSid: 'AC123',
-                    twilioAuthToken: 'token',
-                    twilioFromNumber: '+1234'
-                }
-            });
-        });
-
-        it('should send SMS successfully via Twilio', async () => {
-            mockFetch.mockResolvedValueOnce({
-                ok: true,
-                json: () => Promise.resolve({ sid: 'SM123' })
-            } as Response);
-
-            const result = await twilioService.send({ to: '+905551234567', text: 'Test' });
-
-            expect(result.success).toBe(true);
-            expect(result.messageId).toBe('SM123');
-            expect(mockFetch).toHaveBeenCalledWith(
-                expect.stringContaining('api.twilio.com'),
-                expect.objectContaining({
-                    method: 'POST',
-                    headers: expect.objectContaining({
-                        'Authorization': expect.stringContaining('Basic')
-                    })
-                })
-            );
-        });
-
-        it('should handle Twilio errors', async () => {
-            mockFetch.mockResolvedValueOnce({
-                ok: false,
-                json: () => Promise.resolve({ message: 'Invalid number' })
-            } as Response);
-
-            const result = await twilioService.send({ to: '+905551234567', text: 'Test' });
-
-            expect(result.success).toBe(false);
-            expect(result.error).toBe('Invalid number');
-        });
-
-        it('should fail if credentials missing', async () => {
-            const badService = new SmsService({
-                provider: 'twilio',
-                credentials: {}
-            });
-            const result = await badService.send({ to: '5551234567', text: 'Test' });
-            expect(result.success).toBe(false);
-            expect(result.error).toContain('credentials not configured');
-        });
-    });
-
     describe('Ileti Merkezi', () => {
         let imService: SmsService;
 
@@ -402,4 +339,3 @@ describe('Provider Implementations', () => {
         consoleSpy.mockRestore();
     });
 });
-

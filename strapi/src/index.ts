@@ -2,14 +2,14 @@
  * Bootstrap
  */
 
-import type { Core } from '@strapi/strapi';
+import type { Strapi } from '@strapi/strapi';
 
 export default {
   register(/*{ strapi }*/) {
     // Registration phase
   },
 
-  async bootstrap({ strapi }: { strapi: Core.Strapi }) {
+  async bootstrap({ strapi }: { strapi: Strapi }) {
     // --- Admin Seeding (Development Only) ---
     if (process.env.NODE_ENV === 'development') {
       try {

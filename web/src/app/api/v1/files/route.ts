@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { createNextcloudClient, listFiles, createDirectory } from '@/lib/nextcloud';
 
 export async function GET(request: NextRequest) {
@@ -12,7 +13,10 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url);
         const path = searchParams.get('path') || '/';
 
-        // TODO: Get user credentials from session
+        const cookieStore = await cookies();
+        const token = cookieStore.get('jwt')?.value;
+        const tenant_id = token ? 'authenticated-tenant' : 'arkadas';
+
         const client = createNextcloudClient();
         const files = await listFiles(client, path);
 

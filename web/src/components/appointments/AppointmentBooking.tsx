@@ -6,6 +6,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { authService } from '@/services/authService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCalendarAlt,
@@ -66,6 +67,7 @@ const AppointmentBooking: React.FC = () => {
     const [loadingSlots, setLoadingSlots] = useState(false);
     const [bookingType, setBookingType] = useState<'in-person' | 'online' | 'phone'>('in-person');
     const [error, setError] = useState<string | null>(null);
+    const [userId, setUserId] = useState<number | null>(null);
 
     // Mock teachers - replace with API call
     const teachers: Teacher[] = [
@@ -75,6 +77,9 @@ const AppointmentBooking: React.FC = () => {
     ];
 
     useEffect(() => {
+        authService.getMe()
+            .then(data => setUserId(data?.user?.id || null))
+            .catch(() => console.error('Failed to get user'));
         loadAppointments();
     }, []);
 
@@ -130,7 +135,7 @@ const AppointmentBooking: React.FC = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     teacherId: selectedTeacher,
-                    studentId: 1, // TODO: Get from user context
+                    studentId: userId || 1,
                     date: selectedDate,
                     startTime: selectedSlot,
                     type: bookingType,

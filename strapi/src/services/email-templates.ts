@@ -5,7 +5,7 @@
  * Uses Strapi's built-in email plugin with custom templates.
  */
 
-import type { Core } from '@strapi/strapi';
+import type { Strapi } from '@strapi/strapi';
 
 /**
  * Email template types
@@ -365,7 +365,7 @@ const emailTemplates: Record<EmailTemplateType, {
 /**
  * Email notification service factory
  */
-export default ({ strapi }: { strapi: Core.Strapi }) => ({
+export default ({ strapi }: { strapi: Strapi }) => ({
     /**
      * Send an email using a template
      */

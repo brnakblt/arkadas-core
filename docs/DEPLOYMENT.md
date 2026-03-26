@@ -52,8 +52,9 @@ Ideal for offices with dynamic IPs or blocked ports.
 | MEBBIS Service | 512 MB |
 | OnlyOffice | 2 GB |
 | SFTPGo | 512 MB |
+| PBX (FreePBX) | 2 GB |
 | Infisical | 512 MB |
-| **Toplam** | **~8-10 GB** |
+| **Toplam** | **~10-12 GB** |
 
 ---
 

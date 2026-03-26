@@ -38,8 +38,9 @@ export function useDriverTracking({ routeId, updateInterval = 10000 }: DriverTra
                 // For now, we will fallback to a public endpoint or assume auth header is handled globally if using a custom fetch wrapper.
                 // But since this is a new hook, let's try to use standard fetch with token from localStorage if available.
 
-                // TODO: Replace with proper auth context usage
-                const token = localStorage.getItem('jwt');
+                // Changed to rely on Next.js proxy route `/api/location-logs`
+                // HTTPOnly cookies will automatically be attached to the request
+                const token = null; // Removed client-side local storage grab
 
                 const payload = {
                     data: {

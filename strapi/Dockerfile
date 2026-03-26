@@ -4,7 +4,7 @@
 # ============================================================
 
 # Stage 1: Dependencies
-FROM node:22-slim AS deps
+FROM node:24.14.0-slim AS deps
 WORKDIR /opt/app
 
 # Install build dependencies for native modules
@@ -24,7 +24,7 @@ COPY package.json package-lock.json ./
 RUN npm install --omit=dev --legacy-peer-deps
 
 # Stage 2: Builder
-FROM node:22-slim AS builder
+FROM node:24.14.0-slim AS builder
 WORKDIR /opt/app
 
 # Install build tools
@@ -50,7 +50,7 @@ ENV NODE_ENV=production
 RUN npm run build
 
 # Stage 3: Production Runner (Minimal)
-FROM node:22-slim AS runner
+FROM node:24.14.0-slim AS runner
 WORKDIR /opt/app
 
 # Security: Install only runtime dependencies

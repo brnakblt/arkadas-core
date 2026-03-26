@@ -50,6 +50,7 @@ make dev
 | PostgreSQL | 5432 | - |
 | Redis | 6380 | - |
 | OnlyOffice | 8080 | http://localhost:8080 |
+| PBX (FreePBX) | 81 | http://localhost:81 |
 | Mobile (Expo) | 8085 | expo://localhost:8085 |
 | SFTPGo | 8088 | http://localhost:8088 (optional) |
 
@@ -91,6 +92,14 @@ docker compose --profile storage up -d
 
 # Access: http://localhost:8088
 # Credentials: check SFTPGO_ADMIN_* in .env
+
+### Optional: PBX (FreePBX)
+```bash
+# Start FreePBX
+docker compose -f docker-compose.pbx.yml up -d
+
+# Access Admin: http://localhost:81
+# Default Credentials: check .env
 ```
 
 ### View Logs

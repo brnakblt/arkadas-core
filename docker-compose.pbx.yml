@@ -1,0 +1,26 @@
+# FreePBX / Asterisk Service for Arkadas ERP
+# Usage: docker compose -f docker-compose.pbx.yml up -d
+
+services:
+  freepbx:
+    image: tiredofit/freepbx:latest
+    container_name: arkadas-pbx
+    restart: always
+    # IMPORTANT: VoIP needs direct access to ports for SIP/RTP (audio)
+    # network_mode: host is best for local networks to avoid NAT issues
+    network_mode: host 
+    environment:
+      - DB_EMBEDDED=TRUE
+      - ENABLE_FAIL2BAN=TRUE
+      - ADMIN_USER=${PBX_ADMIN_USER:-admin}
+      - ADMIN_PASS=${PBX_ADMIN_PASSWORD}
+      - WEBSERVER_PORT=81 # Map admin UI to port 81 to avoid conflict with OnlyOffice (8080)
+    volumes:
+      - ./infra_data/pbx/data:/data
+      - ./infra_data/pbx/logs:/var/log/asterisk
+      - ./infra_data/pbx/www:/var/www/html
+      - ./infra_data/pbx/recordings:/var/spool/asterisk/monitor # Konuşma kayıtları buraya gelecek
+    deploy:
+      resources:
+        limits:
+          memory: 2G

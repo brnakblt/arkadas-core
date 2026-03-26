@@ -32,6 +32,14 @@ help:
 	@echo "  make automation   Start n8n & Chatwoot"
 	@echo "  make automation-stop Stop automation stack"
 	@echo ""
+	@echo "PBX (Communication):"
+	@echo "  make pbx-up       Start FreePBX/Asterisk"
+	@echo "  make pbx-down     Stop FreePBX stack"
+	@echo "  make pbx-logs     View PBX logs"
+	@echo ""
+	@echo "Storage Management:"
+	@echo "  make storage-maintenance Run automatic data cleanup (retention policy)"
+	@echo ""
 	@echo "Backup System:"
 	@echo "  make backup       Create manual backup (host)"
 	@echo "  make backup-up    Start backup scheduler (cron + restic)"
@@ -110,6 +118,22 @@ automation:
 
 automation-stop:
 	docker compose -f docker-compose.yml -f docker-compose.automation.yml down
+
+# PBX
+pbx-up:
+	docker compose -f docker-compose.pbx.yml up -d
+	@echo ""
+	@echo "PBX Admin: http://localhost:81"
+
+pbx-down:
+	docker compose -f docker-compose.pbx.yml down
+
+pbx-logs:
+	docker compose -f docker-compose.pbx.yml logs -f
+
+# Storage Management
+storage-maintenance:
+	bash scripts/storage_maintenance.sh
 
 # Logs
 logs:

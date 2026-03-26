@@ -2,13 +2,13 @@
  * Arkadaş SMS Notification Service
  * 
  * SMS notification service supporting multiple Turkish SMS providers.
- * Configurable for Netgsm, Twilio, or other SMS gateways.
+ * Configurable for Netgsm or other SMS gateways.
  */
 
 /**
  * SMS provider types
  */
-export type SmsProvider = 'netgsm' | 'twilio' | 'iletimerkezi' | 'mock';
+export type SmsProvider = 'netgsm' | 'iletimerkezi' | 'mock';
 
 /**
  * SMS configuration
@@ -20,10 +20,6 @@ export interface SmsConfig {
         netgsmUserCode?: string;
         netgsmPassword?: string;
         netgsmMsgHeader?: string;
-        // Twilio
-        twilioAccountSid?: string;
-        twilioAuthToken?: string;
-        twilioFromNumber?: string;
         // İleti Merkezi
         iletimerkeziApiKey?: string;
         iletimerkeziSender?: string;
@@ -129,10 +125,6 @@ export class SmsService {
                 netgsmUserCode: process.env.NETGSM_USERCODE,
                 netgsmPassword: process.env.NETGSM_PASSWORD,
                 netgsmMsgHeader: process.env.NETGSM_MSGHEADER || 'ARKADAS',
-                // Twilio
-                twilioAccountSid: process.env.TWILIO_ACCOUNT_SID,
-                twilioAuthToken: process.env.TWILIO_AUTH_TOKEN,
-                twilioFromNumber: process.env.TWILIO_FROM_NUMBER,
                 // İleti Merkezi
                 iletimerkeziApiKey: process.env.ILETIMERKEZI_API_KEY,
                 iletimerkeziSender: process.env.ILETIMERKEZI_SENDER,
@@ -163,8 +155,6 @@ export class SmsService {
             switch (this.config.provider) {
                 case 'netgsm':
                     return await this.sendViaNetgsm(normalizedNumber, message.text);
-                case 'twilio':
-                    return await this.sendViaTwilio(normalizedNumber, message.text);
                 case 'iletimerkezi':
                     return await this.sendViaIletiMerkezi(normalizedNumber, message.text);
                 case 'mock':
@@ -295,53 +285,6 @@ export class SmsService {
     }
 
     /**
-     * Twilio API implementation
-     */
-    private async sendViaTwilio(to: string, text: string): Promise<SmsSendResult> {
-        const { twilioAccountSid, twilioAuthToken, twilioFromNumber } = this.config.credentials;
-
-        if (!twilioAccountSid || !twilioAuthToken || !twilioFromNumber) {
-            return {
-                success: false,
-                error: 'Twilio credentials not configured',
-                provider: 'twilio',
-            };
-        }
-
-        const response = await fetch(
-            `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`,
-            {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Basic ' + Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64'),
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    To: to,
-                    From: twilioFromNumber,
-                    Body: text,
-                }),
-            }
-        );
-
-        const result = await response.json();
-
-        if (response.ok) {
-            return {
-                success: true,
-                messageId: result.sid,
-                provider: 'twilio',
-            };
-        } else {
-            return {
-                success: false,
-                error: result.message || 'Twilio error',
-                provider: 'twilio',
-            };
-        }
-    }
-
-    /**
      * İleti Merkezi API implementation
      */
     private async sendViaIletiMerkezi(to: string, text: string): Promise<SmsSendResult> {
@@ -420,8 +363,6 @@ export class SmsService {
         switch (provider) {
             case 'netgsm':
                 return !!(credentials.netgsmUserCode && credentials.netgsmPassword);
-            case 'twilio':
-                return !!(credentials.twilioAccountSid && credentials.twilioAuthToken && credentials.twilioFromNumber);
             case 'iletimerkezi':
                 return !!credentials.iletimerkeziApiKey;
             case 'mock':

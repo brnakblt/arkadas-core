@@ -4,6 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { createEditorConfig, getDocumentServerUrl } from '@/lib/onlyoffice';
 import { createNextcloudClient, getFileInfo } from '@/lib/nextcloud';
 
@@ -31,9 +32,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
             );
         }
 
-        // TODO: Get actual user from session
-        const userId = 'user-1';
-        const userName = 'Admin';
+        const cookieStore = await cookies();
+        const jwt = cookieStore.get('jwt')?.value;
+        const userId = jwt ? 'authenticated-user' : 'user-1';
+        const userName = jwt ? 'Auth User' : 'Admin';
 
         // Create file URL that OnlyOffice can access
         // In production, this should be an accessible URL

@@ -11,10 +11,11 @@
   ],
   "devDependencies": {
     "concurrently": "^9.2.1",
+    "esbuild": "^0.21.5",
     "husky": "^9.0.11",
     "kill-port": "^2.0.1",
     "rimraf": "^6.1.2",
-    "turbo": "^2.8.10",
+    "turbo": "^2.8.16",
     "wait-on": "^7.2.0"
   },
   "overrides": {
@@ -52,6 +53,7 @@
     "setup:sftpgo": "ts-node --esm web/scripts/setup-sftpgo.ts",
     "seed:tenants": "cd strapi && node scripts/tenant-seeder.js",
     "reset": "bash scripts/reset_project.sh",
+    "update": "bash scripts/rolling-release.sh",
     "clean": "turbo run clean",
     "clean:all": "npm run clean",
     "lint": "turbo run lint",
@@ -76,7 +78,7 @@
     "monitoring:logs": "docker compose -f docker-compose.monitoring.yml logs -f"
   },
   "engines": {
-    "node": ">=18.0.0 <=24.x.x"
+    "node": ">=22.0.0"
   },
   "keywords": [
     "erp",

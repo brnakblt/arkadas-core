@@ -3,7 +3,7 @@
  * Seeds default roles on first startup
  */
 
-import type { Core } from '@strapi/strapi';
+import type { Strapi } from '@strapi/strapi';
 
 const DEFAULT_ROLES = [
     {
@@ -95,7 +95,7 @@ const DEFAULT_ROLES = [
     },
 ];
 
-export async function seedErpRoles(strapi: Core.Strapi) {
+export async function seedErpRoles(strapi: Strapi) {
     const existingRoles = await strapi.db.query('api::erp-role.erp-role').findMany();
 
     if (existingRoles.length > 0) {

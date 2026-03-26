@@ -41,6 +41,7 @@ make dev
 | **Web** | 3000 | http://localhost:3000 | Next.js Frontend |
 | **Strapi** | 1337 | http://localhost:1337/admin | CMS Admin Panel |
 | **SFTPGo** | 8088 | http://localhost:8088 | Dosya Yönetimi |
+| **PBX (FreePBX)** | 81 | http://localhost:81 | Santral Yönetimi |
 | **Grafana** | 3001 | http://localhost:3001 | Metrikler & Dashboard |
 | **Prometheus**| 9090 | http://localhost:9090 | Veri Toplama |
 | **Alertmanager**| 9093 | http://localhost:9093 | Alarm Yönetimi |
@@ -48,6 +49,12 @@ make dev
 ---
 
 ## ✨ Özellikler
+
+### 📞 Haberleşme (PBX)
+- **FreePBX/Asterisk** entegrasyonu (Opsiyonel)
+- **WebRTC** desteği (Tarayıcıdan arama)
+- Dahili numaralar arası ücretsiz görüşme
+- Strapi ile arama kaydı (CDR) senkronizasyonu
 
 ### 🔐 Güvenlik
 - **Fail-Closed** kimlik doğrulama

@@ -21,6 +21,11 @@ test.describe('BEP Generation Flow', () => {
 
         // Use a relative path as configured in playwright
         await page.goto('/dashboard/bep-ai');
+
+        // CRITICAL: Wait for React hydration to complete before interacting.
+        // Without this, Playwright types into server-rendered HTML before React
+        // attaches event handlers, causing state to never update.
+        await expect(page.getByTestId('bep-generator-root')).toHaveAttribute('data-hydrated', 'true', { timeout: 15000 });
     });
 
     test('should allow user to generate and edit a BEP', async ({ page }) => {
@@ -28,20 +33,31 @@ test.describe('BEP Generation Flow', () => {
         await expect(page.getByRole('heading', { name: 'BEP Asistanı' })).toBeVisible();
 
         // 1. Fill Observations
-        await page.fill('textarea[id="observations-input"]', 'Ali harfleri tanıyor ama hecelemede zorlanıyor.');
+        const obsTextarea = page.getByTestId('observations-input');
+        await obsTextarea.scrollIntoViewIfNeeded();
+        await obsTextarea.click();
+        await obsTextarea.fill('Ali harfleri tanıyor ama hecelemede zorlanıyor.');
+        await expect(obsTextarea).toHaveValue('Ali harfleri tanıyor ama hecelemede zorlanıyor.');
         
         // 2. Fill Strengths
-        await page.fill('textarea[id="strengths-input"]', 'Görsel hafızası iyi.');
+        const strengthsTextarea = page.locator('textarea[id="strengths-input"]');
+        await strengthsTextarea.scrollIntoViewIfNeeded();
+        await strengthsTextarea.fill('Görsel hafızası iyi.');
+        await expect(strengthsTextarea).toHaveValue('Görsel hafızası iyi.');
 
         // 3. Generate
-        await page.click('button:has-text("BEP Raporu Oluştur")');
+        const generateButton = page.getByTestId('generate-bep-button');
+        
+        // Wait for the button to enable. React state might lag slightly behind DOM updates.
+        await expect(generateButton).toBeEnabled({ timeout: 15000 });
+        await generateButton.click();
 
         // 4. Verify Result
         await expect(page.getByText('Taslak Hazır')).toBeVisible({ timeout: 10000 });
         
         // Verify student name appears in an input/textarea
-        const nameInput = page.locator('input').filter({ hasText: /Ali Yılmaz/ }).or(page.locator('input[value="Ali Yılmaz"]'));
-        await expect(nameInput.first()).toBeVisible();
+        // Using a more robust selector for the student name field
+        await expect(page.locator('input[value="Ali Yılmaz"]')).toBeVisible({ timeout: 10000 });
 
         // 5. Edit a goal
         // In our component, list items are textareas

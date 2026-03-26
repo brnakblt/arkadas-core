@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { speakText, playAudioBuffer, BEPData } from '@/services/geminiService';
 import { Sparkles, FileText, Volume2, Loader2, Download, Target, BookOpen, PenTool, CheckCircle, Save, RefreshCw } from 'lucide-react';
 import { MOCK_STUDENTS } from './constants';
@@ -14,8 +14,17 @@ const BEPGenerator: React.FC = () => {
     const [isGenerating, setIsGenerating] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const rootRef = useRef<HTMLDivElement>(null);
+
+    // Signal that React has hydrated this component (event handlers are attached)
+    useEffect(() => {
+        if (rootRef.current) {
+            rootRef.current.setAttribute('data-hydrated', 'true');
+        }
+    }, []);
 
     const selectedStudent = MOCK_STUDENTS.find(s => s.id === selectedStudentId);
+    
 
     const handleGenerate = async () => {
         if (!selectedStudent) return;
@@ -98,7 +107,7 @@ const BEPGenerator: React.FC = () => {
     };
 
     return (
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 h-[calc(100vh-140px)]">
+        <div ref={rootRef} className="grid grid-cols-1 xl:grid-cols-12 gap-6 h-[calc(100vh-140px)]" data-testid="bep-generator-root">
             {/* Input Section */}
             <div className="xl:col-span-4 flex flex-col space-y-4 h-full overflow-hidden">
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex-1 flex flex-col overflow-y-auto">
@@ -152,6 +161,7 @@ const BEPGenerator: React.FC = () => {
                             <p className="text-xs text-slate-500 mb-2">Öğrencinin mevcut durumu hakkında detaylı bilgi verin.</p>
                             <textarea
                                 id="observations-input"
+                                data-testid="observations-input"
                                 value={observations}
                                 onChange={(e) => setObservations(e.target.value)}
                                 placeholder="Örn: Ali görsel eşlemede çok iyi ancak sözel yönergeleri almakta zorlanıyor..."
@@ -164,6 +174,7 @@ const BEPGenerator: React.FC = () => {
                         <button
                             onClick={handleGenerate}
                             disabled={isGenerating || !observations.trim()}
+                            data-testid="generate-bep-button"
                             className="w-full bg-gradient-to-r from-lila-600 to-indigo-600 hover:from-lila-700 hover:to-indigo-700 text-white py-4 rounded-xl font-bold shadow-lg shadow-lila-200 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:shadow-none transform active:scale-[0.98]"
                         >
                             {isGenerating ? <Loader2 className="animate-spin" /> : <Sparkles size={22} />}

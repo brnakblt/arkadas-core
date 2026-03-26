@@ -3,9 +3,9 @@
  * Checks if user has parent/guardian role
  */
 
-import type { Core } from '@strapi/strapi';
+import type { Strapi } from '@strapi/strapi';
 
-export default (policyContext: any, config: any, { strapi }: { strapi: Core.Strapi }) => {
+export default (policyContext: any, config: any, { strapi }: { strapi: Strapi }) => {
     const user = policyContext.state?.user;
 
     if (!user) {

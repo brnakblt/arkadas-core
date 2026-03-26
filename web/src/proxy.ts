@@ -5,9 +5,10 @@ const ONLYOFFICE_URL = process.env.NEXT_PUBLIC_ONLYOFFICE_URL || '';
 
 /** Build the Content-Security-Policy string */
 function buildCsp(): string {
+    const isDev = process.env.NODE_ENV === 'development';
     return [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' https://maps.googleapis.com https://translate.google.com",
+        `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://maps.googleapis.com https://translate.google.com`,
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "font-src 'self' https://fonts.gstatic.com",
         "img-src 'self' data: blob: https: http:",

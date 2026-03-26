@@ -16,7 +16,7 @@
  * 7 - Error has occurred while force saving
  */
 
-import type { Core } from '@strapi/strapi';
+import type { Strapi } from '@strapi/strapi';
 import jwt from 'jsonwebtoken';
 import { releaseLock, forceReleaseLock } from '../services/document-lock';
 
@@ -160,7 +160,7 @@ export default {
      * SECURITY: Validates JWT and URL allowlist before processing
      */
     async callback(ctx: any) {
-        const strapi: Core.Strapi = ctx.strapi || global.strapi;
+        const strapi: Strapi = ctx.strapi || global.strapi;
         const body: OnlyOfficeCallbackBody = ctx.request.body;
 
         const { key, status, url, users } = body;
@@ -323,7 +323,7 @@ export default {
  * URL has already been validated by the controller
  */
 async function handleDocumentSave(
-    strapi: Core.Strapi,
+    strapi: Strapi,
     key: string,
     url?: string,
     users?: string[]
@@ -394,7 +394,7 @@ async function handleDocumentSave(
  * Handle document close (status 4)
  */
 async function handleDocumentClose(
-    strapi: Core.Strapi,
+    strapi: Strapi,
     key: string,
     users?: string[]
 ): Promise<void> {
@@ -411,7 +411,7 @@ async function handleDocumentClose(
  * Handle force save (status 6)
  */
 async function handleForceSave(
-    strapi: Core.Strapi,
+    strapi: Strapi,
     key: string,
     url?: string,
     users?: string[]
@@ -428,7 +428,7 @@ async function handleForceSave(
  * Create audit log entry
  */
 async function createAuditLog(
-    strapi: Core.Strapi,
+    strapi: Strapi,
     documentKey: string,
     action: string,
     users?: string[]
