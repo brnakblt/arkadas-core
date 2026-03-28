@@ -139,23 +139,7 @@ fi
 
 
 
-# 5. Generate SFTPGo Initial Admin Data (for auto-seeding)
-echo -e "Generating SFTPGo initial admin data..."
-mkdir -p "${PROJECT_ROOT}/infra_data/sftpgo/config"
-cat <<EOF > "${PROJECT_ROOT}/infra_data/sftpgo/config/initial_admin.json"
-{
-  "admins": [
-    {
-      "username": "admin",
-      "password": "${SFTPGO_ADMIN_PASSWORD}",
-      "status": 1,
-      "permissions": ["*"],
-      "description": "Default Admin created by seeding script"
-    }
-  ]
-}
-EOF
-
 echo -e "\n${GREEN}=== Environment Generation Complete ===${NC}"
-echo -e "SFTPGo Admin Password: ${YELLOW}${SFTPGO_ADMIN_PASSWORD}${NC}"
+echo -e "Admin Password: ${YELLOW}${GLOBAL_ADMIN_PASSWORD}${NC}"
+echo -e "SFTPGo Admin:   ${YELLOW}admin / ${SFTPGO_ADMIN_PASSWORD}${NC}"
 echo -e "Please run ${YELLOW}bash scripts/setup_infisical.sh${NC} to import these into Infisical."

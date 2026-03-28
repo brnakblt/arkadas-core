@@ -15,7 +15,7 @@ const Header: React.FC = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
 
-  const isDashboard = pathname === "/dashboard";
+  const isDashboard = pathname?.startsWith("/dashboard");
 
   const menuItems = useMemo(() => [
     {

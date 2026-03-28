@@ -1,8 +1,9 @@
 'use strict';
 
-const fs = require('fs-extra');
 const path = require('path');
-const xml2js = require('xml2js');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
+const fs = require('fs-extra');
+const { XMLParser } = require('fast-xml-parser');
 const crypto = require('crypto');
 const mime = require('mime-types');
 const SftpGoService = require('../src/utils/sftpgo');
@@ -57,11 +58,15 @@ const generateUsername = (first, last) => {
 };
 
 async function parseXmlFile(filePath) {
-    const parser = new xml2js.Parser({ explicitArray: false });
     const xmlData = await fs.readFile(filePath, 'utf8');
-    const result = await parser.parseStringPromise(xmlData);
+    const parser = new XMLParser({
+        ignoreAttributes: false,
+        attributeNamePrefix: "@_",
+        processEntities: false,
+    });
+    const result = parser.parse(xmlData);
 
-    let worksheet = result['Workbook']?.['ss:Worksheet'] || result['Workbook']?.['Worksheet'];
+    let worksheet = result['Workbook']?.['Worksheet'] || result['Workbook']?.['ss:Worksheet'];
     if (Array.isArray(worksheet)) worksheet = worksheet[0];
 
     let table = worksheet?.['Table'] || worksheet?.['ss:Table'];
@@ -69,6 +74,7 @@ async function parseXmlFile(filePath) {
 
     let rows = table?.['Row'] || table?.['ss:Row'];
     if (!rows) return [];
+    if (!Array.isArray(rows)) rows = [rows];
 
     return rows;
 }
@@ -82,7 +88,9 @@ function getRowData(row) {
     let currentIndex = 1;
 
     cells.forEach(cell => {
-        const cellIndex = parseInt(cell['$']?.['ss:Index'] || cell['$']?.['Index'] || currentIndex);
+        const cellIndexAttr = cell['@_ss:Index'] || cell['@_Index'];
+        const cellIndex = cellIndexAttr ? parseInt(cellIndexAttr) : currentIndex;
+        
         // Fill gaps
         while (currentIndex < cellIndex) {
             rowData[currentIndex] = '';
@@ -90,10 +98,17 @@ function getRowData(row) {
         }
 
         let data = cell['Data'] || cell['ss:Data'];
-        if (typeof data === 'object' && data['_']) data = data['_'];
-        if (typeof data !== 'string' && typeof data !== 'number') data = '';
+        let value = '';
+        
+        if (data !== undefined && data !== null) {
+            if (typeof data === 'object') {
+                value = data['#text'] || data[''] || '';
+            } else {
+                value = String(data);
+            }
+        }
 
-        rowData[currentIndex] = String(data).trim();
+        rowData[currentIndex] = String(value).trim();
         currentIndex++;
     });
 
@@ -751,6 +766,7 @@ async function seedApiToken(strapi) {
 }
 
 async function main() {
+    console.log(`\n🔌 Connecting to Database: ${process.env.DATABASE_HOST || 'localhost'}:${process.env.DATABASE_PORT || '5432'} as ${process.env.DATABASE_USERNAME || 'postgres'}`);
     const { createStrapi } = require('@strapi/strapi');
     const app = await createStrapi({ distDir: path.resolve(__dirname, '..', 'dist') }).load();
 

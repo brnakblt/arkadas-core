@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
         if (action === 'download') {
             const fileBuffer = await store.downloadFile(path);
 
-            return new NextResponse(fileBuffer as any, {
+            return new NextResponse(new Blob([new Uint8Array(fileBuffer)]), {
                 headers: {
                     "Content-Disposition": `attachment; filename="${path.split('/').pop()}"`,
                     "Content-Type": "application/octet-stream"

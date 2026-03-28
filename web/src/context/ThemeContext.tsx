@@ -15,9 +15,6 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function useTheme() {
     const context = useContext(ThemeContext);
-    if (!context) {
-        throw new Error('useTheme must be used within a ThemeProvider');
-    }
     return context;
 }
 
@@ -90,7 +87,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
  * Theme Toggle Button Component
  */
 export function ThemeToggle({ className = '' }: { className?: string }) {
-    const { effectiveTheme, toggleTheme } = useTheme();
+    const context = useTheme();
+    if (!context) return null;
+    const { effectiveTheme, toggleTheme } = context;
 
     return (
         <button
@@ -111,7 +110,9 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
  * Theme Selector with all options
  */
 export function ThemeSelector({ className = '' }: { className?: string }) {
-    const { theme, setTheme } = useTheme();
+    const context = useTheme();
+    if (!context) return null;
+    const { theme, setTheme } = context;
 
     const options: { value: Theme; label: string; icon: string }[] = [
         { value: 'light', label: 'Açık', icon: '☀️' },

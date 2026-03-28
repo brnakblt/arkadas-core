@@ -11,7 +11,6 @@
   ],
   "devDependencies": {
     "concurrently": "^9.2.1",
-    "esbuild": "^0.21.5",
     "husky": "^9.0.11",
     "kill-port": "^2.0.1",
     "rimraf": "^6.1.2",

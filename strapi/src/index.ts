@@ -38,30 +38,55 @@ export default {
           }
         }
 
-        // 2. Set Public/Authenticated Permissions for new Content Types
-        const roles = await strapi.plugin('users-permissions').service('role').find();
+        // 2. Set Public Permissions for all core content types
+        const publicRole = await strapi.query('plugin::users-permissions.role').findOne({
+          where: { type: 'public' },
+        });
 
-        const authenticatedRole = roles.find((r: any) => r.type === 'authenticated');
-        const publicRole = roles.find((r: any) => r.type === 'public');
+        if (publicRole) {
+          const coreApis = [
+            'api::hero.hero',
+            'api::service.service',
+            'api::about.about',
+            'api::process.process',
+            'api::faq.faq',
+            'api::gallery.gallery',
+            'api::article.article',
+            'api::category.category',
+            'api::author.author',
+            'api::attendance-log.attendance-log'
+          ];
 
-        if (authenticatedRole) {
-          const permissionUpdates: any = {};
+          for (const api of coreApis) {
+            // Enable find and findOne for public role
+            await strapi.query('plugin::users-permissions.permission').create({
+              data: {
+                action: `${api}.find`,
+                role: publicRole.id,
+              },
+            }).catch(() => { }); // Ignore duplicates
 
-          // Enable find/findOne for student and personnel
-          ['student', 'personnel'].forEach(api => {
-            permissionUpdates[`api::${api}.${api}`] = {
-              controllers: {
-                [api]: {
-                  find: { enabled: true },
-                  findOne: { enabled: true },
-                }
-              }
-            };
+            await strapi.query('plugin::users-permissions.permission').create({
+              data: {
+                action: `${api}.findOne`,
+                role: publicRole.id,
+              },
+            }).catch(() => { }); // Ignore duplicates
+          }
+
+          // Enable create for authenticated role for attendance
+          const authRole = await strapi.query('plugin::users-permissions.role').findOne({
+            where: { type: 'authenticated' },
           });
-
-          // This part involves complex plugin service calls usually, 
-          // but for now logging reminder is safer than potentially breaking boot with incorrect service calls
-          console.log('[Permission Seeder] Reminder: Ensure "Authenticated" role has find/findOne for Student and Personnel via Admin Panel or extended script.');
+          if (authRole) {
+            await strapi.query('plugin::users-permissions.permission').create({
+              data: {
+                action: 'api::attendance-log.attendance-log.create',
+                role: authRole.id,
+              },
+            }).catch(() => { });
+          }
+          console.log('[Permission Seeder] Public permissions and Auth Create enabled.');
         }
 
       } catch (error) {

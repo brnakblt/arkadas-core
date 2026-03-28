@@ -35,8 +35,5 @@ export function PolicyModalProvider({ children }: { children: ReactNode }) {
 
 export function usePolicyModal() {
     const context = useContext(PolicyModalContext);
-    if (context === undefined) {
-        throw new Error('usePolicyModal must be used within a PolicyModalProvider');
-    }
     return context;
 }

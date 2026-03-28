@@ -19,6 +19,25 @@ const nextConfig = {
   },
   // Empty turbopack config to silence webpack conflict warning
   turbopack: {},
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        crypto: false,
+        os: false,
+        stream: false,
+        http: false,
+        https: false,
+        zlib: false,
+        tls: false,
+        net: false,
+        child_process: false,
+      };
+    }
+    return config;
+  },
   images: {
     // unoptimized: true, // Removed to enable optimization
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],

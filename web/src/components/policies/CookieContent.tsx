@@ -5,8 +5,15 @@ import { useCookie } from "@/context/CookieContext";
 import { usePolicyModal } from "@/context/PolicyModalContext";
 
 const CookieContent = () => {
-    const { preferences, togglePreference, acceptAll, rejectAll, savePreferences } = useCookie();
-    const { closePolicyModal } = usePolicyModal();
+    const cookieContext = useCookie();
+    const policyContext = usePolicyModal();
+
+    if (!cookieContext || !policyContext) {
+        return null;
+    }
+
+    const { preferences, togglePreference, acceptAll, rejectAll, savePreferences } = cookieContext;
+    const { closePolicyModal } = policyContext;
 
     const handleSave = () => {
         savePreferences();

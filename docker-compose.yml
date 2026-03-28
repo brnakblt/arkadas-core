@@ -62,7 +62,7 @@ services:
   # SFTPGo - File Storage & WebDAV
   # ==========================================
   sftpgo:
-    image: drakkan/sftpgo:v2.6
+    image: drakkan/sftpgo:v2.7
     restart: unless-stopped
     ports:
       - "8088:8080" # WebAdmin/API
@@ -74,13 +74,9 @@ services:
       SFTPGO_WEBDAVD__BINDINGS__0__PORT: 8089
       SFTPGO_DATA_PROVIDER__DRIVER: sqlite
       SFTPGO_DATA_PROVIDER__NAME: /var/lib/sftpgo/sftpgo.db
-      SFTPGO_DEFAULT_ADMIN_CONFIG__USERNAME: ${SFTPGO_ADMIN_USER}
-      SFTPGO_DEFAULT_ADMIN_CONFIG__PASSWORD: ${SFTPGO_ADMIN_PASSWORD}
       SFTPGO_DATA_PROVIDER__CREATE_DEFAULT_ADMIN: "true"
       SFTPGO_DEFAULT_ADMIN_USERNAME: ${SFTPGO_ADMIN_USER}
       SFTPGO_DEFAULT_ADMIN_PASSWORD: ${SFTPGO_ADMIN_PASSWORD}
-      SFTPGO_LOADDATA_FROM: /var/lib/sftpgo/initial_admin.json
-      SFTPGO_LOADDATA_QUOTA_SCAN: 0
     volumes:
       - ./infra_data/sftpgo/data:/srv/sftpgo/data
       - ./infra_data/sftpgo/config:/var/lib/sftpgo

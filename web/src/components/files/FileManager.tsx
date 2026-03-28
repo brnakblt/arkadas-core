@@ -6,7 +6,7 @@
 "use client";
 
 import React, { useState, useCallback } from 'react';
-import useSWR, { mutate } from 'swr';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFolder,
@@ -75,12 +75,57 @@ const FileManager: React.FC<FileManagerProps> = ({ basePath = '/', onFileSelect 
     const [showNewFolderModal, setShowNewFolderModal] = useState(false);
     const [newFolderName, setNewFolderName] = useState('');
 
-    const { data, error, isLoading } = useSWR(
-        `/api/storage?path=${encodeURIComponent(currentPath)}`,
-        fetcher
-    );
+    const queryClient = useQueryClient();
+
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['storage', currentPath],
+        queryFn: () => fetcher(`/api/storage?path=${encodeURIComponent(currentPath)}`)
+    });
 
     const files: FileItem[] = data?.files || []; // API returns { files: [...] }
+
+    // Mutations
+    const uploadMutation = useMutation({
+        mutationFn: async (files: FileList) => {
+            setIsUploading(true);
+            try {
+                for (const file of Array.from(files)) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('path', currentPath);
+
+                    await fetch('/api/storage', {
+                        method: 'POST',
+                        body: formData,
+                    });
+                }
+            } finally {
+                setIsUploading(false);
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['storage', currentPath] });
+        },
+        onError: (err) => {
+            console.error('Upload error:', err);
+            alert('Yükleme başarısız oldu.');
+        }
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: async (filename: string) => {
+            await fetch(`/api/storage?path=${encodeURIComponent(filename)}`, {
+                method: 'DELETE',
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['storage', currentPath] });
+        },
+        onError: (err) => {
+            console.error('Delete error:', err);
+            alert('Silme işlemi başarısız oldu.');
+        }
+    });
 
     const handleNavigate = (file: FileItem) => {
         if (file.type === 'directory') {
@@ -98,58 +143,20 @@ const FileManager: React.FC<FileManagerProps> = ({ basePath = '/', onFileSelect 
     const handleUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files?.length) return;
-
-        setIsUploading(true);
-
-        try {
-            for (const file of Array.from(files)) {
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('path', currentPath);
-
-                await fetch('/api/storage', {
-                    method: 'POST',
-                    body: formData,
-                });
-            }
-
-            // Refresh file list
-            mutate(`/api/storage?path=${encodeURIComponent(currentPath)}`);
-        } catch (error) {
-            console.error('Upload error:', error);
-        } finally {
-            setIsUploading(false);
-            e.target.value = '';
-        }
-    }, [currentPath]);
+        uploadMutation.mutate(files);
+        e.target.value = '';
+    }, [uploadMutation]);
 
     const handleDownload = async (file: FileItem) => {
-        // Use action=download
         window.open(`/api/storage?path=${encodeURIComponent(file.filename)}&action=download`, '_blank');
     };
 
     const handleDelete = async (file: FileItem) => {
         if (!confirm(`"${file.basename}" silinecek. Emin misiniz?`)) return;
-
-        try {
-            // DELETE not implemented in route.ts yet?
-            // Wait, I strictly implemented POST and GET in route.ts.
-            // I need to add DELETE method to route.ts OR just disable delete for now to be safe as per plan?
-            // User request was "UI for file uploads". Delete is extra but good.
-            // I will implement DELETE in route.ts in next step. For now I keep this code pointing to it.
-            await fetch(`/api/storage?path=${encodeURIComponent(file.filename)}`, {
-                method: 'DELETE',
-            });
-
-            mutate(`/api/storage?path=${encodeURIComponent(currentPath)}`);
-        } catch (error) {
-            console.error('Delete error:', error);
-        }
+        deleteMutation.mutate(file.filename);
     };
 
     const handleCreateFolder = async () => {
-        // Folder creation not implemented in route.ts yet. 
-        // Showing alert for now.
         alert("Klasör oluşturma özelliği henüz eklenmedi.");
         setShowNewFolderModal(false);
         setNewFolderName('');

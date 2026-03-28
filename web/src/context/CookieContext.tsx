@@ -102,8 +102,5 @@ export function CookieProvider({ children }: { children: ReactNode }) {
 
 export function useCookie() {
     const context = useContext(CookieContext);
-    if (context === undefined) {
-        throw new Error('useCookie must be used within a CookieProvider');
-    }
     return context;
 }

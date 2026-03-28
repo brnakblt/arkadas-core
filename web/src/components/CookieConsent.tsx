@@ -7,20 +7,24 @@ import { usePolicyModal } from "@/context/PolicyModalContext";
 import { useCookie } from "@/context/CookieContext";
 
 const CookieConsent: React.FC = () => {
-    const { openPolicyModal } = usePolicyModal();
-    const { consentStatus, acceptAll, rejectAll } = useCookie();
+    const policyContext = usePolicyModal();
+    const cookieContext = useCookie();
+    
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        if (consentStatus === 'pending') {
+        if (cookieContext?.consentStatus === 'pending') {
             const timer = setTimeout(() => setIsVisible(true), 1000);
             return () => clearTimeout(timer);
         } else {
             setIsVisible(false);
         }
-    }, [consentStatus]);
+    }, [cookieContext?.consentStatus]);
 
-    if (!isVisible) return null;
+    if (!isVisible || !policyContext || !cookieContext) return null;
+
+    const { openPolicyModal } = policyContext;
+    const { acceptAll, rejectAll } = cookieContext;
 
     return (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] max-w-lg w-full px-4">

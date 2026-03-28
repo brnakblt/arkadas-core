@@ -2,63 +2,81 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import Webcam from 'react-webcam';
-import * as faceapi from 'face-api.js';
-/* eslint-disable no-undef */
-import { Camera, UserCheck, Loader2 } from 'lucide-react';
+import { Camera, UserCheck, Loader2, ShieldCheck, AlertCircle } from 'lucide-react';
 
 interface FaceRecognitionProps {
-    onFaceDetected?: (descriptor: Float32Array) => void;
+    onFaceDetected?: (descriptor: Float32Array, livenessVerified: boolean) => void;
     mode?: 'register' | 'verify';
-    knownDescriptors?: { label: string; descriptor: Float32Array }[];
+    knownDescriptors?: { id: string; label: string; descriptor: Float32Array }[];
 }
+
+type VerificationState = 'IDLE' | 'DETECTED' | 'BUFFERING' | 'VERIFYING_LIVENESS' | 'RECOGNIZING' | 'SUCCESS' | 'ERROR';
 
 const FaceRecognition: React.FC<FaceRecognitionProps> = ({ onFaceDetected, mode = 'verify', knownDescriptors = [] }) => {
     const webcamRef = useRef<Webcam>(null);
-     
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [modelsLoaded, setModelsLoaded] = useState(false);
-    const [isScanning, setIsScanning] = useState(true);
+    const [faceapi, setFaceApi] = useState<any>(null);
+    
+    const [vState, setVState] = useState<VerificationState>('IDLE');
+    const [statusMessage, setVStatusMessage] = useState<string>('');
     const [detectedName, setDetectedName] = useState<string | null>(null);
+    
+    // Frame buffer for liveness
+    const frameBuffer = useRef<string[]>([]);
+    const processingRef = useRef(false);
+
+    const AI_SERVICE_URL = process.env.NEXT_PUBLIC_AI_SERVICE_URL || 'http://localhost:8000';
 
     useEffect(() => {
-        const loadModels = async () => {
+        const init = async () => {
+            const fa = await import('face-api.js');
+            setFaceApi(fa);
+
             const MODEL_URL = '/models';
             try {
                 await Promise.all([
-                    faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
-                    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-                    faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+                    fa.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
+                    fa.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+                    fa.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
                 ]);
                 setModelsLoaded(true);
+                setVStatusMessage('Sistem hazır. Lütfen kameraya bakın.');
             } catch (error) {
                 console.error("Failed to load models:", error);
+                setVState('ERROR');
+                setVStatusMessage('Modeller yüklenemedi.');
             }
         };
-        loadModels();
+        init();
     }, []);
 
-    const handleVideoOnPlay = () => {
-        const interval = setInterval(async () => {
-            if (webcamRef.current && webcamRef.current.video && isScanning) {
-                const video = webcamRef.current.video;
+    const resetState = () => {
+        setTimeout(() => {
+            setVState('IDLE');
+            setDetectedName(null);
+            frameBuffer.current = [];
+            processingRef.current = false;
+            setVStatusMessage('Sistem hazır.');
+        }, 3000);
+    };
 
-                // Safety check if video is ready
+    useEffect(() => {
+        if (!modelsLoaded || !faceapi || vState === 'SUCCESS' || vState === 'BUFFERING' || vState === 'VERIFYING_LIVENESS' || processingRef.current) return;
+
+        const interval = setInterval(async () => {
+            if (webcamRef.current && webcamRef.current.video) {
+                const video = webcamRef.current.video;
                 if (video.readyState !== 4) return;
 
                 const displaySize = { width: video.videoWidth, height: video.videoHeight };
-
-                // Align canvas
                 if (canvasRef.current) {
                     faceapi.matchDimensions(canvasRef.current, displaySize);
                 }
 
-                // Detect
                 const detections = await faceapi.detectAllFaces(video).withFaceLandmarks().withFaceDescriptors();
-
-                // Resize
                 const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
-                // Draw
                 if (canvasRef.current) {
                     const ctx = canvasRef.current.getContext('2d');
                     if (ctx) {
@@ -67,44 +85,100 @@ const FaceRecognition: React.FC<FaceRecognitionProps> = ({ onFaceDetected, mode 
                     }
                 }
 
-                // Recognition Logic
                 if (resizedDetections.length > 0) {
-                    const descriptor = resizedDetections[0].descriptor;
+                    const detection = resizedDetections[0];
+                    const confidence = detection.detection.score;
 
-                    if (mode === 'register') {
-                        if (onFaceDetected) {
-                            onFaceDetected(descriptor);
-                            setIsScanning(false); // Stop scanning after capture
-                        }
-                    } else {
-                        // Verify
-                        if (knownDescriptors.length > 0) {
-                            const faceMatcher = new faceapi.FaceMatcher(knownDescriptors.map(d => new faceapi.LabeledFaceDescriptors(d.label, [d.descriptor])), 0.6);
-                            const bestMatch = faceMatcher.findBestMatch(descriptor);
-
-                            if (bestMatch.label !== 'unknown') {
-                                setDetectedName(bestMatch.toString());
-                                // Draw name box
-                                if (canvasRef.current) {
-                                    const box = resizedDetections[0].detection.box;
-                                    const drawBox = new faceapi.draw.DrawBox(box, { label: bestMatch.toString() });
-                                    drawBox.draw(canvasRef.current);
-                                }
-                            }
+                    if (confidence > 0.8) {
+                        if (vState === 'IDLE') {
+                            setVState('BUFFERING');
+                            setVStatusMessage('Lütfen bekleyin, canlılık kontrolü yapılıyor...');
+                            startLivenessCapture(detection.descriptor);
                         }
                     }
                 }
             }
-        }, 500); // 2 FPS check
+        }, 500);
         return () => clearInterval(interval);
+    }, [modelsLoaded, faceapi, vState]);
+
+    const startLivenessCapture = async (currentDescriptor: Float32Array) => {
+        processingRef.current = true;
+        const frames: string[] = [];
+        
+        // Capture 5 frames over 1 second
+        for (let i = 0; i < 5; i++) {
+            const screenshot = webcamRef.current?.getScreenshot();
+            if (screenshot) frames.push(screenshot);
+            await new Promise(resolve => setTimeout(resolve, 200));
+        }
+
+        setVState('VERIFYING_LIVENESS');
+        
+        try {
+            // 1. Verify Liveness via AI Service
+            const formData = new FormData();
+            for (let i = 0; i < frames.length; i++) {
+                const blob = await fetch(frames[i]).then(r => r.blob());
+                formData.append('frames', blob, `frame_${i}.jpg`);
+            }
+
+            const livenessRes = await fetch(`${AI_SERVICE_URL}/liveness`, {
+                method: 'POST',
+                body: formData
+            });
+            const livenessData = await livenessRes.json();
+
+            if (!livenessData.verified) {
+                setVState('ERROR');
+                setVStatusMessage('Canlılık doğrulanamadı! Lütfen tekrar deneyin.');
+                resetState();
+                return;
+            }
+
+            // 2. Recognize Person
+            setVState('RECOGNIZING');
+            if (mode === 'register') {
+                setVState('SUCCESS');
+                setVStatusMessage('Yüz başarıyla kaydedildi.');
+                onFaceDetected?.(currentDescriptor, true);
+                resetState();
+            } else {
+                if (knownDescriptors.length > 0) {
+                    const faceMatcher = new faceapi.FaceMatcher(
+                        knownDescriptors.map(d => new faceapi.LabeledFaceDescriptors(d.id, [d.descriptor])),
+                        0.6
+                    );
+                    const bestMatch = faceMatcher.findBestMatch(currentDescriptor);
+
+                    if (bestMatch.label !== 'unknown') {
+                        const person = knownDescriptors.find(d => d.id === bestMatch.label);
+                        setDetectedName(person?.label || 'Bilinmeyen');
+                        setVState('SUCCESS');
+                        setVStatusMessage(`Hoş geldiniz, ${person?.label}`);
+                        onFaceDetected?.(currentDescriptor, true);
+                        resetState();
+                    } else {
+                        setVState('ERROR');
+                        setVStatusMessage('Kişi tanınamadı.');
+                        resetState();
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Verification error:", error);
+            setVState('ERROR');
+            setVStatusMessage('Sistem hatası oluştu.');
+            resetState();
+        }
     };
 
     return (
-        <div className="relative w-full max-w-md mx-auto aspect-video rounded-xl overflow-hidden bg-slate-900 border-2 border-slate-700 shadow-xl">
+        <div className="relative w-full max-w-md mx-auto aspect-video rounded-2xl overflow-hidden bg-slate-950 border-4 border-slate-800 shadow-2xl transition-all duration-500">
             {!modelsLoaded && (
-                <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-900/90 text-white">
-                    <Loader2 className="animate-spin mb-2" size={32} />
-                    <p>Yüz modelleri yükleniyor...</p>
+                <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-900/90 text-white">
+                    <Loader2 className="animate-spin mb-4 text-blue-400" size={48} />
+                    <p className="font-medium tracking-wide">Yüz Tanıma Modülleri Hazırlanıyor...</p>
                 </div>
             )}
 
@@ -112,27 +186,44 @@ const FaceRecognition: React.FC<FaceRecognitionProps> = ({ onFaceDetected, mode 
                 ref={webcamRef}
                 audio={false}
                 screenshotFormat="image/jpeg"
-                className="w-full h-full object-cover"
-                onUserMedia={handleVideoOnPlay}
+                className={`w-full h-full object-cover transition-opacity duration-500 ${vState === 'SUCCESS' ? 'opacity-40' : 'opacity-100'}`}
                 mirrored={true}
             />
 
             <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full pointer-events-none" />
 
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
-                {mode === 'register' && (
-                    <button
-                        onClick={() => setIsScanning(true)}
-                        className="bg-blue-600 px-4 py-2 rounded-full text-white font-bold flex items-center gap-2 hover:bg-blue-700 transition"
-                    >
-                        <Camera size={20} /> Yüzü Kaydet
-                    </button>
-                )}
+            {/* Overlays */}
+            <div className="absolute inset-0 pointer-events-none border-[12px] border-transparent transition-colors duration-300" 
+                 style={{ borderColor: vState === 'SUCCESS' ? '#22c55e44' : vState === 'ERROR' ? '#ef444444' : 'transparent' }} />
+
+            {/* Status Bar */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+                <div className={`flex items-center gap-3 px-4 py-2 rounded-xl backdrop-blur-md border ${
+                    vState === 'SUCCESS' ? 'bg-green-500/20 border-green-500/50 text-green-400' :
+                    vState === 'ERROR' ? 'bg-red-500/20 border-red-500/50 text-red-400' :
+                    'bg-white/10 border-white/20 text-white'
+                }`}>
+                    {vState === 'BUFFERING' || vState === 'VERIFYING_LIVENESS' || vState === 'RECOGNIZING' ? (
+                        <Loader2 className="animate-spin" size={20} />
+                    ) : vState === 'SUCCESS' ? (
+                        <ShieldCheck size={20} />
+                    ) : vState === 'ERROR' ? (
+                        <AlertCircle size={20} />
+                    ) : (
+                        <Camera size={20} />
+                    )}
+                    <span className="text-sm font-semibold tracking-tight">{statusMessage}</span>
+                </div>
             </div>
 
-            {detectedName && (
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-green-500/90 text-white px-4 py-1 rounded-full font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-4">
-                    <UserCheck size={18} /> {detectedName}
+            {/* Success Overlay */}
+            {vState === 'SUCCESS' && detectedName && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-green-500/10 animate-in fade-in duration-500">
+                    <div className="bg-green-500 text-white p-4 rounded-full shadow-lg mb-4 animate-bounce">
+                        <UserCheck size={48} />
+                    </div>
+                    <h3 className="text-3xl font-bold text-white drop-shadow-md">{detectedName}</h3>
+                    <p className="text-green-400 font-medium mt-2">Giriş Onaylandı</p>
                 </div>
             )}
         </div>

@@ -1,0 +1,83 @@
+{
+  "kind": "collectionType",
+  "collectionName": "attendance_logs",
+  "info": {
+    "singularName": "attendance-log",
+    "pluralName": "attendance-logs",
+    "displayName": "Yoklama Kaydı",
+    "description": "Student and staff attendance with BKDS verification"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::student.student"
+    },
+    "staff": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::personnel.personnel"
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "checkInTime": {
+      "type": "datetime",
+      "required": true
+    },
+    "checkOutTime": {
+      "type": "datetime"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "present",
+        "absent",
+        "late",
+        "early_exit"
+      ],
+      "default": "present"
+    },
+    "verificationMethod": {
+      "type": "enumeration",
+      "enum": [
+        "face_recognition",
+        "manual",
+        "card",
+        "biometric_v2"
+      ],
+      "default": "biometric_v2"
+    },
+    "livenessVerified": {
+      "type": "boolean",
+      "default": false
+    },
+    "confidenceScore": {
+      "type": "decimal"
+    },
+    "mebbisSyncStatus": {
+      "type": "enumeration",
+      "enum": [
+        "synced",
+        "pending",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "mebbisSyncId": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "text"
+    },
+    "recordedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

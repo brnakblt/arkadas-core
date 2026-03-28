@@ -17,9 +17,6 @@ const TwoFactorContext = createContext<TwoFactorContextType | null>(null);
 
 export function useTwoFactor() {
     const context = useContext(TwoFactorContext);
-    if (!context) {
-        throw new Error('useTwoFactor must be used within TwoFactorProvider');
-    }
     return context;
 }
 
@@ -53,12 +50,7 @@ export function TwoFactorProvider({ children }: { children: ReactNode }) {
             throw new Error(data.error || 'Failed to setup 2FA');
         } catch (error) {
             console.error('2FA setup error:', error);
-            // For demo purposes, generate a mock key
-            const mockKey = generateMockSecret();
-            const mockQr = `otpauth://totp/ArkadasERP:user@example.com?secret=${mockKey}&issuer=ArkadasERP`;
-            setSetupKey(mockKey);
-            setQrCodeUrl(mockQr);
-            return { key: mockKey, qrCode: mockQr };
+            throw error;
         }
     }, []);
 
@@ -82,16 +74,8 @@ export function TwoFactorProvider({ children }: { children: ReactNode }) {
                 return true;
             }
             return false;
-        } catch {
-            // For demo, accept any 6-digit code
-            if (code.length === 6 && /^\d+$/.test(code)) {
-                setIsEnabled(true);
-                setIsVerified(true);
-                setShowVerifyModal(false);
-                pendingAction?.();
-                setPendingAction(null);
-                return true;
-            }
+        } catch (error) {
+            console.error('2FA verify error:', error);
             return false;
         }
     }, [pendingAction]);
@@ -115,15 +99,8 @@ export function TwoFactorProvider({ children }: { children: ReactNode }) {
                 return true;
             }
             return false;
-        } catch {
-            // For demo
-            if (code.length === 6) {
-                setIsEnabled(false);
-                setIsVerified(false);
-                setSetupKey(null);
-                setQrCodeUrl(null);
-                return true;
-            }
+        } catch (error) {
+            console.error('2FA disable error:', error);
             return false;
         }
     }, []);
@@ -241,11 +218,14 @@ function TwoFactorVerifyModal({
  * 2FA Setup Component
  */
 export function TwoFactorSetup() {
-    const { isEnabled, setupKey, enableTwoFactor, verifyCode, disableTwoFactor } =
-        useTwoFactor();
+    const context = useTwoFactor();
     const [step, setStep] = useState<'idle' | 'setup' | 'verify' | 'disable'>('idle');
     const [code, setCode] = useState('');
     const [error, setError] = useState('');
+
+    if (!context) return null;
+
+    const { isEnabled, setupKey, enableTwoFactor, verifyCode, disableTwoFactor } = context;
 
     const handleSetup = async () => {
         await enableTwoFactor();
@@ -394,16 +374,4 @@ export function TwoFactorSetup() {
             )}
         </div>
     );
-}
-
-/**
- * Generate mock TOTP secret
- */
-function generateMockSecret(): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-    let secret = '';
-    for (let i = 0; i < 16; i++) {
-        secret += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return secret;
 }

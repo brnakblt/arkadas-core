@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import useSWR, { mutate } from 'swr';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import UserTable from './UserTable';
 import UserModal from './UserModal';
 import UserFilters from './UserFilters';
@@ -43,6 +43,11 @@ interface RolesResponse {
     roles: StrapiRole[];
 }
 
+interface SaveUserData extends Partial<User> {
+    password?: string;
+    blocked?: boolean;
+}
+
 const fetcher = <T,>(url: string) => authFetch<T>(url);
 
 export default function UserManagement() {
@@ -53,15 +58,20 @@ export default function UserManagement() {
     const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view' | null>(null);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
+    const queryClient = useQueryClient();
+
     // Fetch Roles to map ID <-> Name
-    const { data: rolesData } = useSWR<RolesResponse>('/api/users-permissions/roles', fetcher);
+    const { data: rolesData } = useQuery<RolesResponse>({
+        queryKey: ['roles'],
+        queryFn: () => fetcher<RolesResponse>('/api/users-permissions/roles')
+    });
     const rolesMap = rolesData?.roles?.reduce((acc: Record<string, string>, r: StrapiRole) => ({ ...acc, [r.type]: r.id }), {}) || {};
 
     // Fetch Users
-    const { data: usersData, isLoading } = useSWR<StrapiUser[]>(
-        `/api/users?populate=role&sort=createdAt:desc`,
-        fetcher
-    );
+    const { data: usersData, isLoading } = useQuery<StrapiUser[]>({
+        queryKey: ['users'],
+        queryFn: () => fetcher<StrapiUser[]>('/api/users?populate=role&sort=createdAt:desc')
+    });
 
     const users: User[] = usersData?.map((u: StrapiUser) => ({
         id: u.id,
@@ -87,51 +97,78 @@ export default function UserManagement() {
         return matchesSearch && matchesRole && matchesStatus;
     });
 
-    const handleSave = async (userData: Partial<User> & { password?: string }) => {
-        try {
-            if (modalMode === 'create') {
-                const roleId = rolesMap[userData.role || 'student'];
-                await authFetch('/api/users', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        ...userData,
-                        role: roleId,
-                        confirmed: true,
-                        blocked: false,
-                        provider: 'local'
-                    }),
-                });
-            } else if (modalMode === 'edit' && selectedUser) {
-                // Determine if we need to send role ID
-                const updatePayload: any = { ...userData };
-                if (userData.role) {
-                    updatePayload.role = rolesMap[userData.role];
-                }
-
-                await authFetch(`/api/users/${selectedUser.id}`, {
-                    method: 'PUT',
-                    body: JSON.stringify(updatePayload),
-                });
-            }
-            mutate('/api/users?populate=role&sort=createdAt:desc');
+    // Mutations
+    const createMutation = useMutation({
+        mutationFn: async (userData: SaveUserData) => {
+            const roleId = rolesMap[userData.role || 'student'];
+            return authFetch('/api/users', {
+                method: 'POST',
+                body: JSON.stringify({
+                    ...userData,
+                    role: roleId,
+                    confirmed: true,
+                    blocked: false,
+                    provider: 'local'
+                }),
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['users'] });
             setModalMode(null);
             setSelectedUser(null);
-        } catch (err: unknown) {
-            console.error(err);
-            const message = err instanceof Error ? err.message : 'Bilinmeyen bir hata oluştu';
+        },
+        onError: (err: Error) => {
+            const message = err.message || 'Bilinmeyen bir hata oluştu';
             alert(`İşlem başarısız: ${message}`);
+        }
+    });
+
+    const updateMutation = useMutation({
+        mutationFn: async ({ id, data }: { id: string, data: SaveUserData }) => {
+            const updatePayload: Record<string, unknown> = { ...data };
+            if (data.role) {
+                updatePayload.role = rolesMap[data.role];
+            }
+            return authFetch(`/api/users/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify(updatePayload),
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['users'] });
+            setModalMode(null);
+            setSelectedUser(null);
+        },
+        onError: (err: Error) => {
+            const message = err.message || 'Bilinmeyen bir hata oluştu';
+            alert(`İşlem başarısız: ${message}`);
+        }
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: async (userId: string) => {
+            return authFetch(`/api/users/${userId}`, { method: 'DELETE' });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['users'] });
+        },
+        onError: (err: Error) => {
+            const message = err.message || 'Bilinmeyen bir hata oluştu';
+            alert(`Silme başarısız: ${message}`);
+        }
+    });
+
+    const handleSave = async (userData: SaveUserData) => {
+        if (modalMode === 'create') {
+            createMutation.mutate(userData);
+        } else if (modalMode === 'edit' && selectedUser) {
+            updateMutation.mutate({ id: selectedUser.id, data: userData });
         }
     };
 
     const handleDelete = async (userId: string) => {
         if (!confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?')) return;
-        try {
-            await authFetch(`/api/users/${userId}`, { method: 'DELETE' });
-            mutate('/api/users?populate=role&sort=createdAt:desc');
-        } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : 'Bilinmeyen bir hata oluştu';
-            alert(`Silme başarısız: ${message}`);
-        }
+        deleteMutation.mutate(userId);
     };
 
     const handleToggleStatus = async (userId: string) => {
@@ -140,17 +177,7 @@ export default function UserManagement() {
 
         // Strapi blocked: true = inactive.
         const shouldBlock = user.status === 'active';
-
-        try {
-            await authFetch(`/api/users/${userId}`, {
-                method: 'PUT',
-                body: JSON.stringify({ blocked: shouldBlock }),
-            });
-            mutate('/api/users?populate=role&sort=createdAt:desc');
-        } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : 'Bilinmeyen bir hata oluştu';
-            alert(`Durum değiştirme başarısız: ${message}`);
-        }
+        updateMutation.mutate({ id: userId, data: { blocked: shouldBlock } });
     };
 
     return (

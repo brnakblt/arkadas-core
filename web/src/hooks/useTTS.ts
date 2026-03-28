@@ -104,6 +104,9 @@ export function useTTS() {
     }, []);
 
     useEffect(() => {
+        // Only run on client
+        if (typeof window === 'undefined') return;
+
         // Initialize Worker
         if (!workerRef.current) {
             workerRef.current = new Worker('/tts-worker.js');

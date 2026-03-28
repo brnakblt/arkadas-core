@@ -15,6 +15,7 @@ interface SFTPGoUser {
     description?: string;
     created_at?: number;
     updated_at?: number;
+    groups?: Array<{ name: string; type: number }>;
 }
 
 interface SFTPGoFolder {
@@ -209,10 +210,78 @@ class SFTPGoApiService {
     }
 
     /**
-     * Get server status
+     * Ensure a group exists in SFTPGo
      */
-    async getStatus(): Promise<{ active_connections: number; uptime_ms: number }> {
-        return this.request<{ active_connections: number; uptime_ms: number }>('/status');
+    async ensureGroup(name: string, description?: string): Promise<void> {
+        try {
+            const existing = await this.getFolder(name); // Groups often map to folders or specific permissions
+            if (existing) return;
+
+            await this.request<SFTPGoFolder>('/folders', 'POST', {
+                name,
+                mapped_path: `/srv/sftpgo/data/groups/${name}`,
+                description: description || `Group ${name}`,
+            });
+            console.log(`[SFTPGo] Group/Folder created: ${name}`);
+        } catch (error) {
+            console.error(`[SFTPGo] Failed to ensure group ${name}:`, error.message);
+        }
+    }
+
+    /**
+     * Sync a user to SFTPGo (Create or Update)
+     */
+    async syncUser(params: {
+        username: string;
+        password?: string;
+        email?: string;
+        description?: string;
+        group?: string;
+        deleteUser?: boolean;
+    }): Promise<void> {
+        const { username, password, email, description, group, deleteUser = false } = params;
+
+        try {
+            if (deleteUser) {
+                await this.deleteUser(username);
+                console.log(`[SFTPGo] User deleted: ${username}`);
+                return;
+            }
+
+            const existingUser = await this.getUser(username);
+            const method = existingUser ? 'PUT' : 'POST';
+            const endpoint = existingUser ? `/users/${username}` : '/users';
+
+            const userData: Partial<SFTPGoUser> = {
+                username,
+                status: 1,
+                email: email || `${username}@arkadas.com.tr`,
+                description: description || 'Synced from ERP',
+                home_dir: `/srv/sftpgo/data/${username}`,
+                permissions: { '/': ['*'] },
+            };
+
+            if (password) {
+                userData.password = password;
+            }
+
+            // If user exists, we might not want to overwrite everything if not provided
+            // But for a 'sync' operation, we usually enforce the state
+            
+            await this.request(endpoint, method, userData);
+            console.log(`[SFTPGo] User ${existingUser ? 'updated' : 'created'}: ${username}`);
+
+            if (group) {
+                // In SFTPGo v2 users can belong to multiple groups
+                // This is a simplified version matching the old JS logic
+                await this.updateUser(username, {
+                    ...userData,
+                    groups: [{ name: group, type: 1 }]
+                });
+            }
+        } catch (error) {
+            console.error(`[SFTPGo] Failed to sync user ${username}:`, error.message);
+        }
     }
 }
 

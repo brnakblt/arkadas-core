@@ -449,6 +449,47 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAttendanceLogAttendanceLog extends Struct.CollectionTypeSchema {
+  collectionName: 'attendance_logs';
+  info: {
+    description: 'Student and staff attendance with BKDS verification';
+    displayName: 'Yoklama Kayd\u0131';
+    pluralName: 'attendance-logs';
+    singularName: 'attendance-log';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    checkInTime: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    checkOutTime: Schema.Attribute.DateTime;
+    confidenceScore: Schema.Attribute.Decimal;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    date: Schema.Attribute.Date & Schema.Attribute.Required;
+    livenessVerified: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::attendance-log.attendance-log'> &
+      Schema.Attribute.Private;
+    mebbisSyncId: Schema.Attribute.String;
+    mebbisSyncStatus: Schema.Attribute.Enumeration<['synced', 'pending', 'failed']> &
+      Schema.Attribute.DefaultTo<'pending'>;
+    notes: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    recordedBy: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+    staff: Schema.Attribute.Relation<'manyToOne', 'api::personnel.personnel'>;
+    status: Schema.Attribute.Enumeration<['present', 'absent', 'late', 'early_exit']> &
+      Schema.Attribute.DefaultTo<'present'>;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student.student'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    verificationMethod: Schema.Attribute.Enumeration<
+      ['face_recognition', 'manual', 'card', 'biometric_v2']
+    > &
+      Schema.Attribute.DefaultTo<'biometric_v2'>;
+  };
+}
+
 export interface ApiAuditLogAuditLog extends Struct.CollectionTypeSchema {
   collectionName: 'audit_logs';
   info: {
@@ -1611,6 +1652,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::about.about': ApiAboutAbout;
       'api::article.article': ApiArticleArticle;
+      'api::attendance-log.attendance-log': ApiAttendanceLogAttendanceLog;
       'api::audit-log.audit-log': ApiAuditLogAuditLog;
       'api::author.author': ApiAuthorAuthor;
       'api::category.category': ApiCategoryCategory;

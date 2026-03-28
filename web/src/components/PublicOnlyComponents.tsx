@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 
@@ -12,6 +13,15 @@ const AccessibilityMenu = dynamic(() => import('./AccessibilityMenu'), { ssr: fa
  */
 const PublicOnlyComponents: React.FC = () => {
     const pathname = usePathname();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted || typeof window === 'undefined') {
+        return null;
+    }
 
     // Paths where these components should NOT appear
     const excludedPaths = [

@@ -1,0 +1,65 @@
+version: 2
+enable-beta-ecosystems: true
+updates:
+  # Root package.json
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    # Only security updates - disable version updates
+    open-pull-requests-limit: 0
+    # Security updates are always created regardless of the limit above
+    security-updates-only: true
+    commit-message:
+      prefix: "security"
+      prefix-development: "security(dev)"
+    labels:
+      - "security"
+      - "dependencies"
+    reviewers:
+      - "brnakblt"
+
+  # Web package.json
+  - package-ecosystem: "npm"
+    directory: "/web"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+    commit-message:
+      prefix: "security"
+      prefix-development: "security(dev)"
+    labels:
+      - "security"
+      - "dependencies"
+    reviewers:
+      - "brnakblt"
+
+  # Strapi package.json
+  - package-ecosystem: "npm"
+    directory: "/strapi"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+    commit-message:
+      prefix: "security"
+      prefix-development: "security(dev)"
+    labels:
+      - "security"
+      - "dependencies"
+    reviewers:
+      - "brnakblt"
+
+  # Mobile package.json
+  - package-ecosystem: "npm"
+    directory: "/mobile"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0
+    commit-message:
+      prefix: "security"
+      prefix-development: "security(dev)"
+    labels:
+      - "security"
+      - "dependencies"
+    reviewers:
+      - "brnakblt"

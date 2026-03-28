@@ -1,22 +1,24 @@
 'use strict';
 
-// Shared SFTPGo Service Utility
-// Handles authentication and CRUD for Users/Groups
+const fs = require('fs');
 
+/**
+ * Standalone SFTPGo Sync Utility for Seed and Lifecycles
+ * Designed to work in both ESM and CJS environments without complex TS dependencies
+ */
 class SftpGoService {
-    constructor() {
-        this.baseUrl = process.env.SFTPGO_URL || 'http://localhost:8088';
-        this.adminUser = process.env.SFTPGO_ADMIN_USER || 'admin';
-        this.adminPassword = process.env.SFTPGO_ADMIN_PASSWORD;
+    constructor(url, user, pass) {
+        this.baseUrl = url || process.env.SFTPGO_URL || 'http://localhost:8088';
+        this.adminUser = user || process.env.SFTPGO_ADMIN_USER || 'admin';
+        this.adminPassword = pass || process.env.SFTPGO_ADMIN_PASSWORD;
         this.token = null;
+        this.tokenExpiresAt = null;
     }
 
     async authenticate() {
-        // If we have a token and it's not expired (basic check), verify or refresh?
-        // For simple scripts/lifecycles, re-auth is safer
         try {
             if (!this.adminPassword) {
-                console.warn('SFTPGO_ADMIN_PASSWORD not set, skipping sync.');
+                console.warn('[SFTPGo] Password not set, skipping auth.');
                 return false;
             }
 
@@ -27,111 +29,92 @@ class SftpGoService {
             });
 
             if (!res.ok) {
-                console.error(`SFTPGo Auth Error: ${res.status}`);
+                console.error(`[SFTPGo] Auth Error: ${res.status}`);
                 return false;
             }
 
             const data = await res.json();
             this.token = data.access_token;
+            this.tokenExpiresAt = data.expires_at ? new Date(data.expires_at).getTime() : Date.now() + 3500 * 1000;
             return true;
         } catch (e) {
-            console.error(`SFTPGo Not Reachable: ${e.message}`);
+            console.error(`[SFTPGo] Not Reachable: ${e.message}`);
             return false;
         }
     }
 
-    async ensureGroup(name, description) {
-        if (!this.token && !(await this.authenticate())) return;
-
-        try {
-            const check = await fetch(`${this.baseUrl}/api/v2/groups/${name}`, {
-                headers: { 'Authorization': `Bearer ${this.token}` }
-            });
-
-            if (check.ok) return; // Group exists
-
-            const groupData = {
-                name,
-                description,
-                permissions: { "/": ["*"] }
-            };
-
-            await fetch(`${this.baseUrl}/api/v2/groups`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${this.token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(groupData)
-            });
-            console.log(`SFTPGo Group created: ${name}`);
-        } catch (e) {
-            console.error(`SFTPGo Group Failed (${name}):`, e.message);
+    async ensureAuth() {
+        const now = Date.now();
+        if (!this.token || !this.tokenExpiresAt || now >= this.tokenExpiresAt - 30000) {
+            return await this.authenticate();
         }
+        return true;
     }
 
-    async syncUser({ username, password, email, description, group, deleteUser = false }) {
-        if (!this.token && !(await this.authenticate())) return;
-        if (!username) return;
+    async request(endpoint, method = 'GET', body = null) {
+        if (!(await this.ensureAuth())) return null;
 
         try {
-            if (deleteUser) {
-                await fetch(`${this.baseUrl}/api/v2/users/${username}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${this.token}` }
-                });
-                console.log(`SFTPGo User deleted: ${username}`);
-                return;
-            }
-
-            // Check existence
-            const check = await fetch(`${this.baseUrl}/api/v2/users/${username}`, {
-                headers: { 'Authorization': `Bearer ${this.token}` }
-            });
-
-            const method = check.ok ? 'PUT' : 'POST';
-            const url = check.ok
-                ? `${this.baseUrl}/api/v2/users/${username}`
-                : `${this.baseUrl}/api/v2/users`;
-
-            const userData = {
-                username,
-                password, // Only updated if provided and not empty
-                email: email || `${username}@arkadas.com.tr`,
-                status: 1,
-                description,
-                home_dir: `/srv/sftpgo/data/${username}`,
-                permissions: { "/": ["*"] },
-                filesystem: { provider: 0 }
-            };
-
-            if (group) {
-                userData.groups = [{ name: group, type: 1 }];
-            }
-
-            // If updating, maybe we don't want to change password if not provided?
-            // But usually we sync everything. If password is null, SFTPGo might error or keep old.
-            // Let's assume password is required for now or handled by caller.
-
-            const res = await fetch(url, {
+            const options = {
                 method,
                 headers: {
                     'Authorization': `Bearer ${this.token}`,
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(userData)
-            });
+                }
+            };
+            if (body) options.body = JSON.stringify(body);
 
-            if (!res.ok) {
-                const txt = await res.text();
-                console.error(`SFTPGo Sync Error (${username}): ${txt}`);
-            } else {
-                console.log(`SFTPGo synced: ${username}`);
+            const res = await fetch(`${this.baseUrl}/api/v2${endpoint}`, options);
+            if (!res.ok && res.status !== 404) {
+                const err = await res.text();
+                throw new Error(`SFTPGo Error (${res.status}): ${err}`);
             }
-
+            
+            if (res.status === 204 || method === 'DELETE') return { success: true };
+            return await res.json();
         } catch (e) {
-            console.error(`SFTPGo Sync Failed (${username}):`, e.message);
+            console.error(`[SFTPGo] Request Failed (${endpoint}):`, e.message);
+            return null;
         }
+    }
+
+    async ensureGroup(name, description) {
+        const existing = await this.request(`/groups/${name}`);
+        if (existing && existing.name) return;
+
+        await this.request('/groups', 'POST', {
+            name,
+            description: description || `Group ${name}`,
+            permissions: { '/': ['*'] }
+        });
+    }
+
+    async syncUser(params) {
+        const { username, password, email, description, group, deleteUser = false } = params;
+        if (!username) return;
+
+        if (deleteUser) {
+            await this.request(`/users/${username}`, 'DELETE');
+            return;
+        }
+
+        const existing = await this.request(`/users/${username}`);
+        const method = existing && existing.username ? 'PUT' : 'POST';
+        const endpoint = method === 'PUT' ? `/users/${username}` : '/users';
+
+        const userData = {
+            username,
+            status: 1,
+            email: email || `${username}@arkadas.com.tr`,
+            description: description || 'Synced from ERP',
+            home_dir: `/srv/sftpgo/data/${username}`,
+            permissions: { '/': ['*'] }
+        };
+
+        if (password) userData.password = password;
+        if (group) userData.groups = [{ name: group, type: 1 }];
+
+        await this.request(endpoint, method, userData);
     }
 }
 

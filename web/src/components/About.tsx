@@ -22,7 +22,6 @@ const About: React.FC<{ data?: AboutData }> = ({ data }) => {
         <BezierBackground className="h-full w-full" />
       </div>
       {/* Decorative Elements */}
-      {/* Decorative Elements */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-accent/20 rounded-full -translate-y-32 -translate-x-1/2 md:-translate-x-32"></div>
       <div className="absolute bottom-0 right-0 w-48 h-96 bg-secondary/10 rounded-l-full translate-y-24 translate-x-0 md:translate-x-12 z-20"></div>
 
@@ -43,19 +42,20 @@ const About: React.FC<{ data?: AboutData }> = ({ data }) => {
               <div className="prose prose-lg dark:prose-invert text-neutral-dark/80 dark:text-neutral-300 mb-8 leading-relaxed">
                 <ReactMarkdown
                   components={{
-                    h2: (props) => <h3 className="text-xl md:text-2xl font-display font-bold text-neutral-dark dark:text-neutral-100 mb-4 mt-6" {...props} />,
-                    h3: (props) => <h4 className="text-lg md:text-xl font-display font-bold text-secondary mb-3 mt-5" {...props} />,
-                    p: (props) => <p className="font-body text-base md:text-lg text-neutral-dark/80 dark:text-neutral-300 mb-4 leading-relaxed" {...props} />,
-                    strong: (props) => <strong className="font-semibold text-neutral-dark dark:text-neutral-100" {...props} />,
-                    ul: (props) => <ul className="space-y-2 mb-6" {...props} />,
-                    li: (props) => (
+                    // Destructure ref and node to avoid passing them to HTML elements
+                    h2: ({ node: _node, ref: _ref, ...props }) => <h3 className="text-xl md:text-2xl font-display font-bold text-neutral-dark dark:text-neutral-100 mb-4 mt-6" {...props} />,
+                    h3: ({ node: _node, ref: _ref, ...props }) => <h4 className="text-lg md:text-xl font-display font-bold text-secondary mb-3 mt-5" {...props} />,
+                    p: ({ node: _node, ref: _ref, ...props }) => <p className="font-body text-base md:text-lg text-neutral-dark/80 dark:text-neutral-300 mb-4 leading-relaxed" {...props} />,
+                    strong: ({ node: _node, ref: _ref, ...props }) => <strong className="font-semibold text-neutral-dark dark:text-neutral-100" {...props} />,
+                    ul: ({ node: _node, ref: _ref, ...props }) => <ul className="space-y-2 mb-6" {...props} />,
+                    li: ({ node: _node, ref: _ref, children, ...props }) => (
                       <li className="flex items-start space-x-3 group" {...props}>
                         <div className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center mt-1.5 group-hover:bg-primary/20 transition-colors duration-300">
                           <svg className="w-3 h-3 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
-                        <span className="flex-1 font-body text-base md:text-lg text-neutral-dark dark:text-neutral-200">{props.children}</span>
+                        <span className="flex-1 font-body text-base md:text-lg text-neutral-dark dark:text-neutral-200">{children}</span>
                       </li>
                     ),
                   }}
@@ -123,8 +123,6 @@ const About: React.FC<{ data?: AboutData }> = ({ data }) => {
                   hizmetleri sunmak.
                 </p>
               </div>
-
-
 
               {/* Values */}
               <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-gray-200 dark:border-neutral-700">

@@ -3,8 +3,10 @@ import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
-config.autoAddCss = false
 import PublicOnlyComponents from '@/components/PublicOnlyComponents'
+import { Providers } from '@/components/Providers';
+
+config.autoAddCss = false
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfairDisplay = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair-display' })
@@ -55,8 +57,6 @@ export const metadata: Metadata = {
 export const viewport = {
   themeColor: "#ffffff",
 };
-
-import { Providers } from '@/components/Providers';
 
 export default function RootLayout({
   children,
