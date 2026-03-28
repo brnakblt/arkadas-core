@@ -74,19 +74,19 @@ const MaterialGenerator: React.FC = () => {
                 <div className="bg-slate-100 p-1 rounded-xl flex gap-1">
                     <button
                         onClick={() => setActiveTab('story')}
-                        className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${activeTab === 'story' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                        className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${activeTab === 'story' ? 'bg-white shadow-sm text-primary' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                         <BookOpen size={18} /> Hikaye Oluştur
                     </button>
                     <button
                         onClick={() => setActiveTab('worksheet')}
-                        className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${activeTab === 'worksheet' ? 'bg-white shadow-sm text-purple-600' : 'text-slate-500 hover:text-slate-700'}`}
+                        className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${activeTab === 'worksheet' ? 'bg-white shadow-sm text-primary-dark' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                         <FileText size={18} /> Çalışma Kağıdı
                     </button>
                     <button
                         onClick={() => setActiveTab('image')}
-                        className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${activeTab === 'image' ? 'bg-white shadow-sm text-orange-600' : 'text-slate-500 hover:text-slate-700'}`}
+                        className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${activeTab === 'image' ? 'bg-white shadow-sm text-secondary' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                         <ImageIcon size={18} /> Görsel Materyal
                     </button>
@@ -106,7 +106,7 @@ const MaterialGenerator: React.FC = () => {
                                         value={topic}
                                         onChange={(e) => setTopic(e.target.value)}
                                         placeholder={activeTab === 'story' ? "Örn: Uzayda kaybolan kedi" : "Örn: Basit toplama işlemi"}
-                                        className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
                                     />
                                 </div>
                                 <div>
@@ -114,7 +114,7 @@ const MaterialGenerator: React.FC = () => {
                                     <select
                                         value={level}
                                         onChange={(e) => setLevel(e.target.value)}
-                                        className="w-full p-3 border border-slate-200 rounded-lg bg-white outline-none"
+                                        className="w-full p-3 border border-slate-200 rounded-lg bg-white outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                                     >
                                         <option>Okul Öncesi</option>
                                         <option>İlkokul 1. Sınıf</option>
@@ -133,7 +133,7 @@ const MaterialGenerator: React.FC = () => {
                                     value={studentInfo}
                                     onChange={(e) => setStudentInfo(e.target.value)}
                                     placeholder="Örn: Görsel hafızası güçlü, dikkati çabuk dağılıyor..."
-                                    className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-20 resize-none"
+                                    className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none h-20 resize-none"
                                 />
                             </div>
                         </>
@@ -145,8 +145,8 @@ const MaterialGenerator: React.FC = () => {
                                 <textarea
                                     value={imagePrompt}
                                     onChange={(e) => setImagePrompt(e.target.value)}
-                                    placeholder="Örn: Kırmızı elma tutan mutlu bir çocuk, çizgi film tarzı..."
-                                    className="w-full p-4 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none h-24 resize-none"
+                                    placeholder="Örn: Kırmızı elma tutan mutlu bir child, çizgi film tarzı..."
+                                    className="w-full p-4 border border-slate-200 rounded-lg focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none h-24 resize-none"
                                 />
                             </div>
                             <div className="flex-1">
@@ -154,7 +154,7 @@ const MaterialGenerator: React.FC = () => {
                                 <select
                                     value={imageSize}
                                     onChange={(e) => setImageSize(e.target.value as '1K' | '2K' | '4K')}
-                                    className="w-full p-2.5 border border-slate-200 rounded-lg bg-slate-50 outline-none"
+                                    className="w-full p-2.5 border border-slate-200 rounded-lg bg-slate-50 outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary"
                                 >
                                     <option value="1K">1K (Hızlı - Taslak)</option>
                                     <option value="2K">2K (Standart - Baskı)</option>
@@ -167,10 +167,10 @@ const MaterialGenerator: React.FC = () => {
                     <button
                         onClick={handleGenerate}
                         disabled={loading || (activeTab === 'image' ? !imagePrompt : !topic)}
-                        className={`w-full mt-4 py-3 rounded-lg font-bold shadow-md transition-all flex items-center justify-center gap-2 text-white
-                            ${activeTab === 'story' ? 'bg-blue-600 hover:bg-blue-700' :
-                                activeTab === 'worksheet' ? 'bg-purple-600 hover:bg-purple-700' :
-                                    'bg-orange-600 hover:bg-orange-700'}`}
+                        className={`w-full mt-4 py-3 rounded-lg font-bold shadow-md transition-all flex items-center justify-center gap-2 text-white transform active:scale-[0.98]
+                            ${activeTab === 'story' ? 'bg-primary hover:bg-primary-dark' :
+                                activeTab === 'worksheet' ? 'bg-primary-dark hover:bg-primary' :
+                                    'bg-secondary hover:bg-secondary-dark'}`}
                     >
                         {loading ? <Loader2 className="animate-spin" /> : activeTab === 'image' ? <ImageIcon size={20} /> : <FileText size={20} />}
                         {activeTab === 'story' ? 'Hikaye Yaz' : activeTab === 'worksheet' ? 'Çalışma Kağıdı Oluştur' : 'Görsel Üret'}
@@ -183,7 +183,7 @@ const MaterialGenerator: React.FC = () => {
                 <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 min-h-[200px] relative">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center h-48 space-y-4">
-                            <Loader2 className={`w-10 h-10 animate-spin ${activeTab === 'story' ? 'text-blue-500' : activeTab === 'worksheet' ? 'text-purple-500' : 'text-orange-500'}`} />
+                            <Loader2 className={`w-10 h-10 animate-spin ${activeTab === 'image' ? 'text-secondary' : 'text-primary'}`} />
                             <p className="text-slate-500 text-sm animate-pulse">
                                 {activeTab === 'story' ? 'Hikaye kurgulanıyor...' : activeTab === 'worksheet' ? 'Sorular hazırlanıyor...' : 'Görsel çiziliyor...'}
                             </p>
@@ -193,7 +193,7 @@ const MaterialGenerator: React.FC = () => {
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={imageUrl} alt="Generated" className="max-w-full max-h-[600px] object-contain shadow-lg rounded-lg" />
                             <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <a href={imageUrl} download="materyal.png" className="bg-white p-2 rounded-lg shadow-md hover:text-green-600 text-slate-700">
+                                <a href={imageUrl} download="materyal.png" className="bg-white p-2 rounded-lg shadow-md hover:text-primary text-slate-700">
                                     <Download size={20} />
                                 </a>
                             </div>
@@ -203,16 +203,16 @@ const MaterialGenerator: React.FC = () => {
                             <div className="flex justify-end gap-2 mb-4">
                                 <button
                                     onClick={handleCopy}
-                                    className="flex items-center gap-1 text-sm text-slate-500 hover:text-blue-600 transition-colors"
+                                    className="flex items-center gap-1 text-sm text-slate-500 hover:text-primary transition-colors font-medium"
                                 >
                                     {copied ? <Check size={16} /> : <Copy size={16} />}
                                     {copied ? 'Kopyalandı' : 'Kopyala'}
                                 </button>
-                                <button className="flex items-center gap-1 text-sm text-slate-500 hover:text-green-600 transition-colors">
+                                <button className="flex items-center gap-1 text-sm text-slate-500 hover:text-primary transition-colors font-medium">
                                     <Save size={16} /> Kaydet
                                 </button>
                             </div>
-                            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-100">
+                            <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-100 ring-1 ring-primary/5">
                                 <ReactMarkdown>{result}</ReactMarkdown>
                             </div>
                         </div>

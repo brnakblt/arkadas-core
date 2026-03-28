@@ -183,10 +183,10 @@ export default function UserManagement() {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold text-gray-800">Kullanıcı Yönetimi</h2>
+                <h2 className="text-xl font-bold text-gray-800">Kullanıcı Yönetimi</h2>
                 <button
                     onClick={() => { setSelectedUser(null); setModalMode('create'); }}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-sm"
+                    className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-all flex items-center gap-2 shadow-lg shadow-primary/10 font-bold transform active:scale-95"
                 >
                     <span>➕</span> Yeni Kullanıcı
                 </button>

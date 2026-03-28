@@ -132,7 +132,7 @@ export default function UserModal({ user, mode, onClose, onSave }: UserModalProp
                             value={formData.fullName}
                             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                             disabled={isReadOnly}
-                            className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.fullName ? 'border-red-500' : 'border-gray-300'
+                            className={`w-full px-4 py-2.5 border rounded-lg focus:ring-primary/20 focus:border-primary ${errors.fullName ? 'border-red-500' : 'border-gray-300'
                                 } ${isReadOnly ? 'bg-gray-50' : ''}`}
                             placeholder="Örn: Ahmet Yılmaz"
                         />
@@ -149,7 +149,7 @@ export default function UserModal({ user, mode, onClose, onSave }: UserModalProp
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             disabled={isReadOnly}
-                            className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300'
+                            className={`w-full px-4 py-2.5 border rounded-lg focus:ring-primary/20 focus:border-primary ${errors.email ? 'border-red-500' : 'border-gray-300'
                                 } ${isReadOnly ? 'bg-gray-50' : ''}`}
                             placeholder="ornek@email.com"
                         />
@@ -166,7 +166,7 @@ export default function UserModal({ user, mode, onClose, onSave }: UserModalProp
                             value={formData.username}
                             onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                             disabled={isReadOnly}
-                            className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.username ? 'border-red-500' : 'border-gray-300'
+                            className={`w-full px-4 py-2.5 border rounded-lg focus:ring-primary/20 focus:border-primary ${errors.username ? 'border-red-500' : 'border-gray-300'
                                 } ${isReadOnly ? 'bg-gray-50' : ''}`}
                             placeholder="kullaniciadi"
                         />
@@ -182,7 +182,7 @@ export default function UserModal({ user, mode, onClose, onSave }: UserModalProp
                             value={formData.role}
                             onChange={(e) => setFormData({ ...formData, role: e.target.value as User['role'] })}
                             disabled={isReadOnly}
-                            className={`w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 ${isReadOnly ? 'bg-gray-50' : 'bg-white'
+                            className={`w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-primary/20 focus:border-primary ${isReadOnly ? 'bg-gray-50' : 'bg-white'
                                 }`}
                         >
                             {ROLES.map(role => (
@@ -203,7 +203,7 @@ export default function UserModal({ user, mode, onClose, onSave }: UserModalProp
                             value={formData.phone}
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                             disabled={isReadOnly}
-                            className={`w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 ${isReadOnly ? 'bg-gray-50' : ''
+                            className={`w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-primary/20 focus:border-primary ${isReadOnly ? 'bg-gray-50' : ''
                                 }`}
                             placeholder="0532 123 4567"
                         />
@@ -220,7 +220,7 @@ export default function UserModal({ user, mode, onClose, onSave }: UserModalProp
                                     type="password"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.password ? 'border-red-500' : 'border-gray-300'
+                                    className={`w-full px-4 py-2.5 border rounded-lg focus:ring-primary/20 focus:border-primary ${errors.password ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     placeholder="En az 6 karakter"
                                 />
@@ -235,7 +235,7 @@ export default function UserModal({ user, mode, onClose, onSave }: UserModalProp
                                     type="password"
                                     value={formData.confirmPassword}
                                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                    className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                                    className={`w-full px-4 py-2.5 border rounded-lg focus:ring-primary/20 focus:border-primary ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     placeholder="Şifreyi tekrar girin"
                                 />
@@ -280,7 +280,7 @@ export default function UserModal({ user, mode, onClose, onSave }: UserModalProp
                         {!isReadOnly && (
                             <button
                                 type="submit"
-                                className="flex-1 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+                                className="flex-1 py-2.5 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all font-bold shadow-lg shadow-primary/10 active:scale-95 transform"
                             >
                                 {mode === 'create' ? 'Oluştur' : 'Kaydet'}
                             </button>

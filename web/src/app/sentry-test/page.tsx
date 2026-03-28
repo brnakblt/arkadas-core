@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { captureError, captureMessage, monitoring } from "@/lib/monitoring";
+import { captureError, captureMessage } from "@/lib/monitoring";
 
 export default function SentryTestPage() {
     const [status, setStatus] = useState<string>("");
@@ -30,7 +30,8 @@ export default function SentryTestPage() {
     const testUnhandledError = () => {
         // This will cause an unhandled error
         setTimeout(() => {
-            const obj: any = {};
+            const obj = {} as Record<string, () => void>;
+            // This will throw at runtime because the method is undefined
             obj.nonExistentMethod();
         }, 100);
     };
@@ -83,8 +84,8 @@ export default function SentryTestPage() {
             <div className="mt-8 text-sm text-gray-600">
                 <h3 className="font-semibold mb-2">Instructions:</h3>
                 <ol className="list-decimal pl-5 space-y-1">
-                    <li>Click "Test Captured Error" to send a handled error</li>
-                    <li>Click "Test Message" to send an info message</li>
+                    <li>Click &quot;Test Captured Error&quot; to send a handled error</li>
+                    <li>Click &quot;Test Message&quot; to send an info message</li>
                     <li>Check your Sentry dashboard for the events</li>
                 </ol>
             </div>

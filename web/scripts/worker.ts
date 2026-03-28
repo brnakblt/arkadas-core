@@ -1,6 +1,6 @@
 
 /* eslint-disable no-console */
-import { Worker } from 'bullmq';
+import { Worker, ConnectionOptions } from 'bullmq';
 import IORedis from 'ioredis';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -30,7 +30,7 @@ const worker = new Worker('notifications', async job => {
     console.log(`✅ [Job ${job.id}] Sent "${title}" to ${userCount} users.`);
 
     return { sent: userCount };
-}, { connection: connection as any });
+}, { connection: connection as unknown as ConnectionOptions });
 
 worker.on('completed', job => {
     console.log(`[Job ${job.id}] Completed!`);

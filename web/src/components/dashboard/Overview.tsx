@@ -25,24 +25,24 @@ const Overview: React.FC = () => {
 
     const modules = [
         {
-            id: 'personel', title: 'Personel', icon: <Users size={32} />, color: 'from-blue-400 to-blue-600', columns: [
+            id: 'personel', title: 'Personel', icon: <Users size={32} />, color: 'from-primary-light to-primary', columns: [
                 { title: 'Tanımlar', items: [{ label: 'Eğitimci Tanımları' }, { label: 'Personel Tanımları', target: '/dashboard/personnel' }] },
                 { title: 'Parametreler', items: [{ label: 'Tatil Tanımları' }] }
             ]
         },
         {
-            id: 'bep', title: 'BEP İşlemleri', icon: <BrainCircuit size={32} />, color: 'from-indigo-500 to-purple-600', columns: [
+            id: 'bep', title: 'BEP İşlemleri', icon: <BrainCircuit size={32} />, color: 'from-secondary-light to-secondary', columns: [
                 { title: 'İşlemler', items: [{ label: 'BEP Planı Oluştur', target: '/dashboard/bep-ai' }, { label: 'Kaba Değerlendirme' }] }
             ]
         },
-        { id: 'damar', title: 'Damar Okuma', icon: <Fingerprint size={32} />, color: 'from-rose-700 to-pink-800', direct: '/dashboard/bsdk' },
+        { id: 'damar', title: 'Damar Okuma', icon: <Fingerprint size={32} />, color: 'from-primary to-primary-dark', direct: '/dashboard/bsdk' },
         {
-            id: 'uyarilar', title: 'Uyarılar', icon: <AlertTriangle size={32} />, color: 'from-yellow-400 to-amber-500', columns: [
+            id: 'uyarilar', title: 'Uyarılar', icon: <AlertTriangle size={32} />, color: 'from-orange-400 to-orange-600', columns: [
                 { title: 'Kritik Uyarılar', items: [{ label: 'Raporu Bitenler [30]' }, { label: 'Doğum Günleri [10]' }] }
             ]
         },
-        { id: 'materyal', title: 'Materyal Üret', icon: <Activity size={32} />, color: 'from-pink-500 to-rose-500', direct: '/dashboard/materials' },
-        { id: 'chat', title: 'AI Asistan', icon: <MessageSquare size={32} />, color: 'from-blue-600 to-indigo-700', direct: '/dashboard/chat' }
+        { id: 'materyal', title: 'Materyal Üret', icon: <Activity size={32} />, color: 'from-primary-dark to-primary', direct: '/dashboard/materials' },
+        { id: 'chat', title: 'AI Asistan', icon: <MessageSquare size={32} />, color: 'from-secondary to-secondary-dark', direct: '/dashboard/chat' }
     ];
 
     const currentModule = modules.find(m => m.id === openModal);
@@ -72,9 +72,15 @@ const Overview: React.FC = () => {
             {openModal && currentModule && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" onClick={() => setOpenModal(null)}>
                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-fade-in" onClick={e => e.stopPropagation()}>
-                        <div className="bg-blue-500 p-4 flex justify-between items-center text-white">
+                        <div className="bg-primary p-4 flex justify-between items-center text-white">
                             <h3 className="font-bold text-lg">{currentModule.title}</h3>
-                            <button onClick={() => setOpenModal(null)} className="hover:bg-white/20 rounded-full p-1 transition-colors"><X size={24} /></button>
+                            <button 
+                                onClick={() => setOpenModal(null)} 
+                                aria-label="Kapat"
+                                className="hover:bg-white/20 rounded-full p-1 transition-colors"
+                            >
+                                <X size={24} />
+                            </button>
                         </div>
                         <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
                             {currentModule.columns?.map((col, i) => (
@@ -85,9 +91,9 @@ const Overview: React.FC = () => {
                                             <li key={j}>
                                                 <button
                                                     onClick={() => { if (item.target) handleNavigation(item.target); }}
-                                                    className={`text-sm font-medium flex items-center gap-2 group w-full text-left py-1 ${item.target ? 'text-slate-600 hover:text-blue-600' : 'text-slate-400 cursor-not-allowed'}`}
+                                                    className={`text-sm font-medium flex items-center gap-2 group w-full text-left py-1 ${item.target ? 'text-slate-600 hover:text-primary' : 'text-slate-400 cursor-not-allowed'}`}
                                                 >
-                                                    <div className={`w-1.5 h-1.5 rounded-full ${item.target ? 'bg-slate-300 group-hover:bg-blue-500' : 'bg-slate-200'}`}></div>
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${item.target ? 'bg-slate-300 group-hover:bg-primary' : 'bg-slate-200'}`}></div>
                                                     {item.label}
                                                 </button>
                                             </li>
@@ -101,17 +107,20 @@ const Overview: React.FC = () => {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
-                <div className="bg-blue-600 p-6 rounded-2xl text-white shadow-lg">
-                    <p className="text-blue-100 text-sm">Aktif Öğrenci</p>
-                    <h4 className="text-4xl font-bold">{activeStudentCount !== null ? activeStudentCount : '-'}</h4>
+                <div className="bg-gradient-to-br from-primary to-primary-dark p-6 rounded-2xl text-white shadow-lg relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform"><Users size={64} /></div>
+                    <p className="text-primary-light text-sm font-medium uppercase tracking-wider">Aktif Öğrenci</p>
+                    <h4 className="text-4xl font-bold mt-2">{activeStudentCount !== null ? activeStudentCount : '-'}</h4>
                 </div>
-                <div className="bg-emerald-500 p-6 rounded-2xl text-white shadow-lg">
-                    <p className="text-emerald-100 text-sm">Tamamlanan Seans</p>
-                    <h4 className="text-4xl font-bold">42</h4>
+                <div className="bg-gradient-to-br from-secondary to-secondary-dark p-6 rounded-2xl text-white shadow-lg relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform"><Activity size={64} /></div>
+                    <p className="text-secondary-light text-sm font-medium uppercase tracking-wider">Tamamlanan Seans</p>
+                    <h4 className="text-4xl font-bold mt-2">42</h4>
                 </div>
-                <div className="bg-indigo-600 p-6 rounded-2xl text-white shadow-lg">
-                    <p className="text-indigo-100 text-sm">BSDK Başarı Oranı</p>
-                    <h4 className="text-4xl font-bold">%98</h4>
+                <div className="bg-gradient-to-br from-primary-dark to-slate-800 p-6 rounded-2xl text-white shadow-lg relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform"><Fingerprint size={64} /></div>
+                    <p className="text-primary-light text-sm font-medium uppercase tracking-wider">BSDK Başarı Oranı</p>
+                    <h4 className="text-4xl font-bold mt-2">%98</h4>
                 </div>
                 <StorageStatsCard />
             </div>
@@ -131,8 +140,8 @@ const StorageStatsCard = () => {
 
     if (!stats) {
         return (
-            <div className="bg-slate-600 p-6 rounded-2xl text-white shadow-lg animate-pulse">
-                <p className="text-slate-100 text-sm">Depolama</p>
+            <div className="bg-slate-700 p-6 rounded-2xl text-white shadow-lg animate-pulse">
+                <p className="text-slate-300 text-sm">Depolama</p>
                 <h4 className="text-4xl font-bold mt-2">-</h4>
             </div>
         );
@@ -146,14 +155,15 @@ const StorageStatsCard = () => {
     };
 
     return (
-        <div className="bg-slate-600 p-6 rounded-2xl text-white shadow-lg">
-            <div className="flex justify-between items-start">
+        <div className="bg-gradient-to-br from-slate-700 to-slate-900 p-6 rounded-2xl text-white shadow-lg relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform"><Activity size={64} /></div>
+            <div className="flex justify-between items-start relative z-10">
                 <div>
-                    <p className="text-slate-100 text-sm">Depolama</p>
-                    <h4 className="text-4xl font-bold mt-1">{formatSize(stats.used)}</h4>
+                    <p className="text-slate-300 text-sm font-medium uppercase tracking-wider">Depolama</p>
+                    <h4 className="text-4xl font-bold mt-2">{formatSize(stats.used)}</h4>
                 </div>
                 <div className="text-right">
-                    <p className="text-slate-300 text-xs">Dosya Sayısı</p>
+                    <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Dosya Sayısı</p>
                     <p className="font-semibold text-xl">{stats.count}</p>
                 </div>
             </div>

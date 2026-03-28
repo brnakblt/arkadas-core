@@ -84,17 +84,17 @@ export function TrendCharts({ className = '', data }: TrendChartsProps) {
     return (
         <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}>
             {/* Header */}
-            <div className="bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-4">
+            <div className="bg-gradient-to-r from-primary to-primary-dark px-6 py-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                     <h3 className="text-white font-semibold text-lg">📈 Trend Analizi</h3>
                     <div className="flex items-center gap-2">
                         {/* Time Range Selector */}
-                        <div className="flex bg-purple-500/30 rounded-lg p-0.5">
+                        <div className="flex bg-white/20 rounded-lg p-0.5">
                             {(['week', 'month', 'quarter'] as TimeRange[]).map((range) => (
                                 <button
                                     key={range}
                                     className={`px-3 py-1 text-sm rounded-md transition-colors ${timeRange === range
-                                            ? 'bg-white text-purple-700'
+                                            ? 'bg-white text-primary-dark'
                                             : 'text-white hover:bg-white/10'
                                         }`}
                                     onClick={() => setTimeRange(range)}
@@ -104,9 +104,9 @@ export function TrendCharts({ className = '', data }: TrendChartsProps) {
                             ))}
                         </div>
                         {/* Chart Type Toggle */}
-                        <div className="flex bg-purple-500/30 rounded-lg p-0.5">
+                        <div className="flex bg-white/20 rounded-lg p-0.5">
                             <button
-                                className={`px-2 py-1 text-sm rounded-md transition-colors ${chartType === 'bar' ? 'bg-white text-purple-700' : 'text-white hover:bg-white/10'
+                                className={`px-2 py-1 text-sm rounded-md transition-colors ${chartType === 'bar' ? 'bg-white text-primary-dark' : 'text-white hover:bg-white/10'
                                     }`}
                                 onClick={() => setChartType('bar')}
                                 aria-label="Çubuk grafik"
@@ -114,7 +114,7 @@ export function TrendCharts({ className = '', data }: TrendChartsProps) {
                                 📊
                             </button>
                             <button
-                                className={`px-2 py-1 text-sm rounded-md transition-colors ${chartType === 'line' ? 'bg-white text-purple-700' : 'text-white hover:bg-white/10'
+                                className={`px-2 py-1 text-sm rounded-md transition-colors ${chartType === 'line' ? 'bg-white text-primary-dark' : 'text-white hover:bg-white/10'
                                     }`}
                                 onClick={() => setChartType('line')}
                                 aria-label="Çizgi grafik"
@@ -133,7 +133,7 @@ export function TrendCharts({ className = '', data }: TrendChartsProps) {
                         label="Ortalama Katılım"
                         value={`%${averageAttendance}`}
                         trend={averageAttendance >= 90 ? 'up' : averageAttendance >= 80 ? 'stable' : 'down'}
-                        color="blue"
+                        color="green"
                     />
                     <SummaryCard
                         label="Zamanında Gelen"
@@ -145,7 +145,7 @@ export function TrendCharts({ className = '', data }: TrendChartsProps) {
                         label="Geç Kalan"
                         value={`%${Math.round(chartData.reduce((a, d) => a + d.late, 0) / chartData.length)}`}
                         trend="stable"
-                        color="yellow"
+                        color="orange"
                     />
                     <SummaryCard
                         label="Devamsız"
@@ -183,14 +183,13 @@ interface SummaryCardProps {
     label: string;
     value: string;
     trend: 'up' | 'down' | 'stable';
-    color: 'blue' | 'green' | 'yellow' | 'red';
+    color: 'green' | 'orange' | 'red';
 }
 
 function SummaryCard({ label, value, trend, color }: SummaryCardProps) {
     const colorClasses = {
-        blue: 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400',
-        green: 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400',
-        yellow: 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400',
+        green: 'bg-primary/10 text-primary-dark dark:text-primary-light',
+        orange: 'bg-secondary/10 text-secondary-dark dark:text-secondary-light',
         red: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400',
     };
 
@@ -282,26 +281,26 @@ function LineChart({ data, maxValue }: ChartProps) {
                     <line x1={padding} y1={height / 2} x2={width - padding} y2={height / 2} stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2" />
 
                     {/* Line */}
-                    <path d={linePath} fill="none" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d={linePath} fill="none" stroke="#689F38" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 
                     {/* Area fill */}
                     <path
                         d={`${linePath} L ${points[points.length - 1].x} ${height - padding} L ${points[0].x} ${height - padding} Z`}
                         fill="url(#gradient)"
-                        opacity="0.3"
+                        opacity="0.2"
                     />
 
                     {/* Gradient definition */}
                     <defs>
                         <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stopColor="#8b5cf6" />
-                            <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
+                            <stop offset="0%" stopColor="#689F38" />
+                            <stop offset="100%" stopColor="#689F38" stopOpacity="0" />
                         </linearGradient>
                     </defs>
 
                     {/* Data points */}
                     {points.map((p, i) => (
-                        <circle key={i} cx={p.x} cy={p.y} r="1.5" fill="#8b5cf6" />
+                        <circle key={i} cx={p.x} cy={p.y} r="1.5" fill="#689F38" />
                     ))}
                 </svg>
             </div>

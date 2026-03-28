@@ -28,22 +28,23 @@ export function Providers({ children }: { children: ReactNode }) {
         initMonitoring().catch(console.error);
     }, []);
 
-    if (!mounted) {
-        return <>{children}</>;
-    }
-
+    // QueryClientProvider is safe for SSR and required for prerendering components that use useQuery
     return (
         <QueryClientProvider client={queryClient}>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-                <CookieProvider>
-                    <TwoFactorProvider>
-                        <PolicyModalProvider>
-                            <ScrollToTop />
-                            {children}
-                        </PolicyModalProvider>
-                    </TwoFactorProvider>
-                </CookieProvider>
-            </ThemeProvider>
+            {!mounted ? (
+                <>{children}</>
+            ) : (
+                <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                    <CookieProvider>
+                        <TwoFactorProvider>
+                            <PolicyModalProvider>
+                                <ScrollToTop />
+                                {children}
+                            </PolicyModalProvider>
+                        </TwoFactorProvider>
+                    </CookieProvider>
+                </ThemeProvider>
+            )}
         </QueryClientProvider>
     );
 }

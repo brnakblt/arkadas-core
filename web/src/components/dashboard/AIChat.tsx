@@ -71,20 +71,20 @@ const AIChat: React.FC = () => {
         <div className="h-[calc(100vh-120px)] flex flex-col bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white shadow-md">
+                    <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark rounded-full flex items-center justify-center text-white shadow-md">
                         <Bot size={24} />
                     </div>
                     <div>
                         <h3 className="font-bold text-slate-800">Arkadaş Asistan</h3>
                         <p className="text-xs text-slate-500 flex items-center gap-1">
-                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
                             Çevrimiçi (MEB Modu)
                         </p>
                     </div>
                 </div>
                 <button
                     onClick={handleClear}
-                    className="text-xs text-slate-400 hover:text-red-500 transition-colors px-3 py-1 rounded border border-slate-200 hover:border-red-200"
+                    className="text-xs text-slate-400 hover:text-red-500 transition-colors px-3 py-1 rounded border border-slate-200 hover:border-red-200 font-medium"
                 >
                     Sohbeti Temizle
                 </button>
@@ -94,12 +94,12 @@ const AIChat: React.FC = () => {
                 {messages.map((msg) => (
                     <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                         <div className={`flex gap-3 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${msg.role === 'user' ? 'bg-slate-700' : 'bg-white text-indigo-600 border border-indigo-100'}`}>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm ${msg.role === 'user' ? 'bg-primary-dark' : 'bg-white text-primary border border-primary/10'}`}>
                                 {msg.role === 'user' ? <User size={16} className="text-white" /> : <Bot size={16} />}
                             </div>
                             <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === 'user'
-                                ? 'bg-slate-800 text-white rounded-tr-none'
-                                : 'bg-white text-slate-700 border border-slate-200 rounded-tl-none ProseMirror'
+                                ? 'bg-primary-dark text-white rounded-tr-none'
+                                : 'bg-white text-slate-700 border border-slate-200 rounded-tl-none ring-1 ring-primary/5'
                                 }`}>
                                 <div className="whitespace-pre-wrap">{msg.text}</div>
                             </div>
@@ -110,11 +110,11 @@ const AIChat: React.FC = () => {
                 {loading && (
                     <div className="flex justify-start">
                         <div className="flex gap-3 max-w-[80%]">
-                            <div className="w-8 h-8 rounded-full bg-white text-indigo-600 border border-indigo-100 flex items-center justify-center shadow-sm">
+                            <div className="w-8 h-8 rounded-full bg-white text-primary border border-primary/10 flex items-center justify-center shadow-sm">
                                 <Bot size={16} />
                             </div>
-                            <div className="bg-white border border-slate-100 p-4 rounded-2xl rounded-tl-none flex items-center gap-3 shadow-sm">
-                                <Loader2 size={16} className="animate-spin text-indigo-500" />
+                            <div className="bg-white border border-slate-100 p-4 rounded-2xl rounded-tl-none flex items-center gap-3 shadow-sm ring-1 ring-primary/5">
+                                <Loader2 size={16} className="animate-spin text-primary" />
                                 <span className="text-xs text-slate-500 font-medium">Mevzuat taranıyor...</span>
                             </div>
                         </div>
@@ -131,7 +131,7 @@ const AIChat: React.FC = () => {
                             <button
                                 key={i}
                                 onClick={() => handleSend(q)}
-                                className="whitespace-nowrap px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-full border border-indigo-100 hover:bg-indigo-100 transition-colors"
+                                className="whitespace-nowrap px-3 py-1.5 bg-primary/5 text-primary-dark text-xs font-bold rounded-full border border-primary/10 hover:bg-primary/10 transition-colors"
                             >
                                 {q}
                             </button>
@@ -146,13 +146,14 @@ const AIChat: React.FC = () => {
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                         placeholder="Mevzuat, ders saatleri veya BEP kuralları hakkında sorun..."
-                        className="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-slate-50 focus:bg-white"
+                        className="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-slate-50 focus:bg-white"
                         disabled={loading}
                     />
                     <button
                         onClick={() => handleSend()}
                         disabled={loading || !input.trim()}
-                        className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white p-3 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95"
+                        aria-label="Mesaj Gönder"
+                        className="bg-primary hover:bg-primary-dark disabled:bg-slate-300 disabled:cursor-not-allowed text-white p-3 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95 transform"
                     >
                         <Send size={20} />
                     </button>

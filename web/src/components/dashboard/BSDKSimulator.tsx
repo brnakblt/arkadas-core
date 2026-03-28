@@ -15,11 +15,8 @@ interface Student {
 }
 
 const BSDKSimulator: React.FC = () => {
-    // eslint-disable-next-line no-undef
     const videoRef = useRef<HTMLVideoElement>(null);
-    // eslint-disable-next-line no-undef
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    // eslint-disable-next-line no-undef
     const [stream, setStream] = useState<MediaStream | null>(null);
     const [status, setStatus] = useState<'idle' | 'scanning' | 'verified' | 'failed'>('idle');
     const [_isScanning, setIsScanning] = useState(false);

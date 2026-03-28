@@ -47,7 +47,7 @@ export default function UserFilters({
                             placeholder="İsim, e-posta veya kullanıcı adı ara..."
                             value={searchQuery}
                             onChange={(e) => onSearchChange(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
                         />
                     </div>
                 </div>
@@ -57,7 +57,7 @@ export default function UserFilters({
                     <select
                         value={roleFilter}
                         onChange={(e) => onRoleChange(e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
                     >
                         {ROLES.map(role => (
                             <option key={role.value} value={role.value}>
@@ -72,7 +72,7 @@ export default function UserFilters({
                     <select
                         value={statusFilter}
                         onChange={(e) => onStatusChange(e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
                     >
                         {STATUSES.map(status => (
                             <option key={status.value} value={status.value}>

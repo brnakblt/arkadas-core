@@ -29,7 +29,10 @@ const TopBar = () => {
 
             {/* Right: Actions & Profile */}
             <div className="flex items-center space-x-4">
-                <button className="relative p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                <button 
+                    aria-label="Bildirimler"
+                    className="relative p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
                     <FontAwesomeIcon icon={faBell} className="w-5 h-5" />
                     <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                 </button>
@@ -37,7 +40,7 @@ const TopBar = () => {
                 <div className="h-8 w-px bg-gray-200 mx-2"></div>
 
                 <div className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm ${user?.userType === 'teacher' ? 'bg-indigo-500' : 'bg-orange-500'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm ${user?.userType === 'teacher' ? 'bg-primary' : 'bg-secondary'}`}>
                         {user?.username ? user.username.charAt(0).toUpperCase() : <FontAwesomeIcon icon={faUserCircle} />}
                     </div>
                     <div className="hidden md:block text-left">

@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import Webcam from 'react-webcam';
 import { Camera, UserCheck, Loader2, ShieldCheck, AlertCircle } from 'lucide-react';
+import type * as FaceApiType from 'face-api.js';
 
 interface FaceRecognitionProps {
     onFaceDetected?: (descriptor: Float32Array, livenessVerified: boolean) => void;
@@ -16,7 +17,7 @@ const FaceRecognition: React.FC<FaceRecognitionProps> = ({ onFaceDetected, mode 
     const webcamRef = useRef<Webcam>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [modelsLoaded, setModelsLoaded] = useState(false);
-    const [faceapi, setFaceApi] = useState<any>(null);
+    const [faceapi, setFaceApi] = useState<typeof FaceApiType | null>(null);
     
     const [vState, setVState] = useState<VerificationState>('IDLE');
     const [statusMessage, setVStatusMessage] = useState<string>('');
@@ -51,7 +52,7 @@ const FaceRecognition: React.FC<FaceRecognitionProps> = ({ onFaceDetected, mode 
         init();
     }, []);
 
-    const resetState = () => {
+    const resetState = useCallback(() => {
         setTimeout(() => {
             setVState('IDLE');
             setDetectedName(null);
@@ -59,50 +60,10 @@ const FaceRecognition: React.FC<FaceRecognitionProps> = ({ onFaceDetected, mode 
             processingRef.current = false;
             setVStatusMessage('Sistem hazır.');
         }, 3000);
-    };
+    }, []);
 
-    useEffect(() => {
-        if (!modelsLoaded || !faceapi || vState === 'SUCCESS' || vState === 'BUFFERING' || vState === 'VERIFYING_LIVENESS' || processingRef.current) return;
-
-        const interval = setInterval(async () => {
-            if (webcamRef.current && webcamRef.current.video) {
-                const video = webcamRef.current.video;
-                if (video.readyState !== 4) return;
-
-                const displaySize = { width: video.videoWidth, height: video.videoHeight };
-                if (canvasRef.current) {
-                    faceapi.matchDimensions(canvasRef.current, displaySize);
-                }
-
-                const detections = await faceapi.detectAllFaces(video).withFaceLandmarks().withFaceDescriptors();
-                const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
-                if (canvasRef.current) {
-                    const ctx = canvasRef.current.getContext('2d');
-                    if (ctx) {
-                        ctx.clearRect(0, 0, displaySize.width, displaySize.height);
-                        faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-                    }
-                }
-
-                if (resizedDetections.length > 0) {
-                    const detection = resizedDetections[0];
-                    const confidence = detection.detection.score;
-
-                    if (confidence > 0.8) {
-                        if (vState === 'IDLE') {
-                            setVState('BUFFERING');
-                            setVStatusMessage('Lütfen bekleyin, canlılık kontrolü yapılıyor...');
-                            startLivenessCapture(detection.descriptor);
-                        }
-                    }
-                }
-            }
-        }, 500);
-        return () => clearInterval(interval);
-    }, [modelsLoaded, faceapi, vState]);
-
-    const startLivenessCapture = async (currentDescriptor: Float32Array) => {
+    const startLivenessCapture = useCallback(async (currentDescriptor: Float32Array) => {
+        if (!faceapi) return;
         processingRef.current = true;
         const frames: string[] = [];
         
@@ -171,7 +132,48 @@ const FaceRecognition: React.FC<FaceRecognitionProps> = ({ onFaceDetected, mode 
             setVStatusMessage('Sistem hatası oluştu.');
             resetState();
         }
-    };
+    }, [AI_SERVICE_URL, faceapi, knownDescriptors, mode, onFaceDetected, resetState]);
+
+    useEffect(() => {
+        if (!modelsLoaded || !faceapi || vState === 'SUCCESS' || vState === 'BUFFERING' || vState === 'VERIFYING_LIVENESS' || processingRef.current) return;
+
+        const interval = setInterval(async () => {
+            if (webcamRef.current && webcamRef.current.video) {
+                const video = webcamRef.current.video;
+                if (video.readyState !== 4) return;
+
+                const displaySize = { width: video.videoWidth, height: video.videoHeight };
+                if (canvasRef.current) {
+                    faceapi.matchDimensions(canvasRef.current, displaySize);
+                }
+
+                const detections = await faceapi.detectAllFaces(video).withFaceLandmarks().withFaceDescriptors();
+                const resizedDetections = faceapi.resizeResults(detections, displaySize);
+
+                if (canvasRef.current) {
+                    const ctx = canvasRef.current.getContext('2d');
+                    if (ctx) {
+                        ctx.clearRect(0, 0, displaySize.width, displaySize.height);
+                        faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+                    }
+                }
+
+                if (resizedDetections.length > 0) {
+                    const detection = resizedDetections[0];
+                    const confidence = detection.detection.score;
+
+                    if (confidence > 0.8) {
+                        if (vState === 'IDLE') {
+                            setVState('BUFFERING');
+                            setVStatusMessage('Lütfen bekleyin, canlılık kontrolü yapılıyor...');
+                            startLivenessCapture(detection.descriptor);
+                        }
+                    }
+                }
+            }
+        }, 500);
+        return () => clearInterval(interval);
+    }, [modelsLoaded, faceapi, vState, startLivenessCapture]);
 
     return (
         <div className="relative w-full max-w-md mx-auto aspect-video rounded-2xl overflow-hidden bg-slate-950 border-4 border-slate-800 shadow-2xl transition-all duration-500">

@@ -1,5 +1,5 @@
 
-import { Queue } from 'bullmq';
+import { Queue, ConnectionOptions } from 'bullmq';
 import IORedis from 'ioredis';
 
 const connection = new IORedis({
@@ -9,7 +9,7 @@ const connection = new IORedis({
     maxRetriesPerRequest: null,
 });
 
-export const notificationQueue = new Queue('notifications', { connection: connection as any });
+export const notificationQueue = new Queue('notifications', { connection: connection as unknown as ConnectionOptions });
 
 export const addNotificationJob = async (data: Record<string, unknown>) => {
     return notificationQueue.add('send-notification', data, {

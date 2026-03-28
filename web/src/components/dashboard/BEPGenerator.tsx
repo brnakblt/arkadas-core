@@ -112,7 +112,7 @@ const BEPGenerator: React.FC = () => {
             <div className="xl:col-span-4 flex flex-col space-y-4 h-full overflow-hidden">
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex-1 flex flex-col overflow-y-auto">
                     <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2 sticky top-0 bg-white z-10 pb-4 border-b border-slate-50">
-                        <Sparkles className="text-lila-500" size={24} />
+                        <Sparkles className="text-primary" size={24} />
                         BEP Asistanı
                     </h2>
 
@@ -124,7 +124,7 @@ const BEPGenerator: React.FC = () => {
                                     id="student-select"
                                     value={selectedStudentId}
                                     onChange={(e) => setSelectedStudentId(e.target.value)}
-                                    className="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-lila-500 focus:border-lila-500 outline-none appearance-none font-medium text-slate-700"
+                                    className="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none appearance-none font-medium text-slate-700"
                                 >
                                     {MOCK_STUDENTS.map(s => (
                                         <option key={s.id} value={s.id}>{s.fullName} ({s.age}Y) - {s.diagnosis}</option>
@@ -141,7 +141,7 @@ const BEPGenerator: React.FC = () => {
                                 value={strengths}
                                 onChange={(e) => setStrengths(e.target.value)}
                                 placeholder="Her satıra bir özellik yazın..."
-                                className="w-full h-24 p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-lila-500 outline-none resize-none bg-slate-50 text-slate-700 text-sm"
+                                className="w-full h-24 p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none bg-slate-50 text-slate-700 text-sm"
                             />
                         </div>
 
@@ -152,7 +152,7 @@ const BEPGenerator: React.FC = () => {
                                 value={needs}
                                 onChange={(e) => setNeeds(e.target.value)}
                                 placeholder="Her satıra bir ihtiyaç yazın..."
-                                className="w-full h-24 p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-lila-500 outline-none resize-none bg-slate-50 text-slate-700 text-sm"
+                                className="w-full h-24 p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none bg-slate-50 text-slate-700 text-sm"
                             />
                         </div>
 
@@ -165,7 +165,7 @@ const BEPGenerator: React.FC = () => {
                                 value={observations}
                                 onChange={(e) => setObservations(e.target.value)}
                                 placeholder="Örn: Ali görsel eşlemede çok iyi ancak sözel yönergeleri almakta zorlanıyor..."
-                                className="w-full flex-1 min-h-[150px] p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-lila-500 outline-none resize-none bg-slate-50 text-slate-700 leading-relaxed"
+                                className="w-full flex-1 min-h-[150px] p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none bg-slate-50 text-slate-700 leading-relaxed"
                             />
                         </div>
                     </div>
@@ -175,7 +175,7 @@ const BEPGenerator: React.FC = () => {
                             onClick={handleGenerate}
                             disabled={isGenerating || !observations.trim()}
                             data-testid="generate-bep-button"
-                            className="w-full bg-gradient-to-r from-lila-600 to-indigo-600 hover:from-lila-700 hover:to-indigo-700 text-white py-4 rounded-xl font-bold shadow-lg shadow-lila-200 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:shadow-none transform active:scale-[0.98]"
+                            className="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:shadow-none transform active:scale-[0.98]"
                         >
                             {isGenerating ? <Loader2 className="animate-spin" /> : <Sparkles size={22} />}
                             {isGenerating ? 'BEP Hazırlanıyor...' : 'BEP Raporu Oluştur'}
@@ -188,7 +188,7 @@ const BEPGenerator: React.FC = () => {
             <div className="xl:col-span-8 bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full overflow-hidden">
                 <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                     <h3 className="font-bold text-slate-800 flex items-center gap-2 text-lg">
-                        <FileText className="text-indigo-500" size={24} />
+                        <FileText className="text-primary" size={24} />
                         BEP Taslağı
                         {reportData && <span className="text-xs font-normal bg-green-100 text-green-700 px-2 py-1 rounded-full border border-green-200">Taslak Hazır</span>}
                     </h3>
@@ -196,7 +196,7 @@ const BEPGenerator: React.FC = () => {
                         <button
                             onClick={handleSpeak}
                             disabled={!reportData || isSpeaking}
-                            className="p-2.5 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors disabled:opacity-50"
+                            className="p-2.5 text-slate-600 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors disabled:opacity-50"
                             title="Sesli Özet"
                         >
                             {isSpeaking ? <Loader2 className="animate-spin" size={20} /> : <Volume2 size={20} />}
@@ -229,7 +229,7 @@ const BEPGenerator: React.FC = () => {
                                         <input 
                                             value={reportData.studentName}
                                             onChange={(e) => updateReportField('studentName', e.target.value)}
-                                            className="font-semibold text-slate-900 text-lg bg-transparent border-b border-transparent hover:border-slate-200 focus:border-lila-500 outline-none"
+                                            className="font-semibold text-slate-900 text-lg bg-transparent border-b border-transparent hover:border-slate-200 focus:border-primary outline-none"
                                         />
                                     </div>
                                     <div className="flex flex-col">
@@ -237,7 +237,7 @@ const BEPGenerator: React.FC = () => {
                                         <input 
                                             value={reportData.bepDate}
                                             onChange={(e) => updateReportField('bepDate', e.target.value)}
-                                            className="font-medium text-slate-900 bg-transparent border-b border-transparent hover:border-slate-200 focus:border-lila-500 outline-none"
+                                            className="font-medium text-slate-900 bg-transparent border-b border-transparent hover:border-slate-200 focus:border-primary outline-none"
                                         />
                                     </div>
                                     <div className="flex flex-col md:col-span-2">
@@ -254,16 +254,16 @@ const BEPGenerator: React.FC = () => {
                             {/* Goals Grid */}
                             <div className="grid md:grid-cols-2 gap-6">
                                 {/* Long Term Goals */}
-                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-indigo-100 relative overflow-hidden">
-                                    <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
-                                    <h4 className="font-bold text-indigo-900 mb-4 flex items-center gap-2 text-lg">
-                                        <Target className="text-indigo-500" size={20} />
+                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-primary/10 relative overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+                                    <h4 className="font-bold text-primary-dark mb-4 flex items-center gap-2 text-lg">
+                                        <Target className="text-primary" size={20} />
                                         Uzun Dönemli Amaçlar
                                     </h4>
                                     <div className="space-y-3">
                                         {reportData.longTermGoals.map((goal, idx) => (
-                                            <div key={idx} className="flex gap-3 text-slate-700 bg-indigo-50/50 p-3 rounded-lg">
-                                                <span className="font-bold text-indigo-400">{idx + 1}.</span>
+                                            <div key={idx} className="flex gap-3 text-slate-700 bg-primary/5 p-3 rounded-lg">
+                                                <span className="font-bold text-primary/40">{idx + 1}.</span>
                                                 <textarea 
                                                     value={goal}
                                                     onChange={(e) => updateListField('longTermGoals', idx, e.target.value)}
@@ -276,16 +276,16 @@ const BEPGenerator: React.FC = () => {
                                 </div>
 
                                 {/* Short Term Goals */}
-                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-pink-100 relative overflow-hidden">
-                                    <div className="absolute top-0 left-0 w-1 h-full bg-pink-500"></div>
-                                    <h4 className="font-bold text-pink-900 mb-4 flex items-center gap-2 text-lg">
-                                        <CheckCircle className="text-pink-500" size={20} />
+                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-secondary/10 relative overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
+                                    <h4 className="font-bold text-secondary-dark mb-4 flex items-center gap-2 text-lg">
+                                        <CheckCircle className="text-secondary" size={20} />
                                         Kısa Dönemli Hedefler
                                     </h4>
                                     <div className="space-y-3">
                                         {reportData.shortTermGoals.map((goal, idx) => (
-                                            <div key={idx} className="flex gap-3 text-slate-700 bg-pink-50/50 p-3 rounded-lg">
-                                                <span className="font-bold text-pink-400">•</span>
+                                            <div key={idx} className="flex gap-3 text-slate-700 bg-secondary/5 p-3 rounded-lg">
+                                                <span className="font-bold text-secondary/40">•</span>
                                                 <textarea 
                                                     value={goal}
                                                     onChange={(e) => updateListField('shortTermGoals', idx, e.target.value)}
@@ -302,7 +302,7 @@ const BEPGenerator: React.FC = () => {
                             <div className="grid md:grid-cols-2 gap-6">
                                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                                     <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                        <BookOpen className="text-slate-400" size={20} />
+                                        <BookOpen className="text-primary" size={20} />
                                         Yöntem ve Teknikler
                                     </h4>
                                     <div className="flex flex-wrap gap-2">
@@ -311,14 +311,14 @@ const BEPGenerator: React.FC = () => {
                                                 key={idx}
                                                 value={m}
                                                 onChange={(e) => updateListField('teachingMethods', idx, e.target.value)}
-                                                className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-md text-sm font-medium border border-slate-200 outline-none focus:ring-1 focus:ring-lila-300"
+                                                className="px-3 py-1.5 bg-primary/5 text-primary-dark rounded-md text-sm font-medium border border-primary/10 outline-none focus:ring-1 focus:ring-primary/30"
                                             />
                                         ))}
                                     </div>
                                 </div>
                                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                                     <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                        <PenTool className="text-slate-400" size={20} />
+                                        <PenTool className="text-secondary" size={20} />
                                         Eğitim Materyalleri
                                     </h4>
                                     <div className="flex flex-wrap gap-2">
@@ -327,7 +327,7 @@ const BEPGenerator: React.FC = () => {
                                                 key={idx}
                                                 value={m}
                                                 onChange={(e) => updateListField('materials', idx, e.target.value)}
-                                                className="px-3 py-1.5 bg-orange-50 text-orange-700 rounded-md text-sm font-medium border border-orange-100 outline-none focus:ring-1 focus:ring-orange-300"
+                                                className="px-3 py-1.5 bg-secondary/5 text-secondary-dark rounded-md text-sm font-medium border border-secondary/10 outline-none focus:ring-1 focus:ring-secondary/30"
                                             />
                                         ))}
                                     </div>
@@ -335,15 +335,15 @@ const BEPGenerator: React.FC = () => {
                             </div>
 
                             {/* Recommendations */}
-                            <div className="bg-gradient-to-br from-indigo-900 to-slate-900 p-6 rounded-2xl shadow-lg text-white">
-                                <h4 className="font-bold mb-4 flex items-center gap-2 text-indigo-200">
+                            <div className="bg-gradient-to-br from-primary-dark to-slate-900 p-6 rounded-2xl shadow-lg text-white">
+                                <h4 className="font-bold mb-4 flex items-center gap-2 text-primary-light">
                                     <Sparkles size={20} />
                                     Uzman Tavsiyeleri
                                 </h4>
                                 <div className="space-y-3">
                                     {reportData.recommendations.map((rec, idx) => (
-                                        <div key={idx} className="flex gap-3 text-indigo-50/90 text-sm leading-relaxed bg-white/5 p-3 rounded-lg border border-white/10">
-                                            <span className="text-indigo-400 mt-1">•</span>
+                                        <div key={idx} className="flex gap-3 text-primary-light/90 text-sm leading-relaxed bg-white/5 p-3 rounded-lg border border-white/10">
+                                            <span className="text-primary-light mt-1">•</span>
                                             <textarea 
                                                 value={rec}
                                                 onChange={(e) => updateListField('recommendations', idx, e.target.value)}
@@ -377,15 +377,15 @@ const BEPGenerator: React.FC = () => {
                             </p>
                             <div className="flex gap-8 mt-8 text-xs font-mono text-slate-400">
                                 <div className="flex flex-col items-center gap-2">
-                                    <span className="w-8 h-8 rounded bg-green-50 text-green-600 flex items-center justify-center border border-green-100">✓</span>
+                                    <span className="w-8 h-8 rounded bg-primary/10 text-primary flex items-center justify-center border border-primary/20">✓</span>
                                     MEB Uyumlu
                                 </div>
                                 <div className="flex flex-col items-center gap-2">
-                                    <span className="w-8 h-8 rounded bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">✓</span>
+                                    <span className="w-8 h-8 rounded bg-secondary/10 text-secondary flex items-center justify-center border border-secondary/20">✓</span>
                                     SMART Hedefler
                                 </div>
                                 <div className="flex flex-col items-center gap-2">
-                                    <span className="w-8 h-8 rounded bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100">✓</span>
+                                    <span className="w-8 h-8 rounded bg-primary/10 text-primary flex items-center justify-center border border-primary/20">✓</span>
                                     Pedagojik Dil
                                 </div>
                             </div>

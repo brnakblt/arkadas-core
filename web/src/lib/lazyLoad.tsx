@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense, ComponentType } from 'react';
+import React, { lazy, Suspense, ComponentType } from 'react';
 import { useState, useEffect, useRef } from 'react';
 
 /**
@@ -17,16 +17,17 @@ function LoadingFallback() {
 /**
  * Create a lazy-loaded component with loading fallback
  */
-export function lazyLoad<P extends object>(
+export function lazyLoad<P extends {}>(
     importFn: () => Promise<{ default: ComponentType<P> }>,
     fallback?: React.ReactNode
 ) {
     const LazyComponent = lazy(importFn);
 
     return function LazyWrapper(props: P) {
+        const Component = LazyComponent as unknown as React.ComponentType<P>;
         return (
             <Suspense fallback={fallback ?? <LoadingFallback />}>
-                <LazyComponent {...(props as any)} />
+                <Component {...props} />
             </Suspense>
         );
     };

@@ -40,12 +40,13 @@ const DashboardSidebar: React.FC = () => {
 
     return (
         <aside className="w-64 bg-white border-r border-slate-200 h-screen fixed left-0 top-0 flex-col z-20 hidden md:flex shadow-xl">
-            <div className="h-20 bg-gradient-to-r from-blue-600 to-indigo-700 flex items-center px-6 relative overflow-hidden shrink-0">
+            <div className="h-20 bg-gradient-to-r from-primary to-primary-dark flex items-center px-6 relative overflow-hidden shrink-0">
+                <div className="absolute inset-0 bg-[url('/media/pattern.svg')] opacity-10"></div>
                 <div className="relative z-10 flex items-center gap-3 text-white">
                     <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center border border-white/30 font-bold text-lg">A</div>
                     <div>
                         <h1 className="font-bold text-lg leading-tight">Arkadaş</h1>
-                        <p className="text-[10px] text-blue-100 opacity-80 uppercase tracking-widest">Özel Eğitim ERP</p>
+                        <p className="text-[10px] text-primary-light opacity-90 uppercase tracking-widest">Özel Eğitim ERP</p>
                     </div>
                 </div>
             </div>
@@ -60,14 +61,15 @@ const DashboardSidebar: React.FC = () => {
                                     <li key={item.id}>
                                         <Link
                                             href={item.href}
-                                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${active ? 'bg-blue-50 text-blue-700 font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-50'
+                                            aria-current={active ? 'page' : undefined}
+                                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${active ? 'bg-primary/10 text-primary-dark font-semibold shadow-sm' : 'text-slate-600 hover:bg-slate-50'
                                                 }`}
                                         >
                                             <div className="flex items-center gap-3">
-                                                <span className={active ? 'text-blue-600' : 'text-slate-400'}>{item.icon}</span>
+                                                <span className={active ? 'text-primary' : 'text-slate-400'}>{item.icon}</span>
                                                 <span className="text-sm">{item.label}</span>
                                             </div>
-                                            {active && <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>}
+                                            {active && <div className="w-1.5 h-1.5 rounded-full bg-secondary"></div>}
                                         </Link>
                                     </li>
                                 );

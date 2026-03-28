@@ -28,6 +28,46 @@ interface ServiceStop extends RouteStop {
     delayMinutes?: number;
 }
 
+interface StrapiAttributes {
+    [key: string]: unknown;
+}
+
+interface StrapiData<T = StrapiAttributes> {
+    id: number;
+    attributes: T;
+}
+
+interface StrapiResponse<T = StrapiAttributes> {
+    data: StrapiData<T>[];
+}
+
+interface RouteAttributes {
+    name: string;
+    vehiclePlate: string;
+    isActive: boolean;
+    driver?: {
+        data?: StrapiData<{
+            username: string;
+        }>;
+    };
+    stops?: {
+        data: StrapiData<{
+            name: string;
+            latitude: number;
+            longitude: number;
+            order: number;
+            estimatedTime: string;
+        }>[];
+    };
+}
+
+interface LocationAttributes {
+    latitude: number;
+    longitude: number;
+    recordedAt: string;
+    speedKmh?: number;
+}
+
 export default function ServiceTrackingPage() {
     const [routes, setRoutes] = useState<ServiceRoute[]>([]);
     const [selectedRoute, setSelectedRoute] = useState<ServiceRoute | null>(null);
@@ -45,19 +85,18 @@ export default function ServiceTrackingPage() {
     const fetchRoutes = useCallback(async () => {
         try {
             const res = await fetch(`${getStrapiURL()}/api/service-routes?populate=*&filters[isActive][$eq]=true`);
-            const json = await res.json();
+            const json = (await res.json()) as StrapiResponse<RouteAttributes>;
 
             if (!json.data) return;
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const mappedRoutes: ServiceRoute[] = await Promise.all(json.data.map(async (item: any) => {
+            const mappedRoutes: ServiceRoute[] = await Promise.all(json.data.map(async (item) => {
                 const attrs = item.attributes;
 
                 // Fetch latest location for this route
-                let currentLocation = undefined;
+                let currentLocation: ServiceRoute['currentLocation'] = undefined;
                 try {
                     const locRes = await fetch(`${getStrapiURL()}/api/location-logs?filters[route][id][$eq]=${item.id}&sort[0]=createdAt:desc&pagination[limit]=1`);
-                    const locJson = await locRes.json();
+                    const locJson = (await locRes.json()) as StrapiResponse<LocationAttributes>;
                     if (locJson.data && locJson.data.length > 0) {
                         const loc = locJson.data[0].attributes;
                         currentLocation = {
@@ -72,24 +111,22 @@ export default function ServiceTrackingPage() {
                 }
 
                 // Map stops
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const stops: ServiceStop[] = (attrs.stops?.data || []).map((stop: any) => ({
+                const stops: ServiceStop[] = (attrs.stops?.data || []).map((stop) => ({
                     id: stop.id.toString(),
                     name: stop.attributes.name,
                     latitude: stop.attributes.latitude,
                     longitude: stop.attributes.longitude,
                     order: stop.attributes.order,
                     estimatedTime: stop.attributes.estimatedTime,
-                    status: 'pending', // Default
+                    status: 'pending' as const, // Default
                     delayMinutes: 0
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                })).sort((a: any, b: any) => a.order - b.order);
+                })).sort((a, b) => a.order - b.order);
 
                 // Calculate statuses and delays if we have location
                 if (currentLocation) {
                     stops.forEach(stop => {
                         stop.delayMinutes = calculateDelay(
-                            { latitude: currentLocation.latitude, longitude: currentLocation.longitude },
+                            { latitude: currentLocation?.latitude ?? 0, longitude: currentLocation?.longitude ?? 0 },
                             stop
                         );
                     });
@@ -104,7 +141,7 @@ export default function ServiceTrackingPage() {
                     status: currentLocation ? 'in_progress' : 'not_started',
                     stops: stops,
                     currentLocation
-                };
+                } as ServiceRoute;
             }));
 
             setRoutes(mappedRoutes);
@@ -164,7 +201,7 @@ export default function ServiceTrackingPage() {
         });
     }
 
-    const mapRoutes = selectedRoute
+    const mapRoutesData = selectedRoute
         ? [{
             id: selectedRoute.id,
             points: selectedRoute.stops.map(s => ({ lat: s.latitude, lng: s.longitude })),
@@ -257,7 +294,7 @@ export default function ServiceTrackingPage() {
                         <div className="bg-white rounded-xl shadow-sm p-4">
                             <GPSMap
                                 markers={mapMarkers}
-                                routes={mapRoutes}
+                                routes={mapRoutesData}
                                 currentLocation={selectedRoute?.currentLocation
                                     ? { latitude: selectedRoute.currentLocation.latitude, longitude: selectedRoute.currentLocation.longitude }
                                     : (myLocation ? { latitude: myLocation.latitude, longitude: myLocation.longitude } : null)}

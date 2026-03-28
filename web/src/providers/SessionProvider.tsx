@@ -1,9 +1,10 @@
 'use client';
 
 import React, { createContext, useContext, ReactNode } from 'react';
+import { User } from '@/types/auth';
 
 interface SessionContextType {
-    user: any;
+    user: User | null;
     isAuthenticated: boolean;
 }
 

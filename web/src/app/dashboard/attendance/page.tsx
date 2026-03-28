@@ -10,10 +10,10 @@ const AttendancePage: React.FC = () => {
     const [mode, setMode] = useState<'register' | 'verify'>('verify');
     const [lastDetection, _setLastDetection] = useState<string | null>(null);
 
-    const handleFaceDetected = (descriptor: Float32Array) => {
+    const handleFaceDetected = (descriptor: Float32Array, livenessVerified: boolean) => {
         // In a real app, we would save this to the database
-        console.warn("Registered Face Descriptor:", descriptor);
-        alert("Yüz başarıyla kaydedildi! (Konsola bakınız debug için)");
+        console.warn("Registered Face Descriptor:", descriptor, "Liveness:", livenessVerified);
+        alert(`Yüz başarıyla kaydedildi! (Canlılık: ${livenessVerified})`);
         setMode('verify');
     };
 
