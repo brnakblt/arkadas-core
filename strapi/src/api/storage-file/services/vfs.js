@@ -46,10 +46,10 @@ module.exports = {
                 ContentType: file.mimeType,
             }));
         } else if (backend === 'webdav') {
-            // WebDAV implementation (SFTPGo)
-            const webdavUrl = process.env.WEBDAV_URL || 'http://localhost:8090';
-            const webdavUser = process.env.SFTPGO_ADMIN_USER || 'admin';
-            const webdavPass = process.env.SFTPGO_ADMIN_PASSWORD;
+            // WebDAV implementation (Nextcloud)
+            const webdavUrl = process.env.WEBDAV_URL || 'http://localhost:8088/remote.php/dav/files/admin';
+            const webdavUser = process.env.NEXTCLOUD_ADMIN_USER || 'admin';
+            const webdavPass = process.env.NEXTCLOUD_ADMIN_PASSWORD;
 
             await fetch(`${webdavUrl}/${storagePath}`, {
                 method: 'PUT',
@@ -83,9 +83,9 @@ module.exports = {
 
             return streamToBuffer(response.Body);
         } else if (file.storageBackend === 'webdav') {
-            const webdavUrl = process.env.WEBDAV_URL || 'http://localhost:8090';
-            const webdavUser = process.env.SFTPGO_ADMIN_USER || 'admin';
-            const webdavPass = process.env.SFTPGO_ADMIN_PASSWORD;
+            const webdavUrl = process.env.WEBDAV_URL || 'http://localhost:8088/remote.php/dav/files/admin';
+            const webdavUser = process.env.NEXTCLOUD_ADMIN_USER || 'admin';
+            const webdavPass = process.env.NEXTCLOUD_ADMIN_PASSWORD;
 
             const response = await fetch(`${webdavUrl}/${file.storagePath}`, {
                 headers: {

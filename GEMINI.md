@@ -10,8 +10,8 @@ This file defines the foundational instructions and technical standards for the 
   - **Backend/CMS:** Strapi v5 (PostgreSQL) - Port 1337
   - **Mobile:** React Native (Expo) - Port 8082
   - **AI Service:** Python 3.13 (FastAPI/OpenCV) - Port 8000
-  - **Storage:** SFTPGo (WebDAV) - Port 8088
-  - **Infrastructure:** Docker Compose, Makefile management.
+  - **Storage:** Nextcloud (WebDAV) - Port 8088
+  - **Infrastructure:** Docker Compose, Makefile management, Redis/BullMQ Queue.
 
 ## Engineering Standards
 
@@ -27,8 +27,8 @@ This file defines the foundational instructions and technical standards for the 
 
 ### 3. Backend (strapi/)
 - **Stack:** Strapi v5, TypeScript.
-- **Convention:** Follow Strapi v5 patterns for Controllers, Services, and Middlewares.
-- **Integration:** Maintain sync with SFTPGo for user file management.
+- **Convention:** Follow Strapi v5 patterns. Integrated with Nextcloud OCS/WebDAV and BullMQ.
+- **Integration:** Maintain sync with Nextcloud for user file management.
 
 ### 4. AI & Python (api/opencv)
 - **Stack:** Python 3.13, OpenCV, FastAPI.

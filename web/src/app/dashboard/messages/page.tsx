@@ -13,7 +13,7 @@ export default function MessagesPage() {
                     </div>
                     <div className="ml-3">
                         <p className="text-sm text-yellow-700">
-                            Mesajlaşma sistemi şu anda bakım aşamasındadır. SFTPGo geçişi tamamlandıktan sonra yeni bir altyapı ile hizmete açılacaktır.
+                            Mesajlaşma sistemi şu anda bakım aşamasındadır. Nextcloud entegrasyonu tamamlandıktan sonra yeni bir altyapı ile hizmete açılacaktır.
                         </p>
                     </div>
                 </div>

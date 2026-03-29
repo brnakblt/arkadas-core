@@ -1,23 +1,22 @@
 'use strict';
 
-const SftpGoService = require('../../../../utils/sftpgo');
-const sftp = new SftpGoService();
+const NextcloudService = require('../../../../utils/nextcloud');
+const nextcloud = new NextcloudService();
 
 module.exports = {
     async afterCreate(event) {
         const { result } = event;
         if (result.tcIdentity) {
             try {
-                await sftp.ensureGroup('students', 'Students Group');
-                await sftp.syncUser({
+                await nextcloud.ensureGroup('students');
+                await nextcloud.syncUser({
                     username: result.tcIdentity,
                     password: result.tcIdentity,
-                    email: result.studentNumber ? `${result.studentNumber}@arkadas.com.tr` : undefined,
-                    description: `Student: ${result.fullName}`,
-                    group: 'students'
+                    email: result.studentNumber ? `${result.studentNumber}@arkadas.com.tr` : undefined
                 });
+                await nextcloud.addUserToGroup(result.tcIdentity, 'students');
             } catch (e) {
-                strapi.log.error(`SFTPGo Sync Error (Student Create): ${e.message}`);
+                strapi.log.error(`Nextcloud Sync Error (Student Create): ${e.message}`);
             }
         }
     },
@@ -26,14 +25,12 @@ module.exports = {
         const { result } = event;
         if (result.tcIdentity) {
             try {
-                await sftp.syncUser({
+                await nextcloud.syncUser({
                     username: result.tcIdentity,
-                    email: result.studentNumber ? `${result.studentNumber}@arkadas.com.tr` : undefined,
-                    description: `Student: ${result.fullName}`,
-                    group: 'students'
+                    email: result.studentNumber ? `${result.studentNumber}@arkadas.com.tr` : undefined
                 });
             } catch (e) {
-                strapi.log.error(`SFTPGo Sync Error (Student Update): ${e.message}`);
+                strapi.log.error(`Nextcloud Sync Error (Student Update): ${e.message}`);
             }
         }
     },
@@ -42,12 +39,12 @@ module.exports = {
         const { result } = event;
         if (result.tcIdentity) {
             try {
-                await sftp.syncUser({
+                await nextcloud.syncUser({
                     username: result.tcIdentity,
                     deleteUser: true
                 });
             } catch (e) {
-                strapi.log.error(`SFTPGo Sync Error (Student Delete): ${e.message}`);
+                strapi.log.error(`Nextcloud Sync Error (Student Delete): ${e.message}`);
             }
         }
     },

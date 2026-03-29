@@ -6,7 +6,7 @@ const fs = require('fs-extra');
 const { XMLParser } = require('fast-xml-parser');
 const crypto = require('crypto');
 const mime = require('mime-types');
-const SftpGoService = require('../src/utils/sftpgo');
+const NextcloudService = require('../src/utils/nextcloud');
 
 // Map "Kan Grubu" from Turkish to Enum
 const BLOOD_TYPE_MAP = {
@@ -158,7 +158,7 @@ async function manualUpload(filePath) {
 
 // SFTPGo Service class removed - imported from utils/sftpgo
 
-async function seedStudents(xmlPath, authenticatedRole, sftpGoService) {
+async function seedStudents(xmlPath, authenticatedRole, nextcloudService) {
     console.log('🚀 Seeding Students from XML...');
     if (!fs.existsSync(xmlPath)) return;
 
@@ -293,7 +293,7 @@ async function seedStudents(xmlPath, authenticatedRole, sftpGoService) {
     }
 }
 
-async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, sftpGoService) {
+async function seedPersonnel(xmlPath, authenticatedRole, teamImagesDir, nextcloudService) {
     console.log('🚀 Seeding Personnel from XML...');
     if (!fs.existsSync(xmlPath)) return;
 
@@ -493,7 +493,7 @@ async function seedHero(imagesPath) {
     }
 }
 
-async function seedAdmin(sftpGoService) {
+async function seedAdmin(nextcloudService) {
     console.log('🚀 Seeding Super Admin user...');
     try {
         const roleQuery = strapi.db.query('admin::role');
@@ -533,22 +533,21 @@ async function seedAdmin(sftpGoService) {
 
         console.log(`   + Admin created: ${email}`);
 
-        // Sync to SFTPGo
-        if (sftpGoService) {
-            await sftpGoService.syncUser({
+        // Sync to Nextcloud
+        if (nextcloudService) {
+            await nextcloudService.syncUser({
                 username: 'admin',
-                password: process.env.SFTPGO_ADMIN_PASSWORD || 'Strapi123!',
-                email,
-                description: 'Super Admin User',
-                group: 'admins'
+                password: process.env.NEXTCLOUD_ADMIN_PASSWORD || 'Strapi123!',
+                email
             });
+            await nextcloudService.addUserToGroup('admin', 'admins');
         }
     } catch (error) {
         console.error('   ❌ Could not seed admin user:', error.message);
     }
 }
 
-async function seedAppUser(authenticatedRole, sftpGoService) {
+async function seedAppUser(authenticatedRole, nextcloudService) {
     console.log('🚀 Seeding App Admin User (Frontend)...');
     try {
         const email = process.env.STRAPI_ADMIN_EMAIL || 'barannakblut@gmail.com';
@@ -575,15 +574,14 @@ async function seedAppUser(authenticatedRole, sftpGoService) {
             console.log(`   ~ App User sync completed: ${email}`);
         }
 
-        // Sync to SFTPGo
-        if (sftpGoService) {
-            await sftpGoService.syncUser({
+        // Sync to Nextcloud
+        if (nextcloudService) {
+            await nextcloudService.syncUser({
                 username,
                 password,
-                email,
-                description: 'App Admin User',
-                group: 'admins'
+                email
             });
+            await nextcloudService.addUserToGroup(username, 'admins');
         }
     } catch (e) {
         console.error('   ❌ Failed to seed App User:', e.message);
@@ -796,29 +794,29 @@ async function main() {
 
         const authenticatedRole = await strapi.db.query('plugin::users-permissions.role').findOne({ where: { type: 'authenticated' } });
 
-        // Initialize SFTPGo Service
-        const sftpGoService = new SftpGoService(
-            process.env.SFTPGO_URL || 'http://localhost:8088',
-            process.env.SFTPGO_ADMIN_USER || 'admin',
-            process.env.SFTPGO_ADMIN_PASSWORD || process.env.STRAPI_ADMIN_PASSWORD || 'Strapi123!'
+        // Initialize Nextcloud Service
+        const nextcloudService = new NextcloudService(
+            process.env.NEXTCLOUD_URL || 'http://localhost:8088',
+            process.env.NEXTCLOUD_ADMIN_USER || 'admin',
+            process.env.NEXTCLOUD_ADMIN_PASSWORD || process.env.STRAPI_ADMIN_PASSWORD || 'Strapi123!'
         );
-        console.log('\n🔄 Initializing SFTPGo Sync...');
-        if (await sftpGoService.authenticate()) {
-            console.log('   ✓ SFTPGo Connected');
-            await sftpGoService.ensureGroup('students', 'All Students');
-            await sftpGoService.ensureGroup('teachers', 'All Staff Members');
-            await sftpGoService.ensureGroup('admins', 'System Administrators');
-        } else {
-            console.log('   ⚠️ SFTPGo Connection Failed - specific users won\'t be synced.');
+        console.log('\n🔄 Initializing Nextcloud Sync...');
+        try {
+            await nextcloudService.ensureGroup('students');
+            await nextcloudService.ensureGroup('teachers');
+            await nextcloudService.ensureGroup('admins');
+            console.log('   ✓ Nextcloud Groups Initialized');
+        } catch (e) {
+            console.log('   ⚠️ Nextcloud Connection Failed - specific users won\'t be synced.');
         }
 
-        await seedAdmin(sftpGoService);
-        await seedAppUser(authenticatedRole, sftpGoService);
+        await seedAdmin(nextcloudService);
+        await seedAppUser(authenticatedRole, nextcloudService);
         await setPublicPermissions(app);
         await setAuthenticatedPermissions(app);
         await seedContent(app);
-        await seedStudents(studentXml, authenticatedRole, sftpGoService);
-        await seedPersonnel(staffXml, authenticatedRole, teamMemberImages, sftpGoService);
+        await seedStudents(studentXml, authenticatedRole, nextcloudService);
+        await seedPersonnel(staffXml, authenticatedRole, teamMemberImages, nextcloudService);
         await seedHero(heroImages);
         await seedGallery(app);
         await seedApiToken(app);

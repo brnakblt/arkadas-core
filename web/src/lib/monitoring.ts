@@ -73,8 +73,8 @@ export async function initMonitoring(config: Partial<MonitoringConfig> = {}): Pr
 
     const finalConfig = { ...defaultConfig, ...config };
 
-    if (!finalConfig.dsn) {
-        console.warn('[Monitoring] No DSN configured, running in mock mode');
+    if (!finalConfig.dsn || finalConfig.dsn === 'your-sentry-dsn-here' || !finalConfig.dsn.startsWith('http')) {
+        console.warn('[Monitoring] No valid DSN configured, running in mock mode');
         isInitialized = true;
         return;
     }

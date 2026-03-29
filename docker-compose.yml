@@ -9,9 +9,8 @@
 # Web (Next.js):  3000
 # Strapi CMS:     1337
 # Docs (MkDocs):  8001
-# Collabora:      9980
-# SFTPGo Admin:   8088
-# SFTPGo WebDAV:  8089
+# Collabora:      Nextcloud Extension
+# Nextcloud:      8088
 # ==========================================
 
 services:
@@ -59,61 +58,39 @@ services:
           memory: 256M
 
   # ==========================================
-  # SFTPGo - File Storage & WebDAV
+  # Nextcloud - File Storage & WebDAV
   # ==========================================
-  sftpgo:
-    image: drakkan/sftpgo:v2.7
+  nextcloud:
+    image: nextcloud:latest
     restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
     ports:
-      - "8088:8080" # WebAdmin/API
-      - "8089:8089" # WebDAV
-    environment:
-      SFTPGO_HTTPD__BINDINGS__0__PORT: 8080
-      SFTPGO_HTTPD__BINDINGS__0__ENABLE_WEB_ADMIN: "true"
-      SFTPGO_HTTPD__BINDINGS__0__ENABLE_REST_API: "true"
-      SFTPGO_WEBDAVD__BINDINGS__0__PORT: 8089
-      SFTPGO_DATA_PROVIDER__DRIVER: sqlite
-      SFTPGO_DATA_PROVIDER__NAME: /var/lib/sftpgo/sftpgo.db
-      SFTPGO_DATA_PROVIDER__CREATE_DEFAULT_ADMIN: "true"
-      SFTPGO_DEFAULT_ADMIN_USERNAME: ${SFTPGO_ADMIN_USER}
-      SFTPGO_DEFAULT_ADMIN_PASSWORD: ${SFTPGO_ADMIN_PASSWORD}
+      - "8088:80"
     volumes:
-      - ./infra_data/sftpgo/data:/srv/sftpgo/data
-      - ./infra_data/sftpgo/config:/var/lib/sftpgo
-    deploy:
-      resources:
-        limits:
-          memory: 128M
-
-  # ==========================================
-  # Application Services
-  # ==========================================
-
-  # ==========================================
-  # Collabora Online - Document Editing (MPL-2.0)
-  # ==========================================
-  collabora:
-    image: collabora/code:latest
-    restart: unless-stopped
-    ports:
-      - "9980:9980"
+      - ./infra_data/nextcloud/data:/var/www/html
     environment:
-      aliasgroup1: "http://localhost:3000,http://web:3000,http://strapi:1337"
-      username: admin
-      password: ${COLLABORA_ADMIN_PASSWORD:-collabora}
-      extra_params: "--o:ssl.enable=false --o:ssl.termination=false"
-      dictionaries: "tr en"
-    cap_add:
-      - MKNOD
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
+      - NEXTCLOUD_TRUSTED_DOMAINS=localhost nextcloud.arkadas.com.tr
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:9980/hosting/capabilities || exit 1" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      test: ["CMD", "curl", "-f", "http://localhost/status.php"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     deploy:
       resources:
         limits:
           memory: 1G
+
+  # ==========================================
+  # Application Services
+  # ==========================================
 
   strapi:
     build:
@@ -138,9 +115,9 @@ services:
       - APP_KEYS=${APP_KEYS}
       - API_TOKEN_SALT=${API_TOKEN_SALT}
       - TRANSFER_TOKEN_SALT=${TRANSFER_TOKEN_SALT}
-      - SFTPGO_URL=http://sftpgo:8080
-      - SFTPGO_ADMIN_USERNAME=${SFTPGO_ADMIN_USER}
-      - SFTPGO_ADMIN_PASSWORD=${SFTPGO_ADMIN_PASSWORD}
+      - NEXTCLOUD_URL=http://nextcloud:80
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
     volumes:
       - ./strapi/public/uploads:/opt/app/public/uploads
@@ -149,8 +126,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      sftpgo:
-        condition: service_started
+      nextcloud:
+        condition: service_healthy
     deploy:
       resources:
         limits:

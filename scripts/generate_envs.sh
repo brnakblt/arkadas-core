@@ -22,7 +22,7 @@ echo "Generating secure secrets..."
 # Admin Credentials (Universal)
 echo -e "\n${YELLOW}Setup Universal Admin Credentials${NC}"
 echo "This password will be used for:"
-echo " - SFTPGo Admin"
+echo " - Nextcloud Admin"
 echo " - Strapi Panel (Initial)"
 echo " - Web Admin User"
 
@@ -47,7 +47,7 @@ APP_USER_USERNAME="barannakblut"
 
 # Generate Shared Secrets
 POSTGRES_PASSWORD=$(generate_secret)
-SFTPGO_ADMIN_PASSWORD=$GLOBAL_ADMIN_PASSWORD
+NEXTCLOUD_ADMIN_PASSWORD=$GLOBAL_ADMIN_PASSWORD
 REDIS_PASSWORD=$(generate_secret)
 JWT_SECRET=$(generate_secret)
 ADMIN_JWT_SECRET=$(generate_secret)
@@ -85,10 +85,10 @@ generate_env_file() {
         sed -i "s|STRAPI_ADMIN_EMAIL=.*|STRAPI_ADMIN_EMAIL=${STRAPI_USER}|" "$target_file" || true
         sed -i "s|NEXTAUTH_SECRET=.*|NEXTAUTH_SECRET=${NEXTAUTH_SECRET}|" "$target_file" || true
         
-        # SFTPGo Admin (Global Consistency)
-        sed -i "s|SFTPGO_ADMIN_USER=.*|SFTPGO_ADMIN_USER=admin|" "$target_file" || true
-        sed -i "s|SFTPGO_ADMIN_PASSWORD=.*|SFTPGO_ADMIN_PASSWORD=${SFTPGO_ADMIN_PASSWORD}|" "$target_file" || true
-        sed -i "s|SFTPGO_URL=.*|SFTPGO_URL=http://localhost:8088|" "$target_file" || true
+        # Nextcloud Admin (Global Consistency)
+        sed -i "s|NEXTCLOUD_ADMIN_USER=.*|NEXTCLOUD_ADMIN_USER=admin|" "$target_file" || true
+        sed -i "s|NEXTCLOUD_ADMIN_PASSWORD=.*|NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}|" "$target_file" || true
+        sed -i "s|NEXTCLOUD_URL=.*|NEXTCLOUD_URL=http://localhost:8088|" "$target_file" || true
 
         # Monitoring & Notifications
         sed -i "s|GRAFANA_ADMIN_PASSWORD=.*|GRAFANA_ADMIN_PASSWORD=${APP_PWD}|" "$target_file" || true
@@ -141,5 +141,5 @@ fi
 
 echo -e "\n${GREEN}=== Environment Generation Complete ===${NC}"
 echo -e "Admin Password: ${YELLOW}${GLOBAL_ADMIN_PASSWORD}${NC}"
-echo -e "SFTPGo Admin:   ${YELLOW}admin / ${SFTPGO_ADMIN_PASSWORD}${NC}"
+echo -e "Nextcloud Admin: ${YELLOW}admin / ${NEXTCLOUD_ADMIN_PASSWORD}${NC}"
 echo -e "Please run ${YELLOW}bash scripts/setup_infisical.sh${NC} to import these into Infisical."

@@ -48,8 +48,7 @@ make dev
 | AI Service | 8000 | http://localhost:8000/docs | FastAPI / OpenCV |
 | Mebbis Service | 4000 | http://localhost:4000 | MEBBİS Automation |
 | Mobile (Expo) | 8082 | - | Parent/Teacher App |
-| SFTPGo Admin | 8088 | http://localhost:8088 | Storage Admin |
-| SFTPGo WebDAV | 8089 | http://localhost:8089 | Storage Access |
+| Nextcloud Admin | 8088 | http://localhost:8088 | Storage Admin |
 | Collabora Online | 9980 | http://localhost:9980 | Document Editing |
 | PostgreSQL | 5432 | - | Database |
 | Redis | 6380 | - | Caching (Mapped from 6379) |
@@ -90,16 +89,14 @@ make monitoring
 # Access Grafana: http://localhost:3001
 ```
 
-### Optional: SFTPGo File Storage
+### Optional: Nextcloud File Storage
 ```bash
-# Create directories first
-mkdir -p databases/sftpgo/data databases/sftpgo/config
-
-# Start SFTPGo
-docker compose --profile storage up -d
+# Start Nextcloud
+docker compose up -d nextcloud
 
 # Access: http://localhost:8088
-# Credentials: check SFTPGO_ADMIN_* in .env
+# Credentials: check NEXTCLOUD_ADMIN_* in .env
+```
 
 ### Optional: PBX (FreePBX)
 ```bash

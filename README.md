@@ -43,8 +43,7 @@ make dev
 | **Mobile** | 8082 | - | React Native (Expo) |
 | **AI Service** | 8000 | http://localhost:8000/docs | FastAPI / OpenCV |
 | **Mebbis** | 4000 | http://localhost:4000 | Mebbis Entegrasyon |
-| **SFTPGo** | 8088 | http://localhost:8088 | Dosya Yönetimi (Admin) |
-| **WebDAV** | 8089 | http://localhost:8089 | Dosya Erişimi (OnlyOffice) |
+| **Nextcloud** | 8088 | http://localhost:8088 | Dosya Yönetimi (Admin) |
 | **Collabora** | 9980 | http://localhost:9980 | Online Belge Düzenleme |
 | **PBX (FreePBX)** | 81 | http://localhost:81 | Santral Yönetimi |
 | **Grafana** | 3001 | http://localhost:3001 | Metrikler & Dashboard |
@@ -68,7 +67,7 @@ make dev
 
 ### 🛠️ Altyapı
 - **Otomatik Yedekleme:** DB ve Dosyalar (`make backup`)
-- **Dosya Senkronizasyonu:** Strapi <-> SFTPGo entegrasyonu
+- **Dosya Senkronizasyonu:** Strapi <-> Nextcloud entegrasyonu
 - **İzleme:** Prometheus, Grafana, Alertmanager stack
 - **CI/CD:** GitHub Actions entegrasyonu
 
@@ -116,7 +115,7 @@ Geliştirme ve bakım için `make` komutlarını kullanın:
 
 | Yazılım | Önerilen |
 |---------|----------|
-| Node.js | 20.x+ |
+| Node.js | 24.x+ |
 | Docker | 24.x+ |
 | Make | 4.x+ |
 
@@ -130,8 +129,8 @@ Script otomatik olarak güvenli şifreler oluşturur:
 bash scripts/generate_envs.sh
 ```
 
-### SFTPGo & Strapi Senkronizasyonu
-Strapi üzerindeki "Personel" ve "Öğrenci" işlemleri otomatik olarak SFTPGo kullanıcılarını ve gruplarını günceller.
+### Nextcloud & Strapi Senkronizasyonu
+Strapi üzerindeki "Personel" ve "Öğrenci" işlemleri otomatik olarak Nextcloud kullanıcılarını ve gruplarını günceller.
 
 ---
 

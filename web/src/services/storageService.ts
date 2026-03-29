@@ -1,6 +1,6 @@
 /**
  * Storage Service
- * WebDAV client for file operations with SFTPGo
+ * WebDAV client for file operations with Nextcloud
  */
 
 import { createClient, WebDAVClient, FileStat } from 'webdav';

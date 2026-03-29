@@ -123,7 +123,7 @@ module.exports = createCoreController('api::storage-file.storage-file', ({ strap
         const fs = require('fs');
         const content = fs.readFileSync(file.path);
 
-        // Store using WebDAV backend (SFTPGo)
+        // Store using WebDAV backend (Nextcloud)
         const storagePath = await vfs.write({
             name: file.name,
             mimeType: file.type,
@@ -174,7 +174,7 @@ module.exports = createCoreController('api::storage-file.storage-file', ({ strap
         ctx.body = content;
     },
 
-    // List files in directory (SFTPGo WebDAV)
+    // List files in directory (Nextcloud WebDAV)
     async listDirectory(ctx) {
         const userId = ctx.state.user?.id;
         if (!userId) {
@@ -182,9 +182,9 @@ module.exports = createCoreController('api::storage-file.storage-file', ({ strap
         }
 
         const { path: dirPath = '/' } = ctx.query;
-        const webdavUrl = process.env.SFTPGO_WEBDAV_URL || 'http://localhost:8089';
-        const webdavUser = process.env.SFTPGO_USER || 'app-user';
-        const webdavPass = process.env.SFTPGO_PASSWORD || 'arkadas-app-pass';
+        const webdavUrl = process.env.WEBDAV_URL || 'http://localhost:8088/remote.php/dav/files/admin';
+        const webdavUser = process.env.NEXTCLOUD_ADMIN_USER || 'admin';
+        const webdavPass = process.env.NEXTCLOUD_ADMIN_PASSWORD;
 
         try {
             // PROPFIND request for WebDAV directory listing

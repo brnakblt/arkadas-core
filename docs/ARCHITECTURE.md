@@ -17,8 +17,8 @@ graph TD
         Mobile -->|REST/GraphQL| Strapi
         
         Strapi -->|SQL| Postgres[(PostgreSQL)]
-        Strapi -->|Cache| Redis[(Redis)]
-        Strapi -->|Files/Sync| SFTPGo[SFTPGo Storage]
+        Strapi -->|Cache/Queue| Redis[(Redis)]
+        Strapi -->|Files/Sync| Nextcloud[Nextcloud Storage]
         Strapi -->|Sync CDR| PBX
         Strapi -->|AI Requests| AI[AI Service - Python]
         Strapi -->|Mebbis Sync| Mebbis[Mebbis Service - Node]
@@ -26,7 +26,7 @@ graph TD
         Web -->|WebRTC| PBX
         Mobile -->|SIP| PBX
         Web -->|WebDAV/Docs| Collabora[Collabora Online]
-        SFTPGo -->|Storage| Disk[Local Storage]
+        Nextcloud -->|Storage| Disk[Local Storage]
     end
 
     subgraph "Monitoring & Security"
@@ -54,13 +54,13 @@ graph TD
 ### 2. Backend (Strapi)
 - **Framework:** Strapi v5 (Node.js)
 - **Database:** PostgreSQL 15 + pgvector
-- **Caching:** Redis 7
-- **Integration:** Central hub for all external services (AI, Mebbis, SFTPGo).
+- **Caching & Queue:** Redis 7 + BullMQ
+- **Integration:** Central hub for AI, Mebbis, Nextcloud, and WhatsApp notifications.
 
 ### 3. AI & Computer Vision (api/opencv)
 - **Stack:** Python 3.13, OpenCV, FastAPI.
 - **Features:** 
-  - Face recognition for attendance tracking.
+  - Attendance tracking with **Biometric Liveness Detection** (EAR + Movement variance).
   - Document processing and OCR.
   - AI-driven BEP (Bireyselleştirilmiş Eğitim Programı) generation.
 
@@ -73,7 +73,7 @@ graph TD
 - **Features:** Parent/Teacher portals, notification center, and mobile attendance.
 
 ### 6. File Storage & Document Editing
-- **SFTPGo:** Secure storage backend with WebDAV support.
+- **Nextcloud:** Enterprise-grade storage backend with OCS API and WebDAV support.
 - **Collabora Online:** Office suite integration for real-time document editing (BEP plans, reports).
 
 ### 7. Communication (PBX)
@@ -104,8 +104,8 @@ graph TD
 ### File Upload Flow
 1. User selects file in Web App.
 2. Web App sends file to Strapi Upload API.
-3. Strapi streams file to SFTPGo via SFTP protocol.
-4. SFTPGo stores file on disk/S3.
+3. Strapi streams file to Nextcloud via WebDAV protocol.
+4. Nextcloud stores file on disk.
 5. Strapi records file metadata in PostgreSQL.
 
 ## Infrastructure

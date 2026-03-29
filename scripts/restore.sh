@@ -165,32 +165,32 @@ restore_files() {
     echo -e "   ✓ Uploads restored from: ${YELLOW}$FILES_BACKUP_FILE${NC}"
 }
 
-# SFTPGo Restore
-restore_sftpgo() {
-    echo -e "${GREEN}📦 Restoring SFTPGo...${NC}"
+# Nextcloud Data Restore
+restore_nextcloud() {
+    echo -e "${GREEN}📦 Restoring Nextcloud data...${NC}"
     
-    SFTPGO_BACKUP_FILE="$BACKUP_DIR/sftpgo_${TIMESTAMP}.tar.gz"
+    NEXTCLOUD_BACKUP_FILE="$BACKUP_DIR/nextcloud_${TIMESTAMP}.tar.gz"
     
-    if [ ! -f "$SFTPGO_BACKUP_FILE" ]; then
-        SFTPGO_BACKUP_FILE="$BACKUP_DIR/sftpgo_${TIMESTAMP}.tar"
-        if [ ! -f "$SFTPGO_BACKUP_FILE" ]; then
-            echo -e "${YELLOW}⚠️ SFTPGo backup not found, skipping${NC}"
+    if [ ! -f "$NEXTCLOUD_BACKUP_FILE" ]; then
+        NEXTCLOUD_BACKUP_FILE="$BACKUP_DIR/nextcloud_${TIMESTAMP}.tar"
+        if [ ! -f "$NEXTCLOUD_BACKUP_FILE" ]; then
+            echo -e "${YELLOW}⚠️ Nextcloud backup not found, skipping${NC}"
             return 0
         fi
     fi
     
-    # Stop SFTPGo, restore, restart
-    docker stop arkadasozelegitim-sftpgo-1 2>/dev/null || true
+    # Stop Nextcloud services, restore, restart
+    docker stop arkadasozelegitim-nextcloud-1 arkadasozelegitim-nextcloud-db-1 2>/dev/null || true
     
-    if [[ "$SFTPGO_BACKUP_FILE" == *.gz ]]; then
-        tar -xzf "$SFTPGO_BACKUP_FILE" -C infra_data
+    if [[ "$NEXTCLOUD_BACKUP_FILE" == *.gz ]]; then
+        tar -xzf "$NEXTCLOUD_BACKUP_FILE" -C infra_data
     else
-        tar -xf "$SFTPGO_BACKUP_FILE" -C infra_data
+        tar -xf "$NEXTCLOUD_BACKUP_FILE" -C infra_data
     fi
     
-    docker start arkadasozelegitim-sftpgo-1
+    docker start arkadasozelegitim-nextcloud-db-1 arkadasozelegitim-nextcloud-1
     
-    echo -e "   ✓ SFTPGo restored from: ${YELLOW}$SFTPGO_BACKUP_FILE${NC}"
+    echo -e "   ✓ Nextcloud restored from: ${YELLOW}$NEXTCLOUD_BACKUP_FILE${NC}"
 }
 
 # Run restore based on type
@@ -199,7 +199,7 @@ case $RESTORE_TYPE in
         restore_postgres
         restore_redis
         restore_files
-        restore_sftpgo
+        restore_nextcloud
         ;;
     db)
         restore_postgres
@@ -207,7 +207,7 @@ case $RESTORE_TYPE in
         ;;
     files)
         restore_files
-        restore_sftpgo
+        restore_nextcloud
         ;;
     *)
         echo -e "${RED}Unknown restore type: $RESTORE_TYPE${NC}"

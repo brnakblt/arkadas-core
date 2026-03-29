@@ -490,6 +490,40 @@ export interface ApiAttendanceLogAttendanceLog extends Struct.CollectionTypeSche
   };
 }
 
+export interface ApiAttendanceSyncIssueAttendanceSyncIssue extends Struct.CollectionTypeSchema {
+  collectionName: 'attendance_sync_issues';
+  info: {
+    description: 'Tracks failures in Mebbis or Parent notification sync';
+    displayName: 'Yoklama Senkronizasyon Hatas\u0131';
+    pluralName: 'attendance-sync-issues';
+    singularName: 'attendance-sync-issue';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    attendance_log: Schema.Attribute.Relation<'manyToOne', 'api::attendance-log.attendance-log'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    errorMessage: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::attendance-sync-issue.attendance-sync-issue'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    resolved: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    resolvedAt: Schema.Attribute.DateTime;
+    type: Schema.Attribute.Enumeration<
+      ['MEBBIS_ERROR', 'NOTIFICATION_ERROR', 'NETWORK_FAILURE', 'DATA_MISMATCH']
+    > &
+      Schema.Attribute.DefaultTo<'MEBBIS_ERROR'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiAuditLogAuditLog extends Struct.CollectionTypeSchema {
   collectionName: 'audit_logs';
   info: {
@@ -950,6 +984,36 @@ export interface ApiLocationLogLocationLog extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+  };
+}
+
+export interface ApiNotificationTemplateNotificationTemplate extends Struct.CollectionTypeSchema {
+  collectionName: 'notification_templates';
+  info: {
+    description: 'WhatsApp and Email templates for notifications';
+    displayName: 'Bildirim \u015Eablonu';
+    pluralName: 'notification-templates';
+    singularName: 'notification-template';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    body: Schema.Attribute.Text & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::notification-template.notification-template'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    type: Schema.Attribute.Enumeration<['whatsapp', 'email', 'sms']> &
+      Schema.Attribute.DefaultTo<'whatsapp'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
 }
 
@@ -1653,6 +1717,7 @@ declare module '@strapi/strapi' {
       'api::about.about': ApiAboutAbout;
       'api::article.article': ApiArticleArticle;
       'api::attendance-log.attendance-log': ApiAttendanceLogAttendanceLog;
+      'api::attendance-sync-issue.attendance-sync-issue': ApiAttendanceSyncIssueAttendanceSyncIssue;
       'api::audit-log.audit-log': ApiAuditLogAuditLog;
       'api::author.author': ApiAuthorAuthor;
       'api::category.category': ApiCategoryCategory;
@@ -1667,6 +1732,7 @@ declare module '@strapi/strapi' {
       'api::hero.hero': ApiHeroHero;
       'api::kvkk-onam.kvkk-onam': ApiKvkkOnamKvkkOnam;
       'api::location-log.location-log': ApiLocationLogLocationLog;
+      'api::notification-template.notification-template': ApiNotificationTemplateNotificationTemplate;
       'api::personnel.personnel': ApiPersonnelPersonnel;
       'api::process.process': ApiProcessProcess;
       'api::route-stop.route-stop': ApiRouteStopRouteStop;

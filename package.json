@@ -14,21 +14,25 @@
     "husky": "^9.0.11",
     "kill-port": "^2.0.1",
     "rimraf": "^6.1.2",
-    "turbo": "^2.8.20",
+    "turbo": "^2.8.21",
     "wait-on": "^7.2.0"
   },
   "overrides": {
-    "ioredis": "5.9.1"
+    "ioredis": "5.9.1",
+    "@types/react": "^19.2.0",
+    "vite": "^5.4.21",
+    "@vitejs/plugin-react": "^4.3.4"
   },
   "scripts": {
     "------- DEV -------": "",
     "dev": "npm run lint && npm run dev:docker && npm run dev:all",
-    "dev:all": "concurrently -n strapi,web -c blue,green \"npm run dev:strapi\" \"npm run dev:web\"",
-    "dev:docker": "docker compose up -d postgres redis sftpgo collabora --wait",
+    "dev:all": "concurrently -n strapi,web -c blue,green \"npm run dev:strapi\" \"npm run dev:web\" & bash scripts/start-expo-terminal.sh",
+    "dev:docker": "docker compose up -d postgres redis nextcloud collabora --wait",
     "dev:strapi": "npm run develop --prefix strapi",
     "dev:web": "npm run dev --prefix web",
     "dev:mobile": "npm run start --prefix mobile",
     "dev:docs": "cd docs && mkdocs serve -a localhost:8001",
+    "dev:sdk": "npm run build --prefix sdk",
     "------- BUILD -------": "",
     "build": "npm run lint && npm run typecheck && turbo run build",
     "build:all": "npm run build",
@@ -43,13 +47,13 @@
     "start:docker": "docker compose up -d --wait",
     "------- STOP -------": "",
     "stop": "npm run stop:all",
-    "stop:all": "docker compose down && (fuser -k -n tcp 3000 1337 8001 8088 8089 2>/dev/null || true)",
+    "stop:all": "docker compose down && (fuser -k -n tcp 3000 1337 8000 8001 8081 8088 8089 9980 2>/dev/null || true)",
     "------- INSTALL -------": "",
     "install:all": "npm install && npm run install:docs && docker compose pull",
     "install:docs": "pipx install mkdocs-material || pip install --user mkdocs-material --break-system-packages",
     "------- UTILS -------": "",
     "setup:env": "bash scripts/generate_envs.sh",
-    "setup:sftpgo": "ts-node --esm web/scripts/setup-sftpgo.ts",
+    "migrate:storage": "bash scripts/migrate_sftpgo_to_nextcloud.sh",
     "seed:tenants": "cd strapi && node scripts/tenant-seeder.js",
     "reset": "bash scripts/reset_project.sh",
     "update": "bash scripts/rolling-release.sh",
@@ -90,5 +94,8 @@
     "expo"
   ],
   "author": "Arkadaş Özel Eğitim",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "dependencies": {
+    "react-native-worklets": "^0.8.1"
+  }
 }

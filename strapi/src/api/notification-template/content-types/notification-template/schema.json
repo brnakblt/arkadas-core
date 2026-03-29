@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "notification_templates",
+  "info": {
+    "singularName": "notification-template",
+    "pluralName": "notification-templates",
+    "displayName": "Bildirim Şablonu",
+    "description": "WhatsApp and Email templates for notifications"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "whatsapp",
+        "email",
+        "sms"
+      ],
+      "default": "whatsapp"
+    },
+    "body": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

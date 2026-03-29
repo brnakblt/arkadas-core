@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "attendance_sync_issues",
+  "info": {
+    "singularName": "attendance-sync-issue",
+    "pluralName": "attendance-sync-issues",
+    "displayName": "Yoklama Senkronizasyon Hatası",
+    "description": "Tracks failures in Mebbis or Parent notification sync"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "attendance_log": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::attendance-log.attendance-log"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "MEBBIS_ERROR",
+        "NOTIFICATION_ERROR",
+        "NETWORK_FAILURE",
+        "DATA_MISMATCH"
+      ],
+      "default": "MEBBIS_ERROR"
+    },
+    "errorMessage": {
+      "type": "text"
+    },
+    "resolved": {
+      "type": "boolean",
+      "default": false
+    },
+    "resolvedAt": {
+      "type": "datetime"
+    }
+  }
+}

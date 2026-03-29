@@ -149,27 +149,27 @@ backup_files() {
     fi
 }
 
-# SFTPGo Data Backup
-backup_sftpgo() {
-    echo -e "${GREEN}📦 Backing up SFTPGo data...${NC}"
+# Nextcloud Data Backup
+backup_nextcloud() {
+    echo -e "${GREEN}📦 Backing up Nextcloud data...${NC}"
     
-    SFTPGO_BACKUP_FILE="$BACKUP_DIR/sftpgo_${TIMESTAMP}.tar"
+    NEXTCLOUD_BACKUP_FILE="$BACKUP_DIR/nextcloud_${TIMESTAMP}.tar"
     
-    if [ -d "infra_data/sftpgo" ]; then
-        tar -cf "$SFTPGO_BACKUP_FILE" -C infra_data sftpgo 2>/dev/null || {
-            echo -e "${YELLOW}   ⚠️ No SFTPGo data to backup${NC}"
+    if [ -d "infra_data/nextcloud" ]; then
+        tar -cf "$NEXTCLOUD_BACKUP_FILE" -C infra_data nextcloud 2>/dev/null || {
+            echo -e "${YELLOW}   ⚠️ No Nextcloud data to backup${NC}"
             return 0
         }
         
         if [ "$COMPRESS" = true ]; then
-            gzip "$SFTPGO_BACKUP_FILE"
-            SFTPGO_BACKUP_FILE="${SFTPGO_BACKUP_FILE}.gz"
+            gzip "$NEXTCLOUD_BACKUP_FILE"
+            NEXTCLOUD_BACKUP_FILE="${NEXTCLOUD_BACKUP_FILE}.gz"
         fi
         
-        BACKUP_SIZE=$(du -h "$SFTPGO_BACKUP_FILE" | cut -f1)
-        echo -e "   ✓ SFTPGo backup: ${YELLOW}$SFTPGO_BACKUP_FILE${NC} (${BACKUP_SIZE})"
+        BACKUP_SIZE=$(du -h "$NEXTCLOUD_BACKUP_FILE" | cut -f1)
+        echo -e "   ✓ Nextcloud backup: ${YELLOW}$NEXTCLOUD_BACKUP_FILE${NC} (${BACKUP_SIZE})"
     else
-        echo -e "${YELLOW}   ⚠️ No SFTPGo data directory found${NC}"
+        echo -e "${YELLOW}   ⚠️ No Nextcloud data directory found${NC}"
     fi
 }
 
@@ -192,7 +192,7 @@ case $BACKUP_TYPE in
         backup_postgres
         backup_redis
         backup_files
-        backup_sftpgo
+        backup_nextcloud
         ;;
     db)
         backup_postgres
@@ -200,7 +200,7 @@ case $BACKUP_TYPE in
         ;;
     files)
         backup_files
-        backup_sftpgo
+        backup_nextcloud
         ;;
     *)
         echo -e "${RED}Unknown backup type: $BACKUP_TYPE${NC}"

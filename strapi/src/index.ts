@@ -3,6 +3,7 @@
  */
 
 import type { Core } from '@strapi/strapi';
+import { initWorkers } from './utils/queue';
 
 export default {
   register(/*{ strapi }*/) {
@@ -10,6 +11,9 @@ export default {
   },
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
+    // Initialize BullMQ Workers
+    initWorkers(strapi);
+
     // --- Admin Seeding (Development Only) ---
     if (process.env.NODE_ENV === 'development') {
       try {

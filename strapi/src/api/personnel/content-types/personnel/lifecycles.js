@@ -1,23 +1,22 @@
 'use strict';
 
-const SftpGoService = require('../../../../utils/sftpgo');
-const sftp = new SftpGoService();
+const NextcloudService = require('../../../../utils/nextcloud');
+const nextcloud = new NextcloudService();
 
 module.exports = {
     async afterCreate(event) {
         const { result } = event;
         if (result.tcIdentity) {
             try {
-                await sftp.ensureGroup('teachers', 'Teachers Group');
-                await sftp.syncUser({
+                await nextcloud.ensureGroup('teachers');
+                await nextcloud.syncUser({
                     username: result.tcIdentity, // Using TCKN as username
                     password: result.tcIdentity,
-                    email: result.email,
-                    description: `Staff: ${result.fullName}`,
-                    group: 'teachers'
+                    email: result.email
                 });
+                await nextcloud.addUserToGroup(result.tcIdentity, 'teachers');
             } catch (e) {
-                strapi.log.error(`SFTPGo Sync Error (Personnel Create): ${e.message}`);
+                strapi.log.error(`Nextcloud Sync Error (Personnel Create): ${e.message}`);
             }
         }
     },
@@ -26,14 +25,12 @@ module.exports = {
         const { result } = event;
         if (result.tcIdentity) {
             try {
-                await sftp.syncUser({
+                await nextcloud.syncUser({
                     username: result.tcIdentity,
-                    email: result.email,
-                    description: `Staff: ${result.fullName}`,
-                    group: 'teachers'
+                    email: result.email
                 });
             } catch (e) {
-                strapi.log.error(`SFTPGo Sync Error (Personnel Update): ${e.message}`);
+                strapi.log.error(`Nextcloud Sync Error (Personnel Update): ${e.message}`);
             }
         }
     },
@@ -42,12 +39,12 @@ module.exports = {
         const { result } = event;
         if (result.tcIdentity) {
             try {
-                await sftp.syncUser({
+                await nextcloud.syncUser({
                     username: result.tcIdentity,
                     deleteUser: true
                 });
             } catch (e) {
-                strapi.log.error(`SFTPGo Sync Error (Personnel Delete): ${e.message}`);
+                strapi.log.error(`Nextcloud Sync Error (Personnel Delete): ${e.message}`);
             }
         }
     },

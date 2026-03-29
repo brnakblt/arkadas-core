@@ -6,9 +6,9 @@ import { requireAuth } from "@/lib/cookieAuth";
 // Better to have a singleton in service that self-initializes or lazily initializes.
 // Looking at storageService.ts, it needs init().
 // We should probably ensure it's initialized.
-const SFTPGO_URL = process.env.SFTPGO_URL || "http://localhost:8088";
-const SFTPGO_USER = process.env.SFTPGO_ADMIN_USER || "admin";
-const SFTPGO_PASS = process.env.SFTPGO_ADMIN_PASSWORD || "password";
+const NEXTCLOUD_URL = process.env.NEXTCLOUD_URL || "http://localhost:8088";
+const NEXTCLOUD_USER = process.env.NEXTCLOUD_ADMIN_USER || "admin";
+const NEXTCLOUD_PASS = process.env.NEXTCLOUD_ADMIN_PASSWORD || "password";
 
 // Lazy init wrapper
 const getStorage = () => {
@@ -16,9 +16,9 @@ const getStorage = () => {
         storage.getWebDAVUrl();
     } catch {
         storage.init({
-            baseUrl: `${SFTPGO_URL}/webdav`,
-            username: SFTPGO_USER,
-            password: SFTPGO_PASS
+            baseUrl: `${NEXTCLOUD_URL}/remote.php/dav/files/${NEXTCLOUD_USER}`,
+            username: NEXTCLOUD_USER,
+            password: NEXTCLOUD_PASS
         });
     }
     return storage;

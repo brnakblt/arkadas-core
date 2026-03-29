@@ -1,0 +1,17 @@
+{
+  "name": "@arkadas/sdk",
+  "version": "0.1.0",
+  "description": "Shared SDK for Arkadaş ERP ecosystem",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
