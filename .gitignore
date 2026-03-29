@@ -44,7 +44,7 @@ api/coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-logs/
+# Handled in Storage section below
 
 # ============================================================
 # IDE & Editor
@@ -125,12 +125,14 @@ $RECYCLE.BIN/
 
 
 # ============================================================
-# Databases (Docker Volumes)
+# Databases & Logs (Local Storage)
 # ============================================================
-# Infra Data (Docker Volumes)
-infra_data/
-
-# Tenant Data (Sensitive/Real Data)
+infra_data/*
+!infra_data/.gitkeep
+logs/*
+!logs/.gitkeep
+backups/*
+!backups/.gitkeep
 data/tenants/
 
 # Tenant Databases (SQLite)

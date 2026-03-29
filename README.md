@@ -43,7 +43,7 @@ make dev
 | **Mobile** | 8082 | - | React Native (Expo) |
 | **AI Service** | 8000 | http://localhost:8000/docs | FastAPI / OpenCV |
 | **Mebbis** | 4000 | http://localhost:4000 | Mebbis Entegrasyon |
-| **Nextcloud** | 8088 | http://localhost:8088 | Dosya Yönetimi (Admin) |
+| **Arkadaş Depolama** | 8088 | http://localhost:8088 | Dosya Yönetimi (Admin) |
 | **Collabora** | 9980 | http://localhost:9980 | Online Belge Düzenleme |
 | **PBX (FreePBX)** | 81 | http://localhost:81 | Santral Yönetimi |
 | **Grafana** | 3001 | http://localhost:3001 | Metrikler & Dashboard |
@@ -67,7 +67,7 @@ make dev
 
 ### 🛠️ Altyapı
 - **Otomatik Yedekleme:** DB ve Dosyalar (`make backup`)
-- **Dosya Senkronizasyonu:** Strapi <-> Nextcloud entegrasyonu
+- **Dosya Senkronizasyonu:** Strapi <-> Arkadaş entegrasyonu
 - **İzleme:** Prometheus, Grafana, Alertmanager stack
 - **CI/CD:** GitHub Actions entegrasyonu
 
@@ -129,8 +129,8 @@ Script otomatik olarak güvenli şifreler oluşturur:
 bash scripts/generate_envs.sh
 ```
 
-### Nextcloud & Strapi Senkronizasyonu
-Strapi üzerindeki "Personel" ve "Öğrenci" işlemleri otomatik olarak Nextcloud kullanıcılarını ve gruplarını günceller.
+### Arkadaş & Strapi Senkronizasyonu
+Strapi üzerindeki "Personel" ve "Öğrenci" işlemleri otomatik olarak Arkadaş kullanıcılarını ve gruplarını günceller.
 
 ---
 
