@@ -142,9 +142,6 @@ logs:
 logs-strapi:
 	docker compose logs -f strapi
 
-logs-web:
-	docker compose logs -f web
-
 # Traefik
 traefik-up:
 	docker compose -f docker/docker-compose.traefik.yml up -d
@@ -172,7 +169,6 @@ docker-ps:
 clean:
 	npm run clean
 	rm -rf node_modules/.cache
-	rm -rf web/.next
 	rm -rf strapi/dist strapi/build
 
 clean-all: clean

@@ -1,13 +1,11 @@
 {
-  "name": "arkadas-erp",
+  "name": "arkadas-core",
   "version": "1.0.0",
-  "description": "Arkadaş Özel Eğitim ve Rehabilitasyon Merkezi - ERP Sistemi",
+  "description": "Arkadaş Özel Eğitim ERP - Core Services (Strapi, AI, Infra)",
   "private": true,
   "packageManager": "npm@10.9.0",
   "workspaces": [
-    "web",
-    "strapi",
-    "mobile"
+    "strapi"
   ],
   "devDependencies": {
     "concurrently": "^9.2.1",
@@ -25,29 +23,16 @@
   },
   "scripts": {
     "------- DEV -------": "",
-    "dev": "npm run lint && npm run dev:docker && npm run dev:all",
-    "dev:all": "concurrently -n strapi,web -c blue,green \"npm run dev:strapi\" \"npm run dev:web\" & bash scripts/start-expo-terminal.sh",
+    "dev": "npm run lint && npm run dev:docker && npm run dev:strapi",
     "dev:docker": "docker compose up -d postgres redis nextcloud collabora --wait",
     "dev:strapi": "npm run develop --prefix strapi",
-    "dev:web": "npm run dev --prefix web",
-    "dev:mobile": "npm run start --prefix mobile",
     "dev:docs": "cd docs && mkdocs serve -a localhost:8001",
-    "dev:sdk": "npm run build --prefix sdk",
     "------- BUILD -------": "",
-    "build": "npm run lint && npm run typecheck && turbo run build",
-    "build:all": "npm run build",
+    "build": "npm run lint && turbo run build",
     "build:strapi": "npm run build --prefix strapi",
-    "build:web": "npm run build --prefix web",
     "build:docs": "cd docs && mkdocs build",
-    "------- START (Production) -------": "",
-    "start": "npm run test:quick && npm run start:all",
-    "start:all": "npm run start:docker && concurrently --kill-others --kill-signal SIGTERM -n strapi,web -c blue,green \"npm run start:strapi\" \"npm run start:web\"",
-    "start:strapi": "npm run start --prefix strapi",
-    "start:web": "npm run start --prefix web",
-    "start:docker": "docker compose up -d --wait",
     "------- STOP -------": "",
-    "stop": "npm run stop:all",
-    "stop:all": "docker compose down && (fuser -k -n tcp 3000 1337 8000 8001 8081 8088 8089 9980 2>/dev/null || true)",
+    "stop": "docker compose down && (fuser -k -n tcp 1337 8000 8001 8088 9980 2>/dev/null || true)",
     "------- INSTALL -------": "",
     "install:all": "npm install && npm run install:docs && docker compose pull",
     "install:docs": "pipx install mkdocs-material || pip install --user mkdocs-material --break-system-packages",
@@ -58,19 +43,10 @@
     "reset": "bash scripts/reset_project.sh",
     "update": "bash scripts/rolling-release.sh",
     "clean": "turbo run clean",
-    "clean:all": "npm run clean",
     "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck",
     "------- TEST -------": "",
     "test": "bash scripts/run-tests.sh",
-    "test:quick": "npm run lint && npm run typecheck",
-    "test:all": "RUN_INTEGRATION=true bash scripts/run-tests.sh",
-    "test:web": "npm run test:unit --prefix web",
     "test:strapi": "cd strapi && npm run build",
-    "test:storage": "ts-node --esm web/scripts/test-storage.ts",
-    "test:e2e": "npm run test:e2e --prefix web",
-    "test:coverage": "npm run test:coverage --prefix web",
-    "test:tenant": "RUN_TENANT_TESTS=true bash scripts/run-tests.sh",
     "------- SECURITY -------": "",
     "scan": "bash scripts/docker_scout_scan.sh",
     "scan:cves": "bash scripts/docker_scout_scan.sh --mode cves --critical",
@@ -89,13 +65,9 @@
     "education",
     "special-education",
     "strapi",
-    "nextjs",
-    "react-native",
-    "expo"
+    "ai",
+    "infra"
   ],
   "author": "Arkadaş Özel Eğitim",
-  "license": "UNLICENSED",
-  "dependencies": {
-    "react-native-worklets": "^0.8.1"
-  }
+  "license": "UNLICENSED"
 }

@@ -1,21 +1,20 @@
-# Minimal Docker Compose - Core Infrastructure Only
-# Apps (Web, Strapi, AI, Mebbis) run natively for faster development
+# Minimal Docker Compose - Core Infrastructure Only (arkadas-core)
+# All client apps (Web, Mobile) are now in separate repositories
 
 # ==========================================
 # PORT ALLOCATION (Conflict-Free)
 # ==========================================
 # PostgreSQL:     5432
 # Redis:          6380
-# Web (Next.js):  3000
 # Strapi CMS:     1337
-# Docs (MkDocs):  8001
-# Collabora:      Nextcloud Extension
+# AI Service:     8000
+# Mebbis Mock:    4000
 # Nextcloud:      8088
 # ==========================================
 
 services:
   # ==========================================
-  # Core Infrastructure (Always Required)
+  # Core Infrastructure
   # ==========================================
   postgres:
     image: pgvector/pgvector:pg15
@@ -58,7 +57,7 @@ services:
           memory: 256M
 
   # ==========================================
-  # Nextcloud - File Storage & WebDAV
+  # Nextcloud - File Storage
   # ==========================================
   nextcloud:
     image: nextcloud:latest
@@ -89,9 +88,8 @@ services:
           memory: 1G
 
   # ==========================================
-  # Application Services
+  # Core Application Services
   # ==========================================
-
   strapi:
     build:
       context: ./strapi
@@ -132,23 +130,6 @@ services:
       resources:
         limits:
           memory: 1G
-
-  web:
-    build:
-      context: ./web
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
-      - STRAPI_URL=http://strapi:1337
-    depends_on:
-      - strapi
-    deploy:
-      resources:
-        limits:
-          memory: 512M
 
   ai-service:
     image: python:3.11-slim
