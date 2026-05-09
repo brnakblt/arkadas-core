@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ram_reports",
+  "info": {
+    "singularName": "ram-report",
+    "pluralName": "ram-reports",
+    "displayName": "RAM Raporu",
+    "description": "Extracted data from official RAM reports"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::student.student",
+      "inversedBy": "ramReports"
+    },
+    "reportId": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "startDate": {
+      "type": "date"
+    },
+    "endDate": {
+      "type": "date",
+      "required": true
+    },
+    "diagnosisDetails": {
+      "type": "text"
+    },
+    "educationalModules": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::educational-module.educational-module"
+    },
+    "rawContent": {
+      "type": "text"
+    },
+    "aiJson": {
+      "type": "json"
+    },
+    "originalPdf": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["files"]
+    }
+  }
+}

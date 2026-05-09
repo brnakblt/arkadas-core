@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "bep_targets",
+  "info": {
+    "singularName": "bep-target",
+    "pluralName": "bep-targets",
+    "displayName": "BEP Hedefi",
+    "description": "Specific educational goals for students"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::student.student",
+      "inversedBy": "bepTargets"
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "category": {
+      "type": "string"
+    },
+    "isCompleted": {
+      "type": "boolean",
+      "default": false
+    },
+    "targetDate": {
+      "type": "date"
+    },
+    "completionDate": {
+      "type": "date"
+    },
+    "notes": {
+      "type": "text"
+    }
+  }
+}

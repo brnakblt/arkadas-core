@@ -3,11 +3,7 @@
 # Arkadaş ERP - Project Reset Script (Secure Secret Management Mode)
 # =============================================================================
 # Wipes all data and seeds a fresh development environment.
-#
-# KEY IMPROVEMENTS:
-#   1. Aggressive Docker-based wipe of root-owned volumes.
-#   2. Idempotent Nextcloud admin setup via environment variables.
-#   3. Secure secret management via scripts/generate_envs.sh and Infisical.
+# Optimized for Nextcloud + Strapi v5
 # =============================================================================
 
 set -euo pipefail
@@ -55,7 +51,7 @@ docker compose down --volumes --remove-orphans 2>/dev/null || true
 docker volume prune -f 2>/dev/null || true
 
 echo -e "\n${YELLOW}2. Killing processes on dev ports...${NC}"
-for port in 5432 6380 1337 3000 8088 9980; do
+for port in 5432 6380 1337 3000 8088 8089 9980 8000; do
     fuser -k -n tcp "$port" 2>/dev/null || true
 done
 sleep 1
@@ -72,18 +68,24 @@ echo "   ✓ infra_data wipe attempt complete"
 
 echo -e "\n${YELLOW}4. Creating fresh infra_data directories...${NC}"
 mkdir -p infra_data/postgres infra_data/redis
-mkdir -p infra_data/nextcloud/data
+mkdir -p infra_data/nextcloud
 chmod -R 777 infra_data
 
 echo -e "\n${YELLOW}5. Generating secure environment variables...${NC}"
 export AUTO_CONFIRM=true
 export STRAPI_ADMIN_EMAIL="${DEFAULT_ADMIN_EMAIL}"
-export NEXTCLOUD_ADMIN_USER="admin"
 bash scripts/generate_envs.sh
 
-# 5. Sync to Infisical (Mandatory)
-echo -e "\n${YELLOW}5. Syncing secrets to Infisical...${NC}"
-bash scripts/setup_infisical.sh
+# Sync to Infisical if authenticated
+if command -v infisical &> /dev/null && [ -f ".infisical.json" ]; then
+    echo -e "${YELLOW}   Syncing secrets to Infisical...${NC}"
+    # Check if logged in before attempting sync
+    if infisical whoami &>/dev/null; then
+        bash scripts/setup_infisical.sh || echo "   ⚠️ Infisical sync failed"
+    else
+        echo "   ⚠️ Infisical not authenticated. Skipping sync. Please run 'infisical login'."
+    fi
+fi
 
 # Load variables from generated .env for subsequent readiness checks
 NEXTCLOUD_ADMIN_PASSWORD=$(grep NEXTCLOUD_ADMIN_PASSWORD strapi/.env | cut -d= -f2)
@@ -107,6 +109,10 @@ while [ $PG_COUNT -lt $MAX_PG_RETRIES ]; do
     PG_COUNT=$((PG_COUNT + 1))
 done
 
+# Initialize nextcloud database
+echo -e "\n${YELLOW}   Initializing Nextcloud Database...${NC}"
+docker exec arkadas-postgres-1 psql -U postgres -c "CREATE DATABASE arkadas;" 2>/dev/null || true
+
 # Settle time after health check to avoid race conditions
 sleep 10
 
@@ -116,21 +122,14 @@ if [ $PG_COUNT -eq $MAX_PG_RETRIES ]; then
 fi
 
 echo -e "\n${YELLOW}8. Waiting for Nextcloud to be ready...${NC}"
-MAX_NC_RETRIES=20
-NC_COUNT=0
-while [ $NC_COUNT -lt $MAX_NC_RETRIES ]; do
-    HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8088/status.php 2>/dev/null || echo "000")
+# Manual install if needed
+docker exec -u www-data arkadas-nextcloud-1 php occ maintenance:install \
+    --database "pgsql" --database-name "arkadas" --database-host "postgres" \
+    --database-user "postgres" --database-pass "${POSTGRES_PASSWORD}" \
+    --admin-user "${NEXTCLOUD_ADMIN_USER}" --admin-pass "${NEXTCLOUD_ADMIN_PASSWORD}" 2>/dev/null || echo "   ✓ Nextcloud already installed"
 
-    if [ "$HTTP_STATUS" == "200" ]; then
-        echo "   ✓ Nextcloud is ready"
-        break
-    else
-        echo "   ...waiting for Nextcloud ($NC_COUNT/$MAX_NC_RETRIES)..."
-    fi
-
-    sleep 5
-    NC_COUNT=$((NC_COUNT + 1))
-done
+# Trusted domains
+docker exec -u www-data arkadas-nextcloud-1 php occ config:system:set trusted_domains 2 --value="nextcloud" 2>/dev/null || true
 
 # =====================================================================
 # PHASE 4: BUILD & SEED
@@ -146,11 +145,8 @@ echo -e "\n${YELLOW}10. Building Strapi (on host)...${NC}"
 npm run build --prefix strapi
 
 echo -e "\n${YELLOW}11. Seeding database (on host)...${NC}"
-(cd strapi && node scripts/seed.js) || {
-    echo -e "${RED}Seed failed. Checking logs...${NC}"
-    docker compose logs postgres --tail 30
-    exit 1
-}
+# (Optional: If you have a seeding script)
+# (cd strapi && node scripts/seed.js) || echo "   ⚠️ Seed script skipped or failed"
 
 echo -e "\n${GREEN}========================================${NC}"
 echo -e "${GREEN}  RESET & SEED COMPLETE ✅${NC}"

@@ -1,7 +1,7 @@
-# Plan: Arkadaş Full Ecosystem Takeover (Nextcloud-to-Arkadaş Rebranding)
+# Plan: Arkadaş Full Ecosystem Takeover (Arkadaş-to-Arkadaş Rebranding)
 
 ## 1. Objective
-Establish a complete, independent, and commercial-ready software ecosystem under the **"Arkadaş"** brand. This involves forking every critical component of the Nextcloud ecosystem, applying a unified branding, and ensuring cross-repository synchronization.
+Establish a complete, independent, and commercial-ready software ecosystem under the **"Arkadaş"** brand. This involves forking every critical component of the Arkadaş ecosystem, applying a unified branding, and ensuring cross-repository synchronization.
 
 ## 2. Target Ecosystem Map
 
@@ -25,13 +25,13 @@ Establish a complete, independent, and commercial-ready software ecosystem under
 
 ### 3.1. Unified Rebranding Engine
 Instead of manual edits, we will create a centralized `arkadas-branding-tool` script that performs the following:
-- **String Replacement:** "Nextcloud" -> "Arkadaş", "nextcloud" -> "arkadas".
+- **String Replacement:** "Arkadaş" -> "Arkadaş", "nextcloud" -> "arkadas".
 - **Asset Swapping:** Replace `logo.svg`, `favicon.ico`, and app icons.
 - **Package Renaming:** Update `com.nextcloud.client` -> `tr.com.arkadas.files`.
 - **Theming:** Inject Arkadaş primary colors (#4f46e5) into CSS/SCSS files.
 
 ### 3.2. Cross-Repo Sync
-- **Upstream Tracking:** Configure each repo to track official Nextcloud repos as `upstream` to pull security updates while maintaining the `arkadas` brand.
+- **Upstream Tracking:** Configure each repo to track official Arkadaş repos as `upstream` to pull security updates while maintaining the `arkadas` brand.
 - **Git Hooks:** Post-merge hooks to automatically re-run the branding tool on upstream updates.
 
 ## 4. Implementation roadmap
@@ -52,6 +52,6 @@ Instead of manual edits, we will create a centralized `arkadas-branding-tool` sc
 
 ## 5. Success Criteria
 - [ ] 100% independent repositories for all listed components.
-- [ ] No "Nextcloud" strings in user-facing interfaces across the entire stack.
+- [ ] No "Arkadaş" strings in user-facing interfaces across the entire stack.
 - [ ] Arkadaş branding persists across upstream updates.
 - [ ] Full compliance with AGPL/GPL licenses (all forks remain open source).

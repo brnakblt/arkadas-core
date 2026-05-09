@@ -1,22 +1,21 @@
-const NextcloudService = require('../../../../utils/nextcloud');
-const nextcloud = new NextcloudService();
-
 /**
  * User Lifecycle Hooks
- * Provisions storage for new users via Nextcloud
+ * Provisions storage for new users via SFTPGo
  */
 module.exports = {
     async afterCreate(event) {
         const { result } = event;
         try {
-            console.log(`[Storage] New user created: ${result.username} (${result.email}). Provisioning storage...`);
-            await nextcloud.syncUser({
-                username: result.username,
-                email: result.email
-            });
-            console.log(`[Storage] User ${result.username} provisioned successfully.`);
+            // Try to provision SFTPGo user (optional - service may not exist)
+            const sftpgoService = strapi.service('api::storage-file.sftpgo');
+            if (sftpgoService?.provisionUser) {
+                console.log(`[Storage] New user created: ${result.username} (${result.email}). Provisioning storage...`);
+                await sftpgoService.provisionUser(result.id, result.username, result.email);
+                console.log(`[Storage] User ${result.username} provisioned successfully.`);
+            }
         } catch (err) {
             console.error('[Storage] Failed to provision user:', err);
+            // We don't throw here to avoid rolling back the user creation
         }
     },
 
@@ -24,11 +23,12 @@ module.exports = {
         const { result, params } = event;
         try {
             // If blocked status changed, update storage access
-            if (params.data.blocked !== undefined) {
+            const sftpgoService = strapi.service('api::storage-file.sftpgo');
+            if (sftpgoService && params.data.blocked !== undefined) {
                 if (result.blocked) {
-                    await nextcloud.syncUser({ username: result.username, deleteUser: true }); // Or implement disable
+                    await sftpgoService.disableUser?.(result.username);
                 } else {
-                    await nextcloud.syncUser({ username: result.username });
+                    await sftpgoService.enableUser?.(result.username);
                 }
             }
         } catch (err) {

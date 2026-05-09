@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "educational_modules",
+  "info": {
+    "singularName": "educational-module",
+    "pluralName": "educational-modules",
+    "displayName": "Eğitim Modülü",
+    "description": "MEB approved support programs"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "weeklyHours": {
+      "type": "integer",
+      "default": 2
+    },
+    "totalMonthlyHours": {
+      "type": "integer",
+      "default": 8
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "ZİHİNSEL",
+        "BEDENSEL",
+        "OTİZM",
+        "DİL_KONUŞMA",
+        "İŞİTME",
+        "ÖZEL_ÖĞRENME"
+      ]
+    },
+    "students": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::student.student",
+      "mappedBy": "educationalModules"
+    }
+  }
+}

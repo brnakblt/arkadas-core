@@ -45,16 +45,19 @@ module.exports = {
                 Body: content,
                 ContentType: file.mimeType,
             }));
-        } else if (backend === 'webdav') {
+        } else if (backend === 'webdav' || backend === 'nextcloud') {
             // WebDAV implementation (Nextcloud)
-            const webdavUrl = process.env.WEBDAV_URL || 'http://localhost:8088/remote.php/dav/files/admin';
-            const webdavUser = process.env.NEXTCLOUD_ADMIN_USER || 'admin';
-            const webdavPass = process.env.NEXTCLOUD_ADMIN_PASSWORD;
+            const nextcloudUrl = process.env.NEXTCLOUD_URL || 'http://localhost:8088';
+            const adminUser = process.env.NEXTCLOUD_ADMIN_USER || 'admin';
+            const adminPass = process.env.NEXTCLOUD_ADMIN_PASSWORD;
+            
+            // Nextcloud WebDAV root: /remote.php/dav/files/USER/
+            const webdavUrl = `${nextcloudUrl}/remote.php/dav/files/${adminUser}`;
 
             await fetch(`${webdavUrl}/${storagePath}`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': 'Basic ' + Buffer.from(`${webdavUser}:${webdavPass}`).toString('base64'),
+                    'Authorization': 'Basic ' + Buffer.from(`${adminUser}:${adminPass}`).toString('base64'),
                     'Content-Type': file.mimeType || 'application/octet-stream',
                 },
                 body: content,
@@ -82,14 +85,15 @@ module.exports = {
             }));
 
             return streamToBuffer(response.Body);
-        } else if (file.storageBackend === 'webdav') {
-            const webdavUrl = process.env.WEBDAV_URL || 'http://localhost:8088/remote.php/dav/files/admin';
-            const webdavUser = process.env.NEXTCLOUD_ADMIN_USER || 'admin';
-            const webdavPass = process.env.NEXTCLOUD_ADMIN_PASSWORD;
+        } else if (file.storageBackend === 'webdav' || file.storageBackend === 'nextcloud') {
+            const nextcloudUrl = process.env.NEXTCLOUD_URL || 'http://localhost:8088';
+            const adminUser = process.env.NEXTCLOUD_ADMIN_USER || 'admin';
+            const adminPass = process.env.NEXTCLOUD_ADMIN_PASSWORD;
+            const webdavUrl = `${nextcloudUrl}/remote.php/dav/files/${adminUser}`;
 
             const response = await fetch(`${webdavUrl}/${file.storagePath}`, {
                 headers: {
-                    'Authorization': 'Basic ' + Buffer.from(`${webdavUser}:${webdavPass}`).toString('base64'),
+                    'Authorization': 'Basic ' + Buffer.from(`${adminUser}:${adminPass}`).toString('base64'),
                 },
             });
 

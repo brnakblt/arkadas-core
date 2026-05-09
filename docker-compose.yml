@@ -1,20 +1,22 @@
-# Minimal Docker Compose - Core Infrastructure Only (arkadas-core)
-# All client apps (Web, Mobile) are now in separate repositories
+# Minimal Docker Compose - Core Infrastructure Only
+# Apps (Web, Strapi, AI, Mebbis) run natively for faster development
 
 # ==========================================
 # PORT ALLOCATION (Conflict-Free)
 # ==========================================
 # PostgreSQL:     5432
 # Redis:          6380
+# Web (Next.js):  3000
 # Strapi CMS:     1337
-# AI Service:     8000
-# Mebbis Mock:    4000
-# Nextcloud:      8088
+# Docs (MkDocs):  8001
+# Collabora:      9980
+# SFTPGo Admin:   8088
+# SFTPGo WebDAV:  8089
 # ==========================================
 
 services:
   # ==========================================
-  # Core Infrastructure
+  # Core Infrastructure (Always Required)
   # ==========================================
   postgres:
     image: pgvector/pgvector:pg15
@@ -57,7 +59,7 @@ services:
           memory: 256M
 
   # ==========================================
-  # Nextcloud - File Storage
+  # Nextcloud - File Storage & User Management
   # ==========================================
   nextcloud:
     image: nextcloud:latest
@@ -88,8 +90,35 @@ services:
           memory: 1G
 
   # ==========================================
-  # Core Application Services
+  # Application Services
   # ==========================================
+
+  # ==========================================
+  # Collabora Online - Document Editing (MPL-2.0)
+  # ==========================================
+  collabora:
+    image: collabora/code:latest
+    restart: unless-stopped
+    ports:
+      - "9980:9980"
+    environment:
+      aliasgroup1: "http://localhost:3000,http://web:3000,http://strapi:1337"
+      username: admin
+      password: ${COLLABORA_ADMIN_PASSWORD:-collabora}
+      extra_params: "--o:ssl.enable=false --o:ssl.termination=false"
+      dictionaries: "tr en"
+    cap_add:
+      - MKNOD
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9980/hosting/capabilities || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
   strapi:
     build:
       context: ./strapi
@@ -130,6 +159,23 @@ services:
       resources:
         limits:
           memory: 1G
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
+      - STRAPI_URL=http://strapi:1337
+    depends_on:
+      - strapi
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   ai-service:
     image: python:3.11-slim

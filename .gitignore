@@ -190,3 +190,6 @@ oauth-tokens.json
 *.crt
 *.cer
 *.p12
+
+.env.local
+

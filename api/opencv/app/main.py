@@ -1,14 +1,15 @@
 from fastapi import FastAPI
-from app.routers import verify, liveness
+from app.routers import verify, liveness, generate
 
 app = FastAPI(
     title="Arkadas BSDK Service",
-    description="OpenCV based face recognition and liveness service for Arkadas ERP",
-    version="1.2.0"
+    description="OpenCV and AI service for Arkadas ERP",
+    version="1.3.0"
 )
 
 app.include_router(verify.router)
 app.include_router(liveness.router)
+app.include_router(generate.router)
 
 @app.get("/")
 def read_root():

@@ -12,7 +12,7 @@ module.exports = {
                 await nextcloud.syncUser({
                     username: result.tcIdentity,
                     password: result.tcIdentity,
-                    email: result.studentNumber ? `${result.studentNumber}@arkadas.com.tr` : undefined
+                    email: result.studentNumber ? `${result.studentNumber}@arkadas.com.tr` : undefined,
                 });
                 await nextcloud.addUserToGroup(result.tcIdentity, 'students');
             } catch (e) {
@@ -27,8 +27,9 @@ module.exports = {
             try {
                 await nextcloud.syncUser({
                     username: result.tcIdentity,
-                    email: result.studentNumber ? `${result.studentNumber}@arkadas.com.tr` : undefined
+                    email: result.studentNumber ? `${result.studentNumber}@arkadas.com.tr` : undefined,
                 });
+                await nextcloud.addUserToGroup(result.tcIdentity, 'students');
             } catch (e) {
                 strapi.log.error(`Nextcloud Sync Error (Student Update): ${e.message}`);
             }

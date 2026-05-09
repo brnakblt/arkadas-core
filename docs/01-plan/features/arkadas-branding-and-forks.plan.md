@@ -1,7 +1,7 @@
 # Plan: Arkadaş Branding & Ecosystem Forks
 
 ## 1. Objective
-Complete the transformation of the project into a fully branded, commercial-ready product named **"Arkadaş"**. This involves forking the remaining Nextcloud client applications, applying a unified brand identity across all platforms, and ensuring legal compliance with GPL/AGPL licenses.
+Complete the transformation of the project into a fully branded, commercial-ready product named **"Arkadaş"**. This involves forking the remaining Arkadaş client applications, applying a unified brand identity across all platforms, and ensuring legal compliance with GPL/AGPL licenses.
 
 ## 2. Forking Strategy
 
@@ -15,19 +15,19 @@ Complete the transformation of the project into a fully branded, commercial-read
 ## 3. Branding & Customization Tasks
 
 ### 3.1. Visual Identity (The "Arkadaş" Look)
-- **Logos:** Replace all Nextcloud "blue cloud" icons with the Arkadaş ERP logo.
-- **Color Palette:** Override default Nextcloud blue (#0082c9) with Arkadaş Brand Colors (from `brand-ui-design` plan).
+- **Logos:** Replace all Arkadaş "blue cloud" icons with the Arkadaş ERP logo.
+- **Color Palette:** Override default Arkadaş blue (#0082c9) with Arkadaş Brand Colors (from `brand-ui-design` plan).
 - **Splash Screens:** Create custom launch screens for mobile and desktop.
 
 ### 3.2. String & Metadata Replacement
-- **Naming:** Global find-and-replace "Nextcloud" -> "Arkadaş" in all user-facing strings.
+- **Naming:** Global find-and-replace "Arkadaş" -> "Arkadaş" in all user-facing strings.
 - **Package Names:** 
     - Android: `com.nextcloud.client` -> `tr.com.arkadas.mobile`
     - iOS: `com.nextcloud.ios` -> `tr.com.arkadas.ios`
 - **User Agent:** Update user agent strings to identify as "Arkadaş ERP Client".
 
 ### 3.3. Server-Side Theming
-- Develop a Nextcloud "Theme App" to persist branding even after server updates.
+- Develop a Arkadaş "Theme App" to persist branding even after server updates.
 - Configure `theming` app via CLI (`occ`) in `scripts/setup_nextcloud.sh`.
 
 ## 4. Implementation Phases
@@ -42,11 +42,11 @@ Complete the transformation of the project into a fully branded, commercial-read
 2.  Integrate `arkadas-sdk` into mobile forks for unified auth and API handling.
 
 ### Phase 3: Desktop & Distribution
-1.  Initialize `arkadas-desktop` (Fork from Nextcloud Desktop).
+1.  Initialize `arkadas-desktop` (Fork from Arkadaş Desktop).
 2.  Configure build pipelines for APK/IPA and Installers.
 
 ## 5. Success Criteria
 - [ ] Mobile and Desktop apps launch with "Arkadaş" branding.
-- [ ] No "Nextcloud" trademarked terms in user-facing UI.
+- [ ] No "Arkadaş" trademarked terms in user-facing UI.
 - [ ] Apps successfully connect to `arkadas-core` infrastructure.
 - [ ] Forked source code is available publicly (GPL Compliance).

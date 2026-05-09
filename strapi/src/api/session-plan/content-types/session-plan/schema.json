@@ -1,0 +1,57 @@
+{
+  "kind": "collectionType",
+  "collectionName": "session_plans",
+  "info": {
+    "singularName": "session-plan",
+    "pluralName": "session-plans",
+    "displayName": "Ders Planı",
+    "description": "Core record for scheduled lessons"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "startTime": {
+      "type": "datetime",
+      "required": true
+    },
+    "endTime": {
+      "type": "datetime",
+      "required": true
+    },
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::student.student"
+    },
+    "teacher": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::personnel.personnel"
+    },
+    "classroom": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::classroom.classroom"
+    },
+    "module": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::educational-module.educational-module"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "DRAFT",
+        "CONFIRMED",
+        "CANCELLED",
+        "COMPLETED"
+      ],
+      "default": "DRAFT"
+    },
+    "isGroup": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

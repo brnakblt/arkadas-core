@@ -5,9 +5,9 @@
 
 # Ayarlar (Değiştirilebilir)
 PBX_RECORDINGS_PATH="./infra_data/pbx/recordings"
-NEXTCLOUD_DATA_PATH="./infra_data/nextcloud/data"
+SFTPGO_TEMP_PATH="./infra_data/sftpgo/data/temporary"
 PBX_RETENTION_DAYS=180      # 6 Ay (180 gün)
-NEXTCLOUD_TEMP_RETENTION=30 # 1 Ay (30 gün)
+SFTPGO_RETENTION_DAYS=30    # 1 Ay (30 gün)
 
 # Renkler
 GREEN='\033[0;32m'
@@ -35,20 +35,28 @@ else
     echo -e "${RED}[PBX]${NC} Kayıt dizini bulunamadı: $PBX_RECORDINGS_PATH"
 fi
 
-# 2. Nextcloud Bakım ve Temizlik
+# 2. SFTPGo Geçici Veri Temizliği (1 Ay Sonrası)
 # ----------------------------------------------
-if [ -d "$NEXTCLOUD_DATA_PATH" ]; then
-    echo -e "${YELLOW}[Nextcloud]${NC} Dosya taraması ve sistem bakımı başlatılıyor..."
-    # Önizlemeleri temizle
-    docker exec -u www-data arkadasozelegitim-nextcloud-1 php occ preview:cleanup 2>/dev/null || true
-    echo -e "${GREEN}[Nextcloud]${NC} Önizleme dosyaları temizlendi."
+if [ -d "$SFTPGO_TEMP_PATH" ]; then
+    echo -e "${YELLOW}[SFTPGo]${NC} 1 aydan eski geçici dosyalar taranıyor..."
+    DELETED_FILES=$(find "$SFTPGO_TEMP_PATH" -type f -mtime +$SFTPGO_RETENTION_DAYS -print | wc -l)
+    
+    if [ "$DELETED_FILES" -gt 0 ]; then
+        find "$SFTPGO_TEMP_PATH" -type f -mtime +$SFTPGO_RETENTION_DAYS -delete
+        echo -e "${GREEN}[SFTPGo]${NC} $DELETED_FILES adet geçici dosya silindi."
+    else
+        echo -e "${GREEN}[SFTPGo]${NC} Silinecek geçici dosya bulunamadı."
+    fi
 else
-    echo -e "${RED}[Nextcloud]${NC} Veri dizini bulunamadı: $NEXTCLOUD_DATA_PATH"
+    # Eğer dizin yoksa oluştur (Öneri)
+    mkdir -p "$SFTPGO_TEMP_PATH"
+    echo -e "${BLUE}[SFTPGo]${NC} Geçici veri dizini oluşturuldu: $SFTPGO_TEMP_PATH"
 fi
 
 # 3. Boş dizinleri temizle (Opsiyonel)
 # -----------------------------------
 echo -e "${YELLOW}[SİSTEM]${NC} Boş dizinler temizleniyor..."
 find "$PBX_RECORDINGS_PATH" -type d -empty -delete 2>/dev/null
+find "$SFTPGO_TEMP_PATH" -type d -empty -delete 2>/dev/null
 
 echo -e "${GREEN}=== Bakım İşlemi Başarıyla Tamamlandı ===${NC}"

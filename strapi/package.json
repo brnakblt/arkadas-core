@@ -26,6 +26,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "better-sqlite3": "^12.5.0",
     "bullmq": "^5.71.1",
+    "date-fns": "^4.1.0",
     "exceljs": "^4.4.0",
     "face-api.js": "0.20.0",
     "fast-xml-parser": "^5.5.9",

@@ -123,7 +123,7 @@ module.exports = createCoreController('api::storage-file.storage-file', ({ strap
         const fs = require('fs');
         const content = fs.readFileSync(file.path);
 
-        // Store using WebDAV backend (Nextcloud)
+        // Store using WebDAV backend (SFTPGo)
         const storagePath = await vfs.write({
             name: file.name,
             mimeType: file.type,
@@ -182,16 +182,17 @@ module.exports = createCoreController('api::storage-file.storage-file', ({ strap
         }
 
         const { path: dirPath = '/' } = ctx.query;
-        const webdavUrl = process.env.WEBDAV_URL || 'http://localhost:8088/remote.php/dav/files/admin';
-        const webdavUser = process.env.NEXTCLOUD_ADMIN_USER || 'admin';
-        const webdavPass = process.env.NEXTCLOUD_ADMIN_PASSWORD;
+        const nextcloudUrl = process.env.NEXTCLOUD_URL || 'http://localhost:8088';
+        const adminUser = process.env.NEXTCLOUD_ADMIN_USER || 'admin';
+        const adminPass = process.env.NEXTCLOUD_ADMIN_PASSWORD;
+        const webdavUrl = `${nextcloudUrl}/remote.php/dav/files/${adminUser}`;
 
         try {
             // PROPFIND request for WebDAV directory listing
             const response = await fetch(`${webdavUrl}${dirPath}`, {
                 method: 'PROPFIND',
                 headers: {
-                    'Authorization': 'Basic ' + Buffer.from(`${webdavUser}:${webdavPass}`).toString('base64'),
+                    'Authorization': 'Basic ' + Buffer.from(`${adminUser}:${adminPass}`).toString('base64'),
                     'Depth': '1',
                 },
             });

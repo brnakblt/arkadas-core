@@ -12,7 +12,7 @@ module.exports = {
                 await nextcloud.syncUser({
                     username: result.tcIdentity, // Using TCKN as username
                     password: result.tcIdentity,
-                    email: result.email
+                    email: result.email,
                 });
                 await nextcloud.addUserToGroup(result.tcIdentity, 'teachers');
             } catch (e) {
@@ -27,8 +27,9 @@ module.exports = {
             try {
                 await nextcloud.syncUser({
                     username: result.tcIdentity,
-                    email: result.email
+                    email: result.email,
                 });
+                await nextcloud.addUserToGroup(result.tcIdentity, 'teachers');
             } catch (e) {
                 strapi.log.error(`Nextcloud Sync Error (Personnel Update): ${e.message}`);
             }

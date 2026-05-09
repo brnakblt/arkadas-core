@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "classrooms",
+  "info": {
+    "singularName": "classroom",
+    "pluralName": "classrooms",
+    "displayName": "Derslik",
+    "description": "Physical rooms in the center"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "capacity": {
+      "type": "integer",
+      "default": 1
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "INDIVIDUAL",
+        "GROUP",
+        "PHYSIOTHERAPY",
+        "SENSORY_INTEGRATION"
+      ],
+      "default": "INDIVIDUAL"
+    }
+  }
+}

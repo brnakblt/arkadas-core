@@ -57,6 +57,24 @@
         },
         "avatarUrl": {
             "type": "string"
+        },
+        "ramReports": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::ram-report.ram-report",
+            "mappedBy": "student"
+        },
+        "bepTargets": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::bep-target.bep-target",
+            "mappedBy": "student"
+        },
+        "educationalModules": {
+            "type": "relation",
+            "relation": "manyToMany",
+            "target": "api::educational-module.educational-module",
+            "inversedBy": "students"
         }
     }
 }

@@ -607,6 +607,36 @@ export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBepTargetBepTarget extends Struct.CollectionTypeSchema {
+  collectionName: 'bep_targets';
+  info: {
+    description: 'Specific educational goals for students';
+    displayName: 'BEP Hedefi';
+    pluralName: 'bep-targets';
+    singularName: 'bep-target';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    category: Schema.Attribute.String;
+    completionDate: Schema.Attribute.Date;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    isCompleted: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::bep-target.bep-target'> &
+      Schema.Attribute.Private;
+    notes: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student.student'>;
+    targetDate: Schema.Attribute.Date;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -629,6 +659,35 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiClassroomClassroom extends Struct.CollectionTypeSchema {
+  collectionName: 'classrooms';
+  info: {
+    description: 'Physical rooms in the center';
+    displayName: 'Derslik';
+    pluralName: 'classrooms';
+    singularName: 'classroom';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    capacity: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::classroom.classroom'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    type: Schema.Attribute.Enumeration<
+      ['INDIVIDUAL', 'GROUP', 'PHYSIOTHERAPY', 'SENSORY_INTEGRATION']
+    > &
+      Schema.Attribute.DefaultTo<'INDIVIDUAL'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -688,6 +747,46 @@ export interface ApiDeviceTokenDeviceToken extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     user: Schema.Attribute.Relation<'manyToOne', 'plugin::users-permissions.user'>;
+  };
+}
+
+export interface ApiEducationalModuleEducationalModule extends Struct.CollectionTypeSchema {
+  collectionName: 'educational_modules';
+  info: {
+    description: 'MEB approved support programs';
+    displayName: 'E\u011Fitim Mod\u00FCl\u00FC';
+    pluralName: 'educational-modules';
+    singularName: 'educational-module';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    category: Schema.Attribute.Enumeration<
+      [
+        'Z\u0130H\u0130NSEL',
+        'BEDENSEL',
+        'OT\u0130ZM',
+        'D\u0130L_KONU\u015EMA',
+        '\u0130\u015E\u0130TME',
+        '\u00D6ZEL_\u00D6\u011ERENME',
+      ]
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::educational-module.educational-module'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    students: Schema.Attribute.Relation<'manyToMany', 'api::student.student'>;
+    totalMonthlyHours: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<8>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    weeklyHours: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<2>;
   };
 }
 
@@ -1107,6 +1206,41 @@ export interface ApiProcessProcess extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiRamReportRamReport extends Struct.CollectionTypeSchema {
+  collectionName: 'ram_reports';
+  info: {
+    description: 'Extracted data from official RAM reports';
+    displayName: 'RAM Raporu';
+    pluralName: 'ram-reports';
+    singularName: 'ram-report';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    aiJson: Schema.Attribute.JSON;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    diagnosisDetails: Schema.Attribute.Text;
+    educationalModules: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::educational-module.educational-module'
+    >;
+    endDate: Schema.Attribute.Date & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::ram-report.ram-report'> &
+      Schema.Attribute.Private;
+    originalPdf: Schema.Attribute.Media<'files'>;
+    publishedAt: Schema.Attribute.DateTime;
+    rawContent: Schema.Attribute.Text;
+    reportId: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
+    startDate: Schema.Attribute.Date;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student.student'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiRouteStopRouteStop extends Struct.CollectionTypeSchema {
   collectionName: 'route_stops';
   info: {
@@ -1159,6 +1293,38 @@ export interface ApiServiceService extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'title'>;
     title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSessionPlanSessionPlan extends Struct.CollectionTypeSchema {
+  collectionName: 'session_plans';
+  info: {
+    description: 'Core record for scheduled lessons';
+    displayName: 'Ders Plan\u0131';
+    pluralName: 'session-plans';
+    singularName: 'session-plan';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    classroom: Schema.Attribute.Relation<'manyToOne', 'api::classroom.classroom'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    endTime: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    isGroup: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::session-plan.session-plan'> &
+      Schema.Attribute.Private;
+    module: Schema.Attribute.Relation<'manyToOne', 'api::educational-module.educational-module'>;
+    publishedAt: Schema.Attribute.DateTime;
+    startTime: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    status: Schema.Attribute.Enumeration<['DRAFT', 'CONFIRMED', 'CANCELLED', 'COMPLETED']> &
+      Schema.Attribute.DefaultTo<'DRAFT'>;
+    student: Schema.Attribute.Relation<'manyToOne', 'api::student.student'>;
+    teacher: Schema.Attribute.Relation<'manyToOne', 'api::personnel.personnel'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
   };
@@ -1218,6 +1384,7 @@ export interface ApiStudentStudent extends Struct.CollectionTypeSchema {
   };
   attributes: {
     avatarUrl: Schema.Attribute.String;
+    bepTargets: Schema.Attribute.Relation<'oneToMany', 'api::bep-target.bep-target'>;
     birthDate: Schema.Attribute.Date;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
@@ -1231,6 +1398,10 @@ export interface ApiStudentStudent extends Struct.CollectionTypeSchema {
         'PHYSICAL_DISABILITY',
       ]
     >;
+    educationalModules: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::educational-module.educational-module'
+    >;
     fullName: Schema.Attribute.String & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::student.student'> &
@@ -1239,6 +1410,7 @@ export interface ApiStudentStudent extends Struct.CollectionTypeSchema {
     parentPhone: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     ramReportEndDate: Schema.Attribute.Date;
+    ramReports: Schema.Attribute.Relation<'oneToMany', 'api::ram-report.ram-report'>;
     status: Schema.Attribute.Enumeration<['ACTIVE', 'INACTIVE', 'GRADUATED', 'SUSPENDED']> &
       Schema.Attribute.DefaultTo<'ACTIVE'>;
     tcIdentity: Schema.Attribute.String &
@@ -1720,9 +1892,12 @@ declare module '@strapi/strapi' {
       'api::attendance-sync-issue.attendance-sync-issue': ApiAttendanceSyncIssueAttendanceSyncIssue;
       'api::audit-log.audit-log': ApiAuditLogAuditLog;
       'api::author.author': ApiAuthorAuthor;
+      'api::bep-target.bep-target': ApiBepTargetBepTarget;
       'api::category.category': ApiCategoryCategory;
+      'api::classroom.classroom': ApiClassroomClassroom;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
       'api::device-token.device-token': ApiDeviceTokenDeviceToken;
+      'api::educational-module.educational-module': ApiEducationalModuleEducationalModule;
       'api::erp-role.erp-role': ApiErpRoleErpRole;
       'api::faq.faq': ApiFaqFaq;
       'api::fatura.fatura': ApiFaturaFatura;
@@ -1735,8 +1910,10 @@ declare module '@strapi/strapi' {
       'api::notification-template.notification-template': ApiNotificationTemplateNotificationTemplate;
       'api::personnel.personnel': ApiPersonnelPersonnel;
       'api::process.process': ApiProcessProcess;
+      'api::ram-report.ram-report': ApiRamReportRamReport;
       'api::route-stop.route-stop': ApiRouteStopRouteStop;
       'api::service.service': ApiServiceService;
+      'api::session-plan.session-plan': ApiSessionPlanSessionPlan;
       'api::storage-file.storage-file': ApiStorageFileStorageFile;
       'api::student.student': ApiStudentStudent;
       'api::two-factor-auth.two-factor-auth': ApiTwoFactorAuthTwoFactorAuth;
