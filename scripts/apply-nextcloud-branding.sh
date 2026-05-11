@@ -18,15 +18,26 @@ echo "Applying Arkadas brand name and color..."
 docker compose exec -u www-data nextcloud php occ theming:config name "Arkadas"
 docker compose exec -u www-data nextcloud php occ theming:config color "#689F38"
 
-echo "Applying logos..."
+echo "Applying logos and backgrounds..."
 # We need to copy the files into the container so occ can read them
 docker cp ./arkadas-web/public/icons/logo.svg $(docker compose ps -q nextcloud):/tmp/logo.svg
 docker cp ./arkadas-web/public/icons/favicon.svg $(docker compose ps -q nextcloud):/tmp/favicon.svg
+
+# Override default nextcloud backgrounds with custom fluid ones to support light/dark modes
+docker cp ./arkadas-assets/green-fluid-light.webp $(docker compose ps -q nextcloud):/var/www/html/apps/theming/img/background/jo-myoung-hee-fluid.webp
+docker cp ./arkadas-assets/green-fluid-light.webp $(docker compose ps -q nextcloud):/var/www/html/apps/theming/img/background/preview/jo-myoung-hee-fluid.webp
+docker cp ./arkadas-assets/orange-fluid-dark.webp $(docker compose ps -q nextcloud):/var/www/html/apps/theming/img/background/jo-myoung-hee-fluid-dark.webp
+
+# Ensure correct permissions
+docker compose exec -u root nextcloud chown www-data:www-data /var/www/html/apps/theming/img/background/jo-myoung-hee-fluid.webp /var/www/html/apps/theming/img/background/jo-myoung-hee-fluid-dark.webp /var/www/html/apps/theming/img/background/preview/jo-myoung-hee-fluid.webp
 
 docker compose exec -u www-data nextcloud php occ theming:config logo /tmp/logo.svg
 docker compose exec -u www-data nextcloud php occ theming:config favicon /tmp/favicon.svg
 
 echo "Cleaning up temporary files..."
 docker compose exec nextcloud rm /tmp/logo.svg /tmp/favicon.svg
+
+echo "Updating theme cache..."
+docker compose exec -u www-data nextcloud php occ maintenance:theme:update
 
 echo "Nextcloud branding applied successfully! Please hard-refresh your browser."

@@ -9,8 +9,8 @@ echo "Starting Hybrid Local Development Environment"
 echo "=========================================="
 
 # 1. Start Infrastructure & ML Services
-echo "Starting Docker Infrastructure (Postgres, Redis, Nextcloud, AI, Mebbis)..."
-docker compose up -d postgres redis nextcloud ai mebbis
+echo "Starting Docker Infrastructure (Postgres, Redis, Nextcloud)..."
+docker compose up -d postgres redis nextcloud
 
 # Wait briefly for infrastructure to be available
 sleep 2

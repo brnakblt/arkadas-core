@@ -19,12 +19,9 @@ This document details the technologies and versions used in the project.
 - **Language:** TypeScript
 - **Navigation:** React Navigation
 
-## AI & Services
+## Services
 - **Backend:** Python 3.13 (FastAPI)
-- **Computer Vision:** OpenCV
 - **Integration:** SFTPGo (WebDAV)
-- **PBX:** Asterisk / FreePBX
-
 ## DevOps & Infrastructure
 - **Containerization:** Docker & Docker Compose
 - **Orchestration:** Makefile
